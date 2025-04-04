@@ -207,7 +207,7 @@ a:has(.tooltip-span) {
     height: 2em;
 }
 
-.btn-resize, .add-item-act, .remove-item-act {
+.btn-resize, .add-item-act, .remove-item-act, .add-item, .remove-item {
     margin-right: 0.5em;
     width: 2.2em;
     font-size: 1.2em;

@@ -75,17 +75,24 @@ select.is-valid + .select2-container--krajee-bs4 .select2-selection--single, .ha
     margin-top: -0.1em;
 }
 
+:not(.form-floating) > .input-lg.select2-container--krajee-bs4 .select2-selection--multiple .select2-selection__choice, :not(.form-floating) > .input-group-lg .select2-container--krajee-bs4 .select2-selection--multiple .select2-selection__choice {
+    margin: 0.2em;
+}
+
 .bordered-div {
     border: 1px solid var(--bs-border-color-translucent);
     border-radius: var(--border-radius);
     margin: 1em 0;
 }
 
-.bordered-div .pull-right {
-    text-align: right;
+.bordered-div .panel-title, .bordered-div .pull-right {
     background: var(--secondary-light-color);
     padding: 0.5em;
     border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.bordered-div .pull-right {
+    text-align: right;
 }
 
 .bordered-div .panel-body {
@@ -139,10 +146,23 @@ select.is-valid + .select2-container--krajee-bs4 .select2-selection--single, .ha
     border-width: 0;
 }
 
+.panel-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+div.panel-title {
+    border-bottom: 1px solid var(--bs-border-color-translucent);
+}
+
+.container-items .panel-title + .item {
+    margin-top: 2em;
+}
+
 .regulation-create .form-group, .regulation-update .form-group,
 .event-create .form-group, .event-update .form-group,
 .local-responsibility-create .form-group, .local-responsibility-create .form-group,
 .training-program-create .form-group, .training-program-update .form-group, .temporary-journal-form .form-group {
     margin-bottom: 1em;
 }
-

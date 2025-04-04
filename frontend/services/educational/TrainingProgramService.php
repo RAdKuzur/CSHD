@@ -221,7 +221,7 @@ class TrainingProgramService implements DatabaseServiceInterface
         $patronymicAuthors = ArrayHelper::getColumn($authors, 'authorWork.peopleWork.patronymic');
         $modelAuthor = HtmlBuilder::createTableWithActionButtons(
             [
-                array_merge(['ФИО'], array_map(function($nameAuthors, $surnameAuthors, $patronymicAuthors) {
+                array_merge(['ФИО составителя'], array_map(function($nameAuthors, $surnameAuthors, $patronymicAuthors) {
                     return "$nameAuthors $surnameAuthors $patronymicAuthors";
                 }, $nameAuthors, $surnameAuthors, $patronymicAuthors))
             ],

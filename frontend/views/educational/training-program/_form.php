@@ -64,13 +64,17 @@ use yii\widgets\ActiveForm;
         ?>
 
         <div class="container-items">
-            <h5 class="panel-title pull-left">Составители</h5><!-- widgetBody -->
-            <div class="pull-right">
-                <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+            <div class="panel-title">
+                <h5 class="panel-title pull-left">Составители</h5><!-- widgetBody -->
+                <div class="pull-right">
+                    <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                </div>
             </div>
             <div class="item panel panel-default" id = "item"><!-- widgetItem -->
-                <button type="button" class="remove-item btn btn-danger btn-xs"><span class="glyphicon glyphicon-minus"></span></button>
                 <div class="panel-heading">
+                    <div class="pull-right">
+                        <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
+                    </div>
                     <div class="clearfix"></div>
                 </div>
                 <div class = "form-label">

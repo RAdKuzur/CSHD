@@ -131,8 +131,17 @@ select.is-valid + .select2-container--krajee-bs4 .select2-selection--single, .ha
     display: flex;
 }
 
+#eventwork-contains_education label {
+    display: block;
+}
+
+.table-bordered th {
+    border-width: 0;
+}
+
 .regulation-create .form-group, .regulation-update .form-group,
-.event-create .form-group, .event-update .form-group {
+.event-create .form-group, .event-update .form-group,
+.local-responsibility-create .form-group, .local-responsibility-create .form-group {
     margin-bottom: 1em;
 }
 

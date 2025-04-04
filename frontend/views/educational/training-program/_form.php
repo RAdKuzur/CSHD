@@ -1,6 +1,7 @@
 <?php
 
 use app\components\DynamicWidget;
+use common\helpers\DateFormatter;
 use frontend\models\work\educational\training_program\TrainingProgramWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -18,7 +19,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="training-program-form">
+<div class="training-program-form field-backing">
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
@@ -39,7 +40,7 @@ use yii\widgets\ActiveForm;
         'clientOptions' => [
             'changeMonth' => true,
             'changeYear' => true,
-            'yearRange' => '1980:2100',
+            'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
         ]]) ?>
 
     <?= $form->field($model, 'ped_council_number')->textInput(['maxlength' => true]) ?>
@@ -101,7 +102,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, "focus")->dropDownList(Yii::$app->focus->getList()); ?>
 
-    <div class="row">
+    <div class="row bordered-div">
         <div class="panel panel-default">
             <div class="panel-heading"><h4>Отдел(-ы) - место реализации</h4></div>
             <div class="checkBlock">
@@ -194,7 +195,7 @@ use yii\widgets\ActiveForm;
     <?php endif; ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -55,6 +55,13 @@ class LocalResponsibilityWork extends LocalResponsibility
         return $entity;
     }
 
+    public function attributeLabels()
+    {
+        return array_merge(parent::attributeLabels(), [
+            'filesList' => 'Файлы',
+        ]);
+    }
+
     /**
      * Возвращает массив
      * link => форматированная ссылка на документ

@@ -346,11 +346,11 @@ class HtmlBuilder
             return '';
         }
 
-        $result = '<table class="' . $classes['table'] . '"><thead>';
+        $result = '<table class="' . $classes['table'] . '"><thead><tr>';
         foreach ($dataMatrix as $row) {
             $result .= "<th class='" . $classes['th'] . "'>$row[0]</th>";
         }
-        $result .= '</thead>';
+        $result .= '<th></th></tr></thead>';
 
         $dataMatrix = BaseFunctions::transposeMatrix($dataMatrix);
         $buttonMatrix = BaseFunctions::transposeMatrix($buttonMatrix);

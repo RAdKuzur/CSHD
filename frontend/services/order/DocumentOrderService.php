@@ -371,4 +371,63 @@ class DocumentOrderService
             return NULL;
         }
     }
+    public function generateNumber($model)
+    {
+        /* @var $modelOrderDown DocumentOrderWork */
+        /* @var $modelOrderUp DocumentOrderWork */
+        $year = (new \DateTime($model->order_date))->format('Y');
+        $orders = DocumentOrderWork::find()
+            ->where(['YEAR(order_date)' => $year])->where(['order_number' => $model->order_number]);
+        $modelOrderDown = count($orders->where(['<=', 'order_date', $model->order_date])->orderBy(['order_date' => SORT_DESC])->all()) > 0 ? $orders->where(['<=', 'order_date', $model->order_date])
+            ->orderBy([
+                'order_date' => SORT_DESC,
+                'order_copy_id' => SORT_DESC
+            ])->all()[0] : NULL;
+        $modelOrderUp =   count($orders->where(['>', 'order_date', $model->order_date])->orderBy(['order_date' => SORT_ASC])->all()) > 0 ? ($orders->where(['>', 'order_date', $model->order_date])
+            ->orderBy([
+                'order_date' => SORT_ASC,
+                'order_copy_id' => SORT_ASC
+            ])->all())[0] : NULL;
+        $copyId = 1;
+        if ($modelOrderDown == NULL && $modelOrderUp == NULL) {
+            $model->setNumber($model->order_number, $copyId, NULL);
+        }
+        else if ($modelOrderDown == NULL && $modelOrderUp != NULL) {
+            //????
+        }
+        else if ($modelOrderDown != NULL && $modelOrderUp == NULL) {
+            $model->setNumber($modelOrderDown->order_number, $modelOrderDown->order_copy_id + 1, NULL);
+        }
+        else {
+            $indexUp = $this->orderNumberToArray($modelOrderUp);
+            $indexDown = $this->orderNumberToArray($modelOrderDown);
+            //???
+        }
+    }
+    public function addIndexPostfix($index)
+    {
+        $index['postfix'][count($index['postfix']) - 1] =  $index['postfix'][count($index['postfix']) - 1] + 1;
+        return $index;
+    }
+    public function orderNumberToArray($order){
+        $index = [
+            'number' => $order->order_number,
+            'copy' => $order->order_copy_id,
+            'postfix' => array_map('intval', explode('/', $order->order_postfix))
+        ];
+        return $index;
+    }
+    public function compareIndexes($firstIndex, $secondIndex){
+        if ($firstIndex['copy'] == $secondIndex['copy']) {
+            for($i = 0; $i < max(count($firstIndex['postfix']), count($secondIndex['postfix'])); $i++){
+
+            }
+        }
+        else if ($firstIndex['copy'] > $secondIndex['copy']){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 }

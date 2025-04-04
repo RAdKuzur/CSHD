@@ -117,13 +117,16 @@ class OrderMainController extends DocumentController
 
         $post = Yii::$app->request->post();
         if ($form->entity->load($post)) {
+
+
             $this->documentOrderService->getPeopleStamps($form->entity);
             if (!$form->entity->validate()) {
                 throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($form->entity->getErrors()));
             }
-
-            $form->entity->generateOrderNumber();
+            $this->documentOrderService->generateNumber($form->entity);
+            //$form->entity->generateOrderNumber();
             $this->repository->save($form->entity);
+            //var_dump($form->entity->order_number . '/' .$form->entity->order_copy_id . '/' . $form->entity->order_postfix);
             $this->documentOrderService->getFilesInstances($form->entity);
             $this->service->addExpireEvent($post["ExpireForm"], $form->entity);
             $this->orderPeopleService->addOrderPeopleEvent($post["OrderMainWork"]["responsible_id"], $form->entity);

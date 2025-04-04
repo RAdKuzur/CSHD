@@ -92,11 +92,10 @@ class OrderMainWork extends DocumentOrderWork implements FileInterface
     public function beforeValidate()
     {
         $post = Yii::$app->request->post();
-        $this->order_copy_id = 1;
         $this->type = DocumentOrderWork::ORDER_MAIN;
         if ($post['OrderMainWork']['archive'] == '0') {
-            $this->order_number = NomenclatureDictionary::ADMIN_ORDER;
-            $this->generateOrderNumber();
+             $this->order_number = NomenclatureDictionary::ADMIN_ORDER;
+
         }
         $this->order_date = DateFormatter::format($this->order_date, DateFormatter::dmY_dot, DateFormatter::Ymd_dash);
         return parent::beforeValidate();

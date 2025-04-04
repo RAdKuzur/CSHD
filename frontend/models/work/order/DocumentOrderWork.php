@@ -45,7 +45,7 @@ class DocumentOrderWork extends DocumentOrder
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['order_date', 'order_name', 'executor_id', 'bring_id'], 'required'],
+            [['order_date', 'order_name'], 'required'],
             [['scanFile'], 'file', 'skipOnEmpty' => true,
                 'extensions' => 'png, jpg, pdf, zip, rar, 7z, tag, txt'],
             [['docFiles'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 10,
@@ -240,5 +240,11 @@ class DocumentOrderWork extends DocumentOrder
         }
 
         return HtmlBuilder::createSVGLink($link);
+    }
+    public function setNumber($number, $copyId, $postfix)
+    {
+        $this->order_number = $number;
+        $this->order_copy_id = $copyId;
+        $this->order_postfix = $postfix;
     }
 }

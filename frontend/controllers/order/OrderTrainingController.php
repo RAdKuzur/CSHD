@@ -142,9 +142,10 @@ class OrderTrainingController extends DocumentController
             if (!$model->validate()) {
                throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
             }
+            $this->documentOrderService->generateNumber($model);
             $respPeopleId = DynamicWidget::getData(basename(OrderTrainingWork::class), "responsible_id", $post);
             $this->documentOrderService->getFilesInstances($model);
-            $model->generateOrderNumber();
+            //$model->generateOrderNumber();
             $this->orderTrainingRepository->save($model);
             $status = $this->orderTrainingService->getStatus($model);
             $error = $this->orderTrainingService->createOrderTrainingGroupParticipantEvent($model, $status, $post);

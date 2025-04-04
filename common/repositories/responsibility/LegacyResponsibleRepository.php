@@ -19,7 +19,7 @@ class LegacyResponsibleRepository
      * @param array $params дополнительные условия в запросе - "people" (поиск по человеку), "end" (поиск по пустой дате окончания)
      * @return array|\yii\db\ActiveRecord[]
      */
-    public function getByResponsibility(LocalResponsibilityWork $responsibility, int $type, $params = [])
+    public function getByResponsibility(LocalResponsibilityWork $responsibility, int $type = 0, $params = [])
     {
         $query = LegacyResponsibleWork::find()
             ->where(['responsibility_type' => $responsibility->responsibility_type])
@@ -34,6 +34,8 @@ class LegacyResponsibleRepository
         if (in_array('end', $params)) {
             $query = $query->andWhere(['IS', 'end_date', null]);
         }
+
+        $query = $query->orderBy(['start_date' => SORT_DESC]);
 
         return $type == 0 ?
             $query->all() :

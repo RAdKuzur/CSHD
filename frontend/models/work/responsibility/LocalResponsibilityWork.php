@@ -4,12 +4,15 @@ namespace frontend\models\work\responsibility;
 
 use common\events\EventTrait;
 use common\helpers\files\FilesHelper;
+use common\helpers\StringFormatter;
 use common\models\scaffold\LocalResponsibility;
+use common\repositories\responsibility\LegacyResponsibleRepository;
 use frontend\models\work\dictionaries\AuditoriumWork;
 use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\regulation\RegulationWork;
 use InvalidArgumentException;
 use Yii;
+use yii\helpers\Url;
 
 /**
  * @property PeopleStampWork $peopleStampWork
@@ -102,5 +105,20 @@ class LocalResponsibilityWork extends LocalResponsibility
         $this->last_edit_id = Yii::$app->user->identity->getId();
 
         return parent::beforeSave($insert); 
+    }
+
+    public function getLegacy()
+    {
+        return '';
+    }
+
+    public function getCurrentOrder()
+    {
+        /** @var LegacyResponsibleWork $legacy */
+        $legacy = (Yii::createObject(LegacyResponsibleRepository::class))->getByResponsibility($this, 1);
+        return StringFormatter::stringAsLink(
+            $legacy->orderWork->getFullName(),
+            Url::to([Yii::$app->frontUrls::ORDER_MAIN_VIEW, 'id' => $legacy->order_id])
+        );
     }
 }

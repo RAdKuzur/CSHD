@@ -1,0 +1,87 @@
+<div style="overflow: auto;">
+<table style="font-family: 'arial'; font-size: medium; text-decoration-style: initial; text-indent: 0px; text-transform: none; word-spacing: 0px;" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="overflow: auto;">
+<table style="font-family: 'arial'; font-size: medium; width: 979px;" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="overflow: visible; vertical-align: top; width: 134px;">
+<table style="font-family: 'arial'; font-size: medium;" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="text-align: center;"><img style="height: 47px; margin-bottom: 4px; margin-top: 4px; max-width: 130px; width: 137px;" src="https://resize.yandex.net/mailservice?url=https%3A%2F%2Fxn--80ajlddcoceflnu7byb2cp.xn--p1ai%2Fwp-content%2Fthemes%2Frsht%2Fimgs%2Flogo.png&amp;proxy=yes&amp;key=76660b6f9dfc051cf32313db525b70e2" width="130" /></td>
+</tr>
+<tr>
+<td height="30"><a href="https://www.facebook.com/schooltech.ru/"><img style="margin-bottom: 5px; margin-top: 5px;" src="https://schooltech.ru/icons/mailservice.png" alt="" width="24" height="24" /></a>&nbsp;<a href="https://ok.ru/schooltech"><img style="margin-bottom: 5px; margin-top: 5px;" src="https://schooltech.ru/icons/ok.png" alt="" width="24" height="24" /></a>&nbsp;<a href="https://vk.com/schooltech"><img style="margin-bottom: 5px; margin-top: 5px;" src="https://schooltech.ru/icons/mailservice%20(1).png" alt="" width="24" height="24" /></a>&nbsp;<a href="https://www.instagram.com/schooltech.ru/"><img style="margin-bottom: 5px; margin-top: 5px;" src="https://schooltech.ru/icons/mailservice%20(2).png" alt="" width="24" height="24" /></a></td>
+</tr>
+<tr>
+<td style="overflow: visible; text-align: center;">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td style="width: 50px;">
+<div style="text-align: center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+</td>
+<td style="overflow: visible; padding: 0px; vertical-align: middle; width: 787px;">
+<h3 style="color: #000000; font-size: 18px; margin: 0px;"><span style="font-size: 16px;">Шумак Кирилл Алексеевич</span></h3>
+<p style="color: #000000; font-size: 14px; line-height: 22px; margin: 0px;">Заместитель директора по информационным технологиям</p>
+<p style="color: #000000; font-size: 14px; font-weight: 500; line-height: 22px; margin: 0px;">ГАОУ АО ДО "РШТ"</p>
+<table style="font-family: 'arial'; font-size: medium; width: 576px;" cellspacing="0" cellpadding="0">
+<tbody>
+<tr style="height: 4px;">
+<td style="height: 4px; overflow: visible; width: 426px;">
+<table style="font-family: 'calibri' , sans-serif; font-size: 11pt; height: 22px; line-height: 107%; width: 574px;" border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<tr style="height: 1px;">
+<td style="border-bottom-color: #f2547d; border-style: none none solid none; border-width: medium medium 1pt medium; height: 1px; padding: 0cm; width: 570px;">&nbsp;</td>
+</tr>
+<tr style="height: 15px;">
+<td style="height: 15px; padding: 0cm; width: 570px;">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table style="font-family: 'arial'; font-size: medium; width: 577px;" cellspacing="0" cellpadding="0">
+<tbody>
+<tr style="vertical-align: middle;">
+<td style="overflow: visible; vertical-align: middle; width: 30px;">&nbsp;<img src="https://schooltech.ru/icons/phone.png" alt="" width="16" height="16" /></td>
+<td style="width: 541px;"><span style="font-size: 12px; line-height: normal;">раб. тел.:<span class="wmi-callto">+7 (8512) 44 24 28</span> доб. 5,&nbsp;сот.: +7&nbsp;927&nbsp;<span class="wmi-callto">575 75 91</span></span></td>
+</tr>
+<tr style="vertical-align: middle;">
+<td style="overflow: visible; vertical-align: middle; width: 30px;">&nbsp;<img src="https://schooltech.ru/icons/email.png" alt="" width="16" height="16" /></td>
+<td style="width: 541px;"><span style="font-size: 12px; line-height: normal;"><a class="ns-action" style="color: #000000;" href="mailto:kshumak@schooltech.ru," data-click-action="common.go" data-params="new_window&amp;url=%23compose%2Fmailto%3Dalazarev%2540schooltech.ru%252C">kshumak@schooltech.ru</a>, <img src="https://schooltech.ru/icons/geolocalization.png" alt="" width="16" height="16" />&nbsp;<a class="daria-goto-anchor" style="color: #000000;" href="https://schooltech.ru/" target="_blank" rel="noopener noreferrer" data-vdir-href="https://mail.yandex.ru/re.jsx?uid=1130000044555115&amp;c=LIZA&amp;cv=21.7.3&amp;mid=172544160723632186&amp;h=a,VLHjhBLRj0bIOUPErxx5Rw&amp;l=aHR0cHM6Ly9zY2hvb2x0ZWNoLnJ1Lw" data-orig-href="https://schooltech.ru/">школьныйтехнопарк.рф</a>.</span></td>
+</tr>
+</tbody>
+</table>
+<div style="overflow: visible; text-align: justify;">
+<table style="font-family: 'calibri' , sans-serif; font-size: 11pt; line-height: 107%; width: 577px;" border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<tr style="height: 1px;">
+<td style="border-bottom-color: #f2547d; border-style: none none solid none; border-width: medium medium 1pt medium; height: 1px; padding: 0cm; width: 573px;">&nbsp;</td>
+</tr>
+<tr style="height: 30px;">
+<td style="height: 30px; padding: 0cm; width: 573px;">
+<div>
+<div>&nbsp;</div>
+<div><span style="font-size: 12px; line-height: normal;">Информация в этом сообщении предназначена исключительно для конкретных лиц, которым она адресована. Если Вы получили это сообщение ошибочно, пожалуйста, незамедлительно сообщите отправителю об этом и удалите все сообщение, любые возможные его копии и приложения.</span></div>
+<div>&nbsp;</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+</div>

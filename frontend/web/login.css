@@ -1,0 +1,73 @@
+.login-container {
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+}
+
+.login-block1 {
+    margin: 0; /* Отступы между блоками */
+    flex: 1; /* Равномерное распределение пространства между блоками */
+    padding: 4rem;
+    background-color: #ffffff;
+    border-radius: 10px 0 0 10px;
+    box-shadow: -5px 5px 5px #ececec;
+    display: flex; /* Включаем flex-контейнер */
+    flex-direction: column; /* Вертикальная ориентация элементов */
+    justify-content: center; /* Центрирование по вертикали */
+    height: 100%; /* Занять всю высоту блока */
+}
+
+.login-block2 {
+    margin: 0; /* Отступы между блоками */
+    flex: 1; /* Равномерное распределение пространства между блоками */
+    padding: 4rem;
+    background-color: #009580;
+    border-radius: 0 10px 10px 0;
+    height: 100%;
+    display: flex; /* Включаем flex-контейнер */
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    text-align: center; /* Центрируем текст */
+    color: white;
+    box-shadow: 5px 5px 5px #ececec;
+}
+
+.btn-login {
+    padding: 0.7rem 2.5rem;
+    width: auto;
+    font-size: 18px;
+}
+
+.forgot-password-block {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-input {
+    margin-bottom: 1.5rem;
+    background-color: #d4d4d4;
+    font-size: 18px;
+    padding: 0.8rem;
+    width: 100%; /* Занять всю ширину родительского контейнера */
+    box-sizing: border-box; /* Учтите отступы и границы в общей ширине */
+}
+
+.login-header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.submit-login-block {
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    width: 100%; /* Занять всю ширину родительского элемента */
+}
+
+.text-login-form {
+    height: 100%;
+}
+
+.login-block1, .login-block2 {
+    min-height: 30rem;
+}

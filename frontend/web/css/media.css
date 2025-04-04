@@ -1,0 +1,70 @@
+@media (max-width: 770px) {
+    .prev-accordion {
+        display: none;
+    }
+    .accordion-btn {
+        border-radius: var(--border-radius);
+        width: 100%;
+    }
+
+    .card, .block-card {
+        flex-direction: column;
+    }
+
+    .files-section {
+        flex-wrap: wrap;
+    }
+
+    .file-block-center {
+        flex: 1;
+    }
+
+    .card-field:has(.accordion-block) {
+        flex-direction: column;
+    }
+
+    .field-date:has(.accordion-block) {
+        margin: 1em 0;
+    }
+
+    .table-block, .grid-view {
+        overflow: scroll;
+    }
+
+    .table-block td {
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+    }
+
+    .space {
+        flex-direction: column;
+    }
+
+    .button-group {
+        flex-direction: column;
+        display: flex;
+    }
+
+    .button-group a {
+        white-space: nowrap;
+        margin: 0.5em;
+        font-size: 90%;
+    }
+
+    .export-menu {
+        margin: auto 1em;
+    }
+
+    #toTopButton {
+        bottom: 3em;
+        right: 1em;
+    }
+
+    .index-card {
+        width: 100%;
+    }
+
+    .index-card:nth-child(2) {
+        margin-top: 2em;
+    }
+}

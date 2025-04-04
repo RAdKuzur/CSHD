@@ -1,0 +1,138 @@
+.field-backing {
+    background: #fdfaf7;
+}
+
+.select2 {
+    min-width: 20em;
+}
+
+.select2-container--krajee-bs4:not(.select2-container--disabled) .select2-dropdown {
+    box-shadow: 0 0.375rem 0.75rem 0.2rem rgba(0, 165, 142, 0.3);
+    border-color: var(--primary-subtle-color);
+}
+
+.select2-container--krajee-bs4.select2-container--open:not(.select2-container--disabled) .select2-selection, .select2-container--krajee-bs4:not(.select2-container--disabled) .select2-selection:focus {
+    border-color: var(--primary-subtle-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 165, 142, 0.3);
+}
+
+.select2-container--krajee-bs4 .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--primary-color);
+}
+
+.select2-container--krajee-bs4 .select2-results__option.select2-results__option--selected, .select2-container--krajee-bs4 .select2-results__option[aria-selected=true] {
+    color: var(--primary-subtle-text);
+    background-color: var(--primary-subtle-hover);
+}
+
+.s2-togall-button {
+    color: var(--primary-active);
+}
+
+.select2-container--krajee-bs4 .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: black;
+}
+
+select.is-valid + .select2-container--krajee-bs4 .select2-selection--single, .has-success.select2-container--krajee-bs4 .select2-dropdown, .has-success .select2-container--krajee-bs4 .select2-selection {
+    border-color: var(--primary-subtle-hover);
+}
+
+.has-success .select2-container--open .select2-selection, .has-success .select2-container--krajee-bs4.select2-container--focus .select2-selection {
+    box-shadow: 0 0 0 0.2rem rgba(0, 165, 142, 0.3);
+    border-color: var(--primary-subtle-color);
+}
+
+:not(.form-floating) > .input-lg.select2-container--krajee-bs4 .select2-selection--single, :not(.form-floating) > .input-group-lg .select2-container--krajee-bs4 .select2-selection--single {
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .3rem;
+}
+
+:not(.form-floating) > .input-lg.select2-container--krajee-bs4 .select2-selection--multiple .select2-search--inline .select2-search__field, :not(.form-floating) > .input-group-lg .select2-container--krajee-bs4 .select2-selection--multiple .select2-search--inline .select2-search__field {
+    padding: 0.375rem 0.75rem;
+    height: 1.3em;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+:not(.form-floating) > .input-lg.select2-container--krajee-bs4 .select2-selection--multiple, :not(.form-floating) > .input-group-lg .select2-container--krajee-bs4 .select2-selection--multiple {
+    min-height: calc(1.5em + 0.75rem + 5px);
+}
+
+.select2, .select2-container, .select2-container--krajee-bs4, .select2-search__field {
+    width: 100%!important;
+}
+
+.form-group:has(button[type='submit']) {
+    text-align: center;
+}
+
+:not(.form-floating) > .input-lg.select2-container--krajee-bs4 .select2-selection--single .select2-selection__clear, :not(.form-floating) > .input-group-lg .select2-container--krajee-bs4 .select2-selection--single .select2-selection__clear {
+    margin-top: -0.1em;
+}
+
+.bordered-div {
+    border: 1px solid var(--bs-border-color-translucent);
+    border-radius: var(--border-radius);
+    margin: 1em 0;
+}
+
+.bordered-div .pull-right {
+    text-align: right;
+    background: var(--secondary-light-color);
+    padding: 0.5em;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.bordered-div .panel-body {
+    padding: 0.75em;
+}
+
+.bordered-div .panel-heading:not(:first-child) {
+    border-top: 1px solid var(--bs-border-color-translucent);
+}
+
+.item-act:not(:first-child) .add-item-act {
+    display: none;
+}
+
+.checkList{
+    border: 1px solid var(--bs-border-color-translucent);
+    border-radius: var(--border-radius);
+    margin-bottom: 1em;
+}
+
+.checkBlock{
+    max-height: 20em;
+    overflow-y: scroll;
+    padding: 1em 1em 0;
+}
+
+.checkHeader{
+    background: var(--thead-color);
+    border-bottom: 1px solid var(--bs-border-color-translucent);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    line-height: 2em;
+}
+
+.noPM{
+    margin: 0;
+    padding: 0;
+    line-height: 2.5;
+    padding-left: 0.75em;
+}
+
+.field-eventwork-contains_education {
+    display: flex;
+}
+
+.regulation-create .form-group, .regulation-update .form-group,
+.event-create .form-group, .event-update .form-group {
+    margin-bottom: 1em;
+}
+

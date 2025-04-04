@@ -1,0 +1,13 @@
+.index-card {
+    width: 45%;
+}
+
+.index-title {
+    font-size: 2em;
+    font-weight: 400;
+    margin-bottom: 0.5em;
+}
+
+.block-card {
+    margin-top: 2em;
+}

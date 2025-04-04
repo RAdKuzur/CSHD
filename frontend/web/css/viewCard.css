@@ -1,0 +1,276 @@
+.card {
+    display: flex;
+    flex-direction: row;
+    border-radius: var(--border-radius);
+    margin-bottom: 1em;
+}
+
+.card .card-block-1, .card .card-block-2 {
+    padding: 1em;
+}
+
+.card-block-1 {
+    background-color: white;
+    flex-basis: 60%;
+}
+
+.card-block-2 {
+    background-color: rgb(232, 237, 241); /* Цвет второго блока */
+    flex-basis: 40%;
+}
+
+.card-head {
+    font-size: 0.8em;
+    color: gray;
+    border-bottom: 1px dashed gray;
+    margin: 1em 0.5em;
+}
+
+.card-field {
+    margin: 0.5em;
+}
+
+.field-title {
+    margin-right: 1em;
+    flex: 1;
+    font-weight: 600;
+}
+
+.field-date {
+    flex: 4;
+}
+
+.fileIcon {
+    width: 4em;
+}
+
+.filter-date {
+    text-align: center;
+    padding: 1em;
+}
+
+.filter-date .form-group {
+    margin: 0 auto;
+}
+
+.filter-input {
+    padding: 0 1em 1em;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.form-group-button {
+    margin-top: 1em;
+}
+
+select option[value=""] {
+    color: #ced4da;
+}
+
+.field-option {
+    font-size: 0.9em;
+}
+
+.event-view .card-block-1, .event-view .card-block-2,
+.training-program-view .card-block-1, .training-program-view .card-block-2,
+.training-group-view .card-block-1, .training-group-view .card-block-2 {
+    flex-basis: 50%;
+}
+
+.event-view .field-title,
+.training-program-view .field-title,
+.training-group-view .field-title {
+    flex: 2;
+}
+
+.event-view .field-date,
+.training-program-view .field-date,
+.training-group-view .field-date {
+    flex: 3;
+}
+
+.event-view .file-block-center {
+    flex-basis: 50%;
+    padding: 0.75em;
+}
+
+.event-view .files-section {
+    flex-wrap: wrap;
+}
+
+.training-program-view .file-block-center {
+    padding: 1em;
+    text-align: center;
+}
+
+.card-block-2 .accordion-block {
+    background: var(--accordion-dark);
+}
+
+.card-block-2 .accordion-block,
+.card-block-2 .accordion-btn,
+.card-block-2 .accordion-btn-close {
+    border-color: var(--accordion-btn-dark);
+}
+
+.card-block-2 .accordion-btn,
+.card-block-2 .accordion-btn-close {
+    background: var(--accordion-btn-dark);
+}
+
+h3:has(svg) {
+    display: flex;
+    align-items: center;
+    margin-left: 0.5em;
+}
+
+a:has(.tooltip-span) {
+    color: black;
+}
+
+
+.table-topic {
+    text-align: center;
+    background: var(--secondary-light-color);
+    border-radius: 10px 10px 0 0;
+    padding: 0.5em;
+    font-weight: 600;
+}
+
+.table-block {
+    padding-bottom: 0.5em;
+}
+
+.card table {
+    width: 100%;
+}
+
+.card thead {
+    box-shadow: none;
+    line-height: 2em;
+    border-bottom: 1px solid rgba(232, 237, 241 , 1);
+    border-top: 1px solid rgba(232, 237, 241 , 1);
+}
+
+.card thead th:last-child {
+    line-height: 1.5;
+    padding-left: 0.5em;
+}
+
+.card thead td:first-child {
+    padding-left: 1em;
+}
+
+.card thead td {
+    font-weight: 500;
+    text-align: center;
+    padding: 0.5em;
+    line-height: 1.2;
+}
+
+.card table th {
+    background-color: white!important;
+    padding: 0.5em 0;
+    text-align: center;
+}
+
+.card tbody > tr:not(:last-child) {
+    border-bottom: 1px solid rgba(232, 237, 241 , 1);
+}
+
+.card tbody td {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.card tbody {
+    box-shadow: none;
+}
+
+.card tbody>tr:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgba(245,247,249, 1);
+}
+
+.lessons-date {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.status-participant {
+    text-align: center;
+}
+
+.status-participant svg{
+    width: 2em;
+    height: 2em;
+}
+
+.btn-resize, .add-item-act, .remove-item-act {
+    margin-right: 0.5em;
+    width: 2.2em;
+    font-size: 1.2em;
+    text-align: center;
+    align-items: center;
+    border: 1px solid var(--bs-border-color-translucent);
+}
+
+.control-unit {
+    margin-bottom: 1em;
+}
+
+.status-block, .status-active {
+    margin-right: 0.5em;
+}
+
+.icon-button, .button-icon {
+    text-align: center;
+    align-items: center;
+}
+
+.icon-button svg {
+    width: 2em;
+    margin-left: 1em;
+}
+
+.button-icon svg {
+    width: 2em;
+    margin-right: 1em;
+}
+
+.journal-edit .button-icon {
+    margin: auto 1em;
+}
+
+.control-label {
+    font-weight: 500;
+}
+
+.lessons-date:hover {
+    border: 1px solid var(--border-color);
+}
+
+.icons-container {
+    margin-top: 1em;
+}
+
+.project-participant {
+    width: 12em;
+}
+
+.project-participant div {
+    padding-top: 0.3em;
+}
+
+.success-checkbox label{
+    font-size: 0;
+}
+
+.sticky-cell {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    background: white;
+}

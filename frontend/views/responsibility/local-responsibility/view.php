@@ -91,13 +91,13 @@ YiiAsset::register($this);
                             Квант
                         </div>
                         <div class="field-date">
-                            <?= $model->getRealDate() . ' № ' . $model->getRealNumber() ?>
+                            <?= $model->quant ?>
                         </div>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-        <div class="card-block-2">
+        <div class="card-block-2" style="flex-basis: 80%">
             <div class="card-set">
                 <div class="card-head">Документы</div>
                 <div class="card-field flexx">

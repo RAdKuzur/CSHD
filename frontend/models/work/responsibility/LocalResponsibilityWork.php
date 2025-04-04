@@ -4,10 +4,12 @@ namespace frontend\models\work\responsibility;
 
 use common\events\EventTrait;
 use common\helpers\files\FilesHelper;
+use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use common\models\scaffold\LocalResponsibility;
 use common\repositories\responsibility\LegacyResponsibleRepository;
 use frontend\models\work\dictionaries\AuditoriumWork;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\regulation\RegulationWork;
 use InvalidArgumentException;
@@ -116,7 +118,28 @@ class LocalResponsibilityWork extends LocalResponsibility
 
     public function getLegacy()
     {
-        return '';
+        /** @var LegacyResponsibleWork[] $legacies */
+        $legacies = (Yii::createObject(LegacyResponsibleRepository::class))->getByResponsibility($this);
+        $result = '';
+        foreach ($legacies as $legacy) {
+            $result .= $legacy->start_date.' &#9658; ';
+            if (!is_null($legacy->end_date)) {
+                $result .= $legacy->end_date.' ';
+            }
+            else {
+                $result .= 'н.в. ';
+            }
+            $result .= StringFormatter::stringAsLink(
+                $legacy->peopleStampWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS),
+                Url::to([Yii::$app->frontUrls::PEOPLE_VIEW, 'id' => $legacy->peopleStampWork->people_id]));
+            $result .= ' ('.
+                StringFormatter::stringAsLink(
+                    "Приказ №{$legacy->orderWork->getFullName()}",
+                    Url::to([Yii::$app->frontUrls::ORDER_MAIN_VIEW, 'id' => $legacy->order_id])
+                ).')<br>';
+        }
+
+        return HtmlBuilder::createAccordion($result);
     }
 
     public function getCurrentOrder()

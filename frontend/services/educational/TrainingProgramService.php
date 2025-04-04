@@ -9,6 +9,7 @@ use common\helpers\files\filenames\TrainingProgramFileNameGenerator;
 use common\helpers\files\FilePaths;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
 use common\repositories\educational\TrainingProgramRepository;
 use common\services\DatabaseServiceInterface;
@@ -205,11 +206,11 @@ class TrainingProgramService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Редактировать',
+                    HtmlCreator::IconUpdate(),
                     Url::to('update-theme'),
                     ['id' => ArrayHelper::getColumn($themes, 'id'), 'modelId' => ArrayHelper::getColumn($themes, 'training_program_id')]),
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-theme'),
                     ['id' => ArrayHelper::getColumn($themes, 'id'), 'modelId' => ArrayHelper::getColumn($themes, 'training_program_id')])
             ]
@@ -226,7 +227,7 @@ class TrainingProgramService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-author'),
                     ['id' => ArrayHelper::getColumn($authors, 'id'), 'modelId' => ArrayHelper::getColumn($authors, 'training_program_id')])
             ]

@@ -121,7 +121,7 @@ use yii\widgets\ActiveForm;
             'clientOptions' => [
                 'changeMonth' => true,
                 'changeYear' => true,
-                'yearRange' => '1950:2100',
+                'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
             ]])->label(false);
         echo '</td><td>'.Html::a($order->fullName, \yii\helpers\Url::to(['document-order/view', 'id' => $order->id])). '</td>';
         echo '</td><td>'.Html::submitButton('Открепить', ['class' => 'btn btn-danger', 'onclick' => 'clickSubmit()']). '</td><tr>';

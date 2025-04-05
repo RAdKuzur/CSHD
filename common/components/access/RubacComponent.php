@@ -59,7 +59,6 @@ class RubacComponent
     {
         $this->authCache->loadDataFromDB($userId);
         $permissions = $this->authCache->getAllPermissionsFromUser($userId);
-        var_dump($permissions);die;
         if (!$permissions) {
             $permissions = ArrayHelper::getColumn($this->userPermissionFunctionRepository->getPermissionsByUser($userId), 'short_code');
         }

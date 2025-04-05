@@ -4,6 +4,7 @@ namespace backend\models\forms;
 
 use backend\events\user\AddUserPermissionEvent;
 use backend\events\user\DeleteUserPermissionEvent;
+use common\components\access\AuthDataCache;
 use common\components\compare\UserPermissionCompare;
 use common\components\traits\Math;
 use common\events\EventTrait;
@@ -86,6 +87,8 @@ class UserForm extends Model
 
     public function savePermissions()
     {
+        (Yii::createObject(AuthDataCache::class))->clearAuthData($this->entity->id);
+
         $prevPermissionIds = ArrayHelper::getColumn(
             $this->prevUserPermissions,
             'id'

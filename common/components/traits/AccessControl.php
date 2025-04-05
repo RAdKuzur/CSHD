@@ -24,6 +24,7 @@ trait AccessControl
             ];
         }
 
+        var_dump($action->id);die;
         if (!Yii::$app->rubac->checkUserAccess(Yii::$app->rubac->authId(), get_class(Yii::$app->controller), $action)) {
             Yii::$app->session->setFlash('error', 'У Вас недостаточно прав. Обратитесь к администратору для получения доступа');
             return [

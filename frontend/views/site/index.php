@@ -7,7 +7,7 @@ use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use yii\helpers\Url;
 
-$this->title = 'My Yii Application';
+$this->title = 'ЦСХД';
 ?>
 
 <div class="site-index">

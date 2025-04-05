@@ -80,19 +80,23 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                         <div class="panel-body">
                             <div class="row">
                                 <?= $form->field($modelChild, "[{$i}]id")->hiddenInput()->label(false) ?>
-
-                                <?= $form->field($modelChild, "[{$i}]participant_id")->widget(Select2::classname(), [
-                                    'data' => ArrayHelper::map($childs, 'id', 'fullFio'),
-                                    'size' => Select2::LARGE,
-                                    'options' => ['prompt' => 'Выберите ученика'],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                ])->label('ФИО учащегося'); ?>
-
-                                <?= $form->field($modelChild, "[{$i}]send_method")->dropDownList(
-                                    Yii::$app->sendMethods->getList(), ['prompt' => '---']
-                                )->label('Способ доставки сертификата'); ?>
+                                <div class="flexx">
+                                    <div class="flx1">
+                                        <?= $form->field($modelChild, "[{$i}]participant_id")->widget(Select2::classname(), [
+                                            'data' => ArrayHelper::map($childs, 'id', 'fullFio'),
+                                            'size' => Select2::LARGE,
+                                            'options' => ['prompt' => 'Выберите ученика'],
+                                            'pluginOptions' => [
+                                                'allowClear' => true
+                                            ],
+                                        ])->label('ФИО учащегося'); ?>
+                                    </div>
+                                    <div class="flx1">
+                                        <?= $form->field($modelChild, "[{$i}]send_method")->dropDownList(
+                                            Yii::$app->sendMethods->getList(), ['prompt' => '---']
+                                        )->label('Способ доставки сертификата'); ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

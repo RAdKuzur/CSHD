@@ -52,8 +52,6 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         </div>
     </div>
 
-
-
     <div class="training-group-schedule-form field-backing">
         <?php if (strlen($scheduleTable) > 10): ?>
             <?= $scheduleTable; ?>
@@ -61,18 +59,22 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 
         <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
-        <?= $form->field($model, 'type')->radioList(
-            array(
-                TrainingGroupScheduleForm::MANUAL => 'Ручное заполнение расписания',
-                TrainingGroupScheduleForm::AUTO => 'Автоматическое расписание по дням'
-            ),
-            [
-                'value' => TrainingGroupScheduleForm::MANUAL,
-                'onchange' => 'changeScheduleType()'
-            ]
-        )->label('') ?>
+        <div class="bordered-div">
+            <div style="padding: 0 1em;">
+                <?= $form->field($model, 'type')->radioList(
+                    array(
+                        TrainingGroupScheduleForm::MANUAL => 'Ручное заполнение расписания',
+                        TrainingGroupScheduleForm::AUTO => 'Автоматическое расписание по дням'
+                    ),
+                    [
+                        'value' => TrainingGroupScheduleForm::MANUAL,
+                        'onchange' => 'changeScheduleType()'
+                    ]
+                )->label('') ?>
+            </div>
+        </div>
 
-        <div class="panel-body">
+        <div class="bordered-div">
             <?php DynamicFormWidget::begin([
                 'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
                 'widgetBody' => '.container-items', // required: css class selector
@@ -89,16 +91,21 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
             ]); ?>
 
             <div class="container-items"><!-- widgetContainer -->
-                <button type="button" class="add-item btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i></button>
+                <div class="panel-title">
+                    <h5 class="panel-title pull-left">Занятие</h5><!-- widgetBody -->
+                    <div class="pull-right">
+                        <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                    </div>
+                </div>
                 <?php foreach ($modelLessons as $i => $modelLesson): ?>
-                    <div class="item panel panel-default"><!-- widgetBody -->
-                        <div class="panel-heading">
-                            <h3 class="panel-title pull-left">Занятие</h3>
-                            <div class="pull-right">
-                                <button type="button" class="remove-item btn btn-danger btn-xs"><i class="glyphicon glyphicon-minus"></i></button>
-                            </div>
-                            <div class="clearfix"></div>
+                <div class="item panel panel-default" id = "item"><!-- widgetItem -->
+                    <div class="panel-heading">
+                        <div class="pull-right">
+                            <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
                         </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class = "form-label">
                         <div class="panel-body">
                             <div class="row">
                                 <div id="manual-fields" style="display: block">
@@ -145,7 +152,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                                     ]
                                 )->label('Начало занятия') ?>
 
-                                <?= $form->field($modelLesson, "[{$i}]branch")->dropDownList(Yii::$app->branches->getList()); ?>
+                                <?= $form->field($modelLesson, "[{$i}]branch")->dropDownList(Yii::$app->branches->getList())->label('Отдел'); ?>
 
                                 <?= $form->field($modelLesson, "[{$i}]auditorium_id")->widget(Select2::classname(), [
                                     'data' => ArrayHelper::map($auditoriums, 'id', 'name'),

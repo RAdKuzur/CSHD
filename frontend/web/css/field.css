@@ -156,7 +156,7 @@ div.panel-title {
     border-bottom: 1px solid var(--bs-border-color-translucent);
 }
 
-.container-items .panel-title + .item {
+.container-items .panel-title + .item, .container-items1 .panel-title + .item1  {
     margin-top: 2em;
 }
 
@@ -171,6 +171,22 @@ div.panel-title {
 
 .select2-container .select2-selection--single .select2-selection__clear {
     font-size: 1.2em!important;
+}
+
+.mrgn-bttm-2 {
+    margin-bottom: 2em;
+}
+
+.flx1 {
+    flex: 1;
+}
+
+.flx1:not(:first-child) {
+    padding-left: 1em;
+}
+
+.training-group-schedule-form form:first-child {
+    margin-bottom: 2em;
 }
 
 .regulation-create .form-group, .regulation-update .form-group,

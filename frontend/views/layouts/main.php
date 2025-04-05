@@ -11,7 +11,7 @@ use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 
 AppAsset::register($this);
-
+$this->title = 'ЦСХД';
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -35,7 +35,7 @@ AppAsset::register($this);
     }
     else {
         $menuItems[] = ['label' => 'Личный кабинет', 'url' => ['/user/lk/info', 'id' => Yii::$app->user->identity->getId()]];
-        $menuItems[] = ['label' => 'АНАЛитика', 'url' => ['/analytics/errors', 'id' => Yii::$app->user->identity->getId()]];
+        $menuItems[] = ['label' => 'Аналитика', 'url' => ['/analytics/errors', 'id' => Yii::$app->user->identity->getId()]];
         $menuItems[] = ['label' => 'Выйти', 'url' => ['/auth/logout']];
     }
 
@@ -115,7 +115,7 @@ AppAsset::register($this);
     </div>
 </main>
 
-<footer class="footer mt-auto py-3 text-muted">
+<footer class="footer mt-auto py-3 navbar-dark bg-dark">
     <div class="container">
         <p class="float-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
         <p class="float-end"><?= Yii::powered() ?></p>

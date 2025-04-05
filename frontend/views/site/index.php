@@ -10,8 +10,6 @@ use yii\helpers\Url;
 $this->title = 'ЦСХД';
 ?>
 
-<?= var_dump((Yii::createObject(\common\repositories\rubac\UserPermissionFunctionRepository::class))->getPermissionsByUser(Yii::$app->user->identity)) ?>
-
 <div class="site-index">
     <div class="block-card flexx space-around">
         <div class="index-card">

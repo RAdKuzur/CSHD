@@ -391,43 +391,40 @@ class DocumentOrderService
         $copyId = 1;
         if ($modelOrderDown == NULL && $modelOrderUp == NULL) {
             $model->setNumber($model->order_number, $copyId, NULL);
+            return false;
         }
         else if ($modelOrderDown == NULL && $modelOrderUp != NULL) {
-            //????
+            return true;
         }
         else if ($modelOrderDown != NULL && $modelOrderUp == NULL) {
             $model->setNumber($modelOrderDown->order_number, $modelOrderDown->order_copy_id + 1, NULL);
+            return false;
         }
         else {
             $indexUp = $this->orderNumberToArray($modelOrderUp);
             $indexDown = $this->orderNumberToArray($modelOrderDown);
-            //???
+            if (count($indexUp['postfix']) > count($indexDown['postfix'])) {
+                return true;
+            }
+            if (count($indexUp['postfix']) == count($indexDown['postfix'])){
+                $indexDown['postfix'][] = 1;
+                $model->setNumber($modelOrderDown->order_number, $modelOrderDown->order_copy_id, implode('/', $indexDown['postfix']));
+                return false;
+            }
+            if (count($indexUp['postfix']) < count($indexDown['postfix'])){
+                $indexDown['postfix'][count($indexDown['postfix']) - 1] = $indexDown['postfix'][count($indexDown['postfix']) - 1] + 1;
+                $model->setNumber($modelOrderDown->order_number, $modelOrderDown->order_copy_id, implode('/', $indexDown['postfix']));
+                return false;
+            }
         }
-    }
-    public function addIndexPostfix($index)
-    {
-        $index['postfix'][count($index['postfix']) - 1] =  $index['postfix'][count($index['postfix']) - 1] + 1;
-        return $index;
+        return true;
     }
     public function orderNumberToArray($order){
         $index = [
             'number' => $order->order_number,
             'copy' => $order->order_copy_id,
-            'postfix' => array_map('intval', explode('/', $order->order_postfix))
+            'postfix' => array_filter(explode('/', $order->order_postfix))
         ];
         return $index;
-    }
-    public function compareIndexes($firstIndex, $secondIndex){
-        if ($firstIndex['copy'] == $secondIndex['copy']) {
-            for($i = 0; $i < max(count($firstIndex['postfix']), count($secondIndex['postfix'])); $i++){
-
-            }
-        }
-        else if ($firstIndex['copy'] > $secondIndex['copy']){
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 }

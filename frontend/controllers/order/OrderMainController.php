@@ -97,7 +97,7 @@ class OrderMainController extends DocumentController
     public function actionReserve()
     {
         $model = new OrderMainWork();
-        $this->service->createReserve($model);
+        $this->documentOrderService->generateNumber($model);
         $this->repository->save($model);
         return $this->redirect(['index']);
     }
@@ -113,27 +113,29 @@ class OrderMainController extends DocumentController
             NULL,
             NULL
         );
-
-
         $post = Yii::$app->request->post();
         if ($form->entity->load($post)) {
-
-
             $this->documentOrderService->getPeopleStamps($form->entity);
             if (!$form->entity->validate()) {
                 throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($form->entity->getErrors()));
             }
-            $this->documentOrderService->generateNumber($form->entity);
-            //$form->entity->generateOrderNumber();
-            $this->repository->save($form->entity);
-            //var_dump($form->entity->order_number . '/' .$form->entity->order_copy_id . '/' . $form->entity->order_postfix);
-            $this->documentOrderService->getFilesInstances($form->entity);
-            $this->service->addExpireEvent($post["ExpireForm"], $form->entity);
-            $this->orderPeopleService->addOrderPeopleEvent($post["OrderMainWork"]["responsible_id"], $form->entity);
-            $this->documentOrderService->saveFilesFromModel($form->entity);
-            $form->entity->releaseEvents();
-            $form->entity->checkModel(ErrorAssociationHelper::getOrderMainErrorsList(), DocumentOrderWork::tableName(), $form->entity->id);
-            return $this->redirect(['view', 'id' => $form->entity->id]);
+            $error = $this->documentOrderService->generateNumber($form->entity);
+            if (!$error) {
+                $this->repository->save($form->entity);
+
+                $this->documentOrderService->getFilesInstances($form->entity);
+                $this->service->addExpireEvent($post["ExpireForm"], $form->entity);
+                $this->orderPeopleService->addOrderPeopleEvent($post["OrderMainWork"]["responsible_id"], $form->entity);
+                $this->documentOrderService->saveFilesFromModel($form->entity);
+                $form->entity->releaseEvents();
+                $form->entity->checkModel(ErrorAssociationHelper::getOrderMainErrorsList(), DocumentOrderWork::tableName(), $form->entity->id);
+                return $this->redirect(['view', 'id' => $form->entity->id]);
+            }
+            else {
+                Yii::$app->session->setFlash
+                ('error', "Ошибка создания файла с такой датой");
+                return $this->redirect(Yii::$app->request->referrer ?: ['create']);
+            }
         }
         return $this->render('create', [
             'model' => $form->entity,

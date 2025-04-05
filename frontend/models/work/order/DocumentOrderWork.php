@@ -56,17 +56,22 @@ class DocumentOrderWork extends DocumentOrder
     }
 
     public function getFullOrderName(){
-        return $this->order_number . ' ' . $this->order_postfix . ' ' . $this->order_name;
+        return $this->order_number . ' ' . $this->order_copy_id .' '.$this->order_postfix . ' ' . $this->order_postfix;
     }
 
     public function getFullNumber()
     {
+        $parts = [];
+        if ($this->order_number == null) {
+            $parts[] = $this->order_number;
+        }
+        if ($this->order_copy_id == null){
+            $parts[] = $this->order_copy_id;
+        }
         if ($this->order_postfix == null) {
-            return $this->order_number;
+            $parts[] = $this->order_postfix;
         }
-        else {
-            return $this->order_number.'/'.$this->order_postfix;
-        }
+        return implode('/', $parts);
     }
 
     public function getFullName()

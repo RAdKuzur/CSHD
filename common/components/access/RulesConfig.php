@@ -389,7 +389,7 @@ class RulesConfig
         ],
 
         'edit_users' => [
-            \frontend\controllers\user\UserController::class => [
+            \backend\controllers\UserController::class => [
                 'create',
                 'update',
                 'tokens',

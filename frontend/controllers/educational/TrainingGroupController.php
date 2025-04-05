@@ -50,6 +50,7 @@ use frontend\services\educational\GroupProjectThemesService;
 use frontend\services\educational\JournalService;
 use frontend\services\educational\TrainingGroupService;
 use Yii;
+use yii\web\UploadedFile;
 
 class TrainingGroupController extends DocumentController
 {
@@ -354,7 +355,6 @@ class TrainingGroupController extends DocumentController
             if (!$model->isArchive()) {
                 $formParticipant = new TrainingGroupParticipantForm($id);
                 $childs = $this->participantsRepository->getSortedList(ForeignEventParticipantsRepository::SORT_FIO);
-
                 if (count(Yii::$app->request->post()) > 0) {
                     $this->lockWizard->unlockObject($id, TrainingGroupWork::tableName());
                     $modelChilds = Model::createMultiple(TrainingGroupParticipantWork::classname());

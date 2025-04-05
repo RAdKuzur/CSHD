@@ -83,6 +83,16 @@ class ForeignEventParticipantsRepository
         return $this->provider->delete($participant);
     }
 
+    public function getParticipantByUniqueData(string $firstname, string $surname, string $patronymic, string $birthdate)
+    {
+        return ForeignEventParticipantsWork::find()
+            ->where(['firstname' => $firstname])
+            ->andWhere(['surname' => $surname])
+            ->andWhere(['patronymic' => $patronymic])
+            ->andWhere(['birthdate' => $birthdate])
+            ->one();
+    }
+
     public function save(ForeignEventParticipantsWork $participant)
     {
         return $this->provider->save($participant);

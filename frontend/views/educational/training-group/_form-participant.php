@@ -40,6 +40,8 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
     <div class="training-group-participant-form field-backing">
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
+        <?= $form->field($model, 'participantFile')->fileInput(['multiply' => false])->label('Загрузить учащихся из файла') ?>
+
         <div class="bordered-div">
             <div class="">
             <?php DynamicFormWidget::begin([
@@ -58,6 +60,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                     'send_method'
                 ],
             ]); ?>
+
 
             <div class="container-items"><!-- widgetContainer -->
                 <div class="panel-title">

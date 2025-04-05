@@ -18,6 +18,7 @@ class TrainingGroupParticipantForm extends Model
     public $prevParticipants;
 
     public TrainingGroupWork $group;
+    public $participantFile;
 
     public function __construct($id = -1, $config = [])
     {
@@ -37,7 +38,8 @@ class TrainingGroupParticipantForm extends Model
     public function rules()
     {
         return [
-            [['participants'], 'safe']
+            [['participants'], 'safe'],
+            [['participantFile'], 'file', 'extensions' => 'xls, xlsx', 'skipOnEmpty' => true],
         ];
     }
 }

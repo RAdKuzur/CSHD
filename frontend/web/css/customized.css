@@ -722,3 +722,7 @@ input[type="checkbox"] {
 ::-webkit-scrollbar-corner {
     display: none;
 }
+
+.footer.bg-dark p{
+    color: gray;
+}

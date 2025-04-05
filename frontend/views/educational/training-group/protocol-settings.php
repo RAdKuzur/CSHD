@@ -13,16 +13,20 @@ use yii\widgets\ActiveForm;
 ?>
 
 <?php
-$this->title = 'Протокол итоговой аттестации';
+$this->title = 'Протокол итоговой аттестации ' . $model->getNumberGroup();
+$this->params['breadcrumbs'][] = ['label' => 'Учебные группы', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Группа ' . $model->getNumberGroup(), 'url' => [Yii::$app->frontUrls::TRAINING_GROUP_VIEW, 'id' => $model->group->id]];
+$this->params['breadcrumbs'][] = $this->title;
+\yii\web\YiiAsset::register($this);
 ?>
 
-<style>
+<div class="substrate">
+    <h3><?= Html::encode($this->title) ?></h3>
+</div>
 
-</style>
+<div class="man-hours-report-form field-backing">
 
-<div class="man-hours-report-form">
-
-    <h5><b>Выберите название публичного мероприятия или введите его вручную</b></h5>
+    <label><b>Выберите название публичного мероприятия или введите его вручную</b></label>
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -55,9 +59,3 @@ $this->title = 'Протокол итоговой аттестации';
     <?php ActiveForm::end(); ?>
 
 </div>
-
-<style>
-    .checkbox-list label {
-        display: block;
-    }
-</style>

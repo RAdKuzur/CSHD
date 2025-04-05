@@ -14,8 +14,9 @@ use yii\widgets\ActiveForm;
 /* @var $model TrainingGroupParticipantForm */
 /* @var $modelChilds */
 /* @var $childs */
+/* @var $buttonsAct */
 
-$this->title = 'Редактирование';
+$this->title = 'Редактирование ' . $model->number;
 $this->params['breadcrumbs'][] = ['label' => 'Учебные группы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => "Группа {$model->number}", 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = $this->title;
@@ -23,77 +24,89 @@ $this->params['breadcrumbs'][] = $this->title;
 $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 ?>
 
-<div class="event-create">
+<div class="group-create">
 
     <?= AlertMessageWizard::showRedisConnectMessage() ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= Html::a('Основная информация', Url::to(['educational/training-group/base-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Список учеников', Url::to(['educational/training-group/participant-form', 'id' => $model->id]), ['class' => 'btn btn-success']) ?>
-    <?= Html::a('Расписание', Url::to(['educational/training-group/schedule-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Сведения о защите работ', Url::to(['educational/training-group/pitch-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-
-<?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
-
-    <div class="panel-body">
-        <?php DynamicFormWidget::begin([
-            'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-            'widgetBody' => '.container-items', // required: css class selector
-            'widgetItem' => '.item', // required: css class
-            'limit' => 100, // the maximum times, an element can be cloned (default 999)
-            'min' => 0,
-            'insertButton' => '.add-item', // css class
-            'deleteButton' => '.remove-item', // css class
-            'model' => $modelChilds[0],
-            'formId' => 'dynamic-form',
-            'formFields' => [
-                'id',
-                'participant_id',
-                'send_method'
-            ],
-        ]); ?>
-
-        <div class="container-items"><!-- widgetContainer -->
-            <button type="button" class="add-item btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i></button>
-            <?php foreach ($modelChilds as $i => $modelChild): ?>
-                <div class="item panel panel-default"><!-- widgetBody -->
-                    <div class="panel-heading">
-                        <h3 class="panel-title pull-left">Учащийся</h3>
-                        <div class="pull-right">
-                            <button type="button" class="remove-item btn btn-danger btn-xs"><i class="glyphicon glyphicon-minus"></i></button>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <?= $form->field($modelChild, "[{$i}]id")->hiddenInput()->label(false) ?>
-
-                            <?= $form->field($modelChild, "[{$i}]participant_id")->widget(Select2::classname(), [
-                                'data' => ArrayHelper::map($childs, 'id', 'fullFio'),
-                                'size' => Select2::LARGE,
-                                'options' => ['prompt' => 'Выберите ученика'],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
-                            ])->label('ФИО учащегося'); ?>
-
-                            <?= $form->field($modelChild, "[{$i}]send_method")->dropDownList(
-                                Yii::$app->sendMethods->getList(), ['prompt' => '---']
-                            )->label('Способ доставки сертификата'); ?>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+    <div class="substrate">
+        <h3><?= Html::encode($this->title) ?></h3>
+        <div class="flexx space">
+            <div class="flexx">
+                <?= $buttonsAct; ?>
+            </div>
         </div>
-        <?php DynamicFormWidget::end(); ?>
     </div>
 
-    <div class="form-group">
-        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+    <div class="training-group-participant-form field-backing">
+    <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
+
+        <div class="bordered-div">
+            <div class="">
+            <?php DynamicFormWidget::begin([
+                'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
+                'widgetBody' => '.container-items', // required: css class selector
+                'widgetItem' => '.item', // required: css class
+                'limit' => 100, // the maximum times, an element can be cloned (default 999)
+                'min' => 0,
+                'insertButton' => '.add-item', // css class
+                'deleteButton' => '.remove-item', // css class
+                'model' => $modelChilds[0],
+                'formId' => 'dynamic-form',
+                'formFields' => [
+                    'id',
+                    'participant_id',
+                    'send_method'
+                ],
+            ]); ?>
+
+            <div class="container-items"><!-- widgetContainer -->
+                <div class="panel-title">
+                    <h5 class="panel-title pull-left">Учащиеся</h5><!-- widgetBody -->
+                    <div class="pull-right">
+                        <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                    </div>
+                </div>
+                <?php foreach ($modelChilds as $i => $modelChild): ?>
+                    <div class="item panel panel-default"><!-- widgetBody -->
+                        <div class="panel-heading">
+                            <div class="pull-right">
+                                <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <?= $form->field($modelChild, "[{$i}]id")->hiddenInput()->label(false) ?>
+
+                                <?= $form->field($modelChild, "[{$i}]participant_id")->widget(Select2::classname(), [
+                                    'data' => ArrayHelper::map($childs, 'id', 'fullFio'),
+                                    'size' => Select2::LARGE,
+                                    'options' => ['prompt' => 'Выберите ученика'],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                ])->label('ФИО учащегося'); ?>
+
+                                <?= $form->field($modelChild, "[{$i}]send_method")->dropDownList(
+                                    Yii::$app->sendMethods->getList(), ['prompt' => '---']
+                                )->label('Способ доставки сертификата'); ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php DynamicFormWidget::end(); ?>
+        </div>
+        </div>
+
+        <div class="form-group">
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
+        </div>
+
     </div>
 
 <?php ActiveForm::end(); ?>
+</div>
 
 <script>
     window.onload = function() {

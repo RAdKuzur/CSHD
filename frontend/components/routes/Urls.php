@@ -89,6 +89,10 @@ class Urls
      * TRAINING_GROUP_ARCHIVE - actionRelevance
      * LESSON_THEMES_CREATE - actionCreateLessonThemes
      * JOURNAL_DELETE - actionDeleteJournal
+     * TRAINING_GROUP_BASE_FORM - actionBaseForm
+     * TRAINING_GROUP_PARTICIPANT_FORM - actionParticipantForm
+     * TRAINING_GROUP_SCHEDULE_FORM - actionScheduleForm
+     * TRAINING_GROUP_PITCH_FORM - actionPitchForm
      */
     const TRAINING_GROUP_INDEX = "educational/training-group/index";
     const TRAINING_GROUP_UPDATE = "educational/training-group/base-form";
@@ -96,6 +100,14 @@ class Urls
     const TRAINING_GROUP_ARCHIVE = "educational/training-group/archive";
     const LESSON_THEMES_CREATE = "educational/training-group/create-lesson-themes";
     const JOURNAL_DELETE = "educational/training-group/delete-journal";
+    const TRAINING_GROUP_BASE_FORM = "educational/training-group/base-form";
+    const TRAINING_GROUP_PARTICIPANT_FORM = "educational/training-group/participant-form";
+    const TRAINING_GROUP_SCHEDULE_FORM = "educational/training-group/schedule-form";
+    const TRAINING_GROUP_PITCH_FORM = "educational/training-group/pitch-form";
+
+    /**
+     * Константа PITCH
+     */
     const PITCH = "educational/pitch";
 
     /**

@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = ['label' => "Редактирование ра�
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="foreign-event-participants-form">
+<div class="foreign-event-participants-form field-backing">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -84,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

@@ -106,16 +106,17 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, "focus")->dropDownList(Yii::$app->focus->getList()); ?>
 
-    <div class="row bordered-div">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h4>Отдел(-ы) - место реализации</h4></div>
-            <div class="checkBlock">
-                <?= $form->field($model, 'branches')->checkboxList(Yii::$app->branches->getOnlyEducational(), [
-                    'item' => function($index, $label, $name, $checked, $value) {
-                        $checked = $checked ? 'checked' : '';
-                        return "<div 'class'='col-sm-12'><label><input class='sc' type='checkbox' {$checked} name='{$name}'value='{$value}'> {$label}</label></div>";
-                    }])->label(false) ?>
-            </div>
+    <div class="checkList">
+        <div class="checkHeader">
+            <h4 class="noPM">Отделы - место реализации</h4>
+        </div>
+
+        <div class="checkBlock">
+            <?= $form->field($model, 'branches')->checkboxList(Yii::$app->branches->getOnlyEducational(), [
+                'item' => function($index, $label, $name, $checked, $value) {
+                    $checked = $checked ? 'checked' : '';
+                    return "<div 'class'='col-sm-12'><label><input class='sc' type='checkbox' {$checked} name='{$name}'value='{$value}'> {$label}</label></div>";
+                }])->label(false) ?>
         </div>
     </div>
 
@@ -125,15 +126,17 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'certificate_type')->dropDownList(Yii::$app->certificateType->getList())->label('Итоговая форма контроля'); ?>
 
-    <div style="border: 1px solid #cccccc; border-radius: 5px; padding: 10px; margin-bottom: 10px">
-        <?= $form->field($model, 'is_network')->checkbox(['onchange' => 'CheckNetwork(this)']) ?>
+    <div class="bordered-div">
+        <div class="checkBlock">
+            <?= $form->field($model, 'is_network')->checkbox(['onchange' => 'CheckNetwork(this)']) ?>
 
-        <div id="contractNetwork" style="display: <?php echo $model->is_network == 0 ? 'none' : 'block' ?>">
-            <?= $form->field($model, 'contractFile')->fileInput() ?>
+            <div id="contractNetwork" style="display: <?php echo $model->is_network == 0 ? 'none' : 'block' ?>">
+                <?= $form->field($model, 'contractFile')->fileInput() ?>
 
-            <?php if (strlen($contractFile) > 10): ?>
-                <?= $contractFile; ?>
-            <?php endif; ?>
+                <?php if (strlen($contractFile) > 10): ?>
+                    <?= $contractFile; ?>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
@@ -141,7 +144,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'key_words')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'actual')->checkbox(); ?>
+    <div class="bordered-div">
+        <div class="checkBlock">
+            <?= $form->field($model, 'actual')->checkbox(); ?>
+        </div>
+    </div>
 
     <?= $form->field($model, 'utpFile')->fileInput() ?>
 
@@ -164,13 +171,17 @@ use yii\widgets\ActiveForm;
         ?>
 
         <div class="container-items">
-            <h5 class="panel-title pull-left">Учебно-тематический план</h5><!-- widgetBody -->
-            <div class="pull-right">
-                <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+            <div class="panel-title">
+                <h5 class="panel-title pull-left">Учебно-тематический план</h5><!-- widgetBody -->
+                <div class="pull-right">
+                    <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                </div>
             </div>
             <div class="item panel panel-default" id = "item"><!-- widgetItem -->
-                <button type="button" class="remove-item btn btn-danger btn-xs"><span class="glyphicon glyphicon-minus"></span></button>
                 <div class="panel-heading">
+                    <div class="pull-right">
+                        <button type="button" class="remove-item btn btn-danger btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
+                    </div>
                     <div class="clearfix"></div>
                 </div>
                 <div class = "form-label">

@@ -1,6 +1,7 @@
 <?php
 
 use common\components\wizards\AlertMessageWizard;
+use common\helpers\DateFormatter;
 use common\models\scaffold\TrainingGroup;
 use frontend\forms\training_group\TrainingGroupBaseForm;
 use kartik\select2\Select2;
@@ -18,11 +19,14 @@ use yii\widgets\ActiveForm;
 /* @var $photos */
 /* @var $presentations */
 /* @var $workMaterials */
+/* @var $buttonsAct */
 
-$this->title = 'Редактирование';
-$this->params['breadcrumbs'][] = ['label' => 'Учебные группы', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => "Группа {$model->number}", 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = $this->title;
+if ($model->id) {
+    $this->title = 'Редактирование';
+    $this->params['breadcrumbs'][] = ['label' => 'Учебные группы', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = ['label' => "Группа {$model->number}", 'url' => ['view', 'id' => $model->id]];
+    $this->params['breadcrumbs'][] = $this->title;
+}
 
 $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 ?>
@@ -31,14 +35,18 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 
     <?= AlertMessageWizard::showRedisConnectMessage() ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <?php if ($model->id) {
+        echo '<div class="substrate">
+                <h3>'. Html::encode($this->title) .'</h3>
+                <div class="flexx space">
+                    <div class="flexx">
+                        '.$buttonsAct.'
+                    </div>
+                </div>
+            </div>';
+    } ?>
 
-    <?= Html::a('Основная информация', Url::to(['educational/training-group/base-form', 'id' => $model->id]), ['class' => 'btn btn-success']) ?>
-    <?= Html::a('Список учеников', Url::to(['educational/training-group/participant-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Расписание', Url::to(['educational/training-group/schedule-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Сведения о защите работ', Url::to(['educational/training-group/pitch-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-
-    <div class="training-group-base-form">
+    <div class="training-group-base-form field-backing">
 
         <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
         <?= $form->field($model, 'branch')->dropDownList(Yii::$app->branches->getList()) ?>
@@ -69,30 +77,38 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                 ],
             ]); ?>
 
-            <div class="container-items"><!-- widgetContainer -->
+            <div class="bordered-div"><!-- widgetContainer -->
                 <?php foreach ($modelTeachers as $i => $modelTeacher): ?>
-                    <div class="item panel panel-default"><!-- widgetBody -->
+                <div class="container-items">
+                    <div class="panel-title">
+                        <h5 class="panel-title pull-left">Преподаватели</h5>
+                        <div class="pull-right">
+                            <button type="button" class="add-item btn btn-success btn-xs"><i class="glyphicon glyphicon-plus">+</i></button>
+                        </div>
+                    </div>
+                    <div class="item panel panel-default" id = "item"><!-- widgetItem -->
                         <div class="panel-heading">
-                            <h3 class="panel-title pull-left">ФИО педагога</h3>
                             <div class="pull-right">
-                                <button type="button" class="add-item btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i></button>
-                                <button type="button" class="remove-item btn btn-danger btn-xs"><i class="glyphicon glyphicon-minus"></i></button>
+                                <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
                             </div>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <?= $form->field($modelTeacher, "[{$i}]peopleId")->widget(Select2::classname(), [
-                                    'data' => ArrayHelper::map($people,'id','fullFio'),
-                                    'size' => Select2::LARGE,
-                                    'options' => ['prompt' => 'Выберите преподавателя'],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                ])->label('ФИО'); ?>
+                        <div class = "form-label">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <?= $form->field($modelTeacher, "[{$i}]peopleId")->widget(Select2::classname(), [
+                                        'data' => ArrayHelper::map($people,'id','fullFio'),
+                                        'size' => Select2::LARGE,
+                                        'options' => ['prompt' => 'Выберите преподавателя'],
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                    ])->label('ФИО'); ?>
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
                 <?php endforeach; ?>
             </div>
             <?php DynamicFormWidget::end(); ?>
@@ -109,7 +125,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
             'clientOptions' => [
                 'changeMonth' => true,
                 'changeYear' => true,
-                'yearRange' => '2000:2100',
+                'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
             ]]) ?>
 
         <?= $form->field($model, 'endDate')->widget(\yii\jui\DatePicker::class, [
@@ -123,9 +139,14 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
             'clientOptions' => [
                 'changeMonth' => true,
                 'changeYear' => true,
-                'yearRange' => '2000:2100',
+                'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
             ]]) ?>
-        <?= $form->field($model, 'endLoadOrders')->checkbox() ?>
+
+        <div class="bordered-div">
+            <div class="checkBlock">
+                <?= $form->field($model, 'endLoadOrders')->checkbox() ?>
+            </div>
+        </div>
 
         <?= $form->field($model, 'photos[]')->fileInput(['multiple' => true])->label('Фотоматериалы')?>
         <?php if (strlen($photos) > 10): ?>
@@ -143,7 +164,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         <?php endif; ?>
 
         <div class="form-group">
-            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

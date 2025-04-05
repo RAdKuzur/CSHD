@@ -160,9 +160,23 @@ div.panel-title {
     margin-top: 2em;
 }
 
+.login-container {
+    border: 1px solid var(--bs-border-color-translucent);
+    border-radius: var(--border-radius);
+}
+
+.select2-container--krajee-bs4 .select2-selection--single, .select2-container .select2-selection--single {
+    height: calc(1.5em + 0.75rem + 2px)!important;
+}
+
+.select2-container .select2-selection--single .select2-selection__clear {
+    font-size: 1.2em!important;
+}
+
 .regulation-create .form-group, .regulation-update .form-group,
 .event-create .form-group, .event-update .form-group,
 .local-responsibility-create .form-group, .local-responsibility-create .form-group,
-.training-program-create .form-group, .training-program-update .form-group, .temporary-journal-form .form-group {
+.training-program-create .form-group, .training-program-update .form-group, .temporary-journal-form .form-group,
+.foreign-event-participants-form .form-group {
     margin-bottom: 1em;
 }

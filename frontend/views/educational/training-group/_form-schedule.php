@@ -7,7 +7,6 @@ use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -15,8 +14,9 @@ use yii\widgets\ActiveForm;
 /* @var $modelLessons */
 /* @var $auditoriums */
 /* @var $scheduleTable */
+/* @var $buttonsAct */
 
-$this->title = 'Редактирование';
+$this->title = 'Редактирование группы ' . $model->number;
 $this->params['breadcrumbs'][] = ['label' => 'Учебные группы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => "Группа {$model->number}", 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = $this->title;
@@ -43,18 +43,22 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 
     <?= AlertMessageWizard::showRedisConnectMessage() ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="substrate">
+        <h3><?= Html::encode($this->title) ?></h3>
+        <div class="flexx space">
+            <div class="flexx">
+                <?= $buttonsAct; ?>
+            </div>
+        </div>
+    </div>
 
-    <?= Html::a('Основная информация', Url::to(['educational/training-group/base-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Список учеников', Url::to(['educational/training-group/participant-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Расписание', Url::to(['educational/training-group/schedule-form', 'id' => $model->id]), ['class' => 'btn btn-success']) ?>
-    <?= Html::a('Сведения о защите работ', Url::to(['educational/training-group/pitch-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
 
-    <?php if (strlen($scheduleTable) > 10): ?>
-        <?= $scheduleTable; ?>
-    <?php endif; ?>
 
-    <div class="training-group-schedule-form">
+    <div class="training-group-schedule-form field-backing">
+        <?php if (strlen($scheduleTable) > 10): ?>
+            <?= $scheduleTable; ?>
+        <?php endif; ?>
+
         <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
         <?= $form->field($model, 'type')->radioList(
@@ -160,7 +164,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         </div>
 
         <div class="form-group">
-            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
 

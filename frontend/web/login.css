@@ -10,7 +10,7 @@
     padding: 4rem;
     background-color: #ffffff;
     border-radius: 10px 0 0 10px;
-    box-shadow: -5px 5px 5px #ececec;
+    /*box-shadow: -5px 5px 5px #ececec;*/
     display: flex; /* Включаем flex-контейнер */
     flex-direction: column; /* Вертикальная ориентация элементов */
     justify-content: center; /* Центрирование по вертикали */
@@ -29,7 +29,7 @@
     align-items: center; /* Центрирование по вертикали */
     text-align: center; /* Центрируем текст */
     color: white;
-    box-shadow: 5px 5px 5px #ececec;
+    /*box-shadow: 5px 5px 5px #ececec;*/
 }
 
 .btn-login {

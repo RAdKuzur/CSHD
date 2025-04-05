@@ -422,8 +422,13 @@ class HtmlBuilder
         array $classes = ['submit' => 'btn btn-success']
     ) {
         // Находим все строки таблицы
-        preg_match_all('/<tr[^>]*>(.*?)<\/tr>/s', $table, $matches);
-        $rows = $matches[0];
+        //preg_match_all('/<tr[^>]*>(.*?)<\/tr>/s', $table, $matches);
+        preg_match_all(
+            '/(?:<thead>\s*<tr[^>]*>.*?<\/tr>)?(?:(?!<\/thead>).*?)(<tr[^>]*>.*?<\/tr>)/s',
+                $table,
+                $matches
+        );
+        $rows = $matches[1];
 
         // Создаем массив чекбоксов
         $checkboxes = [];
@@ -435,7 +440,7 @@ class HtmlBuilder
             $rows[$key] = preg_replace('/<tr[^>]*>/', "<tr><td>$checkboxes[$key]</td>", $rows[$key]);
         }
 
-        $newHtmlTable = str_replace($matches[0], $rows, $table);
+        $newHtmlTable = str_replace($matches[1], $rows, $table);
 
         preg_match_all('/<thead[^>]*>(.*?)<\/thead>/s', $newHtmlTable, $matches);
         $thead = $matches[0][0];

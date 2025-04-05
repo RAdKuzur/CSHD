@@ -203,6 +203,7 @@ class TrainingProgramService implements DatabaseServiceInterface
                 array_merge(['Форма контроля'], array_map(function ($number) use ($controlNames) {
                     return $controlNames[$number] ?? null;
                 }, ArrayHelper::getColumn($themes, 'control_type'))),
+                [''],
             ],
             [
                 HtmlBuilder::createButtonsArray(

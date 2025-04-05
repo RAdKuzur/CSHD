@@ -13,6 +13,7 @@ use common\helpers\DateFormatter;
 use common\helpers\files\filenames\TrainingGroupFileNameGenerator;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
 use common\models\scaffold\PeopleStamp;
 use common\models\scaffold\ThematicPlan;
 use common\repositories\dictionaries\AuditoriumRepository;
@@ -460,11 +461,12 @@ class TrainingGroupService implements DatabaseServiceInterface
                 array_merge(['Дата занятия'], ArrayHelper::getColumn($formSchedule->prevLessons, 'lesson_date')),
                 array_merge(['Время начала'], ArrayHelper::getColumn($formSchedule->prevLessons, 'lesson_start_time')),
                 array_merge(['Время окончания'], ArrayHelper::getColumn($formSchedule->prevLessons, 'lesson_end_time')),
-                array_merge(['Помещение'], ArrayHelper::getColumn($formSchedule->prevLessons, 'auditoriumName'))
+                array_merge(['Помещение'], ArrayHelper::getColumn($formSchedule->prevLessons, 'auditoriumName')),
+                ['']
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Редактировать',
+                    HtmlCreator::IconUpdate(),
                     Url::to('update-lesson'),
                     [
                         'groupId' => array_fill(0, count($formSchedule->prevLessons), $formSchedule->id),
@@ -472,7 +474,7 @@ class TrainingGroupService implements DatabaseServiceInterface
                     ]
                 ),
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-lesson'),
                     [
                         'groupId' => array_fill(0, count($formSchedule->prevLessons), $formSchedule->id),

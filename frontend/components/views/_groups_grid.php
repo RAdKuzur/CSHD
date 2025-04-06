@@ -39,9 +39,6 @@ use yii\grid\GridView;
     'summaryOptions' => [
         'style' => 'display: none;',
     ],
-    'options' => [
-        'style' => 'max-height: 600px; overflow-y: auto;', // Добавляем прокрутку
-    ],
 ]);
 ?>
 </div>

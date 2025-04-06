@@ -32,7 +32,7 @@ class GroupParticipantWidget extends Widget
     }
     public function run(){
         $this->script();
-        return $this->render('groupParticipant',
+        return $this->render('GroupParticipant',
         [
             'dataProviderGroup' => $this->dataProviderGroup,
             'model' => $this->model,

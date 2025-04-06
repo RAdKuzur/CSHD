@@ -32,7 +32,7 @@ class GroupParticipantWidget extends Widget
     }
     public function run(){
         $this->script();
-        /*return $this->render('groupParticipant',
+        return $this->render('groupParticipant',
         [
             'dataProviderGroup' => $this->dataProviderGroup,
             'model' => $this->model,
@@ -41,7 +41,7 @@ class GroupParticipantWidget extends Widget
             'transferGroups' => $this->transferGroups,
             'groupCheckOption' => $this->groupCheckOption,
             'groupParticipantOption' => $this->groupParticipantOption,
-        ]);*/
+        ]);
     }
     public function script()
     {

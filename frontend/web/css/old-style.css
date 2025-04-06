@@ -1,4 +1,13 @@
+.index-badge {
+    background-color: #009581!important;
+    text-decoration: none;
+    font-size: 1em;
+    margin-bottom: 0.2em;
+    padding: 0.5em;
+}
 
-
-
-
+.index-badge:hover {
+    color: #009581;
+    background-color: white!important;
+    border: 1px solid #009581;
+}

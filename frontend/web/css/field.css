@@ -189,6 +189,76 @@ div.panel-title {
     margin-bottom: 2em;
 }
 
+.order-event-form .checkList, #bring_id {
+    margin-top: 1em;
+}
+
+.order-event-form .checkBlock {
+    max-height: 100%;
+}
+
+.main-div{
+    margin-bottom: 1em;
+    border: 1px solid var(--bs-border-color-translucent);
+    border-radius: var(--border-radius);
+}
+
+.nomination-heading {
+    padding: 1em;
+    background-color: var(--thead-color);
+    border-color: var(--bs-border-color-translucent);
+    border-bottom: 1px solid var(--bs-border-color-translucent);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+.nomination-add-div{
+    border: 1px solid var(--bs-border-color-translucent);
+    border-radius: var(--border-radius);
+    margin: 1em;
+    background-color: var(--thead-color);
+}
+
+.nomination-label-input, .team-label-input {
+    width: 100%;
+}
+
+.nomination-div, .team-div {
+    margin: 1em;
+}
+
+#nom-team-block .checkHeader, #nom-team-block .checkBlock {
+    padding: 0.75em;
+}
+
+#nom-team-block .flx1:not(:first-child) {
+    padding-left: 0;
+}
+
+#nom-team-block .checkHeader .flx1 {
+    display: flex;
+    align-items: center;
+}
+
+#nom-team-block label {
+    margin: 0;
+}
+
+#nom-team-block input {
+    margin: 0 1em;
+}
+
+.nomination-list-row, .team-list-row {
+    display: flex;
+    margin: 0.5em 0;
+    align-items: center;
+}
+
+.title-nom {
+    margin: 1em;
+    align-items: center;
+}
+
 .regulation-create .form-group, .regulation-update .form-group,
 .event-create .form-group, .event-update .form-group,
 .local-responsibility-create .form-group, .local-responsibility-create .form-group,

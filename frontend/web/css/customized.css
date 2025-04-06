@@ -726,3 +726,9 @@ input[type="checkbox"] {
 .footer.bg-dark p{
     color: gray;
 }
+
+.navbar-nav .dropdown-item:hover, .dropdown-item:focus {
+    background-color: var(--primary-subtle-hover);
+    color: var(--primary-subtle-text);
+    font-weight: 500;
+}

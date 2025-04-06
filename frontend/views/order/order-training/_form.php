@@ -163,7 +163,7 @@ use yii\widgets\ActiveForm;
 
         <?php ActiveForm::end(); ?>
 </div>
-<?php
+<?php   /*
     if (!is_null($model->preamble)) {
         $this->registerJs("
             if(" . $model->preamble . " >= 1 && " . $model->preamble . " <= 4) {
@@ -269,5 +269,5 @@ use yii\widgets\ActiveForm;
                 }
             });
         });
-    ");
+    ");*/
 ?>

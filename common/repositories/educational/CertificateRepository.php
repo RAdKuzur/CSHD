@@ -53,7 +53,10 @@ class CertificateRepository
     {
         return $model->delete();
     }
-
+    public function maxCertificateNumber()
+    {
+        return CertificateWork::find()->max('certificate_number');
+    }
     public function save(CertificateWork $model)
     {
         if (!$model->save()) {

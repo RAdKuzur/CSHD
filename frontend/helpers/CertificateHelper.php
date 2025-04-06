@@ -21,16 +21,20 @@ class CertificateHelper
     {
         $typeText = '';
         if ($participant->trainingGroupWork->trainingProgramWork->isProjectCertificate()) {
-            $typeText = ', ' . $genderVerbs[1] . ' '. mb_strtolower($participant->groupProjectThemesWork->projectThemeWork->getProjectTypeString()) .' проект "'
-                . $participant->groupProjectThemesWork->projectThemeWork->name . '" и ' . $genderVerbs[2] . ' на научной конференции "SchoolTech Conference".';
+            if ($participant->groupProjectThemesWork){
+                $typeText = ', ' . $genderVerbs[1] . ' '. mb_strtolower($participant->groupProjectThemesWork->projectThemeWork->getProjectTypeString()) .' проект "'
+                    . $participant->groupProjectThemesWork->projectThemeWork->name . '" и ' . $genderVerbs[2] . ' на научной конференции "SchoolTech Conference".';
+            }
         }
         if ($participant->trainingGroupWork->trainingProgramWork->isControlWorkCertificate()) {
             $typeText = ', ' . $genderVerbs[1] . ' итоговую контрольную работу с оценкой '
                 . $participant->points .' из 100 баллов.';
         }
         if ($participant->trainingGroupWork->trainingProgramWork->isOpenLessonCertificate()) {
-            $typeText = ', ' . $genderVerbs[1] . ' '. mb_strtolower($participant->groupProjectThemesWork->projectThemeWork->getProjectTypeString()) .' проект "'
-                . $participant->groupProjectThemesWork->projectThemeWork->name . '" и ' . $genderVerbs[3] . ' его в публичном выступлении на открытом уроке.';
+            if ($participant->groupProjectThemesWork) {
+                $typeText = ', ' . $genderVerbs[1] . ' ' . mb_strtolower($participant->groupProjectThemesWork->projectThemeWork->getProjectTypeString()) . ' проект "'
+                    . $participant->groupProjectThemesWork->projectThemeWork->name . '" и ' . $genderVerbs[3] . ' его в публичном выступлении на открытом уроке.';
+            }
         }
 
         return 'успешно '. $genderVerbs[0] . ' обучение по дополнительной общеразвивающей программе 

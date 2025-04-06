@@ -227,7 +227,7 @@ class OrderEventController extends DocumentController
             }
             else {
                 Yii::$app->session->setFlash
-                ('error', "Ошибка создания файла с такой датой");
+                ('error', "Ошибка создания приказа с такой датой");
                 return $this->redirect(Yii::$app->request->referrer ?: ['create']);
             }
         }

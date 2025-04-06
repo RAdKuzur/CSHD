@@ -37,22 +37,22 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'certificate_number', 'format' => 'raw', 'value' => function(CertificateWork $model){
                 return $model->getCertificateLongNumber();
             }],
-            ['attribute' => 'certificate_template_id', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'certificate_template_id', 'format' => 'raw', 'label' => 'Наименование шаблона', 'value' => function(CertificateWork $model){
                 return $model->certificateTemplatesWork->name;
             }],
-            ['attribute' => 'participant_id', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'participant_id', 'format' => 'raw', 'label' => 'Учащийся', 'value' => function(CertificateWork $model){
                 if ($model->trainingGroupParticipantWork && $model->trainingGroupParticipantWork->participantWork) {
                     return $model->trainingGroupParticipantWork->participantWork->getFIO(PersonInterface::FIO_FULL);
                 }
                 return '';
             }],
-            ['attribute' => 'training_group_id', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'training_group_id', 'format' => 'raw', 'label' => 'Учебная группа', 'value' => function(CertificateWork $model){
                 if ($model->trainingGroupParticipantWork && $model->trainingGroupParticipantWork->trainingGroupWork) {
                     return $model->trainingGroupParticipantWork->trainingGroupWork->number;
                 }
                 return '';
             }],
-            ['attribute' => 'protection_date', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'protection_date', 'label' => 'Дата защиты', 'format' => 'raw', 'value' => function(CertificateWork $model){
                 if ($model->trainingGroupParticipantWork && $model->trainingGroupParticipantWork->trainingGroupWork) {
                     return $model->trainingGroupParticipantWork->trainingGroupWork->protection_date;
                 }
@@ -80,13 +80,13 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'certificate_number', 'format' => 'raw', 'value' => function(CertificateWork $model){
                 return StringFormatter::stringAsLink($model->getCertificateLongNumber(), Url::to(['view', 'id' => $model->id]));
             }],
-            ['attribute' => 'certificate_template_id', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'certificate_template_id', 'label' => 'Наименование шаблона', 'format' => 'raw', 'value' => function(CertificateWork $model){
                 return StringFormatter::stringAsLink(
                         $model->certificateTemplatesWork->name,
                         Url::to(['/educational/certificate-template/view', 'id' => $model->certificate_template_id])
                 );
             }],
-            ['attribute' => 'participant_id', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'participant_id', 'format' => 'raw', 'label' => 'Учащийся', 'value' => function(CertificateWork $model){
                 if ($model->trainingGroupParticipantWork && $model->trainingGroupParticipantWork->participantWork) {
                     return StringFormatter::stringAsLink(
                         $model->trainingGroupParticipantWork->participantWork->getFIO(PersonInterface::FIO_FULL),
@@ -95,7 +95,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
                 return '';
             }],
-            ['attribute' => 'training_group_id', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'training_group_id', 'format' => 'raw', 'label' => 'Учебная группа', 'value' => function(CertificateWork $model){
                 if ($model->trainingGroupParticipantWork && $model->trainingGroupParticipantWork->trainingGroupWork) {
                     return StringFormatter::stringAsLink(
                         $model->trainingGroupParticipantWork->trainingGroupWork->number,
@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
                 return '';
             }],
-            ['attribute' => 'protection_date', 'format' => 'raw', 'value' => function(CertificateWork $model){
+            ['attribute' => 'protection_date', 'format' => 'raw', 'label' => 'Дата защиты', 'value' => function(CertificateWork $model){
                 if ($model->trainingGroupParticipantWork && $model->trainingGroupParticipantWork->trainingGroupWork) {
                     return $model->trainingGroupParticipantWork->trainingGroupWork->protection_date;
                 }

@@ -260,6 +260,7 @@ class OrderTrainingController extends DocumentController
         $groupsQuery = $this->trainingGroupRepository->getByBranchQuery($branch);
         $dataProvider = new ActiveDataProvider([
             'query' => $groupsQuery,
+            'pagination' => false
         ]);
         return $this->asJson([
             'gridHtml' => $this->renderPartial(GroupParticipantWidget::GROUP_VIEW, [

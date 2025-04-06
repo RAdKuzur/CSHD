@@ -5,6 +5,14 @@
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use yii\grid\GridView;
 ?>
+<style>
+    .training-group {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding-right: 10px;
+    }
+</style>
 <div class = "training-group">
 <?= GridView::widget([
     'dataProvider' => $dataProvider,

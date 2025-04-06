@@ -43,7 +43,7 @@ class Certificate extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'certificate_number' => 'Certificate Number',
+            'certificate_number' => 'Номер сертификата',
             'certificate_template_id' => 'Certificate Template ID',
             'training_group_participant_id' => 'Training Group Participant ID',
             'status' => 'Status',

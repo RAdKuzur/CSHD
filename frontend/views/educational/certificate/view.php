@@ -36,25 +36,25 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             //'id',
-            ['attribute' => 'number', 'format' => 'raw', 'value' => function (CertificateForm $model) {
+            ['attribute' => 'number', 'format' => 'raw', 'label' => 'Номер сертификата', 'value' => function (CertificateForm $model) {
                 return $model->entity->getCertificateLongNumber();
             }],
-            ['attribute' => 'template', 'format' => 'raw', 'value' => function (CertificateForm $model) {
+            ['attribute' => 'template', 'format' => 'raw', 'label' => 'Наименование шаблона', 'value' => function (CertificateForm $model) {
                 return $model->entity->certificateTemplatesWork->name;
             }],
-            ['attribute' => 'participant', 'format' => 'raw', 'value' => function (CertificateForm $model) {
+            ['attribute' => 'participant', 'format' => 'raw', 'label' => 'Учащийся', 'value' => function (CertificateForm $model) {
                 return StringFormatter::stringAsLink(
                     $model->entity->trainingGroupParticipantWork->getFullFio(),
                     Url::to(['/dictionaries/foreign-event-participants/view', 'id' => $model->entity->trainingGroupParticipantWork->participant_id])
                 );
             }],
-            ['attribute' => 'group', 'format' => 'raw', 'value' => function (CertificateForm $model) {
+            ['attribute' => 'group', 'format' => 'raw', 'label' => 'Учебная группа', 'value' => function (CertificateForm $model) {
                 return StringFormatter::stringAsLink(
                     $model->entity->trainingGroupParticipantWork->trainingGroupWork->number,
                     Url::to(['/educational/training-group/view', 'id' => $model->entity->trainingGroupParticipantWork->training_group_id])
                 );
             }],
-            ['attribute' => 'pdfFile', 'format' => 'raw', 'value' => function (CertificateForm $model) {
+            ['attribute' => 'pdfFile', 'format' => 'raw', 'label' => 'Файлы', 'value' => function (CertificateForm $model) {
                 return Html::a(
                         "Скачать pdf-файл",
                         Url::to(['generation-pdf', 'id' => $model->id]),

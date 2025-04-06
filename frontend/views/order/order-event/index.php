@@ -73,7 +73,6 @@ $tempArchive = $session->get("archiveIn");
                 ['attribute' => 'orderName', 'encodeLabel' => false, 'label' => 'Название<br>приказа'],
                 ['attribute' => 'bringName', 'label' => 'Проект<br>вносит', 'encodeLabel' => false],
                 ['attribute' => 'executorName', 'label' => 'Исполнитель', 'encodeLabel' => false],
-                ['attribute' => 'state', 'label' => 'Статус', 'encodeLabel' => false],
 
                 ['class' => VerticalActionColumn::class],
             ],

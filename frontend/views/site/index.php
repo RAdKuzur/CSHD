@@ -5,6 +5,7 @@
 use common\helpers\files\FilePaths;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 $this->title = 'ЦСХД';
@@ -18,9 +19,8 @@ $this->title = 'ЦСХД';
                 Почта
             </div>
             <div>
-                <?= StringFormatter::stringAsLink('Входящая документация', Url::to([Yii::$app->frontUrls::DOC_IN_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Исходящая документация', Url::to([Yii::$app->frontUrls::DOC_OUT_INDEX]))?>
+                <?= Html::a('Входящая документация', Url::to([Yii::$app->frontUrls::DOC_IN_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Исходящая документация', Url::to([Yii::$app->frontUrls::DOC_OUT_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
             </div>
         </div>
         <div class="index-card">
@@ -29,15 +29,11 @@ $this->title = 'ЦСХД';
                 Документооборот
             </div>
             <div>
-                <?= StringFormatter::stringAsLink('Приказы по основной деятельности', Url::to([Yii::$app->frontUrls::ORDER_MAIN_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Приказы по учету достижений', Url::to([Yii::$app->frontUrls::ORDER_EVENT_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Приказы по учебной деятельности', Url::to([Yii::$app->frontUrls::ORDER_TRAINING_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Положения', Url::to([Yii::$app->frontUrls::REG_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Учет ответственности работников', Url::to([Yii::$app->frontUrls::LOCAL_RESPONSIBILITY_INDEX]))?>
+                <?= Html::a('Приказы по основной деятельности', Url::to([Yii::$app->frontUrls::ORDER_MAIN_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Приказы по учету достижений', Url::to([Yii::$app->frontUrls::ORDER_EVENT_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Приказы по учебной деятельности', Url::to([Yii::$app->frontUrls::ORDER_TRAINING_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Положения', Url::to([Yii::$app->frontUrls::REG_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Учет ответственности работников', Url::to([Yii::$app->frontUrls::LOCAL_RESPONSIBILITY_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
             </div>
         </div>
     </div>
@@ -48,11 +44,9 @@ $this->title = 'ЦСХД';
                 Достижения
             </div>
             <div>
-                <?= StringFormatter::stringAsLink('Мероприятия', Url::to([Yii::$app->frontUrls::OUR_EVENT_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Учет достижений в мероприятиях', Url::to([Yii::$app->frontUrls::FOREIGN_EVENT_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Положение о мероприятиях', Url::to([Yii::$app->frontUrls::REG_EVENT_INDEX]))?>
+                <?= Html::a('Мероприятия', Url::to([Yii::$app->frontUrls::OUR_EVENT_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Учет достижений в мероприятиях', Url::to([Yii::$app->frontUrls::FOREIGN_EVENT_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Положение о мероприятиях', Url::to([Yii::$app->frontUrls::REG_EVENT_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
             </div>
         </div>
         <div class="index-card">
@@ -61,11 +55,9 @@ $this->title = 'ЦСХД';
                 Учебная деятельность
             </div>
             <div>
-                <?= StringFormatter::stringAsLink('Образовательные программы', Url::to([Yii::$app->frontUrls::PROGRAM_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Учебные группы', Url::to([Yii::$app->frontUrls::TRAINING_GROUP_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Генерация сертификатов', Url::to([Yii::$app->frontUrls::CERTIFICATE_INDEX]))?>
+                <?= Html::a('Образовательные программы', Url::to([Yii::$app->frontUrls::PROGRAM_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Учебные группы', Url::to([Yii::$app->frontUrls::TRAINING_GROUP_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Генерация сертификатов', Url::to([Yii::$app->frontUrls::CERTIFICATE_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
             </div>
         </div>
     </div>
@@ -76,9 +68,8 @@ $this->title = 'ЦСХД';
                 Аналитика
             </div>
             <div>
-                <?= StringFormatter::stringAsLink('Ошибки заполнения', Url::to([Yii::$app->frontUrls::ANALITIC_ERRORS_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Защиты учебных групп', Url::to([Yii::$app->frontUrls::PITCH]))?>
+                <?= Html::a('Ошибки заполнения', Url::to([Yii::$app->frontUrls::ANALITIC_ERRORS_INDEX, 'id' => Yii::$app->rubac->authId()]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Защиты учебных групп', Url::to([Yii::$app->frontUrls::PITCH]), ['class' => 'badge bg-secondary index-badge'])?>
             </div>
         </div>
         <div class="index-card">
@@ -87,15 +78,11 @@ $this->title = 'ЦСХД';
                 Справочники
             </div>
             <div>
-                <?= StringFormatter::stringAsLink('Люди', Url::to([Yii::$app->frontUrls::PEOPLE_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Организации', Url::to([Yii::$app->frontUrls::COMPANY_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Должности', Url::to([Yii::$app->frontUrls::POSITION_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Участники деятельности', Url::to([Yii::$app->frontUrls::FOREIGN_EVENT_INDEX]))?>
-                ,
-                <?= StringFormatter::stringAsLink('Помещения', Url::to([Yii::$app->frontUrls::AUDITORIUM_INDEX]))?>
+                <?= Html::a('Люди', Url::to([Yii::$app->frontUrls::PEOPLE_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Организации', Url::to([Yii::$app->frontUrls::COMPANY_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Должности', Url::to([Yii::$app->frontUrls::POSITION_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Участники деятельности', Url::to([Yii::$app->frontUrls::FOREIGN_EVENT_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
+                <?= Html::a('Помещения', Url::to([Yii::$app->frontUrls::AUDITORIUM_INDEX]), ['class' => 'badge bg-secondary index-badge'])?>
             </div>
         </div>
     </div>

@@ -67,7 +67,7 @@ $tempArchive = $session->get("archiveIn");
             'summary' => false,
 
             'columns' => [
-                ['attribute' => 'orderDate', 'encodeLabel' => false, 'label' => 'Дата<br>приказа', function (OrderEventWork $model) {
+                ['attribute' => 'orderDate', 'encodeLabel' => false, 'label' => 'Дата<br>приказа', 'value' => function (OrderEventWork $model) {
                     return DateFormatter::format($model->order_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
                 }],
                 ['attribute' => 'orderName', 'encodeLabel' => false, 'label' => 'Название<br>приказа'],

@@ -32,12 +32,15 @@ use yii\grid\GridView;
                 ];
             },
         ],
-        'number',
+        ['attribute' => 'number' , 'label' => 'Номер группы'],
         'start_date',
         'finish_date',
     ],
     'summaryOptions' => [
         'style' => 'display: none;',
+    ],
+    'options' => [
+        'style' => 'max-height: 600px; overflow-y: auto;', // Добавляем прокрутку
     ],
 ]);
 ?>

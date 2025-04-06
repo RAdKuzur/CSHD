@@ -39,12 +39,6 @@ class AuthController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $user = $this->userRepository->findByEmail($model->username);
-            var_dump($user);
-            var_dump('|||||||||||');
-            var_dump($user->validatePassword($model->password));
-            var_dump('|||||||||||');
-            var_dump($model->password);
-            /** @var UserWork $user */
             if ($user && $user->validatePassword($model->password)) {
                 $duration = 3600 * 12;
                 Yii::$app->user->login($user, $duration);

@@ -89,4 +89,15 @@ class RegulationRepository
     {
         return RegulationWork::find()->all();
     }
+    public function getAllActual()
+    {
+        return RegulationWork::find()->where(['state' => RegulationWork::STATE_ACTIVE])->all();
+    }
+    public function prepareChangeStatus($id){
+        $status = (RegulationWork::findOne($id))->state;
+        $command = Yii::$app->db->createCommand();
+        $state = ($status == RegulationWork::STATE_ACTIVE ? RegulationWork::STATE_EXPIRE : RegulationWork::STATE_ACTIVE);
+        $command->update(RegulationWork::tableName(), ['state' => $state], ['id' => $id]);
+        return $command->getRawSql();
+    }
 }

@@ -32,6 +32,8 @@ class DocumentOrderWork extends DocumentOrder
     public const ORDER_TRAINING = 3;
     public const ERROR_DATE_PARTICIPANT = 1;
     public const ERROR_RELATION = 2;
+    public const NOT_ACTUAL = 0;
+    public const ACTUAL = 1;
     /**
      * Переменные для input-file в форме
      */

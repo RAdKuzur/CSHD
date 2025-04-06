@@ -1,6 +1,6 @@
 <?php
 
-use app\components\GroupParticipantWidget;
+use frontend\components\GroupParticipantWidget;
 use frontend\models\work\order\OrderTrainingWork;
 use common\helpers\DateFormatter;
 use kartik\select2\Select2;

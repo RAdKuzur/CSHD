@@ -95,8 +95,12 @@ class DocumentOutController extends Controller
         $links = ButtonsFormatter::updateDeleteLinks($id);
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
+        /** @var DocumentOutWork $model */
+        $model = $this->repository->get($id);
+        $model->checkFilesExist();
+
         return $this->render('view', [
-            'model' => $this->repository->get($id),
+            'model' => $model,
             'buttonsAct' => $buttonHtml,
         ]);
     }

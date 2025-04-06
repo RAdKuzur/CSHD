@@ -83,7 +83,7 @@ class PeopleProvider implements PeopleProviderInterface
             throw new DomainException('Невозможно произвести сортировку по таблице ' . PeopleWork::tableName());
         }
 
-        var_dump($query->createCommand()->getRawSql());
+        var_dump($query->createCommand()->getRawSql());die;
 
         return $query->all();
     }

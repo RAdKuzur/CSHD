@@ -126,7 +126,8 @@ class OrderTrainingController extends DocumentController
 
     public function actionCreate()
     {
-        $model = new OrderTrainingWork();
+
+        $model = new OrderTrainingWork();var_dump($model, 'Ok! 0');
         $form = new OrderTrainingForm(
             $this->peopleRepository->getOrderedList(),
             $this->orderTrainingService->getGroupsEmptyDataProvider(),

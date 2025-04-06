@@ -62,13 +62,13 @@ class DocumentOrderWork extends DocumentOrder
     public function getFullNumber()
     {
         $parts = [];
-        if ($this->order_number == null) {
+        if ($this->order_number != null) {
             $parts[] = $this->order_number;
         }
-        if ($this->order_copy_id == null){
+        if ($this->order_copy_id != null){
             $parts[] = $this->order_copy_id;
         }
-        if ($this->order_postfix == null) {
+        if ($this->order_postfix != null) {
             $parts[] = $this->order_postfix;
         }
         return implode('/', $parts);

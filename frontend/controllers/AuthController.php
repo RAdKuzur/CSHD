@@ -51,7 +51,7 @@ class AuthController extends Controller
                     $this->redirect(['site/index']);
             }
             else {
-                if ($user->validatePassword($model->password)){
+                if (!$user->validatePassword($model->password)){
                     var_dump('ERROR!!!!');
                 }
             }

@@ -101,6 +101,20 @@ use yii\widgets\ActiveForm;
             ?>
         </div>
     </div>
+    <?= GroupParticipantWidget::widget([
+        'config' => [
+            'groupUrl' => 'get-group-by-branch',
+            'participantUrl' => 'get-group-participants-by-branch'
+        ],
+        'dataProviderGroup' => $groups,
+        'model' => $model,
+        'dataProviderParticipant' => $groupParticipant,
+        'nomenclature' => $model->getNomenclature(),
+        'transferGroups' => $transferGroups,
+        'groupCheckOption' => $groupCheckOption,
+        'groupParticipantOption' => $groupParticipantOption,
+    ]);
+    ?>
     <?= $form->field($model, 'order_name')->textInput([
             'readonly' => true,
             'id' => 'order-name-label'

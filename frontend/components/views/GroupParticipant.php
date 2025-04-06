@@ -17,11 +17,4 @@
     'groupCheckOption' => $groupCheckOption,
 ]);
 ?>
-<?= $this->render('_group-participant_grid', [
-    'dataProvider' => $dataProviderParticipant,
-    'model' => $model,
-    'nomenclature' => $nomenclature,
-    'transferGroups' => $transferGroups,
-    'groupParticipantOption' => $groupParticipantOption,
-]);
 ?>

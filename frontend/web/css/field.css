@@ -1,5 +1,6 @@
 .field-backing {
     background: #fdfaf7;
+    margin-bottom: 2em;
 }
 
 .select2 {
@@ -156,7 +157,8 @@ div.panel-title {
     border-bottom: 1px solid var(--bs-border-color-translucent);
 }
 
-.container-items .panel-title + .item, .container-items1 .panel-title + .item1  {
+.container-items .panel-title + .item, .container-items1 .panel-title + .item1,
+.order-event-form .item-act {
     margin-top: 2em;
 }
 
@@ -257,6 +259,10 @@ div.panel-title {
 .title-nom {
     margin: 1em;
     align-items: center;
+}
+
+.field-actparticipantform-0-type {
+    margin-bottom: 0;
 }
 
 .regulation-create .form-group, .regulation-update .form-group,

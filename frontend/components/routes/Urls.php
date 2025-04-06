@@ -93,6 +93,10 @@ class Urls
      * TRAINING_GROUP_PARTICIPANT_FORM - actionParticipantForm
      * TRAINING_GROUP_SCHEDULE_FORM - actionScheduleForm
      * TRAINING_GROUP_PITCH_FORM - actionPitchForm
+     * TRAINING_GROUP_KUG - actionDownloadPlan
+     * TRAINING_GROUP_KUG - actionCreateProtocol
+     * TRAINING_GROUP_DOWNLOAD_JOURNAL - actionDownloadJournal
+     * TRAINING_GROUP_DOWNLOAD_JOURNAL - actionAmnesty
      */
     const TRAINING_GROUP_INDEX = "educational/training-group/index";
     const TRAINING_GROUP_UPDATE = "educational/training-group/base-form";
@@ -104,6 +108,10 @@ class Urls
     const TRAINING_GROUP_PARTICIPANT_FORM = "educational/training-group/participant-form";
     const TRAINING_GROUP_SCHEDULE_FORM = "educational/training-group/schedule-form";
     const TRAINING_GROUP_PITCH_FORM = "educational/training-group/pitch-form";
+    const TRAINING_GROUP_KUG = "educational/training-group/download-plan";
+    const TRAINING_GROUP_PROTOCOL = "educational/training-group/create-protocol";
+    const TRAINING_GROUP_DOWNLOAD_JOURNAL = "educational/training-group/download-journal";
+    const TRAINING_GROUP_AMNESTY = "educational/training-group/amnesty";
 
     /**
      * Константа PITCH
@@ -135,9 +143,13 @@ class Urls
      *
      * CERTIFICATE_VIEW - actionView
      * CERTIFICATE_INDEX - actionIndex
+     * CERTIFICATE_INDEX - actionCreate
+     * CERTIFICATE_INDEX - actionSendAll
      */
     const CERTIFICATE_VIEW = "educational/certificate/view";
     const CERTIFICATE_INDEX = "educational/certificate/index";
+    const CERTIFICATE_CREATE = "educational/certificate/create";
+    const CERTIFICATE_SEND_ALL = "educational/certificate/send-all";
 
     /**
      * Константы ForeignEventParticipants

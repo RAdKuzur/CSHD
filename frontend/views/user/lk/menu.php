@@ -77,8 +77,6 @@ $this->params['breadcrumbs'][] = $this->title;
             <!-- Тут как будто бы нужно уже предикатами баловаться. Но позже -->
             <?php $curIndex = Yii::$app->session->get('lk-index')?>
             <li <?= 'style="background-color: #ADD8E6"' ?>><a href="<?= Url::to(['/user/lk/info', 'id' => $model->id]) ?>">Профиль</a></li>
-            <li <?= 'style="background-color: #ADD8E6"' ?>><a href="<?= Url::to(['/user/lk/token', 'id' => $model->id]) ?>">Токены</a></li>
-            <li <?= 'style="background-color: #ADD8E6"' ?>><a href="<?= Url::to(['/user/lk/errors', 'id' => $model->id]) ?>">Проблемы</a></li>
             <li <?= 'style="background-color: #ADD8E6"' ?>><a href="<?= Url::to(['/user/lk/change-password', 'id' => $model->id]) ?>">Изменить пароль</a></li>
         </ul>
     </div>

@@ -39,22 +39,7 @@ use yii\widgets\DetailView;
         margin: 0;
     }
 
-    .main-div{
-        margin: 30px 0;
-        margin-bottom: 20px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    }
-
-    .nomination-div{
-        margin-bottom: 10px;
-        height: 100%;
-    }
-
-    .nomination-list-div, .team-list-div {
+    /*.nomination-list-div, .team-list-div {
         border: 1px solid #ccc;
         border-radius: 7px;
         padding: 10px;
@@ -65,46 +50,7 @@ use yii\widgets\DetailView;
         display: inline-block;
     }
 
-    .nomination-heading {
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #f5f5f5;
-        border-color: #ddd;
-        border-bottom: 1px solid #ddd;
-    }
 
-    .nomination-add-div{
-        border: 1px solid #ddd;
-        border-radius: 7px;
-        padding: 0.5% 10px;
-        margin: 10px;
-        background-color: #f5f5f5;
-        height: 80px;
-        display: flex;
-    }
-
-    .nomination-add-input-div, .team-add-input-div {
-        display: inline-block;
-        vertical-align: top;
-        height: 100%;
-        width: 35%;
-    }
-
-    .nomination-add-button-div, .team-add-button-div {
-        display: inline-block;
-        padding: 1%;
-        vertical-align: top;
-        height: 100%;
-        margin-left: -10px;
-    }
-
-    .nomination-add-button, .team-add-button{
-        display: block;
-        margin: 7px 10px;
-        word-break: keep-all;
-        line-height: 1.3rem;
-        width: 100px;
-    }
 
     .nomination-add-input, .team-add-input {
         display: block;
@@ -113,11 +59,7 @@ use yii\widgets\DetailView;
         width: 100%;
     }
 
-    .nomination-label-input, .team-label-input {
-        padding-left: 15px;
-        margin-bottom: 0;
-        width: 100%;
-    }
+
 
     .nomination-list-item, .team-list-item {
         display: inline-block;
@@ -166,11 +108,7 @@ use yii\widgets\DetailView;
         color: white;
         border: 1px solid #962c2c;
         border-radius: 5px;
-    }
-
-    .team-list-div, .team-add-input-div {
-        margin-left: 30px;
-    }
+    }*/
 </style>
 <script>
     function displayDetails()
@@ -225,7 +163,7 @@ use yii\widgets\DetailView;
     {
         let item = document.getElementsByClassName(list_row)[0];
         let itemCopy = item.cloneNode(true)
-        itemCopy.getElementsByClassName(list_item)[0].innerHTML = '<p>' + arr[i] + '</p>'
+        itemCopy.getElementsByClassName(list_item)[0].innerHTML = '<span>' + arr[i] + '</span>'
         itemCopy.style.display = 'block';
 
         let list = document.getElementById(list_name);
@@ -243,8 +181,8 @@ use yii\widgets\DetailView;
 
             let item = document.getElementsByClassName('nomination-list-row')[0];
             let itemCopy = item.cloneNode(true)
-            itemCopy.getElementsByClassName('nomination-list-item')[0].innerHTML = '<p>' + elem.value + '</p>'
-            itemCopy.style.display = 'block';
+            itemCopy.getElementsByClassName('nomination-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
+            itemCopy.style.display = 'flex';
 
             let list = document.getElementById('list');
             list.append(itemCopy);
@@ -267,7 +205,7 @@ use yii\widgets\DetailView;
 
             let item = document.getElementsByClassName('team-list-row')[0];
             let itemCopy = item.cloneNode(true)
-            itemCopy.getElementsByClassName('team-list-item')[0].innerHTML = '<p>' + elem.value + '</p>'
+            itemCopy.getElementsByClassName('team-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
             itemCopy.style.display = 'block';
 
             let list = document.getElementById('list2');
@@ -434,14 +372,7 @@ use yii\widgets\DetailView;
         }
     }
 </script>
-<style>
-    .bordered-div {
-        border: 2px solid #000; /* Черная рамка */
-        padding: 10px;          /* Отступы внутри рамки */
-        border-radius: 5px;    /* Скругленные углы (по желанию) */
-        margin: 10px 0;        /* Отступы сверху и снизу */
-    }
-</style>
+
 <div class="order-event-form field-backing">
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
     <?= $form->field($model, 'order_date')->widget(DatePicker::class, [
@@ -457,75 +388,78 @@ use yii\widgets\DetailView;
             'changeYear' => true,
             'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
         ]])->label('Дата приказа') ?>
-    <?=
-    DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            ['label' => 'Код и номенклатура приказа', 'value' =>
-                NomenclatureDictionary::ADMIN_ORDER . ' Приказы директора по основной деятельности'
-            ],
-        ]
-    ]);?>
-    <div class="bordered-div">
-        <h4>
-            Информация для создания карточки учета достижений
-        </h4>
-        <?= $form->field($model, 'eventName')->textInput()->label('Название мероприятия') ?>
-        <div id="organizer">
-            <?php
-            $params = [
-                'id' => 'organizer',
-                'class' => 'form-control pos',
-                'prompt' => '---',
-            ];
-            echo $form
-                ->field($model, 'organizer_id')
-                ->dropDownList(ArrayHelper::map($company, 'id', 'name'), $params)
-                ->label('Организатор');
-            ?>
-        </div>
-        <?= $form->field($model, 'dateBegin')->widget(DatePicker::class, [
-            'dateFormat' => 'php:d.m.Y',
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Дата',
-                'class'=> 'form-control',
-                'autocomplete'=>'off'
-            ],
-            'clientOptions' => [
-                'changeMonth' => true,
-                'changeYear' => true,
-                'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
-            ]])->label('Дата начала') ?>
-        <?= $form->field($model, 'dateEnd')->widget(DatePicker::class, [
-            'dateFormat' => 'php:d.m.Y',
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Дата',
-                'class'=> 'form-control',
-                'autocomplete'=>'off'
-            ],
-            'clientOptions' => [
-                'changeMonth' => true,
-                'changeYear' => true,
-                'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
-            ]])->label('Дата окончания') ?>
-        <?= $form->field($model, 'city')->textInput()->label('Город') ?>
-        <?= $form->field($model, 'eventWay')->dropDownList(Yii::$app->eventWay->getList(), ['prompt' => '---'])
-            ->label('Формат проведения') ?>
-        <?= $form->field($model, 'eventLevel')->dropDownList(Yii::$app->eventLevel->getList(), ['prompt' => '---'])
-            ->label('Уровень') ?>
-        <?= $form->field($model, 'minAge')->textInput()->label('Мин. возраст участников (лет)') ?>
-        <?= $form->field($model, 'maxAge')->textInput()->label('Макс. возраст участников (лет)') ?>
-        <?= $form->field($model, 'keyEventWords')->textInput()->label('Ключевые слова') ?>
+
+    <div class="col-xs-4">
+        <label class="control-label">Код и номенклатура приказа</label>
+        <select class="form-control" disabled>
+            <option selected><?= NomenclatureDictionary::ADMIN_ORDER ?> Приказы директора по основной деятельности</option>
+        </select>
     </div>
-    <?=
-    DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            ['label' => 'Наименование приказа', 'value' => 'Об участии в мероприятии'],
-        ]
-    ]);?>
+
+    <div class="checkList">
+        <div class="checkHeader">
+            <h4 class="noPM">Информация для создания карточки учета достижений</h4>
+        </div>
+
+        <div class="checkBlock">
+            <?= $form->field($model, 'eventName')->textInput()->label('Название мероприятия') ?>
+            <div id="organizer">
+                <?php
+                $params = [
+                    'id' => 'organizer',
+                    'class' => 'form-control pos',
+                    'prompt' => '---',
+                ];
+                echo $form
+                    ->field($model, 'organizer_id')
+                    ->dropDownList(ArrayHelper::map($company, 'id', 'name'), $params)
+                    ->label('Организатор');
+                ?>
+            </div>
+            <?= $form->field($model, 'dateBegin')->widget(DatePicker::class, [
+                'dateFormat' => 'php:d.m.Y',
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Дата',
+                    'class'=> 'form-control',
+                    'autocomplete'=>'off'
+                ],
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
+                ]])->label('Дата начала') ?>
+            <?= $form->field($model, 'dateEnd')->widget(DatePicker::class, [
+                'dateFormat' => 'php:d.m.Y',
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Дата',
+                    'class'=> 'form-control',
+                    'autocomplete'=>'off'
+                ],
+                'clientOptions' => [
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
+                ]])->label('Дата окончания') ?>
+            <?= $form->field($model, 'city')->textInput()->label('Город') ?>
+            <?= $form->field($model, 'eventWay')->dropDownList(Yii::$app->eventWay->getList(), ['prompt' => '---'])
+                ->label('Формат проведения') ?>
+            <?= $form->field($model, 'eventLevel')->dropDownList(Yii::$app->eventLevel->getList(), ['prompt' => '---'])
+                ->label('Уровень') ?>
+            <?= $form->field($model, 'minAge')->textInput()->label('Мин. возраст участников (лет)') ?>
+            <?= $form->field($model, 'maxAge')->textInput()->label('Макс. возраст участников (лет)') ?>
+            <?= $form->field($model, 'keyEventWords')->textInput()->label('Ключевые слова') ?>
+        </div>
+    </div>
+
+    <div class="col-xs-4">
+        <label class="control-label">Наименование приказа</label>
+        <select class="form-control" disabled>
+            <option selected>Об участии в мероприятии</option>
+        </select>
+    </div>
+
     <div id="bring_id">
         <?php
         $params = [
@@ -539,6 +473,7 @@ use yii\widgets\DetailView;
             ->label('Проект вносит');
         ?>
     </div>
+
     <div id="executor_id">
         <?php
         $params = [
@@ -552,6 +487,7 @@ use yii\widgets\DetailView;
             ->label('Кто исполняет');
         ?>
     </div>
+
     <?= $form->field($model, "responsible_id")->widget(Select2::classname(), [
         'data' => ArrayHelper::map($people,'id','fullFio'),
         'size' => Select2::LARGE,
@@ -563,128 +499,125 @@ use yii\widgets\DetailView;
             'allowClear' => true
         ],
     ])->label('ФИО ответственного'); ?>
-    <div class="bordered-div">
-        <h4>Дополнительная информация для генерации приказа</h4>
-        <?= $form->field($model, 'purpose')->radioList([
-            '0' => 'выявления, формирования, поддержки и развития способностей и талантов у детей и молодежи 
+
+    <div class="checkList">
+        <div class="checkHeader">
+            <h4 class="noPM">Дополнительная информация для генерации приказа</h4>
+        </div>
+
+        <div class="checkBlock">
+            <?= $form->field($model, 'purpose')->radioList([
+                '0' => 'выявления, формирования, поддержки и развития способностей и талантов у детей и молодежи 
             на территории Астраханской области, оказания содействия в получении ими дополнительного образования,
              в том числе образования в области искусств, естественных наук, физической культуры и спорта,
               а также обеспечения организации их свободного времени (досуга) и отдыха',
-            '1' => 'удовлетворения образовательных и профессиональных потребностей, профессионального развития человека,
+                '1' => 'удовлетворения образовательных и профессиональных потребностей, профессионального развития человека,
              обеспечения соответствия его квалификации меняющимся условиям профессиональной деятельности и социальной среды,
               совершенствования и (или) получения новой компетенции, необходимой для профессиональной деятельности,
                и (или) повышения профессионального уровня в рамках имеющейся квалификации',
-            '2' => ' участия в формировании образовательной политики Астраханской области в области выявления,
+                '2' => ' участия в формировании образовательной политики Астраханской области в области выявления,
              сопровождения и дальнейшего развития проявивших выдающиеся способности детей и молодежи в соответствии 
              с задачами социально-экономического, научно-технологического, промышленного 
              и пространственного развития Астраханской области',
-        ], ['itemOptions' => ['class' => 'radio-inline']])->label('Уставная цель') ?>
-        <br>
-        <?= $form->field($model, 'docEvent')->radioList([
-            '0' => 'Отсутствует',
-            '1' => 'Регламент',
-            '2' => 'Письмо',
-            '3' => 'Положение',
-        ],
-        [
-            'itemOptions' => [
-                    'class' => 'radio-inline'],
+            ], ['itemOptions' => ['class' => 'radio-inline']])->label('Уставная цель') ?>
+            <?= $form->field($model, 'docEvent')->radioList([
+                '0' => 'Отсутствует',
+                '1' => 'Регламент',
+                '2' => 'Письмо',
+                '3' => 'Положение',
+            ],
+                [
+                    'itemOptions' => [
+                        'class' => 'radio-inline'],
                     'id' => 'doc-event-radio'
-        ])->label('Документ о мероприятии') ?>
-        <div id = "document_details" style="display: none;">
-            <?= $form->field($model, 'documentDetails')->textInput()->label('Описание документа для вставки в приказ') ?>
-        </div>
-        <div id="extra_resp_info_id">
-            <?php
-            $params = [
-                'id' => 'extra_resp_info',
-                'class' => 'form-control pos',
-                'prompt' => '---',
-            ];
-            echo $form
-                ->field($model, 'respPeopleInfo')
-                ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                ->label('Ответственный за сбор и предоставление информации');
-            ?>
-        </div>
-        <?= $form->field($model, 'timeProvisionDay')->textInput()->label('Срок предоставления информации (в днях)') ?>
-        <div id="extra_resp_insert_id">
-            <?php
-            $params = [
-                'id' => 'extra_resp_insert',
-                'class' => 'form-control pos',
-                'prompt' => '---',
-            ];
-            echo $form
-                ->field($model, 'extraRespInsert')
-                ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                ->label('Ответственный за внесение в ЦСХД');
-            ?>
-        </div>
-        <?= $form->field($model, 'timeInsertDay')->textInput()->label('Срок внесения информации (в днях)') ?>
-        <div id="extra_resp_method_id">
-            <?php
-            $params = [
-                'id' => 'extra_resp_method',
-                'class' => 'form-control pos',
-                'prompt' => '---',
-            ];
-            echo $form
-                ->field($model, 'extraRespMethod')
-                ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                ->label('Ответственный за методологический контроль');
-            ?>
-        </div>
-        <div id="extra_resp_info_stuff_id">
-            <?php
-            $params = [
-                'id' => 'extra_resp_info_stuff',
-                'class' => 'form-control pos',
-                'prompt' => '---',
-            ];
-            echo $form
-                ->field($model, 'extraRespInfoStuff')
-                ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                ->label('Ответственный за информирование работников');
-            ?>
+                ])->label('Документ о мероприятии') ?>
+            <div id = "document_details" style="display: none;">
+                <?= $form->field($model, 'documentDetails')->textInput()->label('Описание документа для вставки в приказ') ?>
+            </div>
+            <div id="extra_resp_info_id">
+                <?php
+                $params = [
+                    'id' => 'extra_resp_info',
+                    'class' => 'form-control pos',
+                    'prompt' => '---',
+                ];
+                echo $form
+                    ->field($model, 'respPeopleInfo')
+                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
+                    ->label('Ответственный за сбор и предоставление информации');
+                ?>
+            </div>
+            <?= $form->field($model, 'timeProvisionDay')->textInput()->label('Срок предоставления информации (в днях)') ?>
+            <div id="extra_resp_insert_id">
+                <?php
+                $params = [
+                    'id' => 'extra_resp_insert',
+                    'class' => 'form-control pos',
+                    'prompt' => '---',
+                ];
+                echo $form
+                    ->field($model, 'extraRespInsert')
+                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
+                    ->label('Ответственный за внесение в ЦСХД');
+                ?>
+            </div>
+            <?= $form->field($model, 'timeInsertDay')->textInput()->label('Срок внесения информации (в днях)') ?>
+            <div id="extra_resp_method_id">
+                <?php
+                $params = [
+                    'id' => 'extra_resp_method',
+                    'class' => 'form-control pos',
+                    'prompt' => '---',
+                ];
+                echo $form
+                    ->field($model, 'extraRespMethod')
+                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
+                    ->label('Ответственный за методологический контроль');
+                ?>
+            </div>
+            <div id="extra_resp_info_stuff_id">
+                <?php
+                $params = [
+                    'id' => 'extra_resp_info_stuff',
+                    'class' => 'form-control pos',
+                    'prompt' => '---',
+                ];
+                echo $form
+                    ->field($model, 'extraRespInfoStuff')
+                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
+                    ->label('Ответственный за информирование работников');
+                ?>
+            </div>
         </div>
     </div>
+
     <div id = "commands">
         <fieldset id="nom-team-block">
         <div class="main-div">
-            <div class="nomination-div">
-                <div class="nomination-heading"><h4><i class="glyphicon glyphicon-tower"></i>Номинации и команды</h4></div>
-                <div class="nomination-add-div">
-                    <div class="nomination-add-input-div">
-                        <label class="nomination-label-input">Номинация
-                            <input class="nomination-add-input" id="nom-name" placeholder="Введите номинацию" type="text"/>
-                        </label>
-                    </div>
-                    <div class="nomination-add-button-div">
-                        <button type="button" onclick="AddNom()" class="nomination-add-button btn btn-success">Добавить<br>номинацию</button>
-                    </div>
-                    <div class="team-add-input-div">
-                        <label class="team-label-input">Команда
-                            <input class="team-add-input" id="team-name" placeholder="Введите название команды" type="text"/>
-                        </label>
-                    </div>
-                    <div class="team-add-button-div">
-                        <button type="button" onclick="AddTeam()" class="team-add-button btn btn-success">Добавить<br>команду</button>
-                    </div>
-                </div>
+            <div class="nomination-heading"><h4><i class="glyphicon glyphicon-tower"></i>Номинации и команды</h4></div>
 
-                <div style="display: flex;">
-                    <div id="list" class="nomination-list-div">
+            <div class="flexx">
+                <div class="nomination-div flx1 checkList">
+                    <div class="flexx flx1 checkHeader">
+                        <div class="flx1">
+                            <label class="control-label">Номинация</label>
+                            <input class="form-control" id="nom-name" placeholder="Введите номинацию" type="text"/>
+                        </div>
+                        <div class="nomination-add-button-div">
+                            <button type="button" onclick="AddNom()" class="nomination-add-button btn btn-success add-item">+</button>
+                        </div>
+                    </div>
+                    <div id="list" class="nomination-list-div checkBlock">
                         <?php
                         $flag = count($nominations) > 0;
-                        $strDisplay = $flag ? 'block' : 'none';
+                        $strDisplay = $flag ? 'flex' : 'none';
                         ?>
                         <div class="nomination-list-row" style="display: none">
                             <div class="nomination-list-item-delete">
-                                <button type="button" onclick="DelNom(this)" class="delete-nomination-button">X</button>
+                                <button type="button" onclick="DelNom(this)" class="delete-nomination-button btn btn-warning remove-item">X</button>
                             </div>
                             <div class="nomination-list-item">
-                                <p>DEFAULT_ITEM</p>
+                                DEFAULT_ITEM
                             </div>
                         </div>
 
@@ -692,27 +625,37 @@ use yii\widgets\DetailView;
 
                         if ($flag)
                             foreach ($nominations as $nomination)
-                                echo '<div class="nomination-list-row" style="display: block">
-                                <div class="nomination-list-item-delete">
-                                    <button type="button" onclick="DelNom(this)" class="delete-nomination-button">X</button>
-                                </div>
-                                <div class="nomination-list-item"><p>'.$nomination.'</p></div>
-                            </div>';?>
+                                echo '<div class="nomination-list-row">
+                            <div class="nomination-list-item-delete">
+                                <button type="button" onclick="DelNom(this)" class="delete-nomination-button btn btn-warnin remove-item">X</button>
+                            </div>
+                            <div class="nomination-list-item">'.$nomination.'</div>
+                        </div>';?>
                     </div>
-
-                    <div id="list2" class="team-list-div">
+                </div>
+                <div class="team-div flx1 checkList">
+                    <div class="flexx flx1 checkHeader">
+                        <div class="flx1">
+                            <label class="control-label">Команда</label>
+                            <input class="form-control" id="team-name" placeholder="Введите название команды" type="text"/>
+                        </div>
+                        <div class="team-add-button-div">
+                            <button type="button" onclick="AddTeam()" class="team-add-button btn btn-success add-item">+</button>
+                        </div>
+                    </div>
+                    <div id="list2" class="team-list-div checkBlock">
                         <?php
 
                         $flag2 = count($nominations) > 0;
-                        $strDisplay2 = $flag2 ? 'block' : 'none';
+                        $strDisplay2 = $flag2 ? 'flex' : 'none';
 
                         ?>
                         <div class="team-list-row" style="display: none">
                             <div class="team-list-item-delete">
-                                <button type="button" onclick="DelTeam(this)" class="delete-team-button">X</button>
+                                <button type="button" onclick="DelTeam(this)" class="delete-team-button btn btn-warnin remove-item">X</button>
                             </div>
                             <div class="team-list-item">
-                                <p>DEFAULT_ITEM</p>
+                                DEFAULT_ITEM
                             </div>
                         </div>
 
@@ -720,24 +663,28 @@ use yii\widgets\DetailView;
 
                         if ($flag2)
                             foreach ($teams as $team)
-                                echo '<div class="team-list-row" style="display: block">
-                                <div class="team-list-item-delete">
-                                    <button type="button" onclick="DelTeam(this)" class="delete-team-button">X</button>
-                                </div>
-                                <div class="team-list-item"><p>'.$team.'</p></div>
-                            </div>';?>
+                                echo '<div class="team-list-row">
+                            <div class="team-list-item-delete">
+                                <button type="button" onclick="DelTeam(this)" class="delete-team-button btn btn-warnin remove-item">X</button>
+                            </div>
+                            <div class="team-list-item">'.$team.'</div>
+                        </div>';?>
                     </div>
                 </div>
             </div>
         </div>
     </fieldset>
     </div>
-    <?= Html::button('Перейти к заполнению участников мероприятия', [
-        'class' => 'btn btn-secondary',
-        'type' => 'button',
-        'id' => 'toggle-button',
-    ]) ?>
-    <div class = "bordered-div" id = "acts">
+
+    <div style="text-align: center;">
+        <?= Html::button('Перейти к заполнению участников мероприятия', [
+            'class' => 'btn btn-success',
+            'type' => 'button',
+            'id' => 'toggle-button',
+        ]) ?>
+    </div>
+
+    <div class="bordered-div" id = "acts">
         <h3>Акты участия</h3>
         <div class="panel-body">
             <?php DynamicFormWidget::begin([
@@ -879,29 +826,31 @@ use yii\widgets\DetailView;
             <?php DynamicFormWidget::end(); ?>
         </div>
     </div>
+
+    <?php if ($actTable != NULL): ?>
+        <?= $actTable; ?>
+    <?php endif; ?>
+
+    <?= $form->field($model, 'key_words')->textInput()->label('Ключевые слова') ?>
+    <?= $form->field($model, 'scanFile')->fileInput()->label('Скан документа') ?>
+    <?php if (strlen($scanFile) > 10): ?>
+        <?= $scanFile; ?>
+    <?php endif; ?>
+
+    <?= $form->field($model, 'docFiles[]')->fileInput(['multiple' => true])->label('Редактируемые документы') ?>
+
+    <?php if (strlen($docFiles) > 10): ?>
+        <?= $docFiles; ?>
+    <?php endif; ?>
+    <div class="form-group">
+        <?= Html::submitButton('Сохранить', [
+            'class' => 'btn btn-primary',
+            'onclick' => 'prepareAndSubmit();' // Подготовка скрытых полей перед отправкой
+        ]) ?>
+        <?php ActiveForm::end(); ?>
+    </div>
 </div>
-<?php if ($actTable != NULL): ?>
-    <?= $actTable; ?>
-<?php endif; ?>
 
-<?= $form->field($model, 'key_words')->textInput()->label('Ключевые слова') ?>
-<?= $form->field($model, 'scanFile')->fileInput()->label('Скан документа') ?>
-<?php if (strlen($scanFile) > 10): ?>
-    <?= $scanFile; ?>
-<?php endif; ?>
-
-<?= $form->field($model, 'docFiles[]')->fileInput(['multiple' => true])->label('Редактируемые документы') ?>
-
-<?php if (strlen($docFiles) > 10): ?>
-    <?= $docFiles; ?>
-<?php endif; ?>
-<div class="form-group">
-    <?= Html::submitButton('Сохранить', [
-        'class' => 'btn btn-primary',
-        'onclick' => 'prepareAndSubmit();' // Подготовка скрытых полей перед отправкой
-    ]) ?>
-    <?php ActiveForm::end(); ?>
-</div>
 <script>
     function checkType(chkBoxName) {
         var participantNumber = chkBoxName.split('-')[1]; // Разделяем строку и берем номер

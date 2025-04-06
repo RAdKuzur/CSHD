@@ -38,77 +38,6 @@ use yii\widgets\DetailView;
     .row {
         margin: 0;
     }
-
-    /*.nomination-list-div, .team-list-div {
-        border: 1px solid #ccc;
-        border-radius: 7px;
-        padding: 10px;
-        overflow-y: scroll;
-        width: 47%;
-        margin: 10px;
-        height: 250px;
-        display: inline-block;
-    }
-
-
-
-    .nomination-add-input, .team-add-input {
-        display: block;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
-
-
-
-    .nomination-list-item, .team-list-item {
-        display: inline-block;
-    }
-
-    .nomination-list-row, .team-list-row {
-        display: block;
-    }
-
-    .nomination-list-item-delete,  .team-list-item-delete {
-        display: inline-block;
-        margin-right: 5px;
-    }
-
-
-    .nomination-add-input, .team-add-input {
-        display: block;
-        width: 97%;
-        height: 30px;
-        padding: 0.375rem 0.75rem;
-        margin-top: 5px;
-        margin-bottom: 5px;
-        margin-right: 10px;
-        margin-left: 0;
-        font-family: inherit;
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 2;
-        color: #212529;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid #9f9f9f;
-        border-radius: 0.25rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-
-    .nomination-add-input::placeholder, .team-add-input::placeholder {
-        color: #212529;
-        opacity: 0.4;
-    }
-
-
-    .delete-nomination-button, .delete-team-button {
-        background-color: #b24848;
-        font-weight: 400;
-        color: white;
-        border: 1px solid #962c2c;
-        border-radius: 5px;
-    }*/
 </style>
 <script>
     function displayDetails()
@@ -119,7 +48,7 @@ use yii\widgets\DetailView;
         if (elem[0].checked)
             details.style.display = "none";
         else
-            details.style.display = "block";
+            details.style.display = "flex";
 
         let item = [1, 2, 3];
         item.forEach((element) => {
@@ -164,7 +93,7 @@ use yii\widgets\DetailView;
         let item = document.getElementsByClassName(list_row)[0];
         let itemCopy = item.cloneNode(true)
         itemCopy.getElementsByClassName(list_item)[0].innerHTML = '<span>' + arr[i] + '</span>'
-        itemCopy.style.display = 'block';
+        itemCopy.style.display = 'flex';
 
         let list = document.getElementById(list_name);
         list.append(itemCopy);
@@ -206,7 +135,7 @@ use yii\widgets\DetailView;
             let item = document.getElementsByClassName('team-list-row')[0];
             let itemCopy = item.cloneNode(true)
             itemCopy.getElementsByClassName('team-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
-            itemCopy.style.display = 'block';
+            itemCopy.style.display = 'flex';
 
             let list = document.getElementById('list2');
             list.append(itemCopy);
@@ -627,7 +556,7 @@ use yii\widgets\DetailView;
                             foreach ($nominations as $nomination)
                                 echo '<div class="nomination-list-row">
                             <div class="nomination-list-item-delete">
-                                <button type="button" onclick="DelNom(this)" class="delete-nomination-button btn btn-warnin remove-item">X</button>
+                                <button type="button" onclick="DelNom(this)" class="delete-nomination-button btn btn-warning remove-item">X</button>
                             </div>
                             <div class="nomination-list-item">'.$nomination.'</div>
                         </div>';?>
@@ -652,7 +581,7 @@ use yii\widgets\DetailView;
                         ?>
                         <div class="team-list-row" style="display: none">
                             <div class="team-list-item-delete">
-                                <button type="button" onclick="DelTeam(this)" class="delete-team-button btn btn-warnin remove-item">X</button>
+                                <button type="button" onclick="DelTeam(this)" class="delete-team-button btn btn-warning remove-item">X</button>
                             </div>
                             <div class="team-list-item">
                                 DEFAULT_ITEM
@@ -665,7 +594,7 @@ use yii\widgets\DetailView;
                             foreach ($teams as $team)
                                 echo '<div class="team-list-row">
                             <div class="team-list-item-delete">
-                                <button type="button" onclick="DelTeam(this)" class="delete-team-button btn btn-warnin remove-item">X</button>
+                                <button type="button" onclick="DelTeam(this)" class="delete-team-button btn btn-warning remove-item">X</button>
                             </div>
                             <div class="team-list-item">'.$team.'</div>
                         </div>';?>
@@ -684,9 +613,7 @@ use yii\widgets\DetailView;
         ]) ?>
     </div>
 
-    <div class="bordered-div" id = "acts">
-        <h3>Акты участия</h3>
-        <div class="panel-body">
+    <div class="bordered-div" id="acts">
             <?php DynamicFormWidget::begin([
                 'widgetContainer' => 'dynamicform_wrapper_act', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
                 'widgetBody' => '.container-items-act', // required: css class selector
@@ -702,29 +629,34 @@ use yii\widgets\DetailView;
                 ],
             ]); ?>
             <div class="container-items-act"><!-- widgetContainer -->
+                <div class="panel-title">
+                    <h5 class="panel-title pull-left">Акты участия</h5><!-- widgetBody -->
+                    <div class="pull-right">
+                        <button type="button" class="add-item-act btn btn-success btn-xs" onclick="updateOptions()"><span class="glyphicon glyphicon-plus">+</span></button>
+                    </div>
+                </div>
                 <?php foreach ($modelActs as $i => $modelAct): ?>
                     <div class="item-act panel panel-default"><!-- widgetBody -->
                         <div class="panel-heading">
-                            <h3 class="panel-title pull-left"></h3>
                             <div class="pull-right">
-                                <button type="button" class="add-item-act btn btn-success btn-xs" onclick="updateOptions()"><i class="glyphicon glyphicon-plus">+</i></button>
-                                <button type="button" class="remove-item-act btn btn-danger btn-xs" onclick="updateOptions()"><i class="glyphicon glyphicon-minus">-</i></button>
+                                <button type="button" class="remove-item-act btn btn-warning btn-xs" onclick="updateOptions()"><span class="glyphicon glyphicon-minus">-</span></button>
                             </div>
                             <div class="clearfix"></div>
                         </div>
-                        <label>
-                            <?=
-                            $form->field($modelAct, "[{$i}]type")->radioList([
-                                '0' => 'Личное участие',
-                                '1' => 'Командное участие',
-                            ], ['itemOptions' => ['class' => 'radio-inline', 'onclick' => 'handleParticipationChange(this)']])
-                                ->label('Выберите тип участия');
-                            ?>
-                        </label>
-                        <div class="panel-body">
-                            <div class="row">
+                        <div class = "form-label">
+                            <div class="panel-body">
+                                <label>
+                                    <?=
+                                    $form->field($modelAct, "[{$i}]type")->radioList([
+                                        '0' => 'Личное участие',
+                                        '1' => 'Командное участие',
+                                    ], ['itemOptions' => ['class' => 'radio-inline', 'onclick' => 'handleParticipationChange(this)']])
+                                        ->label('Выберите тип участия');
+                                    ?>
+                                </label>
+                                <div class="row">
                                 <div id = "form-<?=$i?>" hidden>
-                                    <div class="container personal-dropdown-list">
+                                    <div class=" personal-dropdown-list">
                                         <?php
                                         $params = [
                                             'id' => 'personalParticipantDropdown',
@@ -735,7 +667,7 @@ use yii\widgets\DetailView;
                                         ?>
                                     </div>
 
-                                    <div class="container team-dropdown-list">
+                                    <div class=" team-dropdown-list">
                                         <?= $form->field($modelAct, "[{$i}]participant")->widget(Select2::class, [
                                             'data' => ArrayHelper::map($participants,'id','fullFio'),
                                             'size' => Select2::LARGE,
@@ -747,7 +679,6 @@ use yii\widgets\DetailView;
                                                 'allowClear' => true
                                             ],
                                         ])->label('ФИО участников'); ?>
-                                        В составе команды<br>
                                         <?php
                                         $params = [
                                             'id' => 'teamDropdown',
@@ -807,7 +738,7 @@ use yii\widgets\DetailView;
                                     <?= $form->field($modelAct, "[{$i}]form")->dropDownList(Yii::$app->eventWay->getList(), ['prompt' => '---'])
                                         ->label('Форма реализации') ?>
                                     <?= $form->field($modelAct, "[{$i}]actFiles")->fileInput()->label('Представленные материалы') ?>
-                                    <div class="container nomination-dropdown-list">
+                                    <div class=" nomination-dropdown-list">
                                         <?php
                                         $params = [
                                             'id' => 'nominationDropdown',

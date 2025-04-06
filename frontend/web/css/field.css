@@ -1,5 +1,6 @@
 .field-backing {
     background: #fdfaf7;
+    margin-bottom: 2em;
 }
 
 .select2 {
@@ -156,7 +157,8 @@ div.panel-title {
     border-bottom: 1px solid var(--bs-border-color-translucent);
 }
 
-.container-items .panel-title + .item, .container-items1 .panel-title + .item1  {
+.container-items .panel-title + .item, .container-items1 .panel-title + .item1,
+.order-event-form .item-act {
     margin-top: 2em;
 }
 
@@ -259,10 +261,18 @@ div.panel-title {
     align-items: center;
 }
 
+.field-actparticipantform-0-type {
+    margin-bottom: 0;
+}
+
+.field-tripCheckbox label:not(:first-child) {
+    font-size: 0;
+}
+
 .regulation-create .form-group, .regulation-update .form-group,
 .event-create .form-group, .event-update .form-group,
 .local-responsibility-create .form-group, .local-responsibility-create .form-group,
 .training-program-create .form-group, .training-program-update .form-group, .temporary-journal-form .form-group,
-.foreign-event-participants-form .form-group {
+.foreign-event-participants-form .form-group, .foreign-event-form .form-group, .foreign-event-form .col-xs-4 {
     margin-bottom: 1em;
 }

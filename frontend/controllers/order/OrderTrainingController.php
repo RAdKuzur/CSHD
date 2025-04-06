@@ -127,6 +127,7 @@ class OrderTrainingController extends DocumentController
     public function actionCreate()
     {
         $model = new OrderTrainingWork();
+        var_dump($model);
         $form = new OrderTrainingForm(
             $this->peopleRepository->getOrderedList(),
             $this->orderTrainingService->getGroupsEmptyDataProvider(),
@@ -157,7 +158,7 @@ class OrderTrainingController extends DocumentController
             }
             else {
                 Yii::$app->session->setFlash
-                ('error', "Ошибка создания файла с такой датой");
+                ('error', "Ошибка создания приказа с такой датой");
                 return $this->redirect(Yii::$app->request->referrer ?: ['create']);
             }
         }

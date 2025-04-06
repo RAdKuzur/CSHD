@@ -66,7 +66,6 @@ class UserForm extends Model
         $mainDataLoad = parent::load($data, $formName);
         if ($mainDataLoad) {
             $this->entity->load($data);
-            var_dump($this->entity->id);
             if (is_null($this->entity->id)) {
                 $this->entity->setPassword(
                     Yii::$app->security->generatePasswordHash(

@@ -1,6 +1,6 @@
 <?php
 
-namespace frontend\components;
+namespace app\components;
 
 use yii\base\Widget;
 use yii\helpers\Url;

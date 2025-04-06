@@ -265,10 +265,14 @@ div.panel-title {
     margin-bottom: 0;
 }
 
+.field-tripCheckbox label:not(:first-child) {
+    font-size: 0;
+}
+
 .regulation-create .form-group, .regulation-update .form-group,
 .event-create .form-group, .event-update .form-group,
 .local-responsibility-create .form-group, .local-responsibility-create .form-group,
 .training-program-create .form-group, .training-program-update .form-group, .temporary-journal-form .form-group,
-.foreign-event-participants-form .form-group {
+.foreign-event-participants-form .form-group, .foreign-event-form .form-group, .foreign-event-form .col-xs-4 {
     margin-bottom: 1em;
 }

@@ -18,7 +18,7 @@ use yii\jui\DatePicker;
 ?>
 
 <style type="text/css">
-    .button {
+    /*.button {
         position: fixed;
         bottom: 0px;
         background-color: #f5f8f9;
@@ -26,7 +26,7 @@ use yii\jui\DatePicker;
         padding-left: 1%;
         padding-top: 1%;
         padding-right: 1%;
-        padding-bottom: 1%; /*104.5px is half of the button width*/
+        padding-bottom: 1%;
     }
     .test{
         height:1000px;
@@ -97,7 +97,7 @@ use yii\jui\DatePicker;
          border-radius: inherit;
          width: calc(100% - .375em);
          height: inherit;
-         /*background-image: linear-gradient(to right, #0f73a8, #57cfe2, #b3f0ff);*/
+
      }
 
     &::after {
@@ -105,9 +105,9 @@ use yii\jui\DatePicker;
          position: absolute;
          width: .5em;
          height: 38%;
-         /*background-image: repeating-linear-gradient(to right, #d2f2f6 0 .0625em, #4ea0ae .0625em .125em, transparent .125em .1875em);*/
+
      }
-    }
+    }*/
 </style>
 
 
@@ -120,55 +120,93 @@ use yii\jui\DatePicker;
 </script>
 
 
-<div class="foreign-event-form">
+<div class="foreign-event-form field-backing">
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
-    <?= $form->field($model, 'name')->textInput(['readonly' => true]) ?>
-
-    <?= $form->field($model, 'organizer')->textInput(['readonly' => true, 'value' => $model->organizer])->label('Организатор'); ?>
-
-    <?= $form->field($model, 'startDate')->textInput(['readonly' => true]) ?>
-
-    <?= $form->field($model, 'endDate')->textInput(['readonly' => true]) ?>
-
-    <?= $form->field($model, 'city')->textInput(['readonly' => true]) ?>
-
-    <?= $form->field($model, 'format')
-        ->textInput(['readonly' => true, 'value' => Yii::$app->eventWay->get($model->format)])
-        ->label('Формат проведения');
-    ?>
-
-    <?= $form->field($model, 'level')
-        ->textInput(['readonly' => true, 'value' => Yii::$app->eventLevel->get($model->level)])
-        ->label('Уровень');
-    ?>
-
-    <?php
-        $icon = '❌';
-        if ($model->minister)
-            $icon = '✅';
-        echo '<div class="form-group field-foreigneventwork-is_minpros has-success"><label>'.$icon.' Входит в перечень Минпросвещения РФ</label><div class="help-block"></div></div>';
-    ?>
-
-    <div class="row">
-        <div class="panel panel-default">
-            <div class="panel-heading"><h4><i class="glyphicon glyphicon-user"></i>Акты участия</h4></div>
-            <?php if (strlen($model->squadParticipants) > 10): ?>
-                <?= $model->squadParticipants; ?>
-            <?php endif; ?>
-        </div>
+    <div class="col-xs-4">
+        <label class="control-label">Название мероприятия</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->name ?></option>
+        </select>
     </div>
 
-    <?= $form->field($model, 'minAge')->textInput(['readonly' => true]) ?>
+    <div class="col-xs-4">
+        <label class="control-label">Организатор</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->organizer ?></option>
+        </select>
+    </div>
 
-    <?= $form->field($model, 'maxAge')->textInput(['readonly' => true]) ?>
+    <div class="col-xs-4">
+        <label class="control-label">Дата начала</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->startDate ?></option>
+        </select>
+    </div>
+
+    <div class="col-xs-4">
+        <label class="control-label">Дата окончания</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->endDate ?></option>
+        </select>
+    </div>
+
+    <div class="col-xs-4">
+        <label class="control-label">Город</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->city ?></option>
+        </select>
+    </div>
+
+    <div class="col-xs-4">
+        <label class="control-label">Формат проведения</label>
+        <select class="form-control" disabled>
+            <option selected><?= Yii::$app->eventWay->get($model->format) ?></option>
+        </select>
+    </div>
+
+    <div class="col-xs-4">
+        <label class="control-label">Уровень</label>
+        <select class="form-control" disabled>
+            <option selected><?= Yii::$app->eventLevel->get($model->level) ?></option>
+        </select>
+    </div>
+
+    <?php
+    $icon = '❌';
+    if ($model->minister)
+        $icon = '✅';
+    echo '<div class="form-group field-foreigneventwork-is_minpros has-success"><label>'.$icon.' Входит в перечень Минпросвещения РФ</label><div class="help-block"></div></div>';
+    ?>
+
+    <div class="col-xs-4">
+        <label class="control-label">Мин. возраст участников (лет)</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->minAge ?></option>
+        </select>
+    </div>
+
+    <div class="col-xs-4">
+        <label class="control-label">Макс. возраст участников (лет)</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->maxAge ?></option>
+        </select>
+    </div>
 
     <?php if (strlen($model->oldAchievements) > 10): ?>
         <?= $model->oldAchievements; ?>
     <?php endif; ?>
 
-    <div class="panel-body">
+    <div class="row">
+        <div class="panel panel-default">
+            <?php if (strlen($model->squadParticipants) > 10): ?>
+                <div class="panel-heading"><h4><i class="glyphicon glyphicon-user"></i>Акты участия</h4></div>
+                <?= $model->squadParticipants; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="bordered-div">
         <?php
             DynamicFormWidget::begin([
                 'widgetContainer' => 'dynamicform_wrapper',
@@ -187,17 +225,22 @@ use yii\jui\DatePicker;
         ?>
 
         <div class="container-items"><!-- widgetContainer -->
-            <button type="button" class="add-item btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i></button>
+            <div class="panel-title">
+                <h5 class="panel-title pull-left">Достижения</h5><!-- widgetBody -->
+                <div class="pull-right">
+                    <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                </div>
+            </div>
             <?php foreach ($modelAchievements as $i => $modelAchievement): ?>
                 <div class="item panel panel-default"><!-- widgetBody -->
                     <div class="panel-heading">
-                        <h3 class="panel-title pull-left"></h3>
                         <div class="pull-right">
-                            <button type="button" class="remove-item btn btn-danger btn-xs"><i class="glyphicon glyphicon-minus"></i></button>
+                            <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
                         </div>
                         <div class="clearfix"></div>
                     </div>
-                    <div class="panel-body">
+                    <div class = "form-label">
+                        <div class="panel-body">
                         <div class="row">
                             <div>
                                 <div class="col-xs-6">
@@ -207,10 +250,10 @@ use yii\jui\DatePicker;
                                     ?>
                                 </div>
                                 <div class="col-xs-4">
-                                    <?= $form->field($modelAchievement, "[{$i}]achievement")->textInput(); ?>
+                                    <?= $form->field($modelAchievement, "[{$i}]achievement")->textInput()->label('Достижение'); ?>
                                 </div>
                                 <div class="col-xs-4">
-                                    <?= $form->field($modelAchievement, "[{$i}]cert_number")->textInput(); ?>
+                                    <?= $form->field($modelAchievement, "[{$i}]cert_number")->textInput()->label('Номер сертификата'); ?>
                                 </div>
 
                                 <div class="col-xs-4">
@@ -219,12 +262,12 @@ use yii\jui\DatePicker;
                                             'type' => 'date',
                                             'class' => 'form-control'
                                         ]
-                                    ) ?>
+                                    )->label('Дата сертификата') ?>
                                 </div>
-                                <div class="col-xs-4" style="margin-top: 30px;">
+                                <div class="col-xs-4" style="width: 30%; margin: auto;">
                                     <?php
 
-                                    echo '<div class="toggle-wrapper form-group field-participantachievementwork-'.$i.'-type">
+                                    /*echo '<div class="toggle-wrapper form-group field-participantachievementwork-'.$i.'-type">
                                             <input type="hidden" value="0" id="participantachievementwork-'.$i.'-type" name="ParticipantAchievementWork['.$i.'][type]">
                                             <input type="checkbox" value="1" id="participantachievementwork-'.$i.'-type" class="toggle-checkbox" name="ParticipantAchievementWork['.$i.'][type]">
                                             <span class="toggle-icon off">Призер</span>
@@ -233,13 +276,24 @@ use yii\jui\DatePicker;
                                             </div>
                                             <span class="toggle-icon on">Победитель</span>
                                             <div class="help-block"></div>
-                                       </div>';
+                                       </div>';*/
+
+
+                                    echo '<div class="toggle-wrapper form-group field-participantachievementwork-'.$i.'-type">
+                                                <span class="toggle-icon off" style="text-align: right">Призер</span>
+                                                <div class="toggle-switcher">
+                                                    <input type="hidden" value="0" name="ParticipantAchievementWork['.$i.'][type]">
+                                                    <input type="checkbox" value="1" id="participantachievementwork-'.$i.'-type" class="toggle-checkbox" name="ParticipantAchievementWork['.$i.'][type]">
+                                                    <label for="participantachievementwork-'.$i.'-type"></label>
+                                                </div>
+                                                <span class="toggle-icon on">Победитель</span>
+                                            </div>';
 
                                     ?>
                                 </div>
-                                <div class="panel-body" style="padding: 0; margin: 0"></div>
                             </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -247,49 +301,55 @@ use yii\jui\DatePicker;
         <?php DynamicFormWidget::end(); ?>
     </div>
 
-    <?= $form->field($model, 'isBusinessTrip')->checkbox(['id' => 'tripCheckbox', 'onchange' => 'checkTrip()']) ?>
+    <div class="bordered-div">
+        <div class="checkBlock">
+            <?= $form->field($model, 'isBusinessTrip')->checkbox(['id' => 'tripCheckbox', 'onchange' => 'checkTrip()'])->label('Командировка') ?>
 
-    <div id="divEscort" <?php echo !$model->orderBusinessTrip ? 'hidden' : '' ?>>
-        <?= $form->field($model, 'escort')
-            ->dropDownList(
-                ArrayHelper::map($peoples,'id','fullFio'),
-                ['prompt' => 'не выбрано']
-            );
-        ?>
+            <div id="divEscort" <?php echo !$model->orderBusinessTrip ? 'hidden' : '' ?>>
+                <?= $form->field($model, 'escort')
+                    ->dropDownList(
+                        ArrayHelper::map($peoples,'id','fullFio'),
+                        ['prompt' => 'не выбрано']
+                    )->label('Сопровождающий');
+                ?>
+            </div>
+            <div id="divOrderTrip" <?php echo !$model->orderBusinessTrip ? 'hidden' : '' ?>>
+                <?= $form->field($model, 'orderBusinessTrip')
+                    ->dropDownList(ArrayHelper::map($orders6,'id','fullName'), ['prompt' => '---'])->label('Приказ о командировке');
+                ?>
+            </div>
+        </div>
     </div>
 
-    <div id="divOrderTrip" <?php echo !$model->orderBusinessTrip ? 'hidden' : '' ?>>
-        <?= $form->field($model, 'orderBusinessTrip')
-            ->dropDownList(ArrayHelper::map($orders6,'id','fullName'), ['prompt' => '---']);
-        ?>
+    <div class="col-xs-4">
+        <label class="control-label">Приказ об участии</label>
+        <select class="form-control" disabled>
+            <option selected><?= $model->orderParticipant->getFullName() ?></option>
+        </select>
     </div>
-
-    <?= $form->field($model, 'orderParticipant')->textInput(['readonly' => true, 'value' => $model->orderParticipant->getFullName()])->label('Приказ об участии'); ?>
 
     <?= $form->field($model, 'addOrderParticipant')
-        ->dropDownList(ArrayHelper::map($orders9,'id','fullName'), ['prompt' => '---']);
+        ->dropDownList(ArrayHelper::map($orders9,'id','fullName'), ['prompt' => '---'])
+        ->label('Дополнительный приказ об участии');
     ?>
 
-    <?= $form->field($model, 'keyWords')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'keyWords')->textInput(['maxlength' => true])->label('Ключевые слова') ?>
 
-    <?= $form->field($model, 'doc')->fileInput() ?>
+    <?= $form->field($model, 'doc')->fileInput()->label('Документы о достижениях') ?>
     <?php if (strlen($model->docTable) > 10): ?>
         <?= $model->docTable; ?>
     <?php endif; ?>
 
     <div class="form-group">
-        <div class="button">
-
-            <?= Html::submitButton('Сохранить',
-                [
-                    'class' => 'btn btn-success',
-                    'data' => [
-                        'confirm' => 'Сохранить изменения? Если были загружены новые файлы заявок/достижений, то они заменят более старые',
-                        'method' => 'post',
-                    ],
-                ])
-            ?>
-        </div>
+        <?= Html::submitButton('Сохранить',
+            [
+                'class' => 'btn btn-primary',
+                'data' => [
+                    'confirm' => 'Сохранить изменения? Если были загружены новые файлы заявок/достижений, то они заменят более старые',
+                    'method' => 'post',
+                ],
+            ])
+        ?>
     </div>
 
 

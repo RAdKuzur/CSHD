@@ -42,13 +42,18 @@ class AuthController extends Controller
 
             /** @var UserWork $user */
             if ($user && $user->validatePassword($model->password)) {
-                var_dump('OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                var_dump('OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'); //
                 $duration = 3600 * 12;
                 Yii::$app->user->login($user, $duration);
                 return
                     Yii::$app->session->get('previous_url') ?
                     $this->redirect(Yii::$app->session->get('previous_url')) :
                     $this->redirect(['site/index']);
+            }
+            else {
+                if ($user->validatePassword($model->password)){
+                    var_dump('ERROR!!!!');
+                }
             }
 
             Yii::$app->session->setFlash('danger', 'Неверное имя пользователя и/или пароль');

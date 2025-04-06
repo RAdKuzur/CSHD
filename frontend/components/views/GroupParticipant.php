@@ -10,4 +10,17 @@
 /* @var $groupCheckOption */
 /* @var $groupParticipantOption */
 ?>
-<p>WTF!!!!!!!!!!!!!!!!</p>
+<?= $this->render('_groups_grid', [
+    'dataProvider' => $dataProviderGroup,
+    'model' => $model,
+    'groupCheckOption' => $groupCheckOption,
+]);
+?>
+<?= $this->render('_group-participant_grid', [
+    'dataProvider' => $dataProviderParticipant,
+    'model' => $model,
+    'nomenclature' => $nomenclature,
+    'transferGroups' => $transferGroups,
+    'groupParticipantOption' => $groupParticipantOption,
+]);
+?>

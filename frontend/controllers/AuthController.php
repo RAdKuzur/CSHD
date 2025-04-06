@@ -39,7 +39,7 @@ class AuthController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $user = $this->userRepository->findByEmail($model->username);
-
+            var_dump($user);
             /** @var UserWork $user */
             if ($user && $user->validatePassword($model->password)) {
                 var_dump('OK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'); //
@@ -50,12 +50,6 @@ class AuthController extends Controller
                     $this->redirect(Yii::$app->session->get('previous_url')) :
                     $this->redirect(['site/index']);
             }
-            else {
-                if (!$user->validatePassword($model->password)){
-                    var_dump('ERROR!!!!');
-                }
-            }
-
             Yii::$app->session->setFlash('danger', 'Неверное имя пользователя и/или пароль');
         }
 

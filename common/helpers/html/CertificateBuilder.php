@@ -12,16 +12,17 @@ use Yii;
 
 class CertificateBuilder
 {
-    const VOIKOV_SEAL_PATH = '/templates/seal.png';
-    const KISELEV_SEAL_PATH = '/templates/seal2.png';
+    const VOIKOV_SEAL_PATH = '/upload/templates/seal.png';
+    const KISELEV_SEAL_PATH = '/upload/templates/seal2.png';
     const KISELEV_SEAL_START_DATE = '2022-12-07';
     const KISELEV_SEAL_END_DATE = '2022-12-23';
 
     public static function createStandardCertificate(CertificateWork $certificate, TrainingGroupParticipantWork $participant, int $textSize, string $text)
     {
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
         $date = $participant->trainingGroupWork->protection_date;
         $content = '<body style="
-                                 background: url('. Yii::$app->basePath . FilePaths::CERTIFICATE_TEMPLATES . $certificate->certificateTemplatesWork->path . ') no-repeat ;
+                                 background: url('. $path . ') no-repeat ;
                                  background-size: 10%;">
             <div>
             <table>
@@ -137,8 +138,9 @@ class CertificateBuilder
 
     public static function createTechnosummerCertificate(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
     {
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
         return '<body style="font-family: sans-serif; 
-                                 background: url('. Yii::$app->basePath . FilePaths::CERTIFICATE_TEMPLATES . $certificate->certificateTemplatesWork->path . ') no-repeat ;">
+                                 background: url('. $path . ') no-repeat ;">
             <div>
                 <p style="height: 160px;"></p>
                 <p style="font-size: 28px; text-decoration: none; color: #164192; font-weight: bold; padding-left: -5px;">'.
@@ -203,8 +205,9 @@ class CertificateBuilder
         string $styleDistance
     )
     {
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
         $content = '<body style="font-family: sans-serif; background: url('.
-            Yii::$app->basePath . FilePaths::CERTIFICATE_TEMPLATES . $certificate->certificateTemplatesWork->path .
+             $path.
             ') no-repeat ;">
             <div>';
         if ($date >= "2023-07-21") {

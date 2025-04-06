@@ -49,6 +49,11 @@ class CertificateRepository
         return $command->getRawSql();
     }
 
+    public function delete(CertificateWork $model)
+    {
+        return $model->delete();
+    }
+
     public function save(CertificateWork $model)
     {
         if (!$model->save()) {

@@ -95,7 +95,7 @@ class RubacComponent
 
     public function authId()
     {
-        return Yii::$app->user->identity->getId();
+        return Yii::$app->user->identity ? Yii::$app->user->identity->getId() : 0;
     }
 
     public function checkPermission(int $userId, string $permissionCode)

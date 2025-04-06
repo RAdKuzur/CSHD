@@ -4,16 +4,16 @@ namespace common\components\dictionaries\base;
 
 class PersonalDataDictionary extends BaseDictionary
 {
-    const SURNAME = 0;
-    const FIRSTNAME = 1;
-    const PATRONYMIC = 2;
-    const BIRTH_YEAR = 3;
-    const BIRTH_MONTH = 4;
-    const BIRTH_DAY = 5;
-    const EDUCATIONAL_INSTITUTION = 6;
-    const DIGITAL_FACE_IMAGE = 7;
-    const VIDEO_MATERIALS = 8;
-    const SOUND_MATERIALS = 9;
+    const SURNAME = 1;
+    const FIRSTNAME = 2;
+    const PATRONYMIC = 3;
+    const BIRTH_YEAR = 4;
+    const BIRTH_MONTH = 5;
+    const BIRTH_DAY = 6;
+    const EDUCATIONAL_INSTITUTION = 7;
+    const DIGITAL_FACE_IMAGE = 8;
+    const VIDEO_MATERIALS = 9;
+    const SOUND_MATERIALS = 10;
 
     public function __construct()
     {

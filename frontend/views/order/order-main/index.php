@@ -1,7 +1,9 @@
 <?php
 
 use app\components\VerticalActionColumn;
+use common\helpers\DateFormatter;
 use common\helpers\html\HtmlCreator;
+use frontend\models\work\order\OrderMainWork;
 use kartik\export\ExportMenu;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -64,7 +66,9 @@ $tempArchive = $session->get("archiveIn");
             'summary' => false,
 
             'columns' => [
-                ['attribute' => 'orderDate', 'encodeLabel' => false, 'label' => 'Дата<br>приказа'],
+                ['attribute' => 'orderDate', 'encodeLabel' => false, 'label' => 'Дата<br>приказа', 'value' => function (OrderMainWork $model) {
+                    return DateFormatter::format($model->order_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
+                }],
                 ['attribute' => 'orderName', 'encodeLabel' => false, 'label' => 'Название<br>приказа'],
                 ['attribute' => 'bringName', 'label' => 'Проект<br>вносит', 'encodeLabel' => false],
                 ['attribute' => 'executorName', 'label' => 'Исполнитель', 'encodeLabel' => false],

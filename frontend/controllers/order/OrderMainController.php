@@ -2,6 +2,8 @@
 
 namespace frontend\controllers\order;
 
+use app\events\document_order\DocumentOrderChangeStatusEvent;
+use app\events\RegulationChangeStatusEvent;
 use app\models\forms\OrderMainForm;
 use common\components\traits\AccessControl;
 use common\components\wizards\LockWizard;
@@ -23,6 +25,7 @@ use DomainException;
 use frontend\models\forms\ExpireForm;
 use frontend\models\search\SearchOrderMain;
 use frontend\models\work\order\DocumentOrderWork;
+use frontend\models\work\order\ExpireWork;
 use frontend\models\work\order\OrderMainWork;
 use frontend\services\order\DocumentOrderService;
 use frontend\services\order\OrderMainService;
@@ -107,8 +110,8 @@ class OrderMainController extends DocumentController
         $form = new OrderMainForm(
             new OrderMainWork(),
             $this->peopleRepository->getOrderedList(),
-            $this->documentOrderRepository->getAllByType(DocumentOrderWork::ORDER_MAIN),
-            $this->regulationRepository->getOrderedList(),
+            $this->documentOrderRepository->getAllActual(DocumentOrderWork::ORDER_MAIN),
+            $this->regulationRepository->getAllActual(),
             [new ExpireForm()],
             NULL,
             NULL
@@ -153,7 +156,7 @@ class OrderMainController extends DocumentController
                 $this->repository->get($id),
                 $this->peopleRepository->getOrderedList(),
                 $this->documentOrderRepository->getExceptByIdAndStatus($id, DocumentOrderWork::ORDER_MAIN),
-                $this->regulationRepository->getOrderedList(),
+                $this->regulationRepository->getAllActual(),
                 [new ExpireForm()],
                 $this->service->getChangedDocumentsTable($id),
                 $this->documentOrderService->getUploadedFilesTables($this->repository->get($id))
@@ -233,6 +236,19 @@ class OrderMainController extends DocumentController
 
     public function actionDeleteDocument($id, $modelId)
     {
+        /* @var $expire ExpireWork */
+        $expire = $this->expireRepository->get($id);
+        if ($expire->expire_order_id != "") {
+            $expire->recordEvent(new DocumentOrderChangeStatusEvent(
+                $expire->expire_order_id
+            ), ExpireWork::class);
+        }
+        if ($expire->expire_regulation_id != "") {
+            $expire->recordEvent(new RegulationChangeStatusEvent(
+                $expire->expire_regulation_id
+            ), ExpireWork::class);
+        }
+        $expire->releaseEvents();
         $this->expireRepository->deleteByActiveRegulationId($id);
         return $this->redirect(['update', 'id' => $modelId]);
     }

@@ -155,6 +155,7 @@ class RulesConfig
                 'index',
                 'view',
                 'get-file',
+                'get-files',
             ]
         ],
 
@@ -256,6 +257,7 @@ class RulesConfig
                 'index',
                 'view',
                 'get-file',
+                'get-files',
                 'dependency-dropdown',
             ],
         ],
@@ -275,6 +277,7 @@ class RulesConfig
                 'index',
                 'view',
                 'get-file',
+                'get-files',
                 'dependency-dropdown',
             ],
         ],
@@ -294,6 +297,7 @@ class RulesConfig
                 'index',
                 'view',
                 'get-file',
+                'get-files',
             ],
         ],
 
@@ -311,6 +315,7 @@ class RulesConfig
                 'index',
                 'view',
                 'get-file',
+                'get-files',
             ],
         ],
 

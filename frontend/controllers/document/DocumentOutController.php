@@ -3,6 +3,7 @@
 namespace frontend\controllers\document;
 use common\components\traits\AccessControl;
 use common\components\wizards\LockWizard;
+use common\controllers\DocumentController;
 use common\helpers\ButtonsFormatter;
 use common\helpers\common\HeaderWizard;
 use common\helpers\DateFormatter;
@@ -28,7 +29,7 @@ use frontend\services\document\DocumentOutService;
 use Yii;
 use yii\web\Controller;
 
-class DocumentOutController extends Controller
+class DocumentOutController extends DocumentController
 {
     use AccessControl;
 
@@ -56,7 +57,7 @@ class DocumentOutController extends Controller
         DocumentOutService $service,
         $config = [])
     {
-        parent::__construct($id, $module, $config);
+        parent::__construct($id, $module, Yii::createObject(FileService::class), Yii::createObject(FilesRepository::class), $config);
         $this->repository = $repository;
         $this->peopleRepository = $peopleRepository;
         $this->positionRepository = $positionRepository;
@@ -67,6 +68,7 @@ class DocumentOutController extends Controller
         $this->peopleStampService = $peopleStampService;
         $this->lockWizard = $lockWizard;
     }
+
     public function actionIndex()
     {
         $model = new DocumentOutWork();
@@ -90,6 +92,7 @@ class DocumentOutController extends Controller
             'buttonsAct' => $buttonHtml,
         ]);
     }
+
     public function actionView($id)
     {
         $links = ButtonsFormatter::updateDeleteLinks($id);
@@ -104,6 +107,7 @@ class DocumentOutController extends Controller
             'buttonsAct' => $buttonHtml,
         ]);
     }
+
     public function actionCreate(){
 
         $model = new DocumentOutWork();
@@ -149,6 +153,7 @@ class DocumentOutController extends Controller
             'filesAnswer' => $filesAnswer
         ]);
     }
+
     public function actionUpdate($id)
     {
         if ($this->lockWizard->lockObject($id, DocumentOutWork::tableName(), Yii::$app->user->id)) {
@@ -209,6 +214,7 @@ class DocumentOutController extends Controller
             return $this->redirect(Yii::$app->request->referrer ?: ['index']);
         }
     }
+
     public function actionDelete($id)
     {
         /** @var DocumentOutWork $model */
@@ -223,19 +229,7 @@ class DocumentOutController extends Controller
             throw new DomainException('Модель не найдена');
         }
     }
-    public function actionGetFile($filepath)
-    {
-        $data = $this->fileService->downloadFile($filepath);
-        if ($data['type'] == FilesHelper::FILE_SERVER) {
-            Yii::$app->response->sendFile($data['obj']->file);
-        }
-        else {
-            $fp = fopen('php://output', 'r');
-            HeaderWizard::setFileHeaders(FilesHelper::getFilenameFromPath($data['obj']->filepath), $data['obj']->file->size);
-            $data['obj']->file->download($fp);
-            fseek($fp, 0);
-        }
-    }
+
     public function actionDeleteFile($modelId, $fileId)
     {
         try {
@@ -254,6 +248,7 @@ class DocumentOutController extends Controller
             return 'Oops! Something wrong';
         }
     }
+
     public function actionDependencyDropdown()
     {
         $id = Yii::$app->request->post('id');

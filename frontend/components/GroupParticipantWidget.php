@@ -45,8 +45,8 @@ class GroupParticipantWidget extends Widget
     }
     public function script()
     {
-        /*$this->groupParticipantScript($this->config['participantUrl']);
-        $this->groupScript($this->config['groupUrl']);*/
+        $this->groupParticipantScript($this->config['participantUrl']);
+        $this->groupScript($this->config['groupUrl']);
     }
     public function groupScript($groupUrl){
         //группы 'order/order-training/get-group-by-branch'

@@ -136,7 +136,6 @@ class OrderTrainingController extends DocumentController
             NULL,
             NULL,
         );
-        var_dump('Ok! 1');
         $post = Yii::$app->request->post();
         if ($model->load($post)) {
             $this->documentOrderService->getPeopleStamps($model);
@@ -162,7 +161,6 @@ class OrderTrainingController extends DocumentController
                 return $this->redirect(Yii::$app->request->referrer ?: ['create']);
             }
         }
-        var_dump('Ok! 2');
         return $this->render('create', [
             'model' => $model,
             'people' => $form->people,

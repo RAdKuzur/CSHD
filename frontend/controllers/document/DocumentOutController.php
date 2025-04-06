@@ -37,10 +37,8 @@ class DocumentOutController extends DocumentController
     private PeopleRepository $peopleRepository;
     private PositionRepository $positionRepository;
     private CompanyRepository $companyRepository;
-    private FileService $fileService;
     private PeopleStampService $peopleStampService;
     private LockWizard $lockWizard;
-    private FilesRepository $filesRepository;
     private DocumentOutService $service;
 
     public function __construct(
@@ -50,10 +48,8 @@ class DocumentOutController extends DocumentController
         PeopleRepository $peopleRepository,
         PositionRepository $positionRepository,
         CompanyRepository $companyRepository,
-        FileService $fileService,
         PeopleStampService $peopleStampService,
         LockWizard $lockWizard,
-        FilesRepository $filesRepository,
         DocumentOutService $service,
         $config = [])
     {
@@ -62,8 +58,6 @@ class DocumentOutController extends DocumentController
         $this->peopleRepository = $peopleRepository;
         $this->positionRepository = $positionRepository;
         $this->companyRepository = $companyRepository;
-        $this->fileService = $fileService;
-        $this->filesRepository = $filesRepository;
         $this->service = $service;
         $this->peopleStampService = $peopleStampService;
         $this->lockWizard = $lockWizard;
@@ -108,8 +102,8 @@ class DocumentOutController extends DocumentController
         ]);
     }
 
-    public function actionCreate(){
-
+    public function actionCreate()
+    {
         $model = new DocumentOutWork();
         $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
         $availablePositions = $this->positionRepository->getList();
@@ -227,25 +221,6 @@ class DocumentOutController extends DocumentController
         }
         else {
             throw new DomainException('Модель не найдена');
-        }
-    }
-
-    public function actionDeleteFile($modelId, $fileId)
-    {
-        try {
-            $file = $this->filesRepository->getById($fileId);
-
-            /** @var FilesWork $file */
-            $filepath = $file ? basename($file->filepath) : '';
-            $this->fileService->deleteFile(FilesHelper::createAdditionalPath($file->table_name, $file->file_type) . $file->filepath);
-            $file->recordEvent(new FileDeleteEvent($file->id), get_class($file));
-            $file->releaseEvents();
-
-            Yii::$app->session->setFlash('success', "Файл $filepath успешно удален");
-            return $this->redirect(['update', 'id' => $modelId]);
-        }
-        catch (DomainException $e) {
-            return 'Oops! Something wrong';
         }
     }
 

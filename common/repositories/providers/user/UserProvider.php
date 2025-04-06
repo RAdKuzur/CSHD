@@ -24,7 +24,7 @@ class UserProvider implements UserProviderInterface
 
     public function getByEmail($email)
     {
-        return UserWork::find()->where(['username' => $email])->one();
+        return UserWork::find()->where(['email' => $email])->one();
     }
 
     public function save(UserWork $user)

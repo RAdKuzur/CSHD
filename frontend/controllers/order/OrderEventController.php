@@ -179,7 +179,7 @@ class OrderEventController extends DocumentController
                 $form->orderEventForm->docFiles,
             );
             //$modelOrderEvent->generateOrderNumber();
-            $error = $this->documentOrderService->generateNumber($form->entity);
+            $error = $this->documentOrderService->generateNumber($modelOrderEvent);
             if (!$error){
                 $this->documentOrderService->getPeopleStamps($modelOrderEvent);
                 $number = $modelOrderEvent->getNumberPostfix();

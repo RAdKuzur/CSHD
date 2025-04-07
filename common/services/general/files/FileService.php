@@ -76,7 +76,7 @@ class FileService
         if (file_exists($path)) {
             $taskData = json_encode([
                 'localPath' => $path,
-                'yandexPath' => self::FOLDER . '/' . str_replace('_', '-', $params['tableName']) . '/' . $params['fileType'] . '/' .  $filename,
+                'yandexPath' => self::FOLDER . '/' . str_replace('-', '_', $params['tableName']) . '/' . $params['fileType'] . '/' .  $filename,
             ]);
             Yii::$app->rabbitmq->publish('file_upload_queue', $taskData);
         }

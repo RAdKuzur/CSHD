@@ -125,25 +125,32 @@ $this->registerJs(<<<JS
         });
     }
 
-    document.getElementById('button-teacher').addEventListener('click', function() {
+    document.getElementById('button-teacher').addEventListener('click', function(event) {
+        event.preventDefault();
         activateCheckboxes($permissionsTeacher);
     });
-    document.getElementById('button-study').addEventListener('click', function() {
+    document.getElementById('button-study').addEventListener('click', function(event) {
+        event.preventDefault();
         activateCheckboxes($permissionsStudyInform);
     });
-    document.getElementById('button-event').addEventListener('click', function() {
+    document.getElementById('button-event').addEventListener('click', function(event) {
+        event.preventDefault();
         activateCheckboxes($permissionsEventInform);
     });
-    document.getElementById('button-document').addEventListener('click', function() {
+    document.getElementById('button-document').addEventListener('click', function(event) {
+        event.preventDefault();
         activateCheckboxes($permissionsDocInform);
     });
-    document.getElementById('button-branch-controller').addEventListener('click', function() {
+    document.getElementById('button-branch-controller').addEventListener('click', function(event) {
+        event.preventDefault();
         activateCheckboxes($permissionsBranchController);
     });
-    document.getElementById('button-super-controller').addEventListener('click', function() {
+    document.getElementById('button-super-controller').addEventListener('click', function(event) {
+        event.preventDefault();
         activateCheckboxes($permissionsSuperController);
     });
-    document.getElementById('button-admin').addEventListener('click', function() {
+    document.getElementById('button-admin').addEventListener('click', function(event) {
+        event.preventDefault();
         activateCheckboxes($permissionsAdmin);
     });
 JS

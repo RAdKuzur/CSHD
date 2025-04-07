@@ -24,7 +24,7 @@ class PbacGroupAccess implements PbacComponentInterface
         $this->permissionFunctionRepository = Yii::createObject(UserPermissionFunctionRepository::class);
     }
 
-    public function getAllowedGroups()
+    public function getAllowedGroupsQuery()
     {
         $accessTheirGroups = $this->permissionFunctionRepository->getByUserPermissionBranch($this->data->user->id, PermissionFunctionWork::PERMISSION_THEIR_GROUPS_ID);
         $accessBranchGroups = $this->permissionFunctionRepository->getByUserPermissionBranch($this->data->user->id, PermissionFunctionWork::PERMISSION_BRANCH_GROUPS_ID);

@@ -177,7 +177,7 @@ $this->title = 'ЦСХД';
                 <div class="flexx">
                     <?php
                     $svg = HtmlBuilder::paintSVG(FilePaths::SVG_ANALYTIC);
-                    echo HtmlBuilder::createGroupButton(ButtonsFormatter::anyOneLink($svg . ' Ошибки заполнения', Yii::$app->frontUrls::ANALITIC_ERRORS_INDEX, ButtonsFormatter::BTN_SUCCESS));
+                    echo HtmlBuilder::createGroupButton(ButtonsFormatter::anyOneLink($svg . ' Ошибки заполнения', Yii::$app->frontUrls::ANALITIC_ERRORS_INDEX, ButtonsFormatter::BTN_SUCCESS, '', ButtonsFormatter::createParameterLink(Yii::$app->rubac->authId())));
                     ?>
                 </div>
                 <div class="flexx">

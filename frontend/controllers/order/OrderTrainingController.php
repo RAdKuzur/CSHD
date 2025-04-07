@@ -142,16 +142,24 @@ class OrderTrainingController extends DocumentController
             if (!$model->validate()) {
                throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
             }
-            $respPeopleId = DynamicWidget::getData(basename(OrderTrainingWork::class), "responsible_id", $post);
-            $this->documentOrderService->getFilesInstances($model);
-            $model->generateOrderNumber();
-            $this->orderTrainingRepository->save($model);
-            $status = $this->orderTrainingService->getStatus($model);
-            $error = $this->orderTrainingService->createOrderTrainingGroupParticipantEvent($model, $status, $post);
-            $this->documentOrderService->saveFilesFromModel($model);
-            $this->orderPeopleService->addOrderPeopleEvent($respPeopleId, $model);
-            $model->releaseEvents();
-            return $this->redirect(['view', 'id' => $model->id, 'error' => $error]);
+            $error = $this->documentOrderService->generateNumber($model);
+            if (!$error) {
+                $respPeopleId = DynamicWidget::getData(basename(OrderTrainingWork::class), "responsible_id", $post);
+                $this->documentOrderService->getFilesInstances($model);
+                //$model->generateOrderNumber();
+                $this->orderTrainingRepository->save($model);
+                $status = $this->orderTrainingService->getStatus($model);
+                $error = $this->orderTrainingService->createOrderTrainingGroupParticipantEvent($model, $status, $post);
+                $this->documentOrderService->saveFilesFromModel($model);
+                $this->orderPeopleService->addOrderPeopleEvent($respPeopleId, $model);
+                $model->releaseEvents();
+                return $this->redirect(['view', 'id' => $model->id, 'error' => $error]);
+            }
+            else {
+                Yii::$app->session->setFlash
+                ('error', "Ошибка создания приказа с такой датой");
+                return $this->redirect(Yii::$app->request->referrer ?: ['create']);
+            }
         }
         return $this->render('create', [
             'model' => $model,
@@ -252,6 +260,7 @@ class OrderTrainingController extends DocumentController
         $groupsQuery = $this->trainingGroupRepository->getByBranchQuery($branch);
         $dataProvider = new ActiveDataProvider([
             'query' => $groupsQuery,
+            'pagination' => false
         ]);
         return $this->asJson([
             'gridHtml' => $this->renderPartial(GroupParticipantWidget::GROUP_VIEW, [

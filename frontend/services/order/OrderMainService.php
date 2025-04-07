@@ -2,6 +2,8 @@
 
 namespace frontend\services\order;
 
+use app\events\document_order\DocumentOrderChangeStatusEvent;
+use app\events\RegulationChangeStatusEvent;
 use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\general\PeopleStampRepository;
 use common\services\general\PeopleStampService;
@@ -114,6 +116,16 @@ class OrderMainService {
                 $model->recordEvent(new ExpireCreateEvent(
                     $model->id, $expire->expireRegulationId, $expire->expireOrderId, $expire->docType, $expire->expireType
                 ), ExpireWork::class);
+                if ($expire->expireOrderId != "") {
+                    $model->recordEvent(new DocumentOrderChangeStatusEvent(
+                        $expire->expireOrderId
+                    ), ExpireWork::class);
+                }
+                if ($expire->expireRegulationId != "") {
+                    $model->recordEvent(new RegulationChangeStatusEvent(
+                        $expire->expireRegulationId
+                    ), ExpireWork::class);
+                }
             }
         }
     }

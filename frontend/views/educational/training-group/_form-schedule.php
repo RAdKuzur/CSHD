@@ -7,7 +7,6 @@ use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -15,8 +14,9 @@ use yii\widgets\ActiveForm;
 /* @var $modelLessons */
 /* @var $auditoriums */
 /* @var $scheduleTable */
+/* @var $buttonsAct */
 
-$this->title = 'Редактирование';
+$this->title = 'Редактирование группы ' . $model->number;
 $this->params['breadcrumbs'][] = ['label' => 'Учебные группы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => "Группа {$model->number}", 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = $this->title;
@@ -43,32 +43,38 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 
     <?= AlertMessageWizard::showRedisConnectMessage() ?>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="substrate">
+        <h3><?= Html::encode($this->title) ?></h3>
+        <div class="flexx space">
+            <div class="flexx">
+                <?= $buttonsAct; ?>
+            </div>
+        </div>
+    </div>
 
-    <?= Html::a('Основная информация', Url::to(['educational/training-group/base-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Список учеников', Url::to(['educational/training-group/participant-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
-    <?= Html::a('Расписание', Url::to(['educational/training-group/schedule-form', 'id' => $model->id]), ['class' => 'btn btn-success']) ?>
-    <?= Html::a('Сведения о защите работ', Url::to(['educational/training-group/pitch-form', 'id' => $model->id]), ['class' => 'btn btn-primary']) ?>
+    <div class="training-group-schedule-form field-backing">
+        <?php if (strlen($scheduleTable) > 10): ?>
+            <?= $scheduleTable; ?>
+        <?php endif; ?>
 
-    <?php if (strlen($scheduleTable) > 10): ?>
-        <?= $scheduleTable; ?>
-    <?php endif; ?>
-
-    <div class="training-group-schedule-form">
         <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
-        <?= $form->field($model, 'type')->radioList(
-            array(
-                TrainingGroupScheduleForm::MANUAL => 'Ручное заполнение расписания',
-                TrainingGroupScheduleForm::AUTO => 'Автоматическое расписание по дням'
-            ),
-            [
-                'value' => TrainingGroupScheduleForm::MANUAL,
-                'onchange' => 'changeScheduleType()'
-            ]
-        )->label('') ?>
+        <div class="bordered-div">
+            <div style="padding: 0 1em;">
+                <?= $form->field($model, 'type')->radioList(
+                    array(
+                        TrainingGroupScheduleForm::MANUAL => 'Ручное заполнение расписания',
+                        TrainingGroupScheduleForm::AUTO => 'Автоматическое расписание по дням'
+                    ),
+                    [
+                        'value' => TrainingGroupScheduleForm::MANUAL,
+                        'onchange' => 'changeScheduleType()'
+                    ]
+                )->label('') ?>
+            </div>
+        </div>
 
-        <div class="panel-body">
+        <div class="bordered-div">
             <?php DynamicFormWidget::begin([
                 'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
                 'widgetBody' => '.container-items', // required: css class selector
@@ -85,16 +91,21 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
             ]); ?>
 
             <div class="container-items"><!-- widgetContainer -->
-                <button type="button" class="add-item btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i></button>
+                <div class="panel-title">
+                    <h5 class="panel-title pull-left">Занятие</h5><!-- widgetBody -->
+                    <div class="pull-right">
+                        <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                    </div>
+                </div>
                 <?php foreach ($modelLessons as $i => $modelLesson): ?>
-                    <div class="item panel panel-default"><!-- widgetBody -->
-                        <div class="panel-heading">
-                            <h3 class="panel-title pull-left">Занятие</h3>
-                            <div class="pull-right">
-                                <button type="button" class="remove-item btn btn-danger btn-xs"><i class="glyphicon glyphicon-minus"></i></button>
-                            </div>
-                            <div class="clearfix"></div>
+                <div class="item panel panel-default" id = "item"><!-- widgetItem -->
+                    <div class="panel-heading">
+                        <div class="pull-right">
+                            <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
                         </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class = "form-label">
                         <div class="panel-body">
                             <div class="row">
                                 <div id="manual-fields" style="display: block">
@@ -141,7 +152,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                                     ]
                                 )->label('Начало занятия') ?>
 
-                                <?= $form->field($modelLesson, "[{$i}]branch")->dropDownList(Yii::$app->branches->getList()); ?>
+                                <?= $form->field($modelLesson, "[{$i}]branch")->dropDownList(Yii::$app->branches->getList())->label('Отдел'); ?>
 
                                 <?= $form->field($modelLesson, "[{$i}]auditorium_id")->widget(Select2::classname(), [
                                     'data' => ArrayHelper::map($auditoriums, 'id', 'name'),
@@ -160,7 +171,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         </div>
 
         <div class="form-group">
-            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
         </div>
     </div>
 

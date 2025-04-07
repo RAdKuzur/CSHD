@@ -116,11 +116,13 @@ th:last-child, .grid-view tbody tr:hover td:last-child, .card-block-2 {
     border-top-right-radius: var(--border-radius);
 }
 
-.grid-view tbody tr:hover td:first-child, .grid-view tbody tr:last-child td:first-child, .card-block-1 {
+.grid-view tbody tr:hover td:first-child, .grid-view tbody tr:last-child td:first-child, .card-block-1,
+.table-bordered tr:hover td:last-child, .table-bordered tr:last-child td:first-child {
     border-bottom-left-radius: var(--border-radius);
 }
 
-.grid-view tbody tr:hover td:last-child, .grid-view tbody tr:last-child td:last-child, .card-block-2 {
+.grid-view tbody tr:hover td:last-child, .grid-view tbody tr:last-child td:last-child, .card-block-2,
+.table-bordered tr:hover td:last-child, .table-bordered tr:last-child td:last-child {
     border-bottom-right-radius: var(--border-radius);
 }
 
@@ -719,4 +721,14 @@ input[type="checkbox"] {
 
 ::-webkit-scrollbar-corner {
     display: none;
+}
+
+.footer.bg-dark p{
+    color: gray;
+}
+
+.navbar-nav .dropdown-item:hover, .dropdown-item:focus {
+    background-color: var(--primary-subtle-hover);
+    color: var(--primary-subtle-text);
+    font-weight: 500;
 }

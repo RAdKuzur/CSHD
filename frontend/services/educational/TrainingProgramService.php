@@ -9,6 +9,7 @@ use common\helpers\files\filenames\TrainingProgramFileNameGenerator;
 use common\helpers\files\FilePaths;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
 use common\repositories\educational\TrainingProgramRepository;
 use common\services\DatabaseServiceInterface;
@@ -202,14 +203,15 @@ class TrainingProgramService implements DatabaseServiceInterface
                 array_merge(['Форма контроля'], array_map(function ($number) use ($controlNames) {
                     return $controlNames[$number] ?? null;
                 }, ArrayHelper::getColumn($themes, 'control_type'))),
+                [''],
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Редактировать',
+                    HtmlCreator::IconUpdate(),
                     Url::to('update-theme'),
                     ['id' => ArrayHelper::getColumn($themes, 'id'), 'modelId' => ArrayHelper::getColumn($themes, 'training_program_id')]),
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-theme'),
                     ['id' => ArrayHelper::getColumn($themes, 'id'), 'modelId' => ArrayHelper::getColumn($themes, 'training_program_id')])
             ]
@@ -220,13 +222,13 @@ class TrainingProgramService implements DatabaseServiceInterface
         $patronymicAuthors = ArrayHelper::getColumn($authors, 'authorWork.peopleWork.patronymic');
         $modelAuthor = HtmlBuilder::createTableWithActionButtons(
             [
-                array_merge(['ФИО'], array_map(function($nameAuthors, $surnameAuthors, $patronymicAuthors) {
+                array_merge(['ФИО составителя'], array_map(function($nameAuthors, $surnameAuthors, $patronymicAuthors) {
                     return "$nameAuthors $surnameAuthors $patronymicAuthors";
                 }, $nameAuthors, $surnameAuthors, $patronymicAuthors))
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-author'),
                     ['id' => ArrayHelper::getColumn($authors, 'id'), 'modelId' => ArrayHelper::getColumn($authors, 'training_program_id')])
             ]

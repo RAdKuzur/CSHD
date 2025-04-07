@@ -3,12 +3,14 @@
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\general\PeopleWork;
 use frontend\models\work\responsibility\LegacyResponsibleWork;
 use frontend\models\work\responsibility\LocalResponsibilityWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -22,7 +24,7 @@ if ($model->quant !== null) {
 }
 $this->params['breadcrumbs'][] = ['label' => 'Учет ответственности работников', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-\yii\web\YiiAsset::register($this);
+YiiAsset::register($this);
 ?>
 <div class="local-responsibility-view">
 
@@ -45,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         Вид
                     </div>
                     <div class="field-date">
-                        <?= $model->getFullName() ?>
+                        <?= Yii::$app->responsibilityType->get($model->responsibility_type) ?>
                     </div>
                 </div>
                 <div class="card-field flexx">
@@ -53,123 +55,89 @@ $this->params['breadcrumbs'][] = $this->title;
                         Работник
                     </div>
                     <div class="field-date">
-                        Входящая документация
+                        <?= StringFormatter::stringAsLink(
+                                $model->peopleStampWork->peopleWork->getFIO(PersonInterface::FIO_FULL),
+                                Url::to([Yii::$app->frontUrls::PEOPLE_VIEW, 'id' => $model->peopleStampWork->people_id])
+                            )
+                        ?>
                     </div>
                 </div>
             </div>
             <div class="card-set">
-                <div class="card-head">Местоположение</div>
+                <div class="card-head">Идентификационные данные</div>
                 <div class="card-field flexx">
                     <div class="field-title">
-                        Корреспондент
+                        Отдел
                     </div>
                     <div class="field-date">
-                        <?= $model->getCompanyName() ?>
+                        <?= Yii::$app->branches->get($model->branch) ?>
                     </div>
                 </div>
                 <div class="card-field flexx">
                     <div class="field-title">
-                        Должность и ФИО
+                        Помещение
                     </div>
                     <div class="field-date">
-                        <?= $model->getCorrespondentName() ?>
+                        <?= StringFormatter::stringAsLink(
+                                $model->auditoriumWork->name,
+                                Url::to([Yii::$app->frontUrls::AUDITORIUM_VIEW, 'id' => $model->auditorium_id])
+                            )
+                        ?>
                     </div>
                 </div>
-                <div class="card-field flexx">
-                    <div class="field-title">
-                        Дата и номер
+                <?php if (!is_null($model->quant)): ?>
+                    <div class="card-field flexx">
+                        <div class="field-title">
+                            Квант
+                        </div>
+                        <div class="field-date">
+                            <?= $model->quant ?>
+                        </div>
                     </div>
-                    <div class="field-date">
-                        <?= $model->getRealDate() . ' № ' . $model->getRealNumber() ?>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
-            <?php if ($model->getNeedAnswer()) : ?>
-                <div class="card-set">
-                    <div class="card-head">Ответ</div>
-                    <?php if ($model->getAnswerNotEmpty()) : ?>
-                        <div class="card-field flexx">
-                            <div class="field-title">
-                                Документ
-                            </div>
-                            <div class="field-date">
-                                <?= $model->getAnswer() ?>
-                            </div>
-                        </div>
-                    <?php else : ?>
-                        <div class="card-field flexx">
-                            <div class="field-title">
-                                Ответственный
-                            </div>
-                            <div class="field-date">
-                                <?= $model->getResponsibleName() ?>
-                            </div>
-                        </div>
-                        <div class="card-field flexx">
-                            <div class="field-title">
-                                Cрок ответа
-                            </div>
-                            <div class="field-date">
-                                <?= $model->getResponsibleDate() ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
         </div>
-        <div class="card-block-2">
+        <div class="card-block-2" style="flex-basis: 80%">
             <div class="card-set">
-                <div class="card-head">Дата и номер</div>
+                <div class="card-head">Документы</div>
                 <div class="card-field flexx">
                     <div class="field-title">
-                        № п/п
+                        Приказ
                     </div>
                     <div class="field-date">
-                        <?= $model->getFullNumber() ?>
+                        <?= $model->getCurrentOrder() ?>
                     </div>
                 </div>
                 <div class="card-field flexx">
                     <div class="field-title">
-                        Дата
+                        Положение/инструкция
                     </div>
                     <div class="field-date">
-                        <?= $model->getLocalDate() ?>
-                    </div>
-                </div>
-            </div>
-            <div class="card-set">
-                <div class="card-head">Ключевые слова</div>
-                <div class="card-field">
-                    <div class="field-date">
-                        <?= $model->getKeyWords() ?>
+                        <?= $model->regulationWork ?
+                            StringFormatter::stringAsLink(
+                                $model->regulationWork->name,
+                                Url::to([Yii::$app->frontUrls::REG_VIEW, 'id' => $model->regulation_id])
+                            ) :
+                            '---'
+                        ?>
                     </div>
                 </div>
             </div>
             <div class="card-set">
                 <div class="card-head">Файлы</div>
                 <div class="flexx files-section space-around">
-                    <div class="file-block-center"><?= $model->getFullScan(); ?><div>Сканы</div></div>
-                    <div class="file-block-center"><?= $model->getFullDoc(); ?><div>Редактируемые</div></div>
-                    <div class="file-block-center"><?= $model->getFullApp(); ?><div>Приложения</div></div>
+                    <div class="file-block-center"><?php /*= $model->getFullScan();*/ ?><div>Файлы</div></div>
                 </div>
             </div>
             <div class="card-set">
-                <div class="card-head">Свойства</div>
+                <div class="card-head">История ответственности</div>
                 <div class="flexx">
                     <div class="card-field flexx">
                         <div class="field-title field-option">
-                            Создатель карточки
+                            История
                         </div>
                         <div class="field-date">
-                            <?= $model->getCreatorName() ?>
-                        </div>
-                    </div>
-                    <div class="card-field flexx">
-                        <div class="field-title field-option">
-                            Последний редактор
-                        </div>
-                        <div class="field-date">
-                            <?= $model->getLastEditorName() ?>
+                            <?= $model->getLegacy() ?>
                         </div>
                     </div>
                 </div>

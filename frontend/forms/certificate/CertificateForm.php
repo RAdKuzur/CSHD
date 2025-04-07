@@ -63,6 +63,13 @@ class CertificateForm extends Model
         }
     }
 
+    public function rules()
+    {
+        return [
+            [['templateId'], 'integer']
+        ];
+    }
+
     public function load($data, $formName = null)
     {
         $this->participants = $data['group-participant-selection'];

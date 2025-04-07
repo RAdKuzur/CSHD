@@ -4,6 +4,7 @@ namespace backend\models\forms;
 
 use backend\events\user\AddUserPermissionEvent;
 use backend\events\user\DeleteUserPermissionEvent;
+use common\components\access\AuthDataCache;
 use common\components\compare\UserPermissionCompare;
 use common\components\traits\Math;
 use common\events\EventTrait;
@@ -65,12 +66,13 @@ class UserForm extends Model
         $mainDataLoad = parent::load($data, $formName);
         if ($mainDataLoad) {
             $this->entity->load($data);
-            $this->entity->setPassword(
-                Yii::$app->security->generatePasswordHash(
-                    $this->entity->password_hash
-                )
-            );
-
+            if (!$this->entity->hasPassword()) {
+                $this->entity->setPassword(
+                    Yii::$app->security->generatePasswordHash(
+                        $this->entity->password_hash
+                    )
+                );
+            }
             return true;
         }
 
@@ -86,6 +88,8 @@ class UserForm extends Model
 
     public function savePermissions()
     {
+        (Yii::createObject(AuthDataCache::class))->clearAuthData($this->entity->id);
+
         $prevPermissionIds = ArrayHelper::getColumn(
             $this->prevUserPermissions,
             'id'

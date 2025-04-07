@@ -32,6 +32,8 @@ class DocumentOrderWork extends DocumentOrder
     public const ORDER_TRAINING = 3;
     public const ERROR_DATE_PARTICIPANT = 1;
     public const ERROR_RELATION = 2;
+    public const NOT_ACTUAL = 0;
+    public const ACTUAL = 1;
     /**
      * Переменные для input-file в форме
      */
@@ -45,7 +47,7 @@ class DocumentOrderWork extends DocumentOrder
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['order_date', 'order_name', 'executor_id', 'bring_id'], 'required'],
+            [['order_date', 'order_name'], 'required'],
             [['scanFile'], 'file', 'skipOnEmpty' => true,
                 'extensions' => 'png, jpg, pdf, zip, rar, 7z, tag, txt'],
             [['docFiles'], 'file', 'skipOnEmpty' => true, 'maxFiles' => 10,
@@ -56,17 +58,22 @@ class DocumentOrderWork extends DocumentOrder
     }
 
     public function getFullOrderName(){
-        return $this->order_number . ' ' . $this->order_postfix . ' ' . $this->order_name;
+        return $this->order_number . ' ' . $this->order_copy_id .' '.$this->order_postfix . ' ' . $this->order_postfix;
     }
 
     public function getFullNumber()
     {
-        if ($this->order_postfix == null) {
-            return $this->order_number;
+        $parts = [];
+        if ($this->order_number != null) {
+            $parts[] = $this->order_number;
         }
-        else {
-            return $this->order_number.'/'.$this->order_postfix;
+        if ($this->order_copy_id != null){
+            $parts[] = $this->order_copy_id;
         }
+        if ($this->order_postfix != null) {
+            $parts[] = $this->order_postfix;
+        }
+        return implode('/', $parts);
     }
 
     public function getFullName()
@@ -240,5 +247,11 @@ class DocumentOrderWork extends DocumentOrder
         }
 
         return HtmlBuilder::createSVGLink($link);
+    }
+    public function setNumber($number, $copyId, $postfix)
+    {
+        $this->order_number = $number;
+        $this->order_copy_id = $copyId;
+        $this->order_postfix = $postfix;
     }
 }

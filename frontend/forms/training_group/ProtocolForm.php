@@ -34,4 +34,9 @@ class ProtocolForm extends Model
             [['participants'], 'safe']
         ];
     }
+
+    public function getNumberGroup()
+    {
+        return $this->group->number;
+    }
 }

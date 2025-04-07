@@ -51,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         Рег. номер
                     </div>
                     <div class="field-date">
-                        <?= $model->getNumberPostfix() ?>
+                        <?= $model->getFullNumber() ?>
                     </div>
                 </div>
                 <div class="card-field flexx">

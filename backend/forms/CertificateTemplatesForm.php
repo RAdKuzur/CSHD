@@ -78,6 +78,7 @@ class CertificateTemplatesForm extends Model
         else {
             (Yii::createObject(FileService::class))->uploadFile($this->templateFile, $res, ['filepath' => $loadedPath]);
         }
+
     }
 
     public function getFullScan()

@@ -5,6 +5,7 @@ namespace frontend\forms\training_group;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
 use common\Model;
 use common\repositories\educational\GroupProjectThemesRepository;
 use common\repositories\educational\TrainingGroupRepository;
@@ -93,7 +94,7 @@ class PitchGroupForm extends Model
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-theme'),
                     [
                         'groupId' => array_fill(0, count($this->prevThemes), $this->id),

@@ -3,6 +3,7 @@
 namespace frontend\controllers\document;
 use common\components\traits\AccessControl;
 use common\components\wizards\LockWizard;
+use common\controllers\DocumentController;
 use common\helpers\ButtonsFormatter;
 use common\helpers\common\HeaderWizard;
 use common\helpers\DateFormatter;
@@ -28,7 +29,7 @@ use frontend\services\document\DocumentOutService;
 use Yii;
 use yii\web\Controller;
 
-class DocumentOutController extends Controller
+class DocumentOutController extends DocumentController
 {
     use AccessControl;
 
@@ -36,10 +37,8 @@ class DocumentOutController extends Controller
     private PeopleRepository $peopleRepository;
     private PositionRepository $positionRepository;
     private CompanyRepository $companyRepository;
-    private FileService $fileService;
     private PeopleStampService $peopleStampService;
     private LockWizard $lockWizard;
-    private FilesRepository $filesRepository;
     private DocumentOutService $service;
 
     public function __construct(
@@ -49,24 +48,21 @@ class DocumentOutController extends Controller
         PeopleRepository $peopleRepository,
         PositionRepository $positionRepository,
         CompanyRepository $companyRepository,
-        FileService $fileService,
         PeopleStampService $peopleStampService,
         LockWizard $lockWizard,
-        FilesRepository $filesRepository,
         DocumentOutService $service,
         $config = [])
     {
-        parent::__construct($id, $module, $config);
+        parent::__construct($id, $module, Yii::createObject(FileService::class), Yii::createObject(FilesRepository::class), $config);
         $this->repository = $repository;
         $this->peopleRepository = $peopleRepository;
         $this->positionRepository = $positionRepository;
         $this->companyRepository = $companyRepository;
-        $this->fileService = $fileService;
-        $this->filesRepository = $filesRepository;
         $this->service = $service;
         $this->peopleStampService = $peopleStampService;
         $this->lockWizard = $lockWizard;
     }
+
     public function actionIndex()
     {
         $model = new DocumentOutWork();
@@ -90,18 +86,24 @@ class DocumentOutController extends Controller
             'buttonsAct' => $buttonHtml,
         ]);
     }
+
     public function actionView($id)
     {
         $links = ButtonsFormatter::updateDeleteLinks($id);
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
+        /** @var DocumentOutWork $model */
+        $model = $this->repository->get($id);
+        $model->checkFilesExist();
+
         return $this->render('view', [
-            'model' => $this->repository->get($id),
+            'model' => $model,
             'buttonsAct' => $buttonHtml,
         ]);
     }
-    public function actionCreate(){
 
+    public function actionCreate()
+    {
         $model = new DocumentOutWork();
         $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
         $availablePositions = $this->positionRepository->getList();
@@ -145,6 +147,7 @@ class DocumentOutController extends Controller
             'filesAnswer' => $filesAnswer
         ]);
     }
+
     public function actionUpdate($id)
     {
         if ($this->lockWizard->lockObject($id, DocumentOutWork::tableName(), Yii::$app->user->id)) {
@@ -205,6 +208,7 @@ class DocumentOutController extends Controller
             return $this->redirect(Yii::$app->request->referrer ?: ['index']);
         }
     }
+
     public function actionDelete($id)
     {
         /** @var DocumentOutWork $model */
@@ -219,37 +223,7 @@ class DocumentOutController extends Controller
             throw new DomainException('Модель не найдена');
         }
     }
-    public function actionGetFile($filepath)
-    {
-        $data = $this->fileService->downloadFile($filepath);
-        if ($data['type'] == FilesHelper::FILE_SERVER) {
-            Yii::$app->response->sendFile($data['obj']->file);
-        }
-        else {
-            $fp = fopen('php://output', 'r');
-            HeaderWizard::setFileHeaders(FilesHelper::getFilenameFromPath($data['obj']->filepath), $data['obj']->file->size);
-            $data['obj']->file->download($fp);
-            fseek($fp, 0);
-        }
-    }
-    public function actionDeleteFile($modelId, $fileId)
-    {
-        try {
-            $file = $this->filesRepository->getById($fileId);
 
-            /** @var FilesWork $file */
-            $filepath = $file ? basename($file->filepath) : '';
-            $this->fileService->deleteFile(FilesHelper::createAdditionalPath($file->table_name, $file->file_type) . $file->filepath);
-            $file->recordEvent(new FileDeleteEvent($file->id), get_class($file));
-            $file->releaseEvents();
-
-            Yii::$app->session->setFlash('success', "Файл $filepath успешно удален");
-            return $this->redirect(['update', 'id' => $modelId]);
-        }
-        catch (DomainException $e) {
-            return 'Oops! Something wrong';
-        }
-    }
     public function actionDependencyDropdown()
     {
         $id = Yii::$app->request->post('id');

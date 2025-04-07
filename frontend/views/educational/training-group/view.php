@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\ButtonsFormatter;
 use common\helpers\html\HtmlBuilder;
 use frontend\forms\training_group\TrainingGroupCombinedForm;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
@@ -32,9 +33,84 @@ $this->params['breadcrumbs'][] = 'Группа '.$this->title;
         <div class="flexx space">
             <div class="flexx">
                 <?= $buttonsAct; ?>
+                <div style="margin: 1.1em 1em">
+                    <?= HtmlBuilder::createDualityButton(
+                        ['Создать журнал', 'Открыть журнал'],
+                        [Url::to(['generate-journal', 'id' => $model->id]), Url::to(['educational/journal/view', 'id' => $model->id])],
+                        [['btn', 'btn-success'], ['btn', 'btn-primary']],
+                        $journalState == JournalService::JOURNAL_EMPTY
+                    ); ?>
+                </div>
+                <div style="margin: 1.1em 1em 1.1em 0">
+                    <?= HtmlBuilder::createDualityButton(
+                        ['Архивировать', 'Разархивировать'],
+                        [Url::to(['archive-group', 'id' => $model->id]), Url::to(['unarchive-group', 'id' => $model->id])],
+                        [['btn', 'btn-success'], ['btn', 'btn-primary']],
+                        !$model->trainingGroup->isArchive()
+                    ); ?>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="substrate">
+        <div class="flexx">
+
+        </div>
+        <div class="flexx">
+            <?php
+            if ($journalState == JournalService::JOURNAL_EXIST) {
+                $links = array_merge(
+                    ButtonsFormatter::anyOneLink(
+                        'Скачать КУГ',
+                        Yii::$app->frontUrls::TRAINING_GROUP_KUG,
+                        ButtonsFormatter::BTN_SUCCESS,
+                        '',
+                        ButtonsFormatter::createParameterLink($model->id)),
+                    ButtonsFormatter::anyOneLink(
+                        'Сформировать протокол',
+                        Yii::$app->frontUrls::TRAINING_GROUP_PROTOCOL,
+                        ButtonsFormatter::BTN_SUCCESS,
+                        '',
+                        ButtonsFormatter::createParameterLink($model->id)),
+                    ButtonsFormatter::anyOneLink(
+                        'Скачать журнал',
+                        Yii::$app->frontUrls::TRAINING_GROUP_DOWNLOAD_JOURNAL,
+                        ButtonsFormatter::BTN_SUCCESS,
+                        '',
+                        ButtonsFormatter::createParameterLink($model->id)),
+                );
+                echo HtmlBuilder::createGroupButton($links);
+            }
+            ?>
+        </div>
+        <div class="flexx">
+            <?php
+            $links = array_merge(
+                ButtonsFormatter::anyOneLink(
+                    'Простить ошибки',
+                    Yii::$app->frontUrls::TRAINING_GROUP_AMNESTY,
+                    ButtonsFormatter::BTN_WARNING,
+                    '',
+                    ButtonsFormatter::createParameterLink($model->id)),
+                ButtonsFormatter::anyOneLink(
+                    'Сгенерировать сертификаты',
+                    Yii::$app->frontUrls::CERTIFICATE_CREATE,
+                    ButtonsFormatter::BTN_PRIMARY,
+                    '',
+                    ButtonsFormatter::createParameterLink($model->id)),
+                ButtonsFormatter::anyOneLink(
+                    'Отправить сертификаты',
+                    Yii::$app->frontUrls::CERTIFICATE_SEND_ALL,
+                    ButtonsFormatter::BTN_SUCCESS,
+                    '',
+                    ButtonsFormatter::createParameterLink($model->id)),
+            );
+            echo HtmlBuilder::createGroupButton($links);
+            ?>
+        </div>
+    </div>
+
     <?= HtmlBuilder::createErrorsBlock(TrainingGroupWork::tableName(), $model->id) ?>
     <div class="card">
         <div class="card-block-1">
@@ -198,34 +274,4 @@ $this->params['breadcrumbs'][] = 'Группа '.$this->title;
             </div>
         </div>
     </div>
-
-    <p>
-        <?= Html::a('Перенести темы занятий из ОП', ['create-lesson-themes', 'groupId' => $model->id], ['class' => 'btn btn-secondary']) ?>
-        <?= Html::a('Скачать КУГ', ['download-plan', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Простить ошибки', ['amnesty', 'id' => $model->id], ['class' => 'btn btn-warning']) ?>
-
-        <?= HtmlBuilder::createDualityButton(
-            ['Архивировать', 'Разархивировать'],
-            [Url::to(['archive-group', 'id' => $model->id]), Url::to(['unarchive-group', 'id' => $model->id])],
-            [['btn', 'btn-success'], ['btn', 'btn-primary']],
-            !$model->trainingGroup->isArchive()
-        ); ?>
-
-        <?= HtmlBuilder::createDualityButton(
-            ['Создать журнал', 'Открыть журнал'],
-            [Url::to(['generate-journal', 'id' => $model->id]), Url::to(['educational/journal/view', 'id' => $model->id])],
-            [['btn', 'btn-success'], ['btn', 'btn-primary']],
-            $journalState == JournalService::JOURNAL_EMPTY
-        ); ?>
-
-        <?php if ($journalState == JournalService::JOURNAL_EXIST): ?>
-            <?= Html::a('Удалить журнал', ['delete-journal', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
-            <?= Html::a('Сформировать протокол', ['create-protocol', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a('Сгенерировать сертификаты', ['/educational/certificate/create', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a('Отправить сертификаты', ['/educational/certificate/send-all', 'groupId' => $model->id], ['class' => 'btn btn-primary']) ?>
-
-            <?= Html::a('Скачать журнал', ['download-journal', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php endif; ?>
-
-
 </div>

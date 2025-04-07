@@ -2,6 +2,7 @@
 
 namespace frontend\models\work\responsibility;
 
+use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\order\OrderMainWork;
 use common\helpers\DateFormatter;
 use common\models\scaffold\LegacyResponsible;
@@ -9,6 +10,7 @@ use common\models\scaffold\LocalResponsibility;
 
 /**
  * @property OrderMainWork $orderWork
+ * @property PeopleStampWork $peopleStampWork
  */
 class LegacyResponsibleWork extends LegacyResponsible
 {
@@ -30,6 +32,11 @@ class LegacyResponsibleWork extends LegacyResponsible
     public function getOrderWork()
     {
         return $this->hasOne(OrderMainWork::class, ['id' => 'order_id']);
+    }
+
+    public function getPeopleStampWork()
+    {
+        return $this->hasOne(PeopleStampWork::class, ['id' => 'people_stamp_id']);
     }
 
     public function setEndDate($endDate)

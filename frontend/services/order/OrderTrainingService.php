@@ -125,7 +125,8 @@ class OrderTrainingService
     public function getGroupsDataProvider(OrderTrainingWork $model)
     {
         return new ActiveDataProvider([
-            'query' => $this->trainingGroupRepository->getByBranchQuery($model->branch)
+            'query' => $this->trainingGroupRepository->getByBranchQuery($model->branch),
+            'pagination' => false
         ]);
     }
 

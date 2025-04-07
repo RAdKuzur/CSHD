@@ -50,6 +50,7 @@ use frontend\services\educational\GroupProjectThemesService;
 use frontend\services\educational\JournalService;
 use frontend\services\educational\TrainingGroupService;
 use Yii;
+use yii\web\UploadedFile;
 
 class TrainingGroupController extends DocumentController
 {
@@ -115,7 +116,7 @@ class TrainingGroupController extends DocumentController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $links = array_merge(
-            ButtonsFormatter::anyOneLink('Добавить программу', 'create', ButtonsFormatter::BTN_PRIMARY),
+            ButtonsFormatter::anyOneLink('Добавить группу', 'create', ButtonsFormatter::BTN_PRIMARY),
             ButtonsFormatter::anyOneLink('Изменить актуальность', Yii::$app->frontUrls::TRAINING_GROUP_ARCHIVE, ButtonsFormatter::BTN_SUCCESS)
         );
         $buttonHtml = HtmlBuilder::createGroupButton($links);
@@ -161,11 +162,21 @@ class TrainingGroupController extends DocumentController
             return $this->redirect(['view', 'id' => $groupModel->id]);
         }
 
+        $links = array_merge(
+            ButtonsFormatter::anyOneLink('Основная информация', Yii::$app->frontUrls::TRAINING_GROUP_BASE_FORM, ButtonsFormatter::BTN_SUCCESS),
+            ButtonsFormatter::anyOneLink('Список учеников', Yii::$app->frontUrls::TRAINING_GROUP_PARTICIPANT_FORM, ButtonsFormatter::BTN_SUCCESS),
+            ButtonsFormatter::anyOneLink('Расписание', Yii::$app->frontUrls::TRAINING_GROUP_SCHEDULE_FORM, ButtonsFormatter::BTN_SUCCESS),
+            ButtonsFormatter::anyOneLink('Сведения о защите работ', Yii::$app->frontUrls::TRAINING_GROUP_PITCH_FORM, ButtonsFormatter::BTN_SUCCESS),
+
+        );
+        $buttonHtml = HtmlBuilder::createGroupButton($links);
+
         return $this->render('create', [
             'model' => $form,
             'modelTeachers' => $modelTeachers,
             'trainingPrograms' => $programs,
             'people' => $people,
+            'buttonsAct' => $buttonHtml,
         ]);
     }
 
@@ -238,6 +249,42 @@ class TrainingGroupController extends DocumentController
         return json_encode(['success' => true]);
     }
 
+    /**
+     * Возвращает кнопки на форму для переключения между ними
+     * @param $model
+     * @return string
+     */
+    public function getButtonsForm($model)
+    {
+        $links = array_merge(
+            ButtonsFormatter::anyOneLink(
+                'Основная информация',
+                Yii::$app->frontUrls::TRAINING_GROUP_BASE_FORM,
+                ButtonsFormatter::BTN_SUCCESS,
+                '',
+                ButtonsFormatter::createParameterLink($model->id)),
+            ButtonsFormatter::anyOneLink(
+                'Список учеников',
+                Yii::$app->frontUrls::TRAINING_GROUP_PARTICIPANT_FORM,
+                ButtonsFormatter::BTN_SUCCESS,
+                '',
+                ButtonsFormatter::createParameterLink($model->id)),
+            ButtonsFormatter::anyOneLink(
+                'Расписание',
+                Yii::$app->frontUrls::TRAINING_GROUP_SCHEDULE_FORM,
+                ButtonsFormatter::BTN_SUCCESS,
+                '',
+                ButtonsFormatter::createParameterLink($model->id)),
+            ButtonsFormatter::anyOneLink(
+                'Сведения о защите работ',
+                Yii::$app->frontUrls::TRAINING_GROUP_PITCH_FORM,
+                ButtonsFormatter::BTN_SUCCESS,
+                '',
+                ButtonsFormatter::createParameterLink($model->id)),
+        );
+        return HtmlBuilder::createGroupButton($links);
+    }
+
     public function actionBaseForm($id)
     {
         if ($this->lockWizard->lockObject($id, TrainingGroupWork::tableName(), Yii::$app->user->id)) {
@@ -285,6 +332,7 @@ class TrainingGroupController extends DocumentController
                     'photos' => $tables['photos'],
                     'presentations' => $tables['presentations'],
                     'workMaterials' => $tables['workMaterials'],
+                    'buttonsAct' => $this->getButtonsForm($model),
                 ]);
             }
             else {
@@ -307,7 +355,6 @@ class TrainingGroupController extends DocumentController
             if (!$model->isArchive()) {
                 $formParticipant = new TrainingGroupParticipantForm($id);
                 $childs = $this->participantsRepository->getSortedList(ForeignEventParticipantsRepository::SORT_FIO);
-
                 if (count(Yii::$app->request->post()) > 0) {
                     $this->lockWizard->unlockObject($id, TrainingGroupWork::tableName());
                     $modelChilds = Model::createMultiple(TrainingGroupParticipantWork::classname());
@@ -327,7 +374,8 @@ class TrainingGroupController extends DocumentController
                 return $this->render('_form-participant', [
                     'model' => $formParticipant,
                     'modelChilds' => count($formParticipant->participants) > 0 ? $formParticipant->participants : [new TrainingGroupParticipantWork],
-                    'childs' => $childs
+                    'childs' => $childs,
+                    'buttonsAct' => $this->getButtonsForm($model),
                 ]);
             }
             else {
@@ -380,7 +428,8 @@ class TrainingGroupController extends DocumentController
                     'model' => $formSchedule,
                     'modelLessons' => count($modelLessons) > 0 ? $modelLessons : [new TrainingGroupParticipantWork],
                     'auditoriums' => $auditoriums,
-                    'scheduleTable' => $scheduleTable
+                    'scheduleTable' => $scheduleTable,
+                    'buttonsAct' => $this->getButtonsForm($model),
                 ]);
             }
             else {
@@ -435,7 +484,8 @@ class TrainingGroupController extends DocumentController
 
                 return $this->render('_form-pitch', [
                     'model' => $formPitch,
-                    'peoples' => $peoples
+                    'peoples' => $peoples,
+                    'buttonsAct' => $this->getButtonsForm($model),
                 ]);
             }
             else {

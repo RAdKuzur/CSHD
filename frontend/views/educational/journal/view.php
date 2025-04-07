@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <th colspan="<?= $model->getLessonsCount() ?>">Расписание</th>
                         <th colspan="<?= $model->getColspanControl() ?>">Итоговый контроль</th>
                     </tr>
-                <tr>
+                <tr class="sticky-cell">
                     <td>учащегося</td>
                     <?php foreach ($model->getDateLessons() as $dateLesson): ?>
                         <td class="lessons-date"> <?= $dateLesson ?>  </td>
@@ -68,7 +68,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <tbody>
                     <?php foreach ($model->participantLessons as $participantLesson): ?>
                         <tr>
-                            <td>
+                            <td class="sticky-cell">
                                 <div class="flexx space">
                                     <?= $model->getParticipantIcons($participantLesson->participant); ?>
                                     <?= $model->getPrettyParticipant($participantLesson->participant, StringFormatter::FORMAT_LINK); ?>

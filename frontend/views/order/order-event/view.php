@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Приказы о мероприя
                         Рег. номер
                     </div>
                     <div class="field-date">
-                        <?= $model->getNumberPostfix() ?>
+                        <?= $model->getFullNumber() ?>
                     </div>
                 </div>
                 <div class="card-field flexx">

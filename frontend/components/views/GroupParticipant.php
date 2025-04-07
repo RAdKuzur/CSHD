@@ -10,7 +10,6 @@
 /* @var $groupCheckOption */
 /* @var $groupParticipantOption */
 ?>
-
 <?= $this->render('_groups_grid', [
     'dataProvider' => $dataProviderGroup,
     'model' => $model,

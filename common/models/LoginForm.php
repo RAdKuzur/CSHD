@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\repositories\general\UserRepository;
 use Yii;
 use yii\base\Model;
 
@@ -71,7 +72,7 @@ class LoginForm extends Model
     protected function getUser()
     {
         if ($this->_user === null) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = (Yii::createObject(UserRepository::class))->findByEmail($this->username);
         }
 
         return $this->_user;

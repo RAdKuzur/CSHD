@@ -346,11 +346,11 @@ class HtmlBuilder
             return '';
         }
 
-        $result = '<table class="' . $classes['table'] . '"><thead>';
+        $result = '<table class="' . $classes['table'] . '"><thead><tr>';
         foreach ($dataMatrix as $row) {
             $result .= "<th class='" . $classes['th'] . "'>$row[0]</th>";
         }
-        $result .= '</thead>';
+        $result .= '<th></th></tr></thead>';
 
         $dataMatrix = BaseFunctions::transposeMatrix($dataMatrix);
         $buttonMatrix = BaseFunctions::transposeMatrix($buttonMatrix);
@@ -419,9 +419,10 @@ class HtmlBuilder
         string $checkName,
         array $checkValues,
         string $table,
-        array $classes = ['submit' => 'btn btn-success']
+        array $classes = ['submit' => 'btn btn-warning']
     ) {
         // Находим все строки таблицы
+        $table = preg_replace('/<thead>.*?<tr>(.*?)<\/tr>.*?<\/thead>/s', '<thead>$1</thead>', $table);
         preg_match_all('/<tr[^>]*>(.*?)<\/tr>/s', $table, $matches);
         $rows = $matches[0];
 

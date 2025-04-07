@@ -198,4 +198,9 @@ class OrderEventForm extends Model {
         $this->executor_id = (PeopleStampWork::findOne($this->executor_id))->people_id;
         $this->signed_id = (PeopleStampWork::findOne($this->signed_id))->people_id;
     }
+    public function beforeValidate()
+    {
+        $this->order_name = 'Oб участии в мероприятии "' . $this->eventName . '"';
+        return parent::beforeValidate();
+    }
 }

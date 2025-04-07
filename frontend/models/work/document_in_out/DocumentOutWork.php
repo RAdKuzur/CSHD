@@ -161,13 +161,13 @@ class DocumentOutWork extends DocumentOut implements FileInterface
         $addPath = '';
         switch ($filetype) {
             case FilesHelper::TYPE_SCAN:
-                $addPath = FilesHelper::createAdditionalPath(DocumentInWork::tableName(), FilesHelper::TYPE_SCAN);
+                $addPath = FilesHelper::createAdditionalPath(DocumentOutWork::tableName(), FilesHelper::TYPE_SCAN);
                 break;
             case FilesHelper::TYPE_DOC:
-                $addPath = FilesHelper::createAdditionalPath(DocumentInWork::tableName(), FilesHelper::TYPE_DOC);
+                $addPath = FilesHelper::createAdditionalPath(DocumentOutWork::tableName(), FilesHelper::TYPE_DOC);
                 break;
             case FilesHelper::TYPE_APP:
-                $addPath = FilesHelper::createAdditionalPath(DocumentInWork::tableName(), FilesHelper::TYPE_APP);
+                $addPath = FilesHelper::createAdditionalPath(DocumentOutWork::tableName(), FilesHelper::TYPE_APP);
                 break;
         }
 

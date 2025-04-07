@@ -4,13 +4,13 @@ namespace common\components\dictionaries\base;
 
 class BranchDictionary extends BaseDictionary
 {
-    const TECHNOPARK = 1;
-    const QUANTORIUM = 2;
+    const QUANTORIUM = 1;
+    const TECHNOPARK = 2;
     const CDNTT = 3;
-    const COD = 4;
-    const MOBILE_QUANTUM = 5;
-    const PLANETARIUM = 6;
-    const ADMINISTRATION = 7;
+    const MOBILE_QUANTUM = 4;
+    const ADMINISTRATION = 5;
+    const COD = 7;
+    const PLANETARIUM = 8;
 
     public function __construct()
     {

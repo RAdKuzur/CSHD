@@ -165,10 +165,10 @@ class JournalForm extends Model
 
     /**
      * Красивое отображение успешного завершения
-     * @param int $status
+     * @param ?int $status
      * @return string
      */
-    public function getPrettySuccessFinishing(int $status)
+    public function getPrettySuccessFinishing(?int $status)
     {
         if ($status == 1) {
             return HtmlBuilder::paintSVG(FilePaths::SVG_CHECK, HtmlBuilder::SVG_PRIMARY_COLOR);

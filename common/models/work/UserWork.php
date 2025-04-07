@@ -81,7 +81,10 @@ class UserWork extends User implements IdentityInterface
     {
         $this->password_hash = $passwordHash;
     }
-
+    public function hasPassword()
+    {
+        return $this->password_hash != NULL;
+    }
     public function beforeSave($insert)
     {
         if(!(Yii::$app instanceof yii\console\Application)) {

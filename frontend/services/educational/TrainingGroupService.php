@@ -9,13 +9,19 @@ use common\components\compare\ParticipantGroupCompare;
 use common\components\compare\TeacherGroupCompare;
 use common\components\traits\CommonDatabaseFunctions;
 use common\components\traits\Math;
+use common\components\wizards\ExcelWizard;
+use common\helpers\CompareHelper;
 use common\helpers\DateFormatter;
 use common\helpers\files\filenames\TrainingGroupFileNameGenerator;
+use common\helpers\files\FilePaths;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
+use common\helpers\StringFormatter;
 use common\models\scaffold\PeopleStamp;
 use common\models\scaffold\ThematicPlan;
 use common\repositories\dictionaries\AuditoriumRepository;
+use common\repositories\dictionaries\ForeignEventParticipantsRepository;
 use common\repositories\educational\LessonThemeRepository;
 use common\repositories\educational\ProjectThemeRepository;
 use common\repositories\educational\TeacherGroupRepository;
@@ -44,12 +50,16 @@ use frontend\events\educational\training_group\DeleteVisitEvent;
 use frontend\events\educational\training_group\UpdateGroupExpertEvent;
 use frontend\events\educational\training_group\UpdateProjectThemeEvent;
 use frontend\events\educational\training_group\UpdateTrainingGroupParticipantEvent;
+use frontend\events\foreign_event_participants\PersonalDataParticipantAttachEvent;
 use frontend\events\general\FileCreateEvent;
 use frontend\events\visit\AddLessonToVisitEvent;
 use frontend\forms\training_group\PitchGroupForm;
 use frontend\forms\training_group\TrainingGroupBaseForm;
 use frontend\forms\training_group\TrainingGroupParticipantForm;
 use frontend\forms\training_group\TrainingGroupScheduleForm;
+use frontend\models\work\auxiliary\LoadParticipants;
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\educational\journal\VisitLesson;
 use frontend\models\work\educational\journal\VisitWork;
 use frontend\models\work\educational\training_group\GroupProjectThemesWork;
@@ -78,6 +88,7 @@ class TrainingGroupService implements DatabaseServiceInterface
     private ProjectThemeRepository $themeRepository;
     private TrainingProgramRepository $trainingProgramRepository;
     private VisitRepository $visitRepository;
+    private ForeignEventParticipantsRepository $participantsRepository;
     private LessonThemeRepository $lessonThemeRepository;
     private FileService $fileService;
     private TrainingGroupFileNameGenerator $filenameGenerator;
@@ -93,6 +104,7 @@ class TrainingGroupService implements DatabaseServiceInterface
         ProjectThemeRepository $themeRepository,
         TrainingProgramRepository $trainingProgramRepository,
         VisitRepository $visitRepository,
+        ForeignEventParticipantsRepository $participantsRepository,
         LessonThemeRepository $lessonThemeRepository,
         FileService $fileService,
         TrainingGroupFileNameGenerator $filenameGenerator,
@@ -108,6 +120,7 @@ class TrainingGroupService implements DatabaseServiceInterface
         $this->themeRepository = $themeRepository;
         $this->trainingProgramRepository = $trainingProgramRepository;
         $this->visitRepository = $visitRepository;
+        $this->participantsRepository = $participantsRepository;
         $this->lessonThemeRepository = $lessonThemeRepository;
         $this->fileService = $fileService;
         $this->filenameGenerator = $filenameGenerator;
@@ -313,6 +326,12 @@ class TrainingGroupService implements DatabaseServiceInterface
 
     public function attachParticipants(TrainingGroupParticipantForm $form)
     {
+        $form->participantFile = UploadedFile::getInstance($form, 'participantFile');
+        if ($form->participantFile) {
+            $this->loadParticipantsFromFile($form);
+            return;
+        }
+
         $newParticipants = [];
         foreach ($form->participants as $participant) {
             /** @var TrainingGroupParticipantWork $participant */
@@ -342,6 +361,52 @@ class TrainingGroupService implements DatabaseServiceInterface
                 $form->recordEvent(new UpdateTrainingGroupParticipantEvent($participant->id, $participant->participant_id, $participant->send_method), TrainingGroupParticipantWork::className());
             }
         }
+    }
+
+    public function loadParticipantsFromFile(TrainingGroupParticipantForm $form)
+    {
+        $newFilename = StringFormatter::createHash(date("Y-m-d H:i:s")) . '.' . $form->participantFile->extension;
+        $this->fileService->uploadFile($form->participantFile, $newFilename, ['filepath' => FilePaths::TEMP_FILEPATH . '/']);
+        $data = ExcelWizard::getDataFromColumns(
+            Yii::$app->basePath . FilePaths::TEMP_FILEPATH . '/' . $newFilename,
+            ['Фамилия обучающегося', 'Имя обучающегося', 'Отчество обучающегося', 'Дата рождения (л)', 'Контакт: Рабочий e-mail']
+        );
+
+        for ($i = 0; $i < count($data['Фамилия обучающегося']); $i++) {
+            $birthdate = $data['Дата рождения (л)'][$i] ?
+                DateFormatter::format($data['Дата рождения (л)'][$i], DateFormatter::mdY_slash, DateFormatter::Ymd_dash) :
+                PersonInterface::BASE_BIRTHDATE;
+            /** @var ForeignEventParticipantsWork $participant */
+            $participant = $this->participantsRepository->getParticipantByUniqueData(
+                $data['Имя обучающегося'][$i],
+                $data['Фамилия обучающегося'][$i],
+                $data['Отчество обучающегося'][$i],
+                $birthdate
+            );
+            if (!$participant)
+            {
+                var_dump($data['Контакт: Рабочий e-mail'][$i]);
+                $participant = ForeignEventParticipantsWork::fill(
+                    $data['Имя обучающегося'][$i],
+                    $data['Фамилия обучающегося'][$i],
+                    $birthdate,
+                    CompareHelper::isEmail($data['Контакт: Рабочий e-mail'][$i]) == CompareHelper::RESULT_CORRECT ? $data['Контакт: Рабочий e-mail'][$i] : '',
+                    $this->participantsRepository->getSexByName($data['Имя обучающегося'][$i]),
+                    $data['Отчество обучающегося'][$i]
+                );
+                $this->participantsRepository->save($participant);
+                $participant->recordEvent(new PersonalDataParticipantAttachEvent($participant->id), get_class($participant));
+                $participant->releaseEvents();
+            }
+
+            $form->recordEvent(new CreateTrainingGroupParticipantEvent(
+                $form->id,
+                $participant->id,
+                Yii::$app->sendMethods::EMAIL
+            ), TrainingGroupParticipantWork::className());
+        }
+
+        $this->fileService->deleteFile(FilePaths::TEMP_FILEPATH . '/' . $newFilename);
     }
 
     public function attachLessons(TrainingGroupScheduleForm $form)
@@ -460,11 +525,12 @@ class TrainingGroupService implements DatabaseServiceInterface
                 array_merge(['Дата занятия'], ArrayHelper::getColumn($formSchedule->prevLessons, 'lesson_date')),
                 array_merge(['Время начала'], ArrayHelper::getColumn($formSchedule->prevLessons, 'lesson_start_time')),
                 array_merge(['Время окончания'], ArrayHelper::getColumn($formSchedule->prevLessons, 'lesson_end_time')),
-                array_merge(['Помещение'], ArrayHelper::getColumn($formSchedule->prevLessons, 'auditoriumName'))
+                array_merge(['Помещение'], ArrayHelper::getColumn($formSchedule->prevLessons, 'auditoriumName')),
+                ['']
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Редактировать',
+                    HtmlCreator::IconUpdate(),
                     Url::to('update-lesson'),
                     [
                         'groupId' => array_fill(0, count($formSchedule->prevLessons), $formSchedule->id),
@@ -472,7 +538,7 @@ class TrainingGroupService implements DatabaseServiceInterface
                     ]
                 ),
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-lesson'),
                     [
                         'groupId' => array_fill(0, count($formSchedule->prevLessons), $formSchedule->id),

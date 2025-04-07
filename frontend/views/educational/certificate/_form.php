@@ -33,7 +33,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'templateId')->dropDownList(
             ArrayHelper::map($model->templates, 'id', 'name')
-        )
+        )->label('Наименование шаблона')
     ?>
 
     <?= GroupParticipantWidget::widget([

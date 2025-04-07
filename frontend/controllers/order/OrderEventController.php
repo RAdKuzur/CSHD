@@ -178,50 +178,58 @@ class OrderEventController extends DocumentController
                 $form->orderEventForm->scanFile,
                 $form->orderEventForm->docFiles,
             );
-            $modelOrderEvent->generateOrderNumber();
-            $this->documentOrderService->getPeopleStamps($modelOrderEvent);
-            $number = $modelOrderEvent->getNumberPostfix();
-            $this->orderEventRepository->save($modelOrderEvent);
-            $generateInfo = OrderEventGenerateWork::fill(
-                $modelOrderEvent->id,
-                $form->orderEventForm->purpose,
-                $form->orderEventForm->docEvent,
-                $form->orderEventForm->respPeopleInfo,
-                $form->orderEventForm->timeProvisionDay,
-                $form->orderEventForm->extraRespInsert,
-                $form->orderEventForm->timeInsertDay,
-                $form->orderEventForm->extraRespMethod,
-                $form->orderEventForm->extraRespInfoStuff,
-                $form->orderEventForm->documentDetails
-            );
-            $this->orderEventGenerateService->setPeopleStamp($generateInfo);
-            $this->orderEventGenerateRepository->save($generateInfo);
-            $this->documentOrderService->saveFilesFromModel($modelOrderEvent);
-            $modelForeignEvent = ForeignEventWork::fill(
-                $form->orderEventForm->eventName,
-                $form->orderEventForm->organizer_id,
-                $form->orderEventForm->dateBegin,
-                $form->orderEventForm->dateEnd,
-                $form->orderEventForm->city,
-                $form->orderEventForm->eventWay,
-                $form->orderEventForm->eventLevel,
-                $form->orderEventForm->minister,
-                $form->orderEventForm->minAge,
-                $form->orderEventForm->maxAge,
-                $form->orderEventForm->keyEventWords,
-                $modelOrderEvent->id,
-                $form->orderEventForm->actFiles
-            );
-            $this->foreignEventRepository->save($modelForeignEvent);
-            $modelForeignEvent->checkModel(ErrorAssociationHelper::getForeignEventErrorsList(), ForeignEventWork::tableName(), $modelForeignEvent->id);
+            //$modelOrderEvent->generateOrderNumber();
+            $error = $this->documentOrderService->generateNumber($modelOrderEvent);
+            if (!$error){
+                $this->documentOrderService->getPeopleStamps($modelOrderEvent);
+                $number = $modelOrderEvent->getNumberPostfix();
+                $this->orderEventRepository->save($modelOrderEvent);
+                $generateInfo = OrderEventGenerateWork::fill(
+                    $modelOrderEvent->id,
+                    $form->orderEventForm->purpose,
+                    $form->orderEventForm->docEvent,
+                    $form->orderEventForm->respPeopleInfo,
+                    $form->orderEventForm->timeProvisionDay,
+                    $form->orderEventForm->extraRespInsert,
+                    $form->orderEventForm->timeInsertDay,
+                    $form->orderEventForm->extraRespMethod,
+                    $form->orderEventForm->extraRespInfoStuff,
+                    $form->orderEventForm->documentDetails
+                );
+                $this->orderEventGenerateService->setPeopleStamp($generateInfo);
+                $this->orderEventGenerateRepository->save($generateInfo);
+                $this->documentOrderService->saveFilesFromModel($modelOrderEvent);
+                $modelForeignEvent = ForeignEventWork::fill(
+                    $form->orderEventForm->eventName,
+                    $form->orderEventForm->organizer_id,
+                    $form->orderEventForm->dateBegin,
+                    $form->orderEventForm->dateEnd,
+                    $form->orderEventForm->city,
+                    $form->orderEventForm->eventWay,
+                    $form->orderEventForm->eventLevel,
+                    $form->orderEventForm->minister,
+                    $form->orderEventForm->minAge,
+                    $form->orderEventForm->maxAge,
+                    $form->orderEventForm->keyEventWords,
+                    $modelOrderEvent->id,
+                    $form->orderEventForm->actFiles
+                );
+                $this->foreignEventRepository->save($modelForeignEvent);
+                $modelForeignEvent->checkModel(ErrorAssociationHelper::getForeignEventErrorsList(), ForeignEventWork::tableName(), $modelForeignEvent->id);
 
-            $this->orderPeopleService->addOrderPeopleEvent($respPeopleId, $modelOrderEvent);
-            $this->foreignEventService->saveActFilesFromModel($modelForeignEvent, $form->orderEventForm->actFiles, $number);
-            $form->orderEventForm->releaseEvents();
-            $modelForeignEvent->releaseEvents();
-            $modelOrderEvent->releaseEvents();
-            $this->actParticipantService->addActParticipant($acts, $modelForeignEvent->id);
-            return $this->redirect(['view', 'id' => $modelOrderEvent->id]);
+                $this->orderPeopleService->addOrderPeopleEvent($respPeopleId, $modelOrderEvent);
+                $this->foreignEventService->saveActFilesFromModel($modelForeignEvent, $form->orderEventForm->actFiles, $number);
+                $form->orderEventForm->releaseEvents();
+                $modelForeignEvent->releaseEvents();
+                $modelOrderEvent->releaseEvents();
+                $this->actParticipantService->addActParticipant($acts, $modelForeignEvent->id);
+                return $this->redirect(['view', 'id' => $modelOrderEvent->id]);
+            }
+            else {
+                Yii::$app->session->setFlash
+                ('error', "Ошибка создания приказа с такой датой");
+                return $this->redirect(Yii::$app->request->referrer ?: ['create']);
+            }
         }
         return $this->render('create', [
             'model' => $form->orderEventForm,

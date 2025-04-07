@@ -14,6 +14,7 @@ use app\events\foreign_event\ForeignEventDeleteEvent;
 use app\events\general\OrderPeopleDeleteByIdEvent;
 use app\events\team\TeamNameDeleteEvent;
 use common\components\dictionaries\base\NomenclatureDictionary;
+use common\helpers\DateFormatter;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\educational\OrderTrainingGroupParticipantRepository;
 use common\repositories\event\ForeignEventRepository;
@@ -38,6 +39,7 @@ use common\services\general\files\FileService;
 use frontend\events\general\FileCreateEvent;
 use frontend\models\work\order\OrderTrainingWork;
 use frontend\models\work\team\ActParticipantWork;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 use phpseclib3\Crypt\EC\Curves\brainpoolP160r1;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -370,5 +372,67 @@ class DocumentOrderService
         else {
             return NULL;
         }
+    }
+    public function generateNumber($model)
+    {
+        /* @var $modelOrderDown DocumentOrderWork */
+        /* @var $modelOrderUp DocumentOrderWork */
+        $year = (new \DateTime($model->order_date))->format('Y');
+        $date = DateFormatter::format($model->order_date, DateFormatter::dmY_dot, DateFormatter::Ymd_dash);
+        $modelOrderDown = count(DocumentOrderWork::find()
+            ->andWhere(['YEAR(order_date)' => $year])->andWhere(['order_number' => $model->order_number])
+            ->andWhere(['<=', 'order_date', $date])->orderBy(['order_date' => SORT_DESC])->all()) > 0 ?
+            DocumentOrderWork::find()->andWhere(['YEAR(order_date)' => $year])->andWhere(['order_number' => $model->order_number])
+            ->andWhere(['<=', 'order_date', $date])->orderBy([
+                'order_date' => SORT_DESC,
+                'order_copy_id' => SORT_DESC
+            ])->all()[0] : NULL;
+        $modelOrderUp =   count(DocumentOrderWork::find()
+            ->andWhere(['YEAR(order_date)' => $year])->andWhere(['order_number' => $model->order_number])
+            ->andWhere(['>', 'order_date', $date])->orderBy(['order_date' => SORT_ASC])->all()) > 0 ?
+            (DocumentOrderWork::find()->andWhere(['YEAR(order_date)' => $year])->andWhere(['order_number' => $model->order_number])
+            ->andWhere(['>', 'order_date', $date])->orderBy([
+                'order_date' => SORT_ASC,
+                'order_copy_id' => SORT_ASC
+            ])->all())[0]
+            : NULL;
+        $copyId = 1;
+        if ($modelOrderDown == NULL && $modelOrderUp == NULL) {
+            $model->setNumber($model->order_number, $copyId, NULL);
+            return false;
+        }
+        else if ($modelOrderDown == NULL && $modelOrderUp != NULL) {
+            return true;
+        }
+        else if ($modelOrderDown != NULL && $modelOrderUp == NULL) {
+            $model->setNumber($modelOrderDown->order_number, $modelOrderDown->order_copy_id + 1, NULL);
+            return false;
+        }
+        else {
+            $indexUp = $this->orderNumberToArray($modelOrderUp);
+            $indexDown = $this->orderNumberToArray($modelOrderDown);
+            if (count($indexUp['postfix']) > count($indexDown['postfix'])) {
+                return true;
+            }
+            if (count($indexUp['postfix']) == count($indexDown['postfix'])){
+                $indexDown['postfix'][] = 1;
+                $model->setNumber($modelOrderDown->order_number, $modelOrderDown->order_copy_id, implode('/', $indexDown['postfix']));
+                return false;
+            }
+            if (count($indexUp['postfix']) < count($indexDown['postfix'])){
+                $indexDown['postfix'][count($indexDown['postfix']) - 1] = $indexDown['postfix'][count($indexDown['postfix']) - 1] + 1;
+                $model->setNumber($modelOrderDown->order_number, $modelOrderDown->order_copy_id, implode('/', $indexDown['postfix']));
+                return false;
+            }
+        }
+        return true;
+    }
+    public function orderNumberToArray($order){
+        $index = [
+            'number' => $order->order_number,
+            'copy' => $order->order_copy_id,
+            'postfix' => array_filter(explode('/', $order->order_postfix))
+        ];
+        return $index;
     }
 }

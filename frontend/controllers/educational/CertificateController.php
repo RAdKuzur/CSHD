@@ -74,6 +74,16 @@ class CertificateController extends Controller
         ]);
     }
 
+    public function actionDelete($id)
+    {
+        /** @var CertificateWork $certificate */
+        $certificate = $this->repository->get($id);
+        $this->repository->delete($certificate);
+        Yii::$app->session->setFlash('success', 'Сертификат успешно удален');
+
+        return $this->redirect(['index']);
+    }
+
     public function actionDownloadArchive()
     {
         $this->service->downloadCertificates();

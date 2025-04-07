@@ -1,5 +1,6 @@
 <?php
 
+use common\helpers\DateFormatter;
 use frontend\models\work\order\OrderMainWork;
 use frontend\forms\ResponsibilityForm;
 use frontend\models\work\general\PeopleWork;
@@ -35,7 +36,7 @@ use yii\widgets\ActiveForm;
 
 </script>
 
-<div class="local-responsibility-form">
+<div class="local-responsibility-form field-backing">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -101,7 +102,7 @@ use yii\widgets\ActiveForm;
             'clientOptions' => [
                 'changeMonth' => true,
                 'changeYear' => true,
-                'yearRange' => '1950:2100',
+                'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
             ]])->label('Дата прикрепления ответственности');
     }
     else {
@@ -120,7 +121,7 @@ use yii\widgets\ActiveForm;
             'clientOptions' => [
                 'changeMonth' => true,
                 'changeYear' => true,
-                'yearRange' => '1950:2100',
+                'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
             ]])->label(false);
         echo '</td><td>'.Html::a($order->fullName, \yii\helpers\Url::to(['document-order/view', 'id' => $order->id])). '</td>';
         echo '</td><td>'.Html::submitButton('Открепить', ['class' => 'btn btn-danger', 'onclick' => 'clickSubmit()']). '</td><tr>';
@@ -140,7 +141,7 @@ use yii\widgets\ActiveForm;
     <?php endif; ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success', 'onclick' => 'clickSubmit()']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary', 'onclick' => 'clickSubmit()']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

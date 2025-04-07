@@ -109,9 +109,13 @@ class LocalResponsibilityController extends Controller
         $responsible = $this->responsibilityRepository->get($id);
         $history = $this->legacyRepository->getByResponsibility($responsible, BaseConsts::QUERY_ALL);
 
+        $links = ButtonsFormatter::updateDeleteLinks($id);
+        $buttonHtml = HtmlBuilder::createGroupButton($links);
+
         return $this->render('view', [
             'model' => $responsible,
-            'history' => $history
+            'history' => $history,
+            'buttonsAct' => $buttonHtml
         ]);
     }
 

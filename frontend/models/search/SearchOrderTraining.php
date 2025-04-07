@@ -38,7 +38,7 @@ class SearchOrderTraining extends OrderTrainingWork
     public function search($params)
     {
         $this->load($params);
-        $query = OrderEventWork::find()
+        $query = OrderTrainingWork::find()
             ->where(['type' => DocumentOrderWork::ORDER_TRAINING])
             ->joinWith('bring');
 

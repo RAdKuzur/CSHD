@@ -42,6 +42,7 @@ class ThematicDirectionDictionary extends BaseDictionary
     const ARTISTIC_ART = 48;
     const YACHTING = 49;
     const MATH = 50;
+    const MUSIC = 51;
 
     public function __construct()
     {
@@ -85,6 +86,7 @@ class ThematicDirectionDictionary extends BaseDictionary
             self::ARTISTIC_ART => 'Художественно-эстетическое искусство',
             self::YACHTING => 'Парусный спорт (яхтинг)',
             self::MATH => 'Математика',
+            self::MUSIC => 'Музыкально-исполнительское искусство',
         ];
     }
 
@@ -129,6 +131,7 @@ class ThematicDirectionDictionary extends BaseDictionary
             self::ARTISTIC_ART => 'ХЭИ',
             self::YACHTING => 'ЯХТ',
             self::MATH => 'МАТ',
+            self::MUSIC => 'МИИ',
         ];
     }
 

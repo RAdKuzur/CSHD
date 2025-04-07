@@ -9,6 +9,7 @@ use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 $this->title = 'ЦСХД';
@@ -80,6 +81,9 @@ $this->title = 'ЦСХД';
                 ['label' => 'Участники деятельности', 'url' => ['/dictionaries/foreign-event-participants/index']],
                 ['label' => 'Помещения', 'url' => ['/dictionaries/auditorium/index']],
             ],
+        ],
+        [
+            'label' => 'Админ-панель', 'url' => Url::to(['/backend/web/index.php?r=site/index'])
         ],
         [
             'label' => Yii::$app->user->isGuest ? 'Профиль' : 'Профиль (' . Yii::$app->user->identity->username . ')',

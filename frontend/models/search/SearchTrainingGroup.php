@@ -2,11 +2,16 @@
 
 namespace frontend\models\search;
 
+use common\components\access\pbac\data\PbacGroupData;
+use common\components\access\pbac\PbacGroupAccess;
 use common\components\interfaces\SearchInterfaces;
 use common\helpers\DateFormatter;
 use common\helpers\search\SearchFieldHelper;
 use common\helpers\StringFormatter;
+use common\models\work\UserWork;
+use common\repositories\general\UserRepository;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
@@ -94,6 +99,16 @@ class SearchTrainingGroup extends Model implements SearchInterfaces
                     $query->alias('teacherGroup');
                 },
             ]);
+
+        /** @var UserWork $user */
+        $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
+        $specialGroups = new PbacGroupAccess(
+            new PbacGroupData(
+                $user,
+                [$user->akaWork->branch]
+            )
+        );
+        $query = $specialGroups->getAllowedGroupsQuery($query);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

@@ -2,18 +2,24 @@
 
 namespace common\components\access\pbac;
 
+use backend\builders\TrainingGroupReportBuilder;
 use common\components\access\pbac\data\PbacGroupData;
 use common\models\work\UserWork;
 use common\repositories\educational\TrainingGroupRepository;
+use common\repositories\general\PeopleStampRepository;
 use common\repositories\rubac\UserPermissionFunctionRepository;
 use frontend\models\work\rubac\PermissionFunctionWork;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\helpers\ArrayHelper;
 
 class PbacGroupAccess implements PbacComponentInterface
 {
     private PbacGroupData $data;
     private TrainingGroupRepository $groupRepository;
+    private PeopleStampRepository $peopleStampRepository;
     private UserPermissionFunctionRepository $permissionFunctionRepository;
+    private TrainingGroupReportBuilder $groupBuilder;
 
     public function __construct(
         PbacGroupData $data
@@ -21,27 +27,29 @@ class PbacGroupAccess implements PbacComponentInterface
     {
         $this->data = $data;
         $this->groupRepository = Yii::createObject(TrainingGroupRepository::class);
+        $this->peopleStampRepository = Yii::createObject(PeopleStampRepository::class);
         $this->permissionFunctionRepository = Yii::createObject(UserPermissionFunctionRepository::class);
+        $this->groupBuilder = Yii::createObject(TrainingGroupReportBuilder::class);
     }
 
-    public function getAllowedGroupsQuery()
+    public function getAllowedGroupsQuery(ActiveQuery $query)
     {
         $accessTheirGroups = $this->permissionFunctionRepository->getByUserPermissionBranch($this->data->user->id, PermissionFunctionWork::PERMISSION_THEIR_GROUPS_ID);
         $accessBranchGroups = $this->permissionFunctionRepository->getByUserPermissionBranch($this->data->user->id, PermissionFunctionWork::PERMISSION_BRANCH_GROUPS_ID);
         $accessAllGroups = $this->permissionFunctionRepository->getByUserPermissionBranch($this->data->user->id, PermissionFunctionWork::PERMISSION_ALL_GROUPS_ID);
 
-        $allowedGroups = [];
-        if ($accessTheirGroups) {
-            $allowedGroups = array_merge($allowedGroups, $this->getGroupsByTeacher($this->data->user));
-        }
-        if ($accessBranchGroups) {
-            $allowedGroups = array_merge($allowedGroups, $this->getGroupsByBranch($this->data->branches));
-        }
-        if ($accessAllGroups) {
-            $allowedGroups = array_merge($allowedGroups, $this->getAllGroups());
+        if (!$accessAllGroups) {
+            if ($accessBranchGroups) {
+                $query = $this->groupBuilder->filterGroupsByBranches($query, $this->data->branches);
+            }
+            else if ($accessTheirGroups) {
+                $stampsId = ArrayHelper::getColumn($this->peopleStampRepository->getByPeopleId($this->data->user->aka), 'id');
+                $query = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
+            }
         }
 
-        return $allowedGroups;
+
+        return $query;
     }
 
     private function getGroupsByTeacher(UserWork $user)

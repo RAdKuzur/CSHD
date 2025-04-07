@@ -151,7 +151,7 @@ class TrainingGroupReportBuilder
             'training_group_id'
         );
 
-        return $query->andWhere(['IN', 'id', $groupIds]);
+        return $query->andWhere(['IN', 'training_group.id', $groupIds]);
     }
 
     public function filterGroupsByNetwork(ActiveQuery $query, array $networks = [TrainingGroupWork::NO_NETWORK, TrainingGroupWork::IS_NETWORK]) : ActiveQuery

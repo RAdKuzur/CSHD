@@ -4,9 +4,13 @@ namespace common\services\general\files;
 
 use Arhitector\Yandex\Disk;
 use Yii;
+use yii\base\Component;
+use yii\httpclient\Client;
+use yii\web\Response;
 
 class YandexDiskContext
 {
+    public const BASE_FOLDER = 'DSSD';
     static public function CheckSameFile($filepath)
     {
         $disk = new Disk(Yii::$app->params['yandexApiKey']);
@@ -42,5 +46,9 @@ class YandexDiskContext
         $resource = $disk->getResource($filepath);
 
         return $resource->delete();
+    }
+    static public function info($path)
+    {
+        $disk = new Disk(Yii::$app->params['yandexApiKey']);
     }
 }

@@ -208,7 +208,7 @@ class OrderMainController extends DocumentController
 
     public function actionView($id)
     {
-        $links = ButtonsFormatter::generateOrderLinks($id);
+        $links = ButtonsFormatter::updateDeleteLinks($id);
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
         $modelResponsiblePeople = implode('<br>',

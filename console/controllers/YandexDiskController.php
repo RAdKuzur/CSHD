@@ -12,7 +12,7 @@ use yii\console\Controller;
 class YandexDiskController extends Controller
 {
     const LOCAL_FILE_PATH = 'C:\Users\Praktik\Downloads\visit.sql';
-    const YANDEX_FILE_PATH = 'CSHD';
+    const YANDEX_FILE_PATH = 'DSSD';
     private FileService $fileService;
     public function __construct(
         $id,

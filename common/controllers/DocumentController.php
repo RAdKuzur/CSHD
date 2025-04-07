@@ -8,6 +8,7 @@ use common\helpers\files\FilePaths;
 use common\helpers\files\FilesHelper;
 use common\repositories\general\FilesRepository;
 use common\services\general\files\FileService;
+use common\services\general\files\YandexDiskContext;
 use DomainException;
 use frontend\events\general\FileDeleteEvent;
 use frontend\models\work\general\FilesWork;
@@ -48,10 +49,21 @@ class DocumentController extends Controller
             Yii::$app->response->sendFile($data['obj']->file);
         }
         else {
-            $fp = fopen('php://output', 'r');
-            HeaderWizard::setFileHeaders(FilesHelper::getFilenameFromPath($data['obj']->filepath), $data['obj']->file->size);
-            $data['obj']->file->download($fp);
-            fseek($fp, 0);
+            if (YandexDiskContext::CheckSameFile(YandexDiskContext::BASE_FOLDER . $data['obj']->filepath)) {
+                $file = YandexDiskContext::GetFileFromDisk(YandexDiskContext::BASE_FOLDER . $data['obj']->filepath);
+
+                // Получаем имя файла и его размер
+                $filename = basename($data['obj']->filepath);
+                $fileSize = filesize($file->getPath());
+
+                // Устанавливаем заголовки для браузера
+                Yii::$app->response->headers->set('Content-Type', 'application/octet-stream');
+                Yii::$app->response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+                Yii::$app->response->headers->set('Content-Length', $fileSize);
+
+                // Отправка файла с Яндекс.Диска через sendFile()
+                Yii::$app->response->sendFile($file->getPath());
+            }
         }
     }
 

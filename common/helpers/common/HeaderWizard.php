@@ -6,7 +6,7 @@ class HeaderWizard
 {
     public static function setFileHeaders(string $filename, int $filesize)
     {
-        header('Content-Description: File Transfer');
+       // header('Content-Description: File Transfer');
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename=' . $filename);
         header('Content-Transfer-Encoding: binary');

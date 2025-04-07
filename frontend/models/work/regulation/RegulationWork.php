@@ -2,6 +2,7 @@
 
 namespace frontend\models\work\regulation;
 
+use common\components\interfaces\FileInterface;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
 use common\helpers\files\FilesHelper;
@@ -22,7 +23,7 @@ use yii\helpers\Url;
  * @property OrderMainWork $orderWork
  */
 
-class RegulationWork extends Regulation
+class RegulationWork extends Regulation implements FileInterface
 {
     use EventTrait;
     const STATE_ACTIVE = 1;
@@ -190,7 +191,7 @@ class RegulationWork extends Regulation
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public function getFileLinks($filetype)
+    public function getFileLinks($filetype) : array
     {
         return FilesHelper::createFileLinks($this, $filetype, $this->createAddPaths($filetype));
     }
@@ -229,5 +230,10 @@ class RegulationWork extends Regulation
         $this->ped_council_date = DateFormatter::format($this->ped_council_date, DateFormatter::dmY_dot, DateFormatter::Ymd_dash);
         $this->par_council_date = DateFormatter::format($this->par_council_date, DateFormatter::dmY_dot, DateFormatter::Ymd_dash);
         return parent::beforeValidate(); 
+    }
+
+    public function getFilePaths($filetype): array
+    {
+        return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
     }
 }

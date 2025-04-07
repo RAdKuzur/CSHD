@@ -248,7 +248,7 @@ class TrainingGroupService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($photoLinks), $model->id), 'fileId' => ArrayHelper::getColumn($photoLinks, 'id')])
             ]
@@ -261,7 +261,7 @@ class TrainingGroupService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($presentationLinks), $model->id), 'fileId' => ArrayHelper::getColumn($presentationLinks, 'id')])
             ]
@@ -274,7 +274,7 @@ class TrainingGroupService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($workMaterialsLinks), $model->id), 'fileId' => ArrayHelper::getColumn($workMaterialsLinks, 'id')])
             ]

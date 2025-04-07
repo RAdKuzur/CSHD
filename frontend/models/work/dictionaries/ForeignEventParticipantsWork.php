@@ -298,6 +298,7 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
         foreach ($personals as $personal) {
             $result[] = HtmlBuilder::createSubtitleAndClarification(
                 $personal->getPrettyStringStatus() . ' ',
+
                 Yii::$app->personalData->get($personal->personal_data)
             );
         }

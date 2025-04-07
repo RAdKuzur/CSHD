@@ -48,7 +48,7 @@ $this->title = 'ЦСХД';
         ],
     ]);
     $menuItems = [
-        [
+        /*[
             'label' => 'Документооборот',
             'items' => [
                 ['label' => 'Входящая документация', 'url' => ['/document/document-in/index']],
@@ -81,7 +81,7 @@ $this->title = 'ЦСХД';
                 ['label' => 'Участники деятельности', 'url' => ['/dictionaries/foreign-event-participants/index']],
                 ['label' => 'Помещения', 'url' => ['/dictionaries/auditorium/index']],
             ],
-        ],
+        ],*/
         [
             'label' => 'Админ-панель', 'url' => Yii::$app->params['backUrl'] . '/index.php?r=site/index'
         ],

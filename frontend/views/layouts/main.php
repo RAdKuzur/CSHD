@@ -83,7 +83,7 @@ $this->title = 'ЦСХД';
             ],
         ],
         [
-            'label' => 'Админ-панель', 'url' => Url::to(['/backend/web/index.php?r=site/index'])
+            'label' => 'Админ-панель', 'url' => Yii::$app->params['backUrl'] . '/index.php?r=site/index'
         ],
         [
             'label' => Yii::$app->user->isGuest ? 'Профиль' : 'Профиль (' . Yii::$app->user->identity->username . ')',

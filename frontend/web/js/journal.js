@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const secondTargetElement = document.getElementsByClassName('control-unit')[0];
 
     document.body.addEventListener('click', function(event) {
-        if (!table.contains(event.target) && !secondTargetElement.contains(event.target)) {
+        if (!table.closest(event.target) && !secondTargetElement.contains(event.target)) {
             currentIcon = '';
             document.body.style.cursor = 'default';
         }

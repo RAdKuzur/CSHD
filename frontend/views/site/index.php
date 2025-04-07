@@ -5,8 +5,6 @@
 use common\helpers\ButtonsFormatter;
 use common\helpers\files\FilePaths;
 use common\helpers\html\HtmlBuilder;
-use yii\helpers\Html;
-use yii\helpers\Url;
 
 $this->title = 'ЦСХД';
 ?>
@@ -221,7 +219,7 @@ $this->title = 'ЦСХД';
                 <div class="flexx">
                     <?php
                     $svg = HtmlBuilder::paintSVG(FilePaths::SVG_DIRECTORY);
-                    echo HtmlBuilder::createGroupButton(ButtonsFormatter::anyOneLink($svg . ' Участники деятельности', Yii::$app->frontUrls::FOREIGN_EVENT_INDEX, ButtonsFormatter::BTN_SUCCESS));
+                    echo HtmlBuilder::createGroupButton(ButtonsFormatter::anyOneLink($svg . ' Участники деятельности', Yii::$app->frontUrls::PARTICIPANT_INDEX, ButtonsFormatter::BTN_SUCCESS));
                     ?>
                 </div>
             </div>

@@ -156,9 +156,11 @@ class Urls
      *
      * PARTICIPANT_VIEW - actionView
      * PARTICIPANT_FILE_LOAD - actionFileLoad
+     * PARTICIPANT_INDEX - actionIndex
      */
     const PARTICIPANT_VIEW = "dictionaries/foreign-event-participants/view";
     const PARTICIPANT_FILE_LOAD = "dictionaries/foreign-event-participants/file-load";
+    const PARTICIPANT_INDEX = "dictionaries/foreign-event-participants/index";
 
     /**
      * Константы People

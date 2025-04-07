@@ -111,7 +111,37 @@ class YandexDiskContext
             ->setData([
                'path' => $path
             ])->send();
+
         $fileInfo = $response->data;
         return $fileInfo;
+    }
+    static public function download($url, $filename)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // получаем содержимое как строку
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // следовать редиректам
+
+        $data = curl_exec($ch);
+
+        if(curl_errno($ch)) {
+            echo 'Ошибка curl: ' . curl_error($ch);
+            exit;
+        }
+
+        curl_close($ch);
+
+// Заголовки для отдачи файла
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . strlen($data));
+
+// Отдаем файл
+        echo $data;
+        exit;
     }
 }

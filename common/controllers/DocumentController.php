@@ -50,7 +50,8 @@ class DocumentController extends Controller
         }
         else {
             $fp = fopen('php://output', 'r');
-            HeaderWizard::setFileHeaders(FilesHelper::getFilenameFromPath($data['obj']->filepath), YandexDiskContext::info(YandexDiskContext::BASE_FOLDER . $data['obj']->filepath)['size']);
+            $file = YandexDiskContext::info(YandexDiskContext::BASE_FOLDER . $data['obj']->filepath);
+            YandexDiskContext::download($file['file'], $file['name']);
             $data['obj']->file->download($fp);
             fseek($fp, 0);
             fclose($fp);

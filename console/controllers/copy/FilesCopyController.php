@@ -240,7 +240,7 @@ class FilesCopyController extends Controller
                     [
                         'table_name' => TrainingGroupWork::tableName(),
                         'table_row_id' => $document['id'],
-                        'file_type' => FilesHelper::TYPE_MATERIAL,
+                        'file_type' => FilesHelper::TYPE_WORK,
                         'files' => array_filter(explode(' ', $document['work_data'])),
                     ];
                 $this->fileTransferHelper->createFile($files);
@@ -250,7 +250,7 @@ class FilesCopyController extends Controller
                     [
                         'table_name' => TrainingGroupWork::tableName(),
                         'table_row_id' => $document['id'],
-                        'file_type' => FilesHelper::TYPE_MATERIAL,
+                        'file_type' => FilesHelper::TYPE_PRESENTATION,
                         'files' => array_filter(explode(' ', $document['present_data'])),
                     ];
                 $this->fileTransferHelper->createFile($files);
@@ -265,7 +265,7 @@ class FilesCopyController extends Controller
                     [
                         'table_name' => TrainingProgramWork::tableName(),
                         'table_row_id' => $document['id'],
-                        'file_type' => FilesHelper::TYPE_DOC,
+                        'file_type' => FilesHelper::TYPE_MAIN,
                         'files' => array_filter(explode(' ', $document['doc_file'])),
                     ];
                 $this->fileTransferHelper->createFile($files);

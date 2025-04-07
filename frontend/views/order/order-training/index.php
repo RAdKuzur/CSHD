@@ -10,7 +10,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $searchModel \frontend\models\search\SearchOrderEvent */
+/* @var $searchModel \frontend\models\search\SearchOrderTraining */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $buttonsAct */
 

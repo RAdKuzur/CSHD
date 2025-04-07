@@ -66,6 +66,9 @@ $tempArchive = $session->get("archiveIn");
             'summary' => false,
 
             'columns' => [
+                ['attribute' => 'number', 'encodeLabel' => false, 'label' => 'Номер<br>приказа', 'value' => function (OrderTrainingWork $model) {
+                    return $model->getFullNumber();
+                }],
                 ['attribute' => 'orderDate', 'encodeLabel' => false, 'label' => 'Дата<br>приказа', 'value' => function (OrderTrainingWork $model) {
                     return DateFormatter::format($model->order_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
                 }],

@@ -74,9 +74,11 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
         </div>
         <div class="icons-container flexx space-around" style="display: <?= $model->isProjectCertificate() ? 'flex' : 'none';?>">
             <?php
-            foreach($model->getProjectThemeName() as $theme) {
-                if ($theme != '') {
-                    echo '<div class="button-icon flexx btn-secondary btn" onclick="changeCursorAndSaveIcon(IconProjectLink, event)" data-value="'.$theme['value'].'">' . $theme['name'] .'</div>';
+            if ($model->getProjectThemeName()) {
+                foreach($model->getProjectThemeName() as $theme) {
+                    if ($theme != '') {
+                        echo '<div class="button-icon flexx btn-secondary btn" onclick="changeCursorAndSaveIcon(IconProjectLink, event)" data-value="'.$theme['value'].'">' . $theme['name'] .'</div>';
+                    }
                 }
             }
             ?>

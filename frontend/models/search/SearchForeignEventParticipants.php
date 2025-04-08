@@ -9,6 +9,8 @@ use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
+use yii\db\Query;
+use yii\web\GroupUrlRule;
 
 
 class SearchForeignEventParticipants extends Model implements SearchInterfaces
@@ -17,6 +19,9 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
     public int $branch;
     public int $restrictions;   // ограничения ПД
     public int $incorrect;      // некорректные данные
+
+    public const RESTRICTIONS = [0 => '---', 1 => 'С ограничениями ПД', 2 => 'Без ограничения ПД'];
+    public const INCORRECT = [0 => '---', 1 => 'Некорректные данные', 2 => 'Корректные данные'];
 
     /**
      * {@inheritdoc}
@@ -73,47 +78,14 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
      */
     public function search($params)
     {
-        /*if ($sort == 1)
-        {
-            //$str = "SELECT * FROM `foreign_event_participants` WHERE `is_true` <> 1 AND (`guaranted_true` IS NULL OR `guaranted_true` = 0)
-            //       OR `sex` = 'Другое' AND (`guaranted_true` IS NULL OR `guaranted_true` = 0) ORDER BY `secondname`";
-            $query = ForeignEventParticipantsWork::find()->where(['IN', 'id',
-                (new Query())->select('id')->from('foreign_event_participants')->where(['!=', 'is_true', 1])->andWhere(['IN', 'id',
-                    (new Query())->select('id')->from('foreign_event_participants')->where(['guaranted_true' => null])->orWhere(['guaranted_true' => 0])])])
-                ->orWhere(['IN', 'id',
-                    (new Query())->select('id')->from('foreign_event_participants')->where(['sex' => 'Другое'])->andWhere(['IN', 'id',
-                        (new Query())->select('id')->from('foreign_event_participants')->where(['guaranted_true' => null])->orWhere(['guaranted_true' => 0])])]);
-            //$query = ForeignEventParticipantsWork::findBySql($str);
-        }
-        if ($sort == 2)
-        {
-            $query = ForeignEventParticipantsWork::find()->where(['IN', 'id',
-                (new Query())->select('foreign_event_participant_id')->distinct()->from('personal_data_foreign_event_participant')->where(['status' => 1])]);
-        }
-
-        // add conditions that should always apply here*/
-
         $this->loadParams($params);
 
-        $query = ForeignEventParticipantsWork::find();
-        /*$query = DocumentInWork::find()
-            ->joinWith([
-                'companyWork' => function ($query) {
-                    $query->alias('company');
-                },
-                'correspondentWork' => function ($query) {
-                    $query->alias('correspondent');
-                },
-                'correspondentWork.peopleWork' => function ($query) {
-                    $query->alias('correspondentPeople');
-                },
-                'inOutDocumentWork.responsibleWork' => function ($query) {
-                    $query->alias('responsible');
-                },
-                'inOutDocumentWork.responsibleWork.peopleWork' => function ($query) {
-                    $query->alias('responsiblePeople');
+        $query = ForeignEventParticipantsWork::find()
+            /*->joinWith([
+                'personalDataParticipantWork' => function ($query) {
+                    $query->alias('personalData');
                 }
-            ]);*/
+            ])*/;
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -168,9 +140,12 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
      */
     public function filterQueryParams(ActiveQuery $query) {
         $this->filterParticipant($query);
+        $this->filterIncorrect($query);
+        $this->filterRestrictions($query);
     }
 
     /**
+     * Поиск по фамилии или имени участника деятельности
      * @param ActiveQuery $query
      * @return void
      */
@@ -178,6 +153,56 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
         if (!empty($this->participantName)) {
             $query->andFilterWhere(['like', 'LOWER(surname)', mb_strtolower($this->participantName)])
             ->orWhere(['like', 'LOWER(firstname)', mb_strtolower($this->participantName)]);
+        }
+    }
+
+    /**
+     * Фильтрация по корректности заполнения карточки
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterIncorrect(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->incorrect) && $this->incorrect !== SearchFieldHelper::EMPTY_FIELD) {
+            switch ($this->incorrect) {
+                case 1:
+                    $query->andFilterWhere(['OR',
+                        ['sex' => 2],       // пол "другое"
+                        ['!=', 'is_true', 1],        // система посчитала его не правильным
+                        ['!=', 'guaranteed_true', 1],   // человеки не сказали что он точно правильный
+                    ]);
+                    break;
+                case 2:
+                    $query->andFilterWhere(['OR',
+                        ['!=', 'sex', 2],       // пол не "другое"
+                        ['is_true' => 1],        // система посчитала его правильным
+                        ['guaranteed_true' => 1],   // человеки сказали что он точно правильный
+                    ]);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Фильтрация по разрешению в персональных данных
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterRestrictions(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->restrictions) && $this->restrictions !== SearchFieldHelper::EMPTY_FIELD) {
+            $subQuery = (new Query())
+                ->select('participant_id')
+                ->distinct()
+                ->from('personal_data_participant')
+                ->where(['status' => 1]);
+
+            switch ($this->restrictions) {
+                case 1:
+                    $query->andFilterWhere(['IN', 'id', $subQuery]);
+                    break;
+                case 2:
+                    $query->andFilterWhere(['NOT IN', 'id', $subQuery]);
+                    break;
+            }
         }
     }
 }

@@ -42,25 +42,16 @@ class OrderTrainingRepository
      */
     public function getAllByGroup(int $idGroup)
     {
-        /*return OrderTrainingWork::find()
-            ->joinWith(['orderTrainingGroupParticipantWork orderTrainingGroupParticipantWork'])
-            ->joinWith(['orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork trainingGroupParticipantOutWork'])
-            ->joinWith(['orderTrainingGroupParticipantWork.trainingGroupParticipantInWork trainingGroupParticipantInWork'])
-            ->where(['trainingGroupParticipantOutWork.training_group_id' => $idGroup])
-            ->orWhere(['trainingGroupParticipantInWork.training_group_id' => $idGroup])
-            ->groupBy('document_order.id')
-            ->all();*/
-
 
         return OrderTrainingWork::find()
                     ->joinWith([
                         'orderTrainingGroupParticipantWork' => function ($query) {
-                            $query->joinWith(['trainingGroupParticipantInWork trainingGroupParticipantWork'], true, 'INNER JOIN')
-                            ->joinWith(['trainingGroupParticipantOutWork trainingGroupParticipantWork'], true, 'INNER JOIN');
+                            $query->joinWith('trainingGroupParticipantInWork', true, 'INNER JOIN')
+                            ->joinWith('trainingGroupParticipantOutWork', true, 'LEFT JOIN');
                         }
                     ], true, 'INNER JOIN')
-                    ->where(['trainingGroupParticipantWork.training_group_id' => $idGroup])
-                    ->groupBy('document_order.id')
+                    ->where(['training_group_participant.training_group_id' => $idGroup])
+                    ->groupBy('id')
                     ->all();
     }
 }

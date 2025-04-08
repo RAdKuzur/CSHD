@@ -42,11 +42,10 @@ class OrderTrainingRepository
      */
     public function getAllByGroup(int $idGroup)
     {
-
         return OrderTrainingWork::find()
                     ->joinWith([
                         'orderTrainingGroupParticipantWork' => function ($query) {
-                            $query->joinWith(['trainingGroupParticipantInWork trainingGroupParticipantInWork'], true, 'INNER JOIN')
+                            $query->joinWith(['trainingGroupParticipantInWork trainingGroupParticipantInWork'], true, 'LEFT JOIN')
                             ->joinWith(['trainingGroupParticipantOutWork trainingGroupParticipantOutWork'], true, 'LEFT JOIN');
                         }
                     ], true, 'INNER JOIN')

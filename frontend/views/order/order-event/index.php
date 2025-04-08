@@ -3,6 +3,7 @@
 use app\components\VerticalActionColumn;
 use common\helpers\DateFormatter;
 use common\helpers\html\HtmlCreator;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\order\OrderEventWork;
 use frontend\models\work\order\OrderMainWork;
 use kartik\export\ExportMenu;
@@ -74,8 +75,12 @@ $tempArchive = $session->get("archiveIn");
                     return DateFormatter::format($model->order_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
                 }],
                 ['attribute' => 'orderName', 'encodeLabel' => false, 'label' => 'Название<br>приказа'],
-                ['attribute' => 'bringName', 'label' => 'Проект<br>вносит', 'encodeLabel' => false],
-                ['attribute' => 'executorName', 'label' => 'Исполнитель', 'encodeLabel' => false],
+                ['attribute' => 'bringName', 'label' => 'Проект<br>вносит', 'encodeLabel' => false, 'value' => function (OrderEventWork $model) {
+                    return $model->bringWork ? $model->bringWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS) : '---';
+                }],
+                ['attribute' => 'executorName', 'label' => 'Исполнитель', 'encodeLabel' => false, 'value' => function (OrderEventWork $model) {
+                    return $model->executorWork ? $model->executorWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS) : '---';
+                }],
 
                 ['class' => VerticalActionColumn::class],
             ],

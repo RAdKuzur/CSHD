@@ -189,6 +189,10 @@ class TrainingGroupRepository
     {
         return TrainingGroupWork::find()->where(['id' => $id]);
     }
+    public function getGroupsByBranch($branches)
+    {
+        return TrainingGroupWork::find()->where(['IN', 'branch' , $branches])->all();
+    }
 
     public function empty()
     {
@@ -224,5 +228,9 @@ class TrainingGroupRepository
             $groups = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll($participants), 'training_group_id'));
         }
         return $groups;
+    }
+    public function getAllByIds(array $ids)
+    {
+        return TrainingGroupWork::find()->where(['IN', 'id', $ids])->all();
     }
 }

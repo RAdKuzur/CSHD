@@ -426,4 +426,11 @@ class OrderTrainingService
         }
         return $error;
     }
+    public function getGroupsByBranches($groupId)
+    {
+        $groups = $this->trainingGroupRepository->getAllByIds($groupId);
+        $branches = array_unique(ArrayHelper::getColumn($groups, 'branch'));
+        return $this->trainingGroupRepository->getGroupsByBranch($branches);
+
+    }
 }

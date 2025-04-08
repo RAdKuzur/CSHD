@@ -344,7 +344,7 @@ class OrderTrainingController extends DocumentController
                 'dataProvider' => $dataProvider,
                 'model' => $this->orderTrainingRepository->get($modelId),
                 'nomenclature' => $nomenclature,
-                'transferGroups' => $this->trainingGroupRepository->getQueryById($groupIds)->all(),
+                'transferGroups' => $this->orderTrainingService->getGroupsByBranches($groupIds),
                 'groupCheckOption' => $groupCheckOption,
                 'groupParticipantOption' => $groupParticipantOption,
             ]),

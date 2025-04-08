@@ -201,10 +201,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const table = targetElement.getElementsByTagName('table')[0];
     const secondTargetElement = document.getElementsByClassName('control-unit')[0];
 
-    document.body.addEventListener('click', function(event) {
-        if (!table.closest(event.target) && !secondTargetElement.contains(event.target)) {
+    /*document.body.addEventListener('click', function(event) {
+        if (!table.contains(event.target) && !secondTargetElement.contains(event.target)) {
             currentIcon = '';
             document.body.style.cursor = 'default';
         }
-    });
+    });*/
 });

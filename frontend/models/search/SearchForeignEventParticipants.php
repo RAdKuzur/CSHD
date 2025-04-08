@@ -2,29 +2,46 @@
 
 namespace frontend\models\search;
 
+use common\components\interfaces\SearchInterfaces;
+use common\helpers\search\SearchFieldHelper;
+use common\helpers\StringFormatter;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
-/**
- * SearchForeignEventParticipants represents the model behind the search form of `app\models\common\ForeignEventParticipants`.
- */
-class SearchForeignEventParticipants extends ForeignEventParticipantsWork
+
+class SearchForeignEventParticipants extends Model implements SearchInterfaces
 {
+    public string $participantName;
+    public int $branch;
+    public int $restrictions;   // ограничения ПД
+    public int $incorrect;      // некорректные данные
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            ['id', 'integer'],
-            [['firstname', 'surname', 'patronymic'], 'string'],
+            [['id', 'branch', 'restrictions', 'incorrect'], 'integer'],
+            [['firstname', 'surname', 'patronymic', 'participantName'], 'string'],
+            [['participantName', 'branch', 'restrictions', 'incorrect'], 'safe'],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function __construct(
+        string $participantName = '',
+        int $branch = SearchFieldHelper::EMPTY_FIELD,
+        int $restrictions = SearchFieldHelper::EMPTY_FIELD,
+        int $incorrect = SearchFieldHelper::EMPTY_FIELD
+    ) {
+        $this->participantName = $participantName;
+        $this->branch = $branch;
+        $this->restrictions = $restrictions;
+        $this->incorrect = $incorrect;
+    }
+
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
@@ -32,15 +49,30 @@ class SearchForeignEventParticipants extends ForeignEventParticipantsWork
     }
 
     /**
-     * Creates data provider instance with search query applied
+     * Определение параметров загрузки данных
      *
-     * @param array $params
+     * @param $params
+     * @return void
+     */
+    public function loadParams($params)
+    {
+        if (count($params) > 1) {
+            $params['SearchForeignEventParticipants']['branch'] = StringFormatter::stringAsInt($params['SearchForeignEventParticipants']['branch']);
+            $params['SearchForeignEventParticipants']['restrictions'] = StringFormatter::stringAsInt($params['SearchForeignEventParticipants']['restrictions']);
+            $params['SearchForeignEventParticipants']['incorrect'] = StringFormatter::stringAsInt($params['SearchForeignEventParticipants']['incorrect']);
+        }
+
+        $this->load($params);
+    }
+
+    /**
+     * Создает экземпляр DataProvider с учетом поискового запроса (фильтров или сортировки)
      *
+     * @param $params
      * @return ActiveDataProvider
      */
-    public function search($params, $sort)
+    public function search($params)
     {
-        $query = ForeignEventParticipantsWork::find();
         /*if ($sort == 1)
         {
             //$str = "SELECT * FROM `foreign_event_participants` WHERE `is_true` <> 1 AND (`guaranted_true` IS NULL OR `guaranted_true` = 0)
@@ -61,30 +93,91 @@ class SearchForeignEventParticipants extends ForeignEventParticipantsWork
 
         // add conditions that should always apply here*/
 
+        $this->loadParams($params);
+
+        $query = ForeignEventParticipantsWork::find();
+        /*$query = DocumentInWork::find()
+            ->joinWith([
+                'companyWork' => function ($query) {
+                    $query->alias('company');
+                },
+                'correspondentWork' => function ($query) {
+                    $query->alias('correspondent');
+                },
+                'correspondentWork.peopleWork' => function ($query) {
+                    $query->alias('correspondentPeople');
+                },
+                'inOutDocumentWork.responsibleWork' => function ($query) {
+                    $query->alias('responsible');
+                },
+                'inOutDocumentWork.responsibleWork.peopleWork' => function ($query) {
+                    $query->alias('responsiblePeople');
+                }
+            ]);*/
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'=> ['defaultOrder' => ['surname' => SORT_ASC, 'firstname' => SORT_ASC]]
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        /*$query->andFilterWhere([
-            'id' => $this->id,
-            //'firstname' => $this->firstname,
-            //'secondname' => $this->secondname,
-            //'patronymic' => $this->patronymic,
-        ])
-        ->andFilterWhere(['like', 'firstname', $this->firstname])
-        ->andFilterWhere(['like', 'secondname', $this->secondname])
-        ->andFilterWhere(['like', 'patronymic', $this->patronymic]);*/
+        $this->sortAttributes($dataProvider);
+        $this->filterQueryParams($query);
 
         return $dataProvider;
+    }
+
+    /**
+     * Кастомизированная сортировка по полям таблицы, с учетом родительской сортировки
+     *
+     * @param ActiveDataProvider $dataProvider
+     * @return void
+     */
+    public function sortAttributes(ActiveDataProvider $dataProvider) {
+        $dataProvider->sort->attributes['firstname'] = [
+            'asc' => ['firstname' => SORT_ASC],
+            'desc' => ['firstname' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['secondname'] = [
+            'asc' => ['secondname' => SORT_ASC],
+            'desc' => ['secondname' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['patronymic'] = [
+            'asc' => ['patronymic' => SORT_ASC],
+            'desc' => ['patronymic' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['sex'] = [
+            'asc' => ['sex' => SORT_DESC],
+            'desc' => ['sex' => SORT_ASC],
+        ];
+
+        $dataProvider->sort->attributes['birthdate'] = [
+            'asc' => ['birthdate' => SORT_DESC],
+            'desc' => ['birthdate' => SORT_ASC],
+        ];
+    }
+
+
+    /**
+     * Вызов функций фильтров по параметрам запроса
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterQueryParams(ActiveQuery $query) {
+        $this->filterParticipant($query);
+    }
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterParticipant(ActiveQuery $query) {
+        if (!empty($this->participantName)) {
+            $query->andFilterWhere(['like', 'LOWER(surname)', mb_strtolower($this->participantName)])
+            ->orWhere(['like', 'LOWER(firstname)', mb_strtolower($this->participantName)]);
+        }
     }
 }

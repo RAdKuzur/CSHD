@@ -64,10 +64,10 @@ class ForeignEventParticipantsController extends Controller
         $this->lockWizard = $lockWizard;
     }
 
-    public function actionIndex($sort = null)
+    public function actionIndex()
     {
         $searchModel = new SearchForeignEventParticipants();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams, $sort);
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $links = array_merge(
             ButtonsFormatter::primaryCreateLink('участника'),

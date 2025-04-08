@@ -372,6 +372,7 @@ class DodReportService
         $query = $this->participantBuilder->query();
         $query = $this->participantBuilder->joinWith($query, 'participantWork');
         $query = $this->participantBuilder->filterByGroups($query, ArrayHelper::getColumn($groups, 'id'));
+        $query = $this->participantBuilder->filterByAge($query, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
         $queryAll = $this->participantBuilder->filterBySex(clone $query);
         $queryMale = $this->participantBuilder->filterBySex(clone $query, [PersonInterface::SEX_MALE]);
         $queryFemale = $this->participantBuilder->filterBySex(clone $query, [PersonInterface::SEX_FEMALE]);

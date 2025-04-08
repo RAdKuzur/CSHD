@@ -14,8 +14,6 @@ use yii\widgets\ActiveForm;
 $this->title = 'Результат отчета по обучающимся';
 ?>
 
-<?= var_dump($participantsResult['result']) ?>
-
 <p>Человеко-часы: <?= $manHoursResult['result'] ?></p>
 <p>Обучающиеся:</p>
 <table class="table table-striped">

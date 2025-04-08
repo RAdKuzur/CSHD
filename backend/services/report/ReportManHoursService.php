@@ -190,6 +190,7 @@ class ReportManHoursService implements ManHoursServiceInterface
             $result = [];
             $participants = [];
             foreach ($calculateTypes as $calculateType) {
+                var_dump($calculateType);
                 $tempQuery = $this->builder->filterGroupsByDates(clone $query, $startDate, $endDate, [$calculateType]);
                 $tempQuery = $this->builder->filterGroupsByTeachers($tempQuery, $teacherIds);
                 $groups = $this->repository->findAll($tempQuery);
@@ -201,6 +202,7 @@ class ReportManHoursService implements ManHoursServiceInterface
                 $result[$calculateType] = count($tempParticipants);
                 $participants = array_merge($participants, $tempParticipants);
             }
+            die;
         }
 
         return [

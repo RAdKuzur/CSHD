@@ -42,6 +42,7 @@ class ReportFacade
                 );
         }
 
+        var_dump($form->type);
         if ($form->isParticipants()) {
             array_shift($form->type);
             $manHoursResult['participants'] =

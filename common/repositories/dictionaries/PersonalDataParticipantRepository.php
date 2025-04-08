@@ -45,7 +45,7 @@ class PersonalDataParticipantRepository
         $commands = [];
         $pdIds = Yii::$app->personalData->customSort();
         foreach ($pdIds as $key => $pdId) {
-            $model = PersonalDataParticipantWork::fill($participantId, $key, PersonalDataParticipantWork::STATUS_FREE);
+            $model = PersonalDataParticipantWork::fill($participantId, ($key + 1), PersonalDataParticipantWork::STATUS_FREE);
             $command = Yii::$app->db->createCommand();
             $command->insert($model::tableName(), $model->getAttributes());
             $commands[] = $command->getRawSql();

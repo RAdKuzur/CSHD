@@ -60,7 +60,7 @@ use yii\widgets\ActiveForm;
             return
                 '<div class="checkbox" style="font-size: 16px; font-family: Arial; color: black;">
                         <label for="branch-'. $index .'">
-                            <input id="branch-'. $index .'" name="'. $name .'" type="checkbox" '. $checked .' value="'. ($value + 1) .'">
+                            <input id="branch-'. $index .'" name="'. $name .'" type="checkbox" '. $checked .' value="'. $value .'">
                             '. $label .'
                         </label>
                     </div>';

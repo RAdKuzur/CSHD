@@ -29,6 +29,13 @@ class ManHoursReportForm extends Model
     const MAN_HOURS_FAIR = 1; // учитываем неявки
     const MAN_HOURS_ALL = 2; // игнорируем неявки
 
+    public static $types = [
+        self::MAN_HOURS_REPORT => 'Человеко-часы',
+        self::PARTICIPANT_START_BEFORE_FINISH_IN => 'Кол-во обучающихся, начавших обучение до начала заданного периода и завершивших обучение в заданный период',
+        self::PARTICIPANT_START_IN_FINISH_AFTER => 'Кол-во обучающихся, начавших обучение в заданный период и завершивших обучение после окончания заданного периода',
+        self::PARTICIPANT_START_IN_FINISH_IN => 'Кол-во обучающихся, начавших обучение после начала заданного периода и завершивших обучение до окончания заданного периода',
+        self::PARTICIPANT_START_BEFORE_FINISH_AFTER => 'Кол-во обучающихся, начавших обучение до начала заданного периода и завершивших обучение после окончания заданного периода',
+    ];
 
     private TeacherGroupRepository $teacherGroupRepository;
     private PeopleStampRepository $peopleStampRepository;

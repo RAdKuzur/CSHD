@@ -19,7 +19,7 @@ $this->title = 'Результат отчета по обучающимся';
 <table class="table table-striped">
     <?php if (is_array($participantsResult['result'])): ?>
         <?php foreach($participantsResult['result'] as $index => $participantChapter): ?>
-            <tr><td><?= $index ?></td><td><?= $participantChapter ?></td></tr>
+            <tr><td><?= ManHoursReportForm::$types[$index] ?></td><td><?= $participantChapter ?></td></tr>
         <?php endforeach; ?>
     <?php else: ?>
         <p><?= $participantsResult['result'] ?></p>

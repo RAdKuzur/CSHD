@@ -108,7 +108,7 @@ class DocumentOutController extends DocumentController
         $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
         $availablePositions = $this->positionRepository->getList();
         $availableCompanies = $this->companyRepository->getList();
-        $mainCompanyWorkers = $this->peopleRepository->getPeopleFromMainCompany();
+        $mainCompanyWorkers = $this->peopleRepository->getAll();
         $filesAnswer = $this->repository->getDocumentInWithoutAnswer();
         if ($model->load(Yii::$app->request->post())) {
             $local_id = $model->getAnswer();
@@ -158,7 +158,7 @@ class DocumentOutController extends DocumentController
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
-            $mainCompanyWorkers = $this->peopleRepository->getPeopleFromMainCompany();
+            $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
             $filesAnswer = $this->repository->getDocumentInWithoutAnswer();
             if ($model->load(Yii::$app->request->post())) {

@@ -410,8 +410,7 @@ class TrainingGroupCombinedForm extends Model
             return '---';
         }
 
-        foreach ($this->orders as $order)
-        {
+        foreach ($this->orders as $order) {
             $result .= StringFormatter::stringAsLink(
                 'Приказ № '.$order->getFullName(),
                 Url::to([Yii::$app->frontUrls::ORDER_TRAINING_VIEW, 'id' => $order->id])

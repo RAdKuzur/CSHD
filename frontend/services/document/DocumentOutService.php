@@ -42,12 +42,20 @@ class DocumentOutService implements DatabaseServiceInterface
 
     public function getPeopleStamps(DocumentOutWork $model)
     {
-        $peopleStampId = $this->peopleStampService->createStampFromPeople($model->correspondent_id);
-        $model->correspondent_id = $peopleStampId;
-        $peopleStampId = $this->peopleStampService->createStampFromPeople($model->signed_id);
-        $model->signed_id = $peopleStampId;
-        $peopleStampId = $this->peopleStampService->createStampFromPeople($model->executor_id);
-        $model->executor_id = $peopleStampId;
+        if ($model->correspondent_id != '') {
+            $peopleStampId = $this->peopleStampService->createStampFromPeople($model->correspondent_id);
+            $model->correspondent_id = $peopleStampId;
+        }
+
+        if ($model->signed_id != '') {
+            $peopleStampId = $this->peopleStampService->createStampFromPeople($model->signed_id);
+            $model->signed_id = $peopleStampId;
+        }
+
+        if ($model->executor_id != '') {
+            $peopleStampId = $this->peopleStampService->createStampFromPeople($model->executor_id);
+            $model->executor_id = $peopleStampId;
+        }
     }
 
     public function getFilesInstances(DocumentOutWork $model)
@@ -187,6 +195,8 @@ class DocumentOutService implements DatabaseServiceInterface
     {
         /** @var InOutDocumentsWork $answer */
         $answer = $this->inOutDocumentsRepository->getByDocumentOutId($documentOutId);
-        $answer->documentInWork->checkModel(ErrorAssociationHelper::getDocumentInErrorsList(), DocumentInWork::tableName(), $answer->document_in_id);
+        if ($answer->documentInWork) {
+            $answer->documentInWork->checkModel(ErrorAssociationHelper::getDocumentInErrorsList(), DocumentInWork::tableName(), $answer->document_in_id);
+        }
     }
 }

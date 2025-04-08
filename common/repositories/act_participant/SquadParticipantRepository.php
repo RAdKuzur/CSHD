@@ -88,4 +88,8 @@ class SquadParticipantRepository
         LogFactory::createCrudLog(LogInterface::LVL_INFO, 'Сохранение записи squad_participant', $sql);
         return $model->id;
     }
+    public function checkUnique($participantIds, $actId)
+    {
+        return SquadParticipantWork::find()->andWhere(['act_participant_id' => $actId])->andWhere(['IN', 'participant_id',  $participantIds])->exists();
+    }
 }

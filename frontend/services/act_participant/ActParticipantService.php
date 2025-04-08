@@ -146,7 +146,7 @@ class ActParticipantService
                 );
                 $this->setPeopleStamp($modelAct);
                 $modelAct->actFiles = $modelActParticipantForm->actFiles;
-                if ($this->actParticipantRepository->checkUniqueAct($foreignEventId, $teamNameId, $modelAct->focus, $modelAct->form, $modelAct->nomination) == 0) {
+                if ($this->actParticipantRepository->checkUniqueAct($foreignEventId, $teamNameId, $modelAct->focus, $modelAct->form, $modelAct->nomination, $participants)) {
                     $this->actParticipantRepository->save($modelAct);
                 }
                 if (!is_null($modelAct->id)) {

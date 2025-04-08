@@ -5,6 +5,7 @@ namespace common\repositories\act_participant;
 use common\components\logger\base\LogInterface;
 use common\components\logger\LogFactory;
 use common\models\work\LogWork;
+use common\repositories\event\ParticipantAchievementRepository;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\team\ActParticipantBranchWork;
 use frontend\models\work\team\ActParticipantWork;
@@ -131,7 +132,7 @@ class ActParticipantRepository
         return $query->all();
     }
 
-    public function checkUniqueAct($foreignEventId, $teamNameId, $focus, $form, $nomination)
+    public function checkUniqueAct($foreignEventId, $teamNameId, $focus, $form, $nomination, $participants)
     {
         $query = ActParticipantWork::find()
             ->andWhere(['foreign_event_id' => $foreignEventId])
@@ -139,8 +140,13 @@ class ActParticipantRepository
             ->andWhere(['focus' => $focus])
             ->andWhere(['form' => $form])
             ->andWhere(['nomination' => $nomination]);
+        foreach ($query->all() as $act) {
+            if ($this->squadParticipantRepository->checkUnique($participants, $act->id)) {
+                return false;
+            }
+        }
         LogFactory::createCrudLog(LogInterface::LVL_INFO, 'Выгрузка количества уникальных актов участия по заданным параметрам', $query->createCommand()->getRawSql());
-        return count($query->all());
+        return true;
     }
 
     public function get($id)

@@ -158,7 +158,6 @@ class ReportManHoursService implements ManHoursServiceInterface
         int $mode = ReportFacade::MODE_PURE
     ) : array
     {
-        var_dump($calculateTypes);
         $query = $this->getTrainingGroupsQueryByFilters($branches, $focuses, $allowRemotes, $budgets);
         // для подсчета уникальных игнорируем разделы (по таймингам)
         if ($calculateSubtype === ManHoursReportForm::PARTICIPANTS_UNIQUE) {
@@ -202,7 +201,6 @@ class ReportManHoursService implements ManHoursServiceInterface
                 $result[$calculateType] = count($tempParticipants);
                 $participants = array_merge($participants, $tempParticipants);
             }
-            die;
         }
 
         return [

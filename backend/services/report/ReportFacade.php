@@ -42,9 +42,10 @@ class ReportFacade
                 );
         }
 
-        var_dump($form->type);
         if ($form->isParticipants()) {
-            array_shift($form->type);
+            $form->type = array_filter($form->type, function($value) {
+                return $value !== ManHoursReportForm::MAN_HOURS_REPORT;
+            });
             $manHoursResult['participants'] =
                 $service->calculateParticipantsByPeriod(
                     $form->startDate,

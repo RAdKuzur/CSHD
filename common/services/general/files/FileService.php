@@ -9,6 +9,7 @@ use DomainException;
 use Imagine\Image\ImagineInterface;
 use Imagine\Image\ManipulatorInterface;
 use Yii;
+use yii\web\UploadedFile;
 
 class FileService
 {
@@ -43,12 +44,12 @@ class FileService
      * Функция загрузки файла на сервер или ЯД
      * в $params необходимо передать либо filepath, либо пару tableName + fileType
      *
-     * @param $file
+     * @param UploadedFile $file
      * @param $filename
      * @param $params ['filepath' => %относительный_путь_к_файлу%, 'tableName' => %имя_таблицы%, 'fileType' => %тип_файла%]
      * @return void
      */
-    public function uploadFile($file, $filename, $params = '')
+    public function uploadFile(UploadedFile $file, $filename, $params = '')
     {
         if (array_key_exists('filepath', $params)) {
             $finalPath = $params['filepath'];
@@ -62,9 +63,10 @@ class FileService
 
         // тут будет стратегия для загрузки на яндекс диск... потом
 
-        var_dump(Yii::$app->basePath . $finalPath . $filename);die;
+        var_dump(Yii::$app->basePath . $finalPath . $filename);
         if ($file) {
             $file->saveAs(Yii::$app->basePath . $finalPath . $filename);
+            var_dump($file->getHasError());
             if ($file->size > self::FILE_LIMIT){
                 //загрузка на Диск
                 $this->uploadDisk($finalPath, $filename, $params);

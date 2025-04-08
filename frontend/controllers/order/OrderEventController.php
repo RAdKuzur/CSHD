@@ -520,7 +520,7 @@ class OrderEventController extends DocumentController
         $model = $this->documentOrderRepository->get($id);
         $loader = new OrderLoader(
             $this->documentOrderService->generateOrder($model),
-            "Приказ №" . $model->order_number
+            "Приказ №" . $model->getFullNumber() . ' ' . $model->order_name
         );
         $loader();
     }

@@ -872,7 +872,7 @@ class WordCreator
         $posOne = $pos->where(['people_id' => $order->executor_id])->one();
         $cell->addText($order->executor->getFIO(PersonInterface::FIO_SURNAME_INITIALS) . '. ', array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(3000);
-        $cell->addText(mb_strtolower(mb_substr($posOne->position->name, 0, 1)) . mb_substr($posOne->position->name, 1), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
+        $cell->addText(mb_strtolower(mb_substr($order->executor->positionWork->name, 0, 1)) . mb_substr($order->executor->positionWork->name, 1), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(10000);
         $text = '- контроль соблюдения расписания ';
         if ($countGroup == 1)

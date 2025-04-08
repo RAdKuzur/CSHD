@@ -65,8 +65,7 @@ class FileService
 
         var_dump(Yii::$app->basePath . $finalPath . $filename);
         if ($file) {
-            $file->saveAs(Yii::$app->basePath . $finalPath . $filename);
-            var_dump($file->getHasError());die;
+            var_dump($file->saveAs(Yii::$app->basePath . $finalPath . $filename));die;
             if ($file->size > self::FILE_LIMIT){
                 //загрузка на Диск
                 $this->uploadDisk($finalPath, $filename, $params);

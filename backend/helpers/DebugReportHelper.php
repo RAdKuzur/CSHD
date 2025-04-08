@@ -32,11 +32,11 @@ class DebugReportHelper
         $expertType = count($expertsList) > 0 ?
             $expertsList[0]->getExpertTypeString() :
             '';
-        $expertCompany = count($expertsList) > 0 && count($expertsList[0]->expertWork->peopleWork->positionCompanyWork) > 0?
-            $expertsList[0]->expertWork->peopleWork->positionCompanyWork[0]->companyWork->name :
+        $expertCompany = count($expertsList) > 0 && count($expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork) > 0?
+            $expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork[0]->companyWork->name :
             '';
-        $expertPosition = count($expertsList) > 0 && count($expertsList[0]->expertWork->peopleWork->positionCompanyWork) > 0?
-            $expertsList[0]->expertWork->peopleWork->positionCompanyWork[0]->positionWork->name :
+        $expertPosition = count($expertsList) > 0 && count($expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork) > 0?
+            $expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork[0]->positionWork->name :
             '';
 
         return [

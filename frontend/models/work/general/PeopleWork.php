@@ -13,7 +13,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 
 /**
- * @property PeoplePositionCompanyBranchWork[] $positionCompanyWork
+ * @property PeoplePositionCompanyBranchWork[] $peoplePositionCompanyBranchWork
  */
 
 class PeopleWork extends People implements PersonInterface

@@ -63,24 +63,15 @@ class FileService
 
         // тут будет стратегия для загрузки на яндекс диск... потом
 
-        echo '<pre>';
-        var_dump($file);
-        echo '</pre>';
-        var_dump(Yii::$app->basePath . $finalPath . $filename);die;
         if ($file) {
-            try {
-                $file->saveAs(Yii::$app->basePath . $finalPath . $filename);
-            }
-            catch (\Exception $e)
-            {
-                var_dump($e->getMessage());die;
-            }
+            $file->saveAs(Yii::$app->basePath . $finalPath . $filename);
             if ($file->size > self::FILE_LIMIT){
                 //загрузка на Диск
                 $this->uploadDisk($finalPath, $filename, $params);
             }
         }
     }
+
     public function uploadDisk($finalPath, $filename, $params)
     {
         $path = Yii::$app->basePath . $finalPath . $filename;

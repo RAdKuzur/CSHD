@@ -389,6 +389,7 @@ class OrderEventController extends DocumentController
                         $form->orderEventForm->actFiles
                     );
                 }
+
                 $this->foreignEventRepository->save($modelForeignEvent);
                 $modelForeignEvent->checkModel(ErrorAssociationHelper::getForeignEventErrorsList(), ForeignEventWork::tableName(), $modelForeignEvent->id);
                 $this->actParticipantService->addActParticipant($acts, $modelForeignEvent->id);

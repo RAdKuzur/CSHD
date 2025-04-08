@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 <script src="/scripts/sisyphus/sisyphus.js"></script>
 <script src="/scripts/sisyphus/sisyphus.min.js"></script>
 
-<div class="foreign-event-participants-form">
+<div class="foreign-event-participants-form field-backing">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -50,7 +50,7 @@ use yii\widgets\ActiveForm;
     <!--if (\app\models\components\RoleBaseAccess::CheckRole(Yii::$app->user->identity->getId(), 6) || \app\models\components\RoleBaseAccess::CheckRole(Yii::$app->user->identity->getId(), 7))-->
 
     <div <?= $model->isTrueAnyway() ? 'hidden' : '' ?>>
-        <?= $form->field($model, 'guaranteed_true')->checkbox(['checked' => $model->isGuaranteedTrue()]); ?>
+        <?= $form->field($model, 'guaranteed_true')->checkbox(['checked' => $model->isGuaranteedTrue()])->label('Данные заполненны корректно'); ?>
     </div>
 
     <!--if (\app\models\components\RoleBaseAccess::CheckSingleAccess(Yii::$app->user->identity->getId(), 22) )-->
@@ -68,7 +68,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

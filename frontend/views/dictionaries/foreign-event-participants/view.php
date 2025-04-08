@@ -1,11 +1,9 @@
 <?php
 
 use common\helpers\DateFormatter;
-use common\helpers\html\HtmlBuilder;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\dictionaries\PersonInterface;
 use yii\helpers\Html;
-use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
 /* @var $model ForeignEventParticipantsWork */
@@ -16,38 +14,6 @@ $this->params['breadcrumbs'][] = ['label' => 'Участники деятель�
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<style>
-
-    .badge {
-        padding: 3px 9px 4px;
-        font-size: 13px;
-        font-weight: bold;
-        white-space: nowrap;
-        color: #ffffff;
-        background-color: #999999;
-        -webkit-border-radius: 9px;
-        -moz-border-radius: 9px;
-        border-radius: 9px;
-    }
-    .badge:hover {
-        color: #ffffff;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    .badge-error {
-        background-color: #b94a48;
-    }
-    .badge-error:hover {
-        background-color: #953b39;
-    }
-    .badge-success {
-        background-color: #468847;
-    }
-    .badge-success:hover {
-        background-color: #356635;
-    }
-
-</style>
 
 <div class="foreign-event-participants-view">
 

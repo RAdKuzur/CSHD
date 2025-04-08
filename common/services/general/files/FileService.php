@@ -63,6 +63,9 @@ class FileService
 
         // тут будет стратегия для загрузки на яндекс диск... потом
 
+        echo '<pre>';
+        var_dump($file);
+        echo '</pre>';
         var_dump(Yii::$app->basePath . $finalPath . $filename);die;
         if ($file) {
             try {

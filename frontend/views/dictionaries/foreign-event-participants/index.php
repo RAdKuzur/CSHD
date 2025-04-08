@@ -58,11 +58,11 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-        <?= $this->render('_search', ['model' => $searchModel]); ?>
+        <?= $this->render('_search', ['searchModel' => $searchModel]); ?>
 
         <?php
-        echo '<div style="margin-bottom: 10px">'.Html::a('Показать участников с некорректными данными', \yii\helpers\Url::to(['foreign-event-participants/index', 'sort' => '1']), ['class' => 'btn btn-danger', 'style' => 'margin-right: 5px;']);
-        echo Html::a('Показать участников с ограничениями на разглашение ПД', \yii\helpers\Url::to(['foreign-event-participants/index', 'sort' => '2']), ['class' => 'btn btn-info']).'</div>';
+        //echo '<div style="margin-bottom: 10px">'.Html::a('Показать участников с некорректными данными', \yii\helpers\Url::to(['foreign-event-participants/index', 'sort' => '1']), ['class' => 'btn btn-danger', 'style' => 'margin-right: 5px;']);
+        //echo Html::a('Показать участников с ограничениями на разглашение ПД', \yii\helpers\Url::to(['foreign-event-participants/index', 'sort' => '2']), ['class' => 'btn btn-info']).'</div>';
         ?>
 
         <?= GridView::widget([

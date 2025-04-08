@@ -1,34 +1,27 @@
 <?php
 
-use yii\helpers\Html;
+use common\helpers\html\HtmlBuilder;
+use common\helpers\search\SearchFieldHelper;
+use frontend\models\search\SearchForeignEventParticipants;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\SearchForeignEventParticipants */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $searchModel SearchForeignEventParticipants */
 ?>
 
-<!--<div class="foreign-event-participants-search">
+<?php $form = ActiveForm::begin([
+    'action' => ['index'], // Действие контроллера для обработки поиска
+    'method' => 'get', // Метод GET для передачи параметров в URL
+    'options' => ['data-pjax' => true], // Для использования Pjax
+]); ?>
 
-    <?php /*$form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); */?>
+<?php
+$searchFields = array_merge(
+    SearchFieldHelper::textField('participantName' , 'ФИО учащегося', 'ФИО учащегося'),
+    /*SearchFieldHelper::dropdownField('branch', 'Отдел обучения', Yii::$app->branches->getOnlyEducational(), 'Отдел обучения'),
+    SearchFieldHelper::dropdownField('branch', 'Отдел обучения', Yii::$app->branches->getOnlyEducational(), 'Отдел обучения'),
+    SearchFieldHelper::dropdownField('branch', 'Отдел обучения', Yii::$app->branches->getOnlyEducational(), 'Отдел обучения'),*/
+);
 
-    <?php /*= $form->field($model, 'id') */?>
+echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::PARTICIPANT_INDEX); ?>
 
-    <?php /*= $form->field($model, 'firstname') */?>
-
-    <?php /*= $form->field($model, 'secondname') */?>
-
-    <?php /*= $form->field($model, 'patronymic') */?>
-
-    <div class="form-group">
-        <?php /*= Html::submitButton('Search', ['class' => 'btn btn-primary']) */?>
-        <?php /*= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) */?>
-    </div>
-
-    <?php /*ActiveForm::end(); */?>
-
-</div>
--->
+<?php ActiveForm::end(); ?>

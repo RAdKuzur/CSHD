@@ -450,7 +450,6 @@ body {
     padding-right: 1em;
     display: flex;
     justify-content: space-between;
-    width: 5em;
 }
 
 .pagination .active input {

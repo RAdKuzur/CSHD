@@ -35,6 +35,7 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
+        ['label' => 'Вернуться в ЦСХД', 'url' => Yii::$app->params['frontUrl'] . '/index.php?r=site/index'],
         ['label' => 'Пользователи', 'url' => ['/user/index']],
         ['label' => 'Сертификаты', 'url' => ['/certificate-templates/index']],
         [

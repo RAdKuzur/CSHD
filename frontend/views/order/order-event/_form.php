@@ -718,11 +718,11 @@ use yii\widgets\DetailView;
                                     echo $form
                                         ->field($modelAct, "[{$i}]firstTeacher")
                                         ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                        ->label('ФИО первого учителя');
+                                        ->label('ФИО первого педагога');
                                     echo $form
                                         ->field($modelAct, "[{$i}]secondTeacher")
                                         ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                        ->label('ФИО второго учителя (при необходмиости)');
+                                        ->label('ФИО второго педагога (при необходимости)');
                                     ?>
                                     <?php
                                     $params = [

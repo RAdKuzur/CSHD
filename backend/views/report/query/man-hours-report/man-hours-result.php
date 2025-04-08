@@ -16,13 +16,16 @@ $this->title = 'Результат отчета по обучающимся';
 
 <p>Человеко-часы: <?= $manHoursResult['result'] ?></p>
 <p>Обучающиеся:</p>
-<?php if (is_array($participantsResult['result'])): ?>
-    <?php foreach($participantsResult['result'] as $index => $participantChapter): ?>
-        <p><?= $index ?>: <?= $participantChapter ?></p>
-    <?php endforeach; ?>
-<?php else: ?>
-    <p><?= $participantsResult['result'] ?></p>
-<?php endif; ?>
+<table class="table table-striped">
+    <?php if (is_array($participantsResult['result'])): ?>
+        <?php foreach($participantsResult['result'] as $index => $participantChapter): ?>
+            <tr><td><?= $index ?></td><td><?= $participantChapter ?></td></tr>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p><?= $participantsResult['result'] ?></p>
+    <?php endif; ?>
+</table>
+
 
 <?php $form1 = ActiveForm::begin(['method' => 'post', 'action' => ['download-debug-csv', 'type' => ManHoursReportForm::MAN_HOURS_REPORT]]); ?>
     <input type="hidden" name="debugData" value="<?= htmlspecialchars(json_encode($manHoursResult['debugData'], JSON_UNESCAPED_UNICODE)) ?>">

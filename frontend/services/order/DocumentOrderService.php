@@ -435,4 +435,10 @@ class DocumentOrderService
         ];
         return $index;
     }
+    public function createOrderMainReserve($model)
+    {
+        $model->order_name = 'Резерв';
+        $model->order_number = '02-02';
+        $model->order_date = DateFormatter::format(date('Y-m-d'), DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
+    }
 }

@@ -189,8 +189,8 @@ class ReportManHoursService implements ManHoursServiceInterface
         else {
             $result = [];
             $participants = [];
+            var_dump($calculateTypes);
             foreach ($calculateTypes as $calculateType) {
-                var_dump($calculateType);
                 $tempQuery = $this->builder->filterGroupsByDates(clone $query, $startDate, $endDate, [$calculateType]);
                 $tempQuery = $this->builder->filterGroupsByTeachers($tempQuery, $teacherIds);
                 $groups = $this->repository->findAll($tempQuery);

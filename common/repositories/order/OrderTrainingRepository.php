@@ -59,7 +59,7 @@ class OrderTrainingRepository
                         }
                     ], true, 'INNER JOIN')
                     ->where(['training_group_participant.training_group_id' => $idGroup])
-                    ->groupBy('id')
+                    //->groupBy('id')
                     ->all();
     }
 }

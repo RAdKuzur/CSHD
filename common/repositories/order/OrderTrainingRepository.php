@@ -46,11 +46,12 @@ class OrderTrainingRepository
         return OrderTrainingWork::find()
                     ->joinWith([
                         'orderTrainingGroupParticipantWork' => function ($query) {
-                            $query->joinWith('trainingGroupParticipantInWork', true, 'INNER JOIN')
-                            ->joinWith('trainingGroupParticipantOutWork', true, 'LEFT JOIN');
+                            $query->joinWith(['trainingGroupParticipantInWork trainingGroupParticipantInWork'], true, 'INNER JOIN')
+                            ->joinWith(['trainingGroupParticipantOutWork trainingGroupParticipantOutWork'], true, 'LEFT JOIN');
                         }
                     ], true, 'INNER JOIN')
-                    ->where(['training_group_participant.training_group_id' => $idGroup])
+                    ->where(['trainingGroupParticipantInWork.training_group_id' => $idGroup])
+                    ->orWhere(['trainingGroupParticipantOutWork.training_group_id' => $idGroup])
                     ->groupBy('id')
                     ->all();
     }

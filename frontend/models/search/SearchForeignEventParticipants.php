@@ -16,6 +16,8 @@ use yii\web\GroupUrlRule;
 class SearchForeignEventParticipants extends Model implements SearchInterfaces
 {
     public string $participantName;
+    public string $participantSurname;
+    public string $participantPatronymic;
     public int $branch;
     public int $restrictions;   // ограничения ПД
     public int $incorrect;      // некорректные данные
@@ -30,18 +32,22 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
     {
         return [
             [['id', 'branch', 'restrictions', 'incorrect'], 'integer'],
-            [['firstname', 'surname', 'patronymic', 'participantName'], 'string'],
+            [['firstname', 'surname', 'patronymic', 'participantName', 'participantSurname', 'participantPatronymic'], 'string'],
             [['participantName', 'branch', 'restrictions', 'incorrect'], 'safe'],
         ];
     }
 
     public function __construct(
         string $participantName = '',
+        string $participantSurname = '',
+        string $participantPatronymic = '',
         int $branch = SearchFieldHelper::EMPTY_FIELD,
         int $restrictions = SearchFieldHelper::EMPTY_FIELD,
         int $incorrect = SearchFieldHelper::EMPTY_FIELD
     ) {
         $this->participantName = $participantName;
+        $this->participantSurname = $participantSurname;
+        $this->participantPatronymic = $participantPatronymic;
         $this->branch = $branch;
         $this->restrictions = $restrictions;
         $this->incorrect = $incorrect;
@@ -139,20 +145,43 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
      * @return void
      */
     public function filterQueryParams(ActiveQuery $query) {
-        $this->filterParticipant($query);
+        $this->filterParticipantName($query);
+        $this->filterParticipantSurname($query);
+        $this->filterParticipantPatronymic($query);
         $this->filterIncorrect($query);
         $this->filterRestrictions($query);
     }
 
     /**
-     * Поиск по фамилии или имени участника деятельности
+     * Поиск по имени участника деятельности
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterParticipant(ActiveQuery $query) {
+    public function filterParticipantName(ActiveQuery $query) {
         if (!empty($this->participantName)) {
-            $query->andFilterWhere(['like', 'LOWER(surname)', mb_strtolower($this->participantName)])
-            ->orWhere(['like', 'LOWER(firstname)', mb_strtolower($this->participantName)]);
+            $query->andFilterWhere(['like', 'LOWER(firstname)', mb_strtolower($this->participantName)]);
+        }
+    }
+
+    /**
+     * Поиск по фамилии участника деятельности
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterParticipantSurname(ActiveQuery $query) {
+        if (!empty($this->participantSurname)) {
+            $query->andFilterWhere(['like', 'LOWER(surname)', mb_strtolower($this->participantSurname)]);
+        }
+    }
+
+    /**
+     * Поиск по отчеству участника деятельности
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterParticipantPatronymic(ActiveQuery $query) {
+        if (!empty($this->participantPatronymic)) {
+            $query->andFilterWhere(['like', 'LOWER(patronymic)', mb_strtolower($this->participantPatronymic)]);
         }
     }
 

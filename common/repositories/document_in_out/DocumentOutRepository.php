@@ -63,7 +63,11 @@ class DocumentOutRepository
     public function getDocumentInWithoutAnswer()
     {
         $model = [];
-        $docs = InOutDocumentsWork::find()->where(['document_out_id' => null])->orderBy(['local_date' => SORT_DESC])->all();
+        $docs = InOutDocumentsWork::find()
+            ->joinWith(['documentOutWork documentOutWork'])
+            ->where(['document_out_id' => null])
+            ->orderBy(['documentOutWork.local_date' => SORT_DESC])
+            ->all();
         foreach ($docs as $doc) {
             $model[] = DocumentInWork::find()->where(['id' => $doc->document_in_id])->one();
         }

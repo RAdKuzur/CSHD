@@ -139,7 +139,10 @@ class TrainingGroupParticipantRepository
     {
         return count($ids) > 0 ? TrainingGroupParticipantWork::find()->where(['IN', 'id', $ids])->all() : TrainingGroupParticipantWork::find()->all();
     }
-
+    public function getAllById($ids)
+    {
+        return count($ids) > 0 ? TrainingGroupParticipantWork::find()->where(['IN', 'id', $ids])->all() : [];
+    }
     public function empty()
     {
         return TrainingGroupParticipantWork::find()->where(['id' => 0]);

@@ -77,7 +77,7 @@ class OrderTrainingService
         /* @var $group TrainingGroupWork */
         $inId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id), 'training_group_participant_in_id');
         $outId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id), 'training_group_participant_out_id');
-        $groupIds = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll(ArrayHelper::merge($inId, $outId)), 'training_group_id'));
+        $groupIds = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById(ArrayHelper::merge($inId, $outId)), 'training_group_id'));
         $groups = $this->trainingGroupRepository->getQueryById($groupIds)->all();
         $links = [];
         foreach ($groups as $group) {
@@ -93,7 +93,7 @@ class OrderTrainingService
         $inId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id), 'training_group_participant_in_id');
         $outId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id), 'training_group_participant_out_id');
 
-        $participants = $this->trainingGroupParticipantRepository->getAll(ArrayHelper::merge($inId, $outId));
+        $participants = $this->trainingGroupParticipantRepository->getAllById(ArrayHelper::merge($inId, $outId));
 
         $links = [];
         foreach ($participants as $participant) {
@@ -136,7 +136,7 @@ class OrderTrainingService
         if($status == NomenclatureDictionary::ORDER_ENROLL) {
             $orderParticipantId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id),
                 'training_group_participant_in_id');
-            $groupId = ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll($orderParticipantId),
+            $groupId = ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById($orderParticipantId),
                 'training_group_id'
             );
             $query = TrainingGroupParticipantWork::find()
@@ -146,7 +146,7 @@ class OrderTrainingService
         if($status == NomenclatureDictionary::ORDER_DEDUCT) {
             $orderParticipantId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id),
                 'training_group_participant_out_id');
-            $groupId = ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll($orderParticipantId),
+            $groupId = ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById($orderParticipantId),
                 'training_group_id'
             );
             $query = TrainingGroupParticipantWork::find()
@@ -156,7 +156,7 @@ class OrderTrainingService
         if($status == NomenclatureDictionary::ORDER_TRANSFER){
             $orderParticipantId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id),
                 'training_group_participant_out_id');
-            $groupId = ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll($orderParticipantId),
+            $groupId = ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById($orderParticipantId),
                 'training_group_id'
             );
             $exceptParticipantId = ArrayHelper::getColumn(OrderTrainingGroupParticipantWork::find()

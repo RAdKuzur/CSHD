@@ -250,7 +250,7 @@ class ForeignEventForm extends Model
                 ) . ' (педагог(-и): ' .
                 $item->actParticipantWork->getTeachersLink() .
                 ', отдел(-ы) для учета: ' .
-                $item->actParticipantWork->getBranches() . ')' .
+                implode(',', $item->actParticipantWork->getBranches()) . ')' .
                 (is_null($item->actParticipantWork->team_name_id) ? '' : " - Команда {$item->actParticipantWork->getTeamName()}");
         }, $this->squadParticipantsModel);
 

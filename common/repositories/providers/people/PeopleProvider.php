@@ -96,7 +96,8 @@ class PeopleProvider implements PeopleProviderInterface
 
     public function deletePosition($id)
     {
-        return $this->peoplePositionCompanyBranchRepository->delete($id);
+        $model = $this->peoplePositionCompanyBranchRepository->get($id);
+        return $this->peoplePositionCompanyBranchRepository->delete($model);
     }
 
     public function save(PeopleWork $people)

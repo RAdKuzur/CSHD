@@ -200,7 +200,11 @@ class SearchDocumentOut extends DocumentSearch implements SearchInterfaces
      */
     private function filterNumber(ActiveQuery $query) {
         if (!empty($this->number)) {
-            $query->andFilterWhere(['like', "CONCAT(document_number, '/', document_postfix)", $this->number]);
+            //$query->andFilterWhere(['like', "CONCAT(document_number, '/', document_postfix)", $this->number]);
+            $query->andFilterWhere(['or',
+                ['like', 'document_number', $this->number],
+                ['like', 'document_postfix', $this->number]
+            ]);
         }
     }
 

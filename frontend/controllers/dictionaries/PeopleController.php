@@ -137,7 +137,7 @@ class PeopleController extends Controller
 
             var_dump(Yii::$app->request->post()['PeopleWork']['positions']);
             $postPositions = DynamicWidget::getData(basename(PeopleWork::class), 'positions', $post);
-            var_dump(basename(PeopleWork::class));
+            var_dump((PeopleWork::class));
             die;
             $postCompanies = DynamicWidget::getData(basename(PeopleWork::class), 'companies', $post);
             $postBranches = DynamicWidget::getData(basename(PeopleWork::class), 'branches', $post);

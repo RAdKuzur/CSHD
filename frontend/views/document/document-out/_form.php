@@ -1,6 +1,8 @@
 <?php
 
 use common\helpers\DateFormatter;
+use frontend\models\work\document_in_out\DocumentInWork;
+use frontend\models\work\document_in_out\DocumentOutWork;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -186,9 +188,8 @@ use yii\widgets\ActiveForm;
         ];
        echo $form->field($model, "is_answer")
            ->dropDownList(
-                ArrayHelper::map($filesAnswer,'id',function($model){
-
-                    return  $model->local_number.' '.$model->document_theme;
+                ArrayHelper::map($filesAnswer,'id',function(DocumentInWork $model){
+                    return $model->getNumberWithDate();
                 }),
                 $params
             )

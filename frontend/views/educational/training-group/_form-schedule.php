@@ -32,23 +32,21 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         let secondDivs = document.querySelectorAll('[id^="auto-"][id$="--fields"]');
 
         if (type.getElementsByTagName('input')[0].checked) {    // ручное заполнение
-            //firstDivs[0].style.display = 'block';
-            secondDivs[0].style.display = 'none';
-            secondDivs.forEach((element, index) => {
-                if (index > 0) {
-                    element.remove();
-                }
+            if (secondDivs.length > 0) {
+                secondDivs[0].style.display = 'none';
+            }
+            secondDivs.forEach((element) => {
+                element.remove();
             });
             firstDivs.forEach((element) => {
                 element.style.display = 'block';
             });
         } else {    // автоматическое заполнение
-            firstDivs[0].style.display = 'none';
-            //secondDivs[0].style.display = 'block';
-            firstDivs.forEach((element, index) => {
-                if (index > 0) {
-                    element.remove();
-                }
+            if (firstDivs.length > 0) {
+                firstDivs[0].style.display = 'none';
+            }
+            firstDivs.forEach((element) => {
+                element.remove();
             });
             secondDivs.forEach((element) => {
                 element.style.display = 'block';

@@ -84,4 +84,15 @@ class PeopleStampWork extends PeopleStamp
     {
         return $this->hasOne(CompanyWork::class, ['id' => 'company_id']);
     }
+    public function getDeclinationFIO()
+    {
+        if ($this->genitive_surname) {
+            return $this->genitive_surname
+                . ' ' . mb_substr($this->peopleWork->firstname, 0, 1)
+                . '. ' . ($this->peopleWork->patronymic ? mb_substr($this->peopleWork->patronymic, 0, 1) . '.' : '');
+        }
+        else {
+            return $this->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+        }
+    }
 }

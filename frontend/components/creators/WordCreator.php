@@ -330,7 +330,7 @@ class WordCreator
     {
         /* @var $supplement OrderEventGenerateWork */
         /* @var $order DocumentOrderWork */
-        /* @var $oneActPart SquadParticipantWork*/
+        /* @var $oneActPart SquadParticipantWork */
         ini_set('memory_limit', '512M');
 
         $inputData = new PhpWord();
@@ -382,12 +382,12 @@ class WordCreator
         $section->addTextBreak(1);
         $section->addText('ПРИКАЗЫВАЮ:', array('lineHeight' => 1.0), array('spaceAfter' => 0));
         $section->addText('1.	Принять участие в мероприятии «'.$foreignEvent->name.'» (далее – мероприятие) и утвердить перечень учащихся, участвующих в мероприятии, и педагогов, ответственных за подготовку и контроль результатов участия в мероприятии, согласно Приложению к настоящему приказу.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
-        $section->addText('2.	Назначить ответственным за сбор и предоставление информации об участии в мероприятии для внесения в Цифровую систему хранения документов ГАОУ АО ДО «РШТ» (далее – ЦСХД) '.$supplement->respPeopleInfo->getFIO(PersonInterface::FIO_SURNAME_INITIALS).'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
+        $section->addText('2.	Назначить ответственным за сбор и предоставление информации об участии в мероприятии для внесения в Цифровую систему хранения документов ГАОУ АО ДО «РШТ» (далее – ЦСХД) '.$supplement->respPeopleInfo->getDeclinationFIO().'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         $section->addText('3.	Определить срок предоставления информации об участии в мероприятии: '.$supplement->time_provision_day.' рабочих дней со дня завершения мероприятия.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
-        $section->addText('4.	Назначить ответственным за внесение информации об участии в мероприятии в ЦСХД '.$supplement->extraRespInsert->getFIO(PersonInterface::FIO_SURNAME_INITIALS).'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
+        $section->addText('4.	Назначить ответственным за внесение информации об участии в мероприятии в ЦСХД '.$supplement->extraRespInsert->getDeclinationFIO().'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         $section->addText('5.	Определить срок для внесения информации об участии в мероприятии: '.$supplement->time_insert_day.' рабочих дней со дня завершения мероприятия.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
-        $section->addText('6.	Назначить ответственным за методический контроль подготовки учащихся к участию в мероприятии и информационное взаимодействие с организаторами мероприятия '.$supplement->extraRespMethod->getFIO(PersonInterface::FIO_SURNAME_INITIALS).'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
-        $section->addText('7.	Назначить ответственным за информирование работников о настоящем приказе '.$supplement->extraRespInfoStuff->getFIO(PersonInterface::FIO_SURNAME_INITIALS).'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
+        $section->addText('6.	Назначить ответственным за методический контроль подготовки учащихся к участию в мероприятии и информационное взаимодействие с организаторами мероприятия '.$supplement->extraRespMethod->getDeclinationFIO().'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
+        $section->addText('7.	Назначить ответственным за информирование работников о настоящем приказе '.$supplement->extraRespInfoStuff->getDeclinationFIO().'.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         $section->addText('8.	Контроль исполнения приказа оставляю за собой.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
 
         $section->addTextBreak(2);
@@ -514,7 +514,7 @@ class WordCreator
             $cell->addText(Yii::$app->focus->get($oneActPart->actParticipantWork->focus), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
 
             $cell = $table->addCell(3000);
-            $branches = $tBranchs->where(['act_participant_id' => $oneActPart->id])->all();
+            $branches = $tBranchs->where(['act_participant_id' => $oneActPart->act_participant_id])->all();
             foreach ($branches as $branch)
                 $cell->addText(Yii::$app->branches->get($branch->branch), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
 

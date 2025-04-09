@@ -113,13 +113,13 @@ class ReportFacade
         $result['section31'] = $service->fillSection31($form->startDate, $form->endDate);
         $endTime = new DateTime();
         $interval = $startTime->diff($endTime);
-        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время генерации раздела 3.1: $interval");
+        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время генерации раздела 3.1: {$interval->format('%s.%f')}");
 
         $startTime = new DateTime();
         $result['section32'] = $service->fillSection32($form->startDate, $form->endDate, $form->type);
         $endTime = new DateTime();
         $interval = $startTime->diff($endTime);
-        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время генерации раздела 3.2: $interval");
+        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время генерации раздела 3.2: {$interval->format('%s.%f')}");
 
         return $result;
     }

@@ -139,6 +139,16 @@ class PeopleWork extends People implements PersonInterface
         return parent::beforeValidate();
     }
 
+    public function getPositions()
+    {
+        $positions = $this->peoplePositionCompanyBranchWork;
+        $positionString = array_map(function (PeoplePositionCompanyBranchWork $model) {
+            return $model->positionWork->name;
+        }, $positions);
+
+        return implode('<br>', $positionString);
+    }
+
     public function inMainCompany()
     {
         return $this->company_id == Yii::$app->params["mainCompanyId"];

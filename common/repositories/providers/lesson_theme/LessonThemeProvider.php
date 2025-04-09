@@ -28,6 +28,7 @@ class LessonThemeProvider implements LessonThemeProviderInterface
         return LessonThemeWork::find()
             ->joinWith(['trainingGroupLessonWork trainingGroupLessonWork'])
             ->where(['IN', 'trainingGroupLessonWork.training_group_id', $trainingGroupId])
+            ->orderBy(['trainingGroupLessonWork.lesson_date' => SORT_ASC, 'trainingGroupLessonWork.lesson_start_time' => SORT_ASC])
             ->all();
     }
 

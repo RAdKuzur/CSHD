@@ -285,7 +285,7 @@ class SearchEvent extends Model implements SearchInterfaces
      */
     public function filterBranch(ActiveQuery $query) {
         if (!StringFormatter::isEmpty($this->branch) && $this->branch !== SearchFieldHelper::EMPTY_FIELD) {
-            $query->andFilterWhere(['branch' => $this->branch]);
+            $query->andFilterWhere(['event.branch' => $this->branch]);
         }
     }
 

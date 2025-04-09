@@ -217,15 +217,15 @@ class TrainingGroupRepository
     public function getAttachedGroupsByOrder($orderId, $status){
         if ($status == NomenclatureDictionary::ORDER_ENROLL){
             $participants = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($orderId), 'training_group_participant_in_id');
-            $groups = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll($participants), 'training_group_id'));
+            $groups = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById($participants), 'training_group_id'));
         }
         else if ($status == NomenclatureDictionary::ORDER_DEDUCT) {
             $participants = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($orderId), 'training_group_participant_out_id');
-            $groups = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll($participants), 'training_group_id'));
+            $groups = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById($participants), 'training_group_id'));
         }
         else if ($status == NomenclatureDictionary::ORDER_TRANSFER) {
             $participants = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($orderId), 'training_group_participant_in_id');
-            $groups = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll($participants), 'training_group_id'));
+            $groups = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById($participants), 'training_group_id'));
         }
         return $groups;
     }

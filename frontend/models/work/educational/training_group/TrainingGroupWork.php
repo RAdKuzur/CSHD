@@ -15,6 +15,7 @@ use common\models\scaffold\TrainingGroup;
 use common\repositories\dictionaries\PeopleRepository;
 use frontend\models\work\educational\training_program\TrainingProgramWork;
 use frontend\models\work\general\PeopleStampWork;
+use frontend\models\work\general\PeopleWork;
 use InvalidArgumentException;
 use Yii;
 use yii\helpers\Url;
@@ -131,13 +132,13 @@ class TrainingGroupWork extends TrainingGroup
         return '<div class=flexx>' . $this->number . ' ' . $this->getRawArchive() . '</div>';
     }
 
-    public function generateNumber($teacherId)
+    public function generateNumber(PeopleWork $teacher)
     {
         $level = $this->trainingProgramWork->level;
         $level++;
         $thematicDirection = $this->trainingProgramWork->thematic_direction ? Yii::$app->thematicDirection->getAbbreviation($this->trainingProgramWork->thematic_direction) : '';
         $date = DateFormatter::format($this->start_date, DateFormatter::Ymd_dash, DateFormatter::Ymd_without_separator);
-        $teacherCode = (Yii::createObject(PeopleStampRepository::class)->get($teacherId))->peopleWork->short;
+        $teacherCode = $teacher->short;
         $addCode = 1;
 
         $sameNameGroups = TrainingGroupWork::find()->where(['like', 'number', $this->number.'%', false])->andWhere(['!=', 'id', $this->id])->all();

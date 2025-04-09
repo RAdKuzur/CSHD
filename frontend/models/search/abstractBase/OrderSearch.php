@@ -124,7 +124,7 @@ class OrderSearch extends Model
      * @return void
      */
     private function filterNumber(ActiveQuery $query, string $orderNumber) {
-        if (!empty($this->number)) {
+        if (!empty($orderNumber)) {
             $query->andFilterWhere(['or',
                 ['like', 'order_number', $orderNumber],
                 ['like', 'order_copy_id', $orderNumber],

@@ -509,7 +509,7 @@ class WordCreator
             $cell = $table->addCell(4000);
             $cell->addText($oneActPart->participantWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
             $cell = $table->addCell(3000);
-            $cell->addText($oneActPart->actParticipantWork->nomination == NULL ? '' : $oneActPart->actParticipantWork->nomination, array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
+            $cell->addText($oneActPart->actParticipantWork->nomination == 'NULL' ? '' : $oneActPart->actParticipantWork->nomination, array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
             $cell = $table->addCell(3000);
             $cell->addText(Yii::$app->focus->get($oneActPart->actParticipantWork->focus), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
 

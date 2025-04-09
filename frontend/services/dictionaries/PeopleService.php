@@ -75,6 +75,8 @@ class PeopleService implements DatabaseServiceInterface
 
     public function attachPositionCompanyBranch(PeopleWork $model, array $positions, array $companies, array $branches)
     {
+        var_dump($positions);
+        var_dump($companies);
         if (!(count($positions) == count($companies) && count($companies) == count($branches))) {
             throw new DomainException('Размеры массивов $positions, $companies и $branches не совпадают');
         }

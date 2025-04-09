@@ -211,7 +211,8 @@ class SearchDocumentIn extends DocumentSearch implements SearchInterfaces
     private function filterNumber(ActiveQuery $query) {
         if (!empty($this->number)) {
             $query->andFilterWhere(['or',
-                ['like', "CONCAT(local_number, '/', local_postfix)", $this->number],
+                ['like', 'local_number', $this->number],
+                ['like', 'local_postfix', $this->number],
                 ['like', 'real_number', $this->number],
             ]);
         }

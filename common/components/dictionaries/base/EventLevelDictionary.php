@@ -10,6 +10,7 @@ class EventLevelDictionary extends BaseDictionary
     const REGIONAL = 6;
     const FEDERAL = 7;
     const INTERNATIONAL = 8;
+    const INTERREGIONAL = 9;
 
     public function __construct()
     {
@@ -21,6 +22,7 @@ class EventLevelDictionary extends BaseDictionary
             self::REGIONAL => 'Региональный',
             self::FEDERAL => 'Федеральный',
             self::INTERNATIONAL => 'Международный',
+            self::INTERREGIONAL => 'Межрегиональный',
         ];
     }
 
@@ -33,6 +35,7 @@ class EventLevelDictionary extends BaseDictionary
             $this->list[self::REGIONAL],
             $this->list[self::FEDERAL],
             $this->list[self::INTERNATIONAL],
+            $this->list[self::INTERREGIONAL],
         ];
     }
 
@@ -41,7 +44,8 @@ class EventLevelDictionary extends BaseDictionary
         return [
             self::REGIONAL,
             self::FEDERAL,
-            self::INTERNATIONAL
+            self::INTERNATIONAL,
+            self::INTERREGIONAL,
         ];
     }
 }

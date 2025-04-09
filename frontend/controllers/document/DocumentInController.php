@@ -110,7 +110,7 @@ class DocumentInController extends DocumentController
         $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
         $availablePositions = $this->positionRepository->getList();
         $availableCompanies = $this->companyRepository->getList();
-        $mainCompanyWorkers = $this->peopleRepository->getPeopleFromMainCompany();
+        $mainCompanyWorkers = $this->peopleRepository->getAll();
         if ($model->load(Yii::$app->request->post())) {
             $model->generateDocumentNumber();
             $this->service->getPeopleStamps($model);
@@ -156,7 +156,7 @@ class DocumentInController extends DocumentController
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
-            $mainCompanyWorkers = $this->peopleRepository->getPeopleFromMainCompany();
+            $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
             if ($model->load(Yii::$app->request->post())) {
                 $this->lockWizard->unlockObject($id, DocumentInWork::tableName());

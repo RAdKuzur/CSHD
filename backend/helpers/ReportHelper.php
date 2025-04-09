@@ -37,4 +37,22 @@ class ReportHelper
 
         return 0;
     }
+
+    public static function calculateAttendanceOptimized(string $lessonsJson, int $calculateType)
+    {
+        $count = self::calculateVisitsByType($lessonsJson, VisitWork::ATTENDANCE)
+            + self::calculateVisitsByType($lessonsJson, VisitWork::DISTANCE);
+        if ($calculateType == ManHoursReportForm::MAN_HOURS_ALL) {
+            $count += self::calculateVisitsByType($lessonsJson, VisitWork::NO_ATTENDANCE);
+        }
+
+        return $count;
+    }
+
+    private static function calculateVisitsByType(string $lessonsJson, int $type)
+    {
+        $pattern = '/"status":' . $type . '/';
+        preg_match_all($pattern, $lessonsJson, $matches);
+        return count($matches[0]);
+    }
 }

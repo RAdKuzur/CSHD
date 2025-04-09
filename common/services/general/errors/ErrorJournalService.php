@@ -738,7 +738,7 @@ class ErrorJournalService
             }
         }
 
-        if ($errFlag) {
+        if (!$errFlag) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::JOURNAL_020,

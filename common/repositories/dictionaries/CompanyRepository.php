@@ -27,7 +27,7 @@ class CompanyRepository
             $query->andWhere(['IN', 'id', ArrayHelper::getColumn($subQuery, 'company_id')]);
         }
 
-        return $query->all();
+        return $query->orderBy(['name' => SORT_ASC])->all();
     }
 
     public function fastCreateWithId(

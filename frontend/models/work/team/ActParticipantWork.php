@@ -227,7 +227,10 @@ class ActParticipantWork extends ActParticipant
 
     public function getBranches()
     {
-        return 'stub';
+        $branches = $this->actParticipantBranchWork;
+        return array_map(function (ActParticipantBranchWork $actBranch) {
+            return Yii::$app->branches->get($actBranch->branch);
+        }, $branches);
     }
 
     public function getSquadParticipantsWork()

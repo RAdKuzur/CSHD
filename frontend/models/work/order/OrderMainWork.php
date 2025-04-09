@@ -130,7 +130,7 @@ class OrderMainWork extends DocumentOrderWork implements FileInterface
         return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
     }
 
-    private function createAddPaths($filetype)
+    public function createAddPaths($filetype)
     {
         if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
             throw new InvalidArgumentException('Неизвестный тип файла');

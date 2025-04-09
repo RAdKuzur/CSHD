@@ -12,6 +12,7 @@ use common\helpers\ButtonsFormatter;
 use common\helpers\ErrorAssociationHelper;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\search\SearchFieldHelper;
+use common\helpers\StringFormatter;
 use common\models\work\LogWork;
 use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\educational\TrainingProgramRepository;
@@ -166,9 +167,9 @@ class TrainingProgramController extends DocumentController
                 throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
             }
 
-            $postThemes = DynamicWidget::getData(basename(TrainingProgramWork::class), 'themes', $post);
-            $postControls = DynamicWidget::getData(basename(TrainingProgramWork::class), 'controls', $post);
-            $postAuthors = DynamicWidget::getData(basename(TrainingProgramWork::class), 'authors', $post);
+            $postThemes = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(TrainingProgramWork::class)), 'themes', $post);
+            $postControls = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(TrainingProgramWork::class)), 'controls', $post);
+            $postAuthors = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(TrainingProgramWork::class)), 'authors', $post);
             $this->service->getFilesInstances($model);
             $this->repository->save($model);
 
@@ -216,9 +217,9 @@ class TrainingProgramController extends DocumentController
                     throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
                 }
 
-                $postThemes = DynamicWidget::getData(basename(TrainingProgramWork::class), 'themes', $post);
-                $postControls = DynamicWidget::getData(basename(TrainingProgramWork::class), 'controls', $post);
-                $postAuthors = DynamicWidget::getData(basename(TrainingProgramWork::class), 'authors', $post);
+                $postThemes = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(TrainingProgramWork::class)), 'themes', $post);
+                $postControls = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(TrainingProgramWork::class)), 'controls', $post);
+                $postAuthors = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(TrainingProgramWork::class)), 'authors', $post);
                 $this->service->getFilesInstances($model);
                 $this->repository->save($model);
 

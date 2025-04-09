@@ -93,12 +93,14 @@ class PeopleWork extends People implements PersonInterface
 
     public function getFioPosition()
     {
-        return "{$this->getFullFio()} stub";
+        $positions = implode(', ', $this->getPositions());
+        return "{$this->getFullFio()} ({$positions})";
     }
 
     public function getPositionSurnameInitials()
     {
-        return "{$this->getPositionName()} {$this->getSurnameInitials()}";
+        $positions = implode(', ', $this->getPositions());
+        return "{$this->getSurnameInitials()} ({$positions})";
     }
 
     public function getPositionName()
@@ -137,6 +139,14 @@ class PeopleWork extends People implements PersonInterface
         }
 
         return parent::beforeValidate();
+    }
+
+    public function getPositions()
+    {
+        $positions = $this->peoplePositionCompanyBranchWork;
+        return array_map(function (PeoplePositionCompanyBranchWork $model) {
+            return $model->positionWork->name;
+        }, $positions);
     }
 
     public function inMainCompany()

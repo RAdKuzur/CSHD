@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 <?php
-$this->title = 'Отчет 1-ДОД';
+$this->title = 'Отчет гос. задание';
 ?>
 
 <style>

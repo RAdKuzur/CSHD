@@ -16,6 +16,7 @@ use common\helpers\ButtonsFormatter;
 use common\helpers\ErrorAssociationHelper;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\SortHelper;
 use common\helpers\StringFormatter;
 use common\models\scaffold\OrderEventGenerate;
 use common\repositories\dictionaries\PeopleRepository;
@@ -142,7 +143,7 @@ class OrderEventController extends DocumentController
     public function actionCreate() {
         $form = new OrderEventBuilderForm(
             new OrderEventForm(),
-            $this->peopleRepository->getOrderedList(),
+            $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO),
             [new ActParticipantForm],
             [],
             [],
@@ -277,7 +278,7 @@ class OrderEventController extends DocumentController
             $modelForeignEvent = $this->foreignEventRepository->getByDocOrderId($modelOrderEvent->id);
             $form = new OrderEventBuilderForm(
                 OrderEventForm::fill($modelOrderEvent, $modelForeignEvent),
-                $this->peopleRepository->getOrderedList(),
+                $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO),
                 [new ActParticipantForm],
                 $this->teamService->getNamesByForeignEventId($modelForeignEvent->id),
                 array_unique(ArrayHelper::getColumn($this->actParticipantRepository->getByForeignEventIds([$modelForeignEvent->id]), 'nomination')),

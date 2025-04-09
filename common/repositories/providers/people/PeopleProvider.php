@@ -6,6 +6,7 @@ use frontend\events\dictionaries\PeoplePositionCompanyBranchEventDelete;
 use common\helpers\SortHelper;
 use common\repositories\general\PeoplePositionCompanyBranchRepository;
 use DomainException;
+use frontend\models\work\general\PeoplePositionCompanyBranchWork;
 use frontend\models\work\general\PeopleWork;
 use Yii;
 use yii\db\ActiveQuery;
@@ -96,6 +97,7 @@ class PeopleProvider implements PeopleProviderInterface
 
     public function deletePosition($id)
     {
+        /** @var PeoplePositionCompanyBranchWork $model */
         $model = $this->peoplePositionCompanyBranchRepository->get($id);
         return $this->peoplePositionCompanyBranchRepository->delete($model);
     }

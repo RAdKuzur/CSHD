@@ -102,9 +102,9 @@ class PeopleController extends Controller
                 throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
             }
 
-            $postPositions = DynamicWidget::getData(basename(PeopleWork::class), 'positions', $post);
-            $postCompanies = DynamicWidget::getData(basename(PeopleWork::class), 'companies', $post);
-            $postBranches = DynamicWidget::getData(basename(PeopleWork::class), 'branches', $post);
+            $postPositions = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'positions', $post);
+            $postCompanies = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'companies', $post);
+            $postBranches = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'branches', $post);
             $peopleId = $this->repository->save($model);
             $this->service->attachPositionCompanyBranch($model, $postPositions, $postCompanies, $postBranches, $peopleId);
 
@@ -135,12 +135,9 @@ class PeopleController extends Controller
                 throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
             }
 
-            var_dump(Yii::$app->request->post()['PeopleWork']['positions']);
-            $postPositions = DynamicWidget::getData(basename(PeopleWork::class), 'positions', $post);
-            var_dump(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)));
-            die;
-            $postCompanies = DynamicWidget::getData(basename(PeopleWork::class), 'companies', $post);
-            $postBranches = DynamicWidget::getData(basename(PeopleWork::class), 'branches', $post);
+            $postPositions = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'positions', $post);
+            $postCompanies = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'companies', $post);
+            $postBranches = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'branches', $post);
             $this->repository->save($model);
             $this->service->attachPositionCompanyBranch($model, $postPositions, $postCompanies, $postBranches);
 

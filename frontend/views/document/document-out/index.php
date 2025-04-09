@@ -98,7 +98,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 ['attribute' => 'sendMethodName',
                     'value' => function(DocumentOutWork $model) {
                         return Yii::$app->sendMethods->get($model->send_method);
-                    }
+                    },
+                    'encodeLabel' => false,
+                    'label' => 'Способ<br>отправки'
                 ],
                 ['attribute' => 'sentDate',
                     'value' => function(DocumentOutWork $model) {

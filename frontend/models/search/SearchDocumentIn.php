@@ -215,6 +215,7 @@ class SearchDocumentIn extends DocumentSearch implements SearchInterfaces
                 ['like', 'real_number', $this->number],
             ]);
         }
+        var_dump($query->createCommand()->getRawSql());die();
     }
 
     /**

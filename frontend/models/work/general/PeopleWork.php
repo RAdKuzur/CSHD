@@ -93,7 +93,8 @@ class PeopleWork extends People implements PersonInterface
 
     public function getFioPosition()
     {
-        return "{$this->getFullFio()} stub";
+        $positions = implode(',', $this->getPositions());
+        return "{$this->getFullFio()} ({$positions})";
     }
 
     public function getPositionSurnameInitials()

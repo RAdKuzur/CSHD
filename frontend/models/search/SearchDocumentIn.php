@@ -227,7 +227,10 @@ class SearchDocumentIn extends DocumentSearch implements SearchInterfaces
      */
     private function filterExecutorName(ActiveQuery $query) {
         if (!empty($this->executorName)) {
-            $query->andFilterWhere(['like', 'LOWER(responsiblePeople.firstname)', mb_strtolower($this->executorName)]);
+            $query->andFilterWhere(['or',
+                ['like', 'LOWER(responsiblePeople.surname)', mb_strtolower($this->executorName)],
+                ['like', 'LOWER(responsiblePeople.firstname)', mb_strtolower($this->executorName)]
+            ]);
         }
     }
 }

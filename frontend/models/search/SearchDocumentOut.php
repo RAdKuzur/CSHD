@@ -236,7 +236,9 @@ class SearchDocumentOut extends DocumentSearch implements SearchInterfaces
         if (!empty($this->executorName)) {
             $query->andFilterWhere([
                 'OR',
+                ['like', 'LOWER(executorPeople.surname)', mb_strtolower($this->executorName)],
                 ['like', 'LOWER(executorPeople.firstname)', mb_strtolower($this->executorName)],
+                ['like', 'LOWER(signedPeople.surname)', mb_strtolower($this->executorName)],
                 ['like', 'LOWER(signedPeople.firstname)', mb_strtolower($this->executorName)],
             ]);
         }

@@ -76,12 +76,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     return DateFormatter::format($model->start_date, DateFormatter::Ymd_dash, DateFormatter::dmy_dot);
                 },
                 'encodeLabel' => false,
+                'label' => 'Дата начала<br>занятий'
             ],
             ['attribute' => 'finish_date',
                 'value' => function(TrainingGroupWork $model){
                     return DateFormatter::format($model->finish_date, DateFormatter::Ymd_dash, DateFormatter::dmy_dot);
                 },
                 'encodeLabel' => false,
+                'label' => 'Дата окончания<br>занятий'
             ],
             ['attribute' => 'budgetString'],
 

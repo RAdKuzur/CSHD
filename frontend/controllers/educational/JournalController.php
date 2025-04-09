@@ -52,7 +52,7 @@ class JournalController extends Controller
                 ButtonsFormatter::createParameterLink($id)
             ),
             ButtonsFormatter::anyOneLink(
-                'Редактировать ТП',
+                'Редактировать УТП',
                 Yii::$app->frontUrls::JOURNAL_EDIT_PLAN,
                 ButtonsFormatter::BTN_SUCCESS,
                 '',
@@ -63,14 +63,14 @@ class JournalController extends Controller
 
         $otherLinks = array_merge(
             ButtonsFormatter::anyOneLink(
-                'Создать ТП',
+                'Создать УТП',
                 Yii::$app->frontUrls::LESSON_THEMES_CREATE,
                 ButtonsFormatter::BTN_SUCCESS,
                 '',
                 ButtonsFormatter::createParameterLink($id, 'groupId')
             ),
             ButtonsFormatter::anyOneLink(
-                'Очистить ТП',
+                'Очистить УТП',
                 Yii::$app->frontUrls::JOURNAL_DELETE_PLAN,
                 ButtonsFormatter::BTN_WARNING,
                 '',

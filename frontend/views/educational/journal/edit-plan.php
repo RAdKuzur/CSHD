@@ -11,7 +11,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model ThematicPlanForm */
 
-$this->title = 'Редактирование тематического плана';
+$this->title = 'Редактирование учебно-тематического плана';
 $this->params['breadcrumbs'][] = ['label' => 'Учебные группы', 'url' => [Yii::$app->frontUrls::TRAINING_GROUP_INDEX]];
 $this->params['breadcrumbs'][] = ['label' => 'Группа ' . $model->getTrainingGroupNumber(), 'url' => [Yii::$app->frontUrls::TRAINING_GROUP_VIEW, 'id' => $model->groupId]];
 $this->params['breadcrumbs'][] = ['label' => 'Электронный журнал', 'url' => [Yii::$app->frontUrls::JOURNAL_VIEW, 'id' => $model->groupId]];
@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'groupId')->hiddenInput()->label(false) ?>
         <div class="card no-flex">
             <div class="table-topic">
-                Тематический план (ТП)
+                Учебно-тематический план (УТП)
             </div>
             <div class="table-block">
                 <table>

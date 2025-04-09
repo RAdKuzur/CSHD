@@ -26,15 +26,31 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 
 <script>
     function changeScheduleType() {
-        const firstDiv = document.getElementById('manual-fields');
-        const secondDiv = document.getElementById('auto-fields');
+        let type = document.getElementById('traininggroupscheduleform-type');
 
-        if (firstDiv.style.display === 'none') {
-            firstDiv.style.display = 'block';
-            secondDiv.style.display = 'none';
-        } else {
-            firstDiv.style.display = 'none';
-            secondDiv.style.display = 'block';
+        let firstDivs = document.querySelectorAll('[id^="manual-"][id$="--fields"]');
+        let secondDivs = document.querySelectorAll('[id^="auto-"][id$="--fields"]');
+
+        if (type.getElementsByTagName('input')[0].checked) {    // ручное заполнение
+            if (secondDivs.length > 0) {
+                secondDivs[0].style.display = 'none';
+            }
+            secondDivs.forEach((element) => {
+                element.remove();
+            });
+            firstDivs.forEach((element) => {
+                element.style.display = 'block';
+            });
+        } else {    // автоматическое заполнение
+            if (firstDivs.length > 0) {
+                firstDivs[0].style.display = 'none';
+            }
+            firstDivs.forEach((element) => {
+                element.remove();
+            });
+            secondDivs.forEach((element) => {
+                element.style.display = 'block';
+            });
         }
     }
 </script>
@@ -94,7 +110,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                 <div class="panel-title">
                     <h5 class="panel-title pull-left">Занятие</h5><!-- widgetBody -->
                     <div class="pull-right">
-                        <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                        <button type="button" class="add-item btn btn-success btn-xs" onclick="changeScheduleType()"><span class="glyphicon glyphicon-plus">+</span></button>
                     </div>
                 </div>
                 <?php foreach ($modelLessons as $i => $modelLesson): ?>

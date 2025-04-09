@@ -727,9 +727,6 @@ class ErrorJournalService
         $participants = $this->participantRepository->getParticipantsFromGroups([$rowId]);
         if (date('Y-m-d') >= $group->start_date) {
             $orderEnrollParticipants = $this->orderParticipantRepository->getEnrollByGroupId($rowId);
-            var_dump(count($orderEnrollParticipants));
-            var_dump(count($participants));
-            die;
             if (count($orderEnrollParticipants) != count($participants)) {
                 $errFlag = false;
             }

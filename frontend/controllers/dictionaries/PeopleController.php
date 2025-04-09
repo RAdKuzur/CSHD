@@ -136,8 +136,9 @@ class PeopleController extends Controller
             }
 
             var_dump(Yii::$app->request->post()['PeopleWork']['positions']);
-            die;
             $postPositions = DynamicWidget::getData(basename(PeopleWork::class), 'positions', $post);
+            var_dump($postPositions);
+            die;
             $postCompanies = DynamicWidget::getData(basename(PeopleWork::class), 'companies', $post);
             $postBranches = DynamicWidget::getData(basename(PeopleWork::class), 'branches', $post);
             $this->repository->save($model);

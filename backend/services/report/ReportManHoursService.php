@@ -132,10 +132,11 @@ class ReportManHoursService implements ManHoursServiceInterface
         $startTime = new DateTime();
         foreach ($visits as $visit) {
             /** @var VisitWork $visit */
-            $lessons = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
+            $result += ReportHelper::calculateAttendanceOptimized($visit->lessons, $calculateType);
+            /*$lessons = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
             foreach ($lessons as $lesson) {
                 $result += ReportHelper::checkVisitLesson($lesson, $startDate, $endDate, $calculateType, $teacherLessonIds);
-            }
+            }*/
         }
         $endTime = new DateTime();
         $interval = $startTime->diff($endTime);

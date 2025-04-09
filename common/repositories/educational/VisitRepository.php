@@ -50,6 +50,11 @@ class VisitRepository
         return $this->provider->getByTrainingGroupParticipants($trainingGroupParticipantIds);
     }
 
+    public function getByTrainingGroupParticipantsEach(array $trainingGroupParticipantIds)
+    {
+        return $this->provider->getByTrainingGroupParticipantsEach($trainingGroupParticipantIds);
+    }
+
     public function getByGroupAndParticipant($groupId, $participantId)
     {
         return VisitWork::find()

@@ -116,7 +116,7 @@ class ReportManHoursService implements ManHoursServiceInterface
         LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время выгрузки учеников: {$interval->format('%s.%f')}");
 
         $startTime = new DateTime();
-        $visits = $this->visitRepository->getByTrainingGroupParticipants(
+        $visits = $this->visitRepository->getByTrainingGroupParticipantsEach(
             ArrayHelper::getColumn($participants, 'id')
         );
         $endTime = new DateTime();

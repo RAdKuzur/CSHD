@@ -151,6 +151,11 @@ class SearchDocumentOut extends DocumentSearch implements SearchInterfaces
             'asc' => ['is_answer' => SORT_DESC],
             'desc' => ['is_answer' => SORT_ASC],
         ];
+
+        $dataProvider->sort->attributes['sendMethodName'] = [
+            'asc' => ['send_method' => SORT_DESC],
+            'desc' => ['send_method' => SORT_ASC],
+        ];
     }
 
 

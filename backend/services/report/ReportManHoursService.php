@@ -6,11 +6,14 @@ use backend\builders\TrainingGroupReportBuilder;
 use backend\forms\report\ManHoursReportForm;
 use backend\helpers\ReportHelper;
 use backend\services\report\interfaces\ManHoursServiceInterface;
+use common\components\logger\base\LogInterface;
+use common\components\logger\LogFactory;
 use common\repositories\educational\LessonThemeRepository;
 use common\repositories\educational\TrainingGroupLessonRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\educational\VisitRepository;
+use DateTime;
 use frontend\models\work\educational\journal\VisitLesson;
 use frontend\models\work\educational\journal\VisitWork;
 use yii\db\ActiveQuery;
@@ -98,15 +101,27 @@ class ReportManHoursService implements ManHoursServiceInterface
         $query = $this->getTrainingGroupsQueryByFilters($branches, $focuses, $allowRemotes, $budgets);
 
         $query = $this->builder->filterGroupsBetweenDates($query, $startDate, $endDate);
+        $startTime = new DateTime();
         $groups = $this->repository->findAll($query);
+        $endTime = new DateTime();
+        $interval = $startTime->diff($endTime);
+        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время выгрузки групп: {$interval->format('%s.%f')}");
 
+        $startTime = new DateTime();
         $participants = $this->participantRepository->getParticipantsFromGroups(
             ArrayHelper::getColumn($groups, 'id')
         );
+        $endTime = new DateTime();
+        $interval = $startTime->diff($endTime);
+        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время выгрузки учеников: {$interval->format('%s.%f')}");
 
+        $startTime = new DateTime();
         $visits = $this->visitRepository->getByTrainingGroupParticipants(
             ArrayHelper::getColumn($participants, 'id')
         );
+        $endTime = new DateTime();
+        $interval = $startTime->diff($endTime);
+        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время выгрузки явок: {$interval->format('%s.%f')}");
 
         $teacherLessonIds = ArrayHelper::getColumn(
             $this->lessonThemeRepository->getByTeacherIds($teacherIds),
@@ -114,6 +129,7 @@ class ReportManHoursService implements ManHoursServiceInterface
         );
 
         $result = 0;
+        $startTime = new DateTime();
         foreach ($visits as $visit) {
             /** @var VisitWork $visit */
             $lessons = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
@@ -121,6 +137,9 @@ class ReportManHoursService implements ManHoursServiceInterface
                 $result += ReportHelper::checkVisitLesson($lesson, $startDate, $endDate, $calculateType, $teacherLessonIds);
             }
         }
+        $endTime = new DateTime();
+        $interval = $startTime->diff($endTime);
+        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время подсчета ч/ч: {$interval->format('%s.%f')}");
 
         return [
             'result' => $result,

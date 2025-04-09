@@ -109,17 +109,8 @@ class ReportFacade
     public static function generateSA(SAForm $form, StateAssignmentReportService $service) : array
     {
         $result = [];
-        $startTime = new DateTime();
         $result['section31'] = $service->fillSection31($form->startDate, $form->endDate);
-        $endTime = new DateTime();
-        $interval = $startTime->diff($endTime);
-        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время генерации раздела 3.1: {$interval->format('%s.%f')}");
-
-        $startTime = new DateTime();
         $result['section32'] = $service->fillSection32($form->startDate, $form->endDate, $form->type);
-        $endTime = new DateTime();
-        $interval = $startTime->diff($endTime);
-        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время генерации раздела 3.2: {$interval->format('%s.%f')}");
 
         return $result;
     }

@@ -23,7 +23,7 @@ use yii\helpers\Url;
 /* @property ExpireWork[] $expireWorks */
 /* @property OrderPeopleWork[] $orderPeopleWorks */
 
-class DocumentOrderWork extends DocumentOrder
+class DocumentOrderWork extends DocumentOrder implements FileInterface
 {
     use EventTrait;
     public const ORDER_INIT = 0;
@@ -253,5 +253,29 @@ class DocumentOrderWork extends DocumentOrder
         $this->order_number = $number;
         $this->order_copy_id = $copyId;
         $this->order_postfix = $postfix;
+    }
+
+    public function getFilePaths($filetype): array
+    {
+        return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
+    }
+
+    public function createAddPaths($filetype)
+    {
+        if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
+            throw new InvalidArgumentException('Неизвестный тип файла');
+        }
+
+        $addPath = '';
+        switch ($filetype) {
+            case FilesHelper::TYPE_SCAN:
+                $addPath = FilesHelper::createAdditionalPath(DocumentOrderWork::tableName(), FilesHelper::TYPE_SCAN);
+                break;
+            case FilesHelper::TYPE_DOC:
+                $addPath = FilesHelper::createAdditionalPath(DocumentOrderWork::tableName(), FilesHelper::TYPE_DOC);
+                break;
+        }
+
+        return $addPath;
     }
 }

@@ -101,27 +101,15 @@ class ReportManHoursService implements ManHoursServiceInterface
         $query = $this->getTrainingGroupsQueryByFilters($branches, $focuses, $allowRemotes, $budgets);
 
         $query = $this->builder->filterGroupsBetweenDates($query, $startDate, $endDate);
-        $startTime = new DateTime();
         $groups = $this->repository->findAll($query);
-        $endTime = new DateTime();
-        $interval = $startTime->diff($endTime);
-        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время выгрузки групп: {$interval->format('%s.%f')}");
 
-        $startTime = new DateTime();
         $participants = $this->participantRepository->getParticipantsFromGroups(
             ArrayHelper::getColumn($groups, 'id')
         );
-        $endTime = new DateTime();
-        $interval = $startTime->diff($endTime);
-        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время выгрузки учеников: {$interval->format('%s.%f')}");
 
-        $startTime = new DateTime();
         $visits = $this->visitRepository->getByTrainingGroupParticipantsEach(
             ArrayHelper::getColumn($participants, 'id')
         );
-        $endTime = new DateTime();
-        $interval = $startTime->diff($endTime);
-        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время выгрузки явок: {$interval->format('%s.%f')}");
 
         $teacherLessonIds = ArrayHelper::getColumn(
             $this->lessonThemeRepository->getByTeacherIds($teacherIds),
@@ -132,11 +120,15 @@ class ReportManHoursService implements ManHoursServiceInterface
         $startTime = new DateTime();
         foreach ($visits as $visit) {
             /** @var VisitWork $visit */
-            $result += ReportHelper::calculateAttendanceOptimized($visit->lessons, $calculateType);
-            /*$lessons = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
-            foreach ($lessons as $lesson) {
-                $result += ReportHelper::checkVisitLesson($lesson, $startDate, $endDate, $calculateType, $teacherLessonIds);
-            }*/
+            if (count($teacherLessonIds) > 0) {
+                $lessons = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
+                foreach ($lessons as $lesson) {
+                    $result += ReportHelper::checkVisitLesson($lesson, $startDate, $endDate, $calculateType, $teacherLessonIds);
+                }
+            }
+            else {
+                $result += ReportHelper::calculateAttendanceOptimized($visit->lessons, $calculateType);
+            }
         }
         $endTime = new DateTime();
         $interval = $startTime->diff($endTime);

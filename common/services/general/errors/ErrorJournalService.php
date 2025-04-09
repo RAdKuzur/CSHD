@@ -738,7 +738,7 @@ class ErrorJournalService
             }
         }
 
-        if ($errFlag) {
+        if (!$errFlag) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::JOURNAL_020,
@@ -761,7 +761,7 @@ class ErrorJournalService
         $group = $this->groupRepository->get($error->table_row_id);
         $participants = $this->participantRepository->getParticipantsFromGroups([$error->table_row_id]);
         if (date('Y-m-d') >= $group->start_date) {
-            $orderEnrollParticipants = $this->orderParticipantRepository->getEnrollByGroupId($error->table_row_id);\
+            $orderEnrollParticipants = $this->orderParticipantRepository->getEnrollByGroupId($error->table_row_id);
             if (count($orderEnrollParticipants) == count($participants)) {
                 $errFlag = true;
             }

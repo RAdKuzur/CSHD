@@ -77,7 +77,7 @@ class OrderTrainingService
         /* @var $group TrainingGroupWork */
         $inId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id), 'training_group_participant_in_id');
         $outId = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($model->id), 'training_group_participant_out_id');
-        $groupIds = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAll(ArrayHelper::merge($inId, $outId)), 'training_group_id'));
+        $groupIds = array_unique(ArrayHelper::getColumn($this->trainingGroupParticipantRepository->getAllById(ArrayHelper::merge($inId, $outId)), 'training_group_id'));
         $groups = $this->trainingGroupRepository->getQueryById($groupIds)->all();
         $links = [];
         foreach ($groups as $group) {

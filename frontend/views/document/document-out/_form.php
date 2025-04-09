@@ -1,8 +1,10 @@
 <?php
 
 use common\helpers\DateFormatter;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\document_in_out\DocumentInWork;
 use frontend\models\work\document_in_out\DocumentOutWork;
+use frontend\models\work\general\PeopleWork;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -66,7 +68,9 @@ use yii\widgets\ActiveForm;
     ];
 
     echo $form->field($model, 'correspondent_id')->widget(Select2::classname(), [
-        'data' => ArrayHelper::map($mainCompanyWorkers,'id','fullFio'),
+        'data' => ArrayHelper::map($mainCompanyWorkers,'id',function (PeopleWork $model) {
+            return $model->getFIO(PersonInterface::FIO_WITH_POSITION);
+        }),
         'size' => Select2::LARGE,
         'options' => $params,
         'pluginOptions' => [

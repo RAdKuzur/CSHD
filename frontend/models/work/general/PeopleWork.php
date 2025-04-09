@@ -98,7 +98,8 @@ class PeopleWork extends People implements PersonInterface
 
     public function getPositionSurnameInitials()
     {
-        return "{$this->getPositionName()} {$this->getSurnameInitials()}";
+        $positions = implode(',', $this->getPositions());
+        return "{$this->getSurnameInitials()} ({$positions})";
     }
 
     public function getPositionName()
@@ -142,11 +143,9 @@ class PeopleWork extends People implements PersonInterface
     public function getPositions()
     {
         $positions = $this->peoplePositionCompanyBranchWork;
-        $positionString = array_map(function (PeoplePositionCompanyBranchWork $model) {
+        return array_map(function (PeoplePositionCompanyBranchWork $model) {
             return $model->positionWork->name;
         }, $positions);
-
-        return implode('<br>', $positionString);
     }
 
     public function inMainCompany()

@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'firstname', 'label' => 'Имя'],
             ['attribute' => 'patronymic', 'label' => 'Отчество'],
             ['attribute' => 'positionsWork', 'label' => 'Должности', 'format' => 'raw', 'value' => function (PeopleWork $model) {
-                return $model->getPositions();
+                return implode('<br>', $model->getPositions());
             }],
             /*['attribute' => 'positionsWork', 'label' => 'Должность', 'format' => 'raw'],*/ // вот это работает, но нужно подшаманить с фильтрами
             ['attribute' => 'companyName', 'label' => 'Организация', 'value' => function (PeopleWork $model){

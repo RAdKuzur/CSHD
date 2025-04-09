@@ -27,6 +27,6 @@ $searchFields = array_merge(
     SearchFieldHelper::textField('executorName', 'Фамилия исполнителя', 'Фамилия исполнителя'),
 );
 
-echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::ORDER_MAIN_VIEW); ?>
+echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::ORDER_TRAINING_INDEX); ?>
 
 <?php ActiveForm::end(); ?>

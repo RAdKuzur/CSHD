@@ -66,7 +66,7 @@ class InitCopyController extends Controller
                 'surname' => $record['secondname'],
                 'patronymic' => $record['patronymic'],
                 'birthdate' => $record['birthdate'],
-                'sex' => $record['sex'],
+                'sex' => $record['sex'] == 'Мужской' ? 0 : 1,
                 'is_true' => $record['is_true'],
                 'email' => $record['email'],
                 'guaranteed_true' => $record['guaranted_true'],

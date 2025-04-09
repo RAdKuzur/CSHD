@@ -6,6 +6,7 @@ use common\components\traits\ErrorTrait;
 use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
 use common\models\work\UserWork;
+use common\repositories\general\PeopleStampRepository;
 use frontend\models\work\dictionaries\PersonInterface;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
@@ -136,7 +137,7 @@ class TrainingGroupWork extends TrainingGroup
         $level++;
         $thematicDirection = $this->trainingProgramWork->thematic_direction ? Yii::$app->thematicDirection->getAbbreviation($this->trainingProgramWork->thematic_direction) : '';
         $date = DateFormatter::format($this->start_date, DateFormatter::Ymd_dash, DateFormatter::Ymd_without_separator);
-        $teacherCode = (Yii::createObject(PeopleRepository::class)->get($teacherId))->short;
+        $teacherCode = (Yii::createObject(PeopleStampRepository::class)->get($teacherId))->peopleWork->short;
         $addCode = 1;
 
         $sameNameGroups = TrainingGroupWork::find()->where(['like', 'number', $this->number.'%', false])->andWhere(['!=', 'id', $this->id])->all();

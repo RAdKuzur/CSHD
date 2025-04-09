@@ -729,6 +729,7 @@ class ErrorJournalService
             $orderEnrollParticipants = $this->orderParticipantRepository->getEnrollByGroupId($rowId);
             var_dump(count($orderEnrollParticipants));
             var_dump(count($participants));
+            die;
             if (count($orderEnrollParticipants) != count($participants)) {
                 $errFlag = false;
             }

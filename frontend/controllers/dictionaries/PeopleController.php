@@ -135,6 +135,8 @@ class PeopleController extends Controller
                 throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
             }
 
+            var_dump(Yii::$app->request->post());
+            die;
             $postPositions = DynamicWidget::getData(basename(PeopleWork::class), 'positions', $post);
             $postCompanies = DynamicWidget::getData(basename(PeopleWork::class), 'companies', $post);
             $postBranches = DynamicWidget::getData(basename(PeopleWork::class), 'branches', $post);

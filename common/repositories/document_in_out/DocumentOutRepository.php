@@ -64,9 +64,9 @@ class DocumentOutRepository
     {
         $model = [];
         $docs = InOutDocumentsWork::find()
-            ->joinWith(['documentOutWork documentOutWork'])
+            ->joinWith(['documentInWork documentInWork'])
             ->where(['document_out_id' => null])
-            ->orderBy(['documentOutWork.local_date' => SORT_DESC])
+            ->orderBy(['documentInWork.local_date' => SORT_DESC])
             ->all();
         foreach ($docs as $doc) {
             $model[] = DocumentInWork::find()->where(['id' => $doc->document_in_id])->one();

@@ -22,7 +22,7 @@ class EventLevelDictionary extends BaseDictionary
             self::REGIONAL => 'Региональный',
             self::FEDERAL => 'Федеральный',
             self::INTERNATIONAL => 'Международный',
-            self::INTERREGIONAL => 'Межрегиоанльный',
+            self::INTERREGIONAL => 'Межрегиональный',
         ];
     }
 

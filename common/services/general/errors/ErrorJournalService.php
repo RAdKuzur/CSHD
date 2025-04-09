@@ -727,6 +727,8 @@ class ErrorJournalService
         $participants = $this->participantRepository->getParticipantsFromGroups([$rowId]);
         if (date('Y-m-d') >= $group->start_date) {
             $orderEnrollParticipants = $this->orderParticipantRepository->getEnrollByGroupId($rowId);
+            var_dump(count($orderEnrollParticipants));
+            var_dump(count($participants));
             if (count($orderEnrollParticipants) != count($participants)) {
                 $errFlag = false;
             }
@@ -753,7 +755,6 @@ class ErrorJournalService
 
     public function fixJournal_020($errorId)
     {
-        var_dump('try');
         $errFlag = false;
         /** @var ErrorsWork $error */
         /** @var TrainingProgramWork $program */
@@ -763,9 +764,6 @@ class ErrorJournalService
         $participants = $this->participantRepository->getParticipantsFromGroups([$error->table_row_id]);
         if (date('Y-m-d') >= $group->start_date) {
             $orderEnrollParticipants = $this->orderParticipantRepository->getEnrollByGroupId($error->table_row_id);\
-            var_dump(count($orderEnrollParticipants));
-            var_dump(count($participants));
-            die;
             if (count($orderEnrollParticipants) == count($participants)) {
                 $errFlag = true;
             }

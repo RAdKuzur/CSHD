@@ -22,7 +22,8 @@ class RulesConfig
                 'view',
                 'get-file',
                 'get-files',
-                'download-plan'
+                'download-plan',
+                'download-journal',
             ]
         ],
 
@@ -32,7 +33,8 @@ class RulesConfig
                 'view',
                 'get-file',
                 'get-files',
-                'download-plan'
+                'download-plan',
+                'download-journal',
             ]
         ],
 
@@ -42,7 +44,8 @@ class RulesConfig
                 'view',
                 'get-file',
                 'get-files',
-                'download-plan'
+                'download-plan',
+                'download-journal',
             ]
         ],
 
@@ -92,7 +95,6 @@ class RulesConfig
                 'update-lesson',
                 'sub-auds',
                 'create-protocol',
-                'download-journal',
                 'delete-theme'
             ]
         ],

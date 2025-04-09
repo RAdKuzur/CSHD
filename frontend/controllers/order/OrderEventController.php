@@ -16,6 +16,7 @@ use common\helpers\ButtonsFormatter;
 use common\helpers\ErrorAssociationHelper;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\StringFormatter;
 use common\models\scaffold\OrderEventGenerate;
 use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\order\DocumentOrderRepository;
@@ -157,7 +158,7 @@ class OrderEventController extends DocumentController
                   throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($form->orderEventForm->getErrors()));
             }
             $this->orderEventFormService->getFilesInstances($form->orderEventForm);
-            $respPeopleId = DynamicWidget::getData(basename(OrderEventForm::class), "responsible_id", $post);
+            $respPeopleId = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(OrderEventForm::class)), "responsible_id", $post);
             $modelOrderEvent = OrderEventWork::fill(
                 $form->orderEventForm->order_copy_id,
                 NomenclatureDictionary::ADMIN_ORDER,

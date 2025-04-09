@@ -151,6 +151,11 @@ class SearchDocumentOut extends DocumentSearch implements SearchInterfaces
             'asc' => ['is_answer' => SORT_DESC],
             'desc' => ['is_answer' => SORT_ASC],
         ];
+
+        $dataProvider->sort->attributes['sendMethodName'] = [
+            'asc' => ['send_method' => SORT_DESC],
+            'desc' => ['send_method' => SORT_ASC],
+        ];
     }
 
 
@@ -195,7 +200,11 @@ class SearchDocumentOut extends DocumentSearch implements SearchInterfaces
      */
     private function filterNumber(ActiveQuery $query) {
         if (!empty($this->number)) {
-            $query->andFilterWhere(['like', "CONCAT(document_number, '/', document_postfix)", $this->number]);
+            //$query->andFilterWhere(['like', "CONCAT(document_number, '/', document_postfix)", $this->number]);
+            $query->andFilterWhere(['or',
+                ['like', 'document_number', $this->number],
+                ['like', 'document_postfix', $this->number]
+            ]);
         }
     }
 
@@ -227,7 +236,9 @@ class SearchDocumentOut extends DocumentSearch implements SearchInterfaces
         if (!empty($this->executorName)) {
             $query->andFilterWhere([
                 'OR',
+                ['like', 'LOWER(executorPeople.surname)', mb_strtolower($this->executorName)],
                 ['like', 'LOWER(executorPeople.firstname)', mb_strtolower($this->executorName)],
+                ['like', 'LOWER(signedPeople.surname)', mb_strtolower($this->executorName)],
                 ['like', 'LOWER(signedPeople.firstname)', mb_strtolower($this->executorName)],
             ]);
         }

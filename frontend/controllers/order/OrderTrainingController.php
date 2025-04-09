@@ -8,6 +8,7 @@ use app\models\forms\OrderTrainingForm;
 use common\components\traits\AccessControl;
 use common\helpers\ButtonsFormatter;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\StringFormatter;
 use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\order\DocumentOrderRepository;
 use frontend\components\GroupParticipantWidget;
@@ -144,7 +145,7 @@ class OrderTrainingController extends DocumentController
             }
             $error = $this->documentOrderService->generateNumber($model);
             if (!$error) {
-                $respPeopleId = DynamicWidget::getData(basename(OrderTrainingWork::class), "responsible_id", $post);
+                $respPeopleId = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(OrderTrainingWork::class)), "responsible_id", $post);
                 $this->documentOrderService->getFilesInstances($model);
                 //$model->generateOrderNumber();
                 $this->orderTrainingRepository->save($model);

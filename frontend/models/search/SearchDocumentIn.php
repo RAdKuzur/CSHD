@@ -211,10 +211,12 @@ class SearchDocumentIn extends DocumentSearch implements SearchInterfaces
     private function filterNumber(ActiveQuery $query) {
         if (!empty($this->number)) {
             $query->andFilterWhere(['or',
-                ['like', "CONCAT('local_number', '/', 'local_postfix')", $this->number],
+                ['like', 'local_number', $this->number],
+                ['like', 'local_postfix', $this->number],
                 ['like', 'real_number', $this->number],
             ]);
         }
+
     }
 
     /**
@@ -225,7 +227,10 @@ class SearchDocumentIn extends DocumentSearch implements SearchInterfaces
      */
     private function filterExecutorName(ActiveQuery $query) {
         if (!empty($this->executorName)) {
-            $query->andFilterWhere(['like', 'LOWER(responsiblePeople.firstname)', mb_strtolower($this->executorName)]);
+            $query->andFilterWhere(['or',
+                ['like', 'LOWER(responsiblePeople.surname)', mb_strtolower($this->executorName)],
+                ['like', 'LOWER(responsiblePeople.firstname)', mb_strtolower($this->executorName)]
+            ]);
         }
     }
 }

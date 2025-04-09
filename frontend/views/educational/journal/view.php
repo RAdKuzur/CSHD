@@ -97,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="card no-flex">
         <div class="table-topic">
-            Тематический план (ТП)
+            Учебно-тематический план (УТП)
         </div>
         <div class="table-block">
             <table>

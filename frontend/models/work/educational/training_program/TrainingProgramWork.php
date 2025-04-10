@@ -3,6 +3,7 @@
 namespace frontend\models\work\educational\training_program;
 
 use common\components\dictionaries\base\CertificateTypeDictionary;
+use common\components\interfaces\FileInterface;
 use common\components\traits\ErrorTrait;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
@@ -26,7 +27,7 @@ use yii\helpers\Url;
 /** @property AuthorProgramWork $authorsProgramWork */
 /** @property BranchProgramWork[] $branchProgramWork */
 
-class TrainingProgramWork extends TrainingProgram
+class TrainingProgramWork extends TrainingProgram implements FileInterface
 {
     use EventTrait, ErrorTrait;
 
@@ -355,7 +356,7 @@ class TrainingProgramWork extends TrainingProgram
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public function getFileLinks($filetype)
+    public function getFileLinks($filetype) : array
     {
         if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
             throw new InvalidArgumentException('Неизвестный тип файла');
@@ -422,5 +423,32 @@ class TrainingProgramWork extends TrainingProgram
     public function getBranchProgramWork()
     {
         return $this->hasMany(BranchProgramWork::class, ['training_program_id' => 'id']);
+    }
+
+    public function createAddPaths($filetype)
+    {
+        if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
+            throw new InvalidArgumentException('Неизвестный тип файла');
+        }
+
+        $addPath = '';
+        switch ($filetype) {
+            case FilesHelper::TYPE_MAIN:
+                $addPath = FilesHelper::createAdditionalPath(TrainingProgramWork::tableName(), FilesHelper::TYPE_MAIN);
+                break;
+            case FilesHelper::TYPE_DOC:
+                $addPath = FilesHelper::createAdditionalPath(TrainingProgramWork::tableName(), FilesHelper::TYPE_DOC);
+                break;
+            case FilesHelper::TYPE_CONTRACT:
+                $addPath = FilesHelper::createAdditionalPath(TrainingProgramWork::tableName(), FilesHelper::TYPE_CONTRACT);
+                break;
+        }
+
+        return $addPath;
+    }
+
+    public function getFilePaths($filetype): array
+    {
+        return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
     }
 }

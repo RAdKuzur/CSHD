@@ -186,7 +186,7 @@ class EventWork extends Event implements FileInterface
 
     public function getEventGroupRaw()
     {
-        $result = '';
+        /*$result = '';
         $eventGroups = $this->trainingGroupWork;
 
         if (!$eventGroups) {
@@ -197,7 +197,8 @@ class EventWork extends Event implements FileInterface
             $result .= StringFormatter::stringAsLink("{$trainingGroup->number}", Url::to([Yii::$app->frontUrls::TRAINING_GROUP_VIEW, 'id' => $trainingGroup->id])) . ', ';
         }
 
-        return substr($result, 0, -2);
+        return substr($result, 0, -2);*/
+        return '---';
     }
 
     public function getKeyWord()

@@ -29,12 +29,35 @@ class ParticipationScopeDictionary extends BaseDictionary
     const GENERAL_TECHNICAL_MODELING = 23;
     const RADIO_DIRECTION = 24;
     const PHYSICS = 25;
+    const CHEMISTRY = 26;
+    const IT_GRAPH = 27;
+    const IT_ELECTRIC = 28;
+    const ROBO_MOBILE = 29;
+    const ROBO_UNDERWATER = 30;
+    const RADIO_CONSTRUCT = 31;
+    const MEDIA_SOUND = 32;
+    const FLY_COPTER = 33;
+    const FLY_PLANE = 34;
+    const WATER_SHIP = 35;
+    const AUTO_MODEL = 36;
+    const ARCHITECTURE = 37;
+    const PRE_SCHOOL = 38;
+    const COMMON_INTEL = 40;
+    const VOCAL = 41;
+    const ACTOR_ART = 42;
+    const LITERATURE = 43;
+    const LINGUISTICS = 44;
+    const CHOREOGRAPHY = 45;
+    const ARTISTIC_AESTHETIC = 46;
+    const YACHTING = 47;
+    const MATH = 48;
+    const PROFESSIONAL = 49;
 
     public function __construct()
     {
         parent::__construct();
         $this->list = [
-            self::PATRIOTIC_EDUCATION => 'Патриотическое воспитание ',
+            self::PATRIOTIC_EDUCATION => 'Патриотическое воспитание',
             self::PREVENTION_BULLYING => 'Профилактика травли (буллинга)',
             self::ANTITERRORIST_MEASURES => 'Антитеррористические мероприятия',
             self::ANTIDRUG_MEASURES => 'Профилактические антинаркотические мероприятия',
@@ -59,6 +82,29 @@ class ParticipationScopeDictionary extends BaseDictionary
             self::GENERAL_TECHNICAL_MODELING => 'Общее техническое моделирование',
             self::RADIO_DIRECTION => 'Радиопеленгация и спортивное ориентирование',
             self::PHYSICS => 'Физика',
+            self::CHEMISTRY => 'Химия',
+            self::IT_GRAPH => 'Информационные технологии: цифровая графика',
+            self::IT_ELECTRIC => 'Информационные технологии: электроника',
+            self::ROBO_MOBILE => 'Робототехника мобильная',
+            self::ROBO_UNDERWATER => 'Робототехника подводная',
+            self::RADIO_CONSTRUCT => 'Радиотехническое конструирование',
+            self::MEDIA_SOUND => 'Медиатехнологии: звуковой монтаж',
+            self::FLY_COPTER => 'Летательные аппараты: мультикоптеры',
+            self::FLY_PLANE => 'Летательные аппараты: самолеты',
+            self::WATER_SHIP => 'Водный транспорт: судомоделирование',
+            self::AUTO_MODEL => 'Автомобильный транспорт: моделирование',
+            self::ARCHITECTURE => 'Архитектура и дизайн зданий',
+            self::PRE_SCHOOL => 'Подготовка детей к школе',
+            self::COMMON_INTEL => 'Общее интеллектуальное развитие',
+            self::VOCAL => 'Вокал (вольное искусство)',
+            self::ACTOR_ART => 'Актерское мастерство',
+            self::LITERATURE => 'Литературное творчество',
+            self::LINGUISTICS => 'Лингвистика',
+            self::CHOREOGRAPHY => 'Хореография',
+            self::ARTISTIC_AESTHETIC => 'Художественно-эстетическое искусство',
+            self::YACHTING => 'Парусный спорт (яхтинг)',
+            self::MATH => 'Математика',
+            self::PROFESSIONAL => 'Профориентационные мероприятия',
         ];
     }
 

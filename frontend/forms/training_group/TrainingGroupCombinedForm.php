@@ -485,7 +485,7 @@ class TrainingGroupCombinedForm extends Model
     {
         $link = '#';
         if ($this->workExist) {
-            $link = Url::to(['get-files', 'classname' => self::class, 'filetype' => FilesHelper::TYPE_WORK, 'id' => $this->id]);
+            $link = Url::to(['get-files', 'classname' => TrainingGroupWork::class, 'filetype' => FilesHelper::TYPE_WORK, 'id' => $this->id]);
         }
 
         return HtmlBuilder::createSVGLink($link);
@@ -499,7 +499,7 @@ class TrainingGroupCombinedForm extends Model
     {
         $link = '#';
         if ($this->presentationExist) {
-            $link = Url::to(['get-files', 'classname' => self::class, 'filetype' => FilesHelper::TYPE_PRESENTATION, 'id' => $this->id]);
+            $link = Url::to(['get-files', 'classname' => TrainingGroupWork::class, 'filetype' => FilesHelper::TYPE_PRESENTATION, 'id' => $this->id]);
         }
 
         return HtmlBuilder::createSVGLink($link);
@@ -513,7 +513,7 @@ class TrainingGroupCombinedForm extends Model
     {
         $link = '#';
         if ($this->photoExist) {
-            $link = Url::to(['get-files', 'classname' => self::class, 'filetype' => FilesHelper::TYPE_PHOTO, 'id' => $this->id]);
+            $link = Url::to(['get-files', 'classname' => TrainingGroupWork::class, 'filetype' => FilesHelper::TYPE_PHOTO, 'id' => $this->id]);
         }
 
         return HtmlBuilder::createSVGLink($link);

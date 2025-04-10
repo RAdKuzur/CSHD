@@ -15,6 +15,7 @@ use common\repositories\document_in_out\DocumentInRepository;
 use common\repositories\document_in_out\DocumentOutRepository;
 use common\repositories\document_in_out\InOutDocumentsRepository;
 use frontend\models\work\dictionaries\CompanyWork;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\dictionaries\PositionWork;
 use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\general\PeopleWork;
@@ -227,7 +228,7 @@ class DocumentOutWork extends DocumentOut implements FileInterface
     public function getCorrespondentName()
     {
         $correspondent = $this->correspondentWork;
-        return $correspondent ? $correspondent->getFIO(PeopleWork::FIO_SURNAME_INITIALS_WITH_POSITION) : '---';
+        return $correspondent ? $this->positionWork->name . ' ' . $correspondent->getFIO(PersonInterface::FIO_SURNAME_INITIALS) : '---';
     }
 
     public function getPositionWork()

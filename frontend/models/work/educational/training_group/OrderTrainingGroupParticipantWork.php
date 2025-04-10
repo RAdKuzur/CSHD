@@ -40,4 +40,9 @@ class OrderTrainingGroupParticipantWork extends OrderTrainingGroupParticipant
     {
         return $this->hasOne(TrainingGroupParticipantWork::class, ['id' => 'training_group_participant_in_id']);
     }
+
+    public function getAllTrainingGroupParticipant()
+    {
+        return $this->hasMany(TrainingGroupParticipantWork::class, ['IN', 'id', ['training_group_participant_out_id', 'training_group_participant_in_id']]);
+    }
 }

@@ -166,6 +166,7 @@ class OurEventController extends DocumentController
 
             if ($model->load(Yii::$app->request->post())) {
                 $this->lockWizard->unlockObject($id, ForeignEventWork::tableName());
+                $this->service->getPeopleStamps($model);
                 if (!$model->validate()) {
                     throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
                 }

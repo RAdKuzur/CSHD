@@ -6,7 +6,7 @@ use common\models\scaffold\DocumentOrder;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model OrderEventWork */
+/* @var $model */
 /* @var $people */
 /* @var $foreignEventTable */
 /* @var $scanFile */
@@ -22,7 +22,7 @@ use yii\helpers\Html;
 /* @var $company */
 /* @var $id */
 
-$this->title = 'Изменить приказ об участии деятельности № ' . $model->order_number;
+$this->title = 'Изменить приказ об участии деятельности № ' . $model->getFullName($id);
 $this->params['breadcrumbs'][] = ['label' => 'Приказы об участии', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['view', 'id' => $id]];
 $this->params['breadcrumbs'][] = 'Редактирование';

@@ -5,7 +5,7 @@ use common\models\scaffold\DocumentOrder;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model \frontend\models\work\order\OrderMainWork */
+/* @var $model  */
 /* @var $people */
 /* @var $modelExpire */
 /* @var $orders */
@@ -14,7 +14,7 @@ use yii\helpers\Html;
 /* @var $scanFile */
 /* @var $docFiles */
 
-$this->title = 'Приказ об основной деятельности №' . $model->order_number;
+$this->title = 'Приказ об основной деятельности №' . $model->getFullNumber();
 $this->params['breadcrumbs'][] = ['label' => 'Приказы об основной деятельности', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $this->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Редактирование';

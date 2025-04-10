@@ -17,7 +17,7 @@ use yii\helpers\Html;
 /* @var $groupCheckOption */
 /* @var $groupParticipantOption */
 /* @var $error */
-$this->title = 'Изменить приказ об образовательной деятельности № '. $model->order_number;
+$this->title = 'Изменить приказ об образовательной деятельности № '. $model->getFullNumber();
 $this->params['breadcrumbs'][] = ['label' => 'Приказы об образовательной деятельности', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 

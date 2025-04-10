@@ -203,4 +203,8 @@ class OrderEventForm extends Model {
         $this->order_name = 'Oб участии в мероприятии "' . $this->eventName . '"';
         return parent::beforeValidate();
     }
+    public function getFullName($orderId)
+    {
+        return (DocumentOrderWork::findOne($orderId))->getFullNumber();
+    }
 }

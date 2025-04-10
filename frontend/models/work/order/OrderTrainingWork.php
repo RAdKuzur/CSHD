@@ -27,10 +27,6 @@ class OrderTrainingWork extends DocumentOrderWork
     /**
      * @return string
      */
-    public function getFullName()
-    {
-        return "{$this->order_number} {$this->order_name}";
-    }
 
     public function generateOrderNumber()
     {

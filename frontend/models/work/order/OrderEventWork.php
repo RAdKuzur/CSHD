@@ -83,10 +83,6 @@ class OrderEventWork extends DocumentOrderWork
         $this->docFiles = $docFiles;
     }
 
-    public function getFullName()
-    {
-        return "{$this->order_number} {$this->order_name}";
-    }
 
     public function generateOrderNumber()
     {

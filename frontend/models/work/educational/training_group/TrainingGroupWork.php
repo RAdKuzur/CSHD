@@ -2,6 +2,7 @@
 
 namespace frontend\models\work\educational\training_group;
 
+use common\components\interfaces\FileInterface;
 use common\components\traits\ErrorTrait;
 use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
@@ -28,7 +29,7 @@ use yii\helpers\Url;
  * @property GroupProjectThemesWork[] $groupProjectThemesWorks
  */
 
-class TrainingGroupWork extends TrainingGroup
+class TrainingGroupWork extends TrainingGroup implements FileInterface
 {
     use EventTrait, ErrorTrait;
 
@@ -211,7 +212,7 @@ class TrainingGroupWork extends TrainingGroup
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public function getFileLinks($filetype)
+    public function getFileLinks($filetype) : array
     {
         if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
             throw new InvalidArgumentException('Неизвестный тип файла');
@@ -231,6 +232,28 @@ class TrainingGroupWork extends TrainingGroup
         }
 
         return FilesHelper::createFileLinks($this, $filetype, $addPath);
+    }
+
+    private function createAddPaths($filetype)
+    {
+        if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
+            throw new InvalidArgumentException('Неизвестный тип файла');
+        }
+
+        $addPath = '';
+        switch ($filetype) {
+            case FilesHelper::TYPE_PHOTO:
+                $addPath = FilesHelper::createAdditionalPath(TrainingGroupWork::tableName(), FilesHelper::TYPE_PHOTO);
+                break;
+            case FilesHelper::TYPE_PRESENTATION:
+                $addPath = FilesHelper::createAdditionalPath(TrainingGroupWork::tableName(), FilesHelper::TYPE_PRESENTATION);
+                break;
+            case FilesHelper::TYPE_WORK:
+                $addPath = FilesHelper::createAdditionalPath(TrainingGroupWork::tableName(), FilesHelper::TYPE_WORK);
+                break;
+        }
+
+        return $addPath;
     }
 
     public function getTrainingProgramWork()
@@ -338,5 +361,10 @@ class TrainingGroupWork extends TrainingGroup
     public function getGroupProjectThemesWorks()
     {
         return $this->hasMany(GroupProjectThemesWork::class, ['training_group_id' => 'id']);
+    }
+
+    public function getFilePaths($filetype): array
+    {
+        return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
     }
 }

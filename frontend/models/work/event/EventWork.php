@@ -2,6 +2,7 @@
 
 namespace frontend\models\work\event;
 
+use common\components\interfaces\FileInterface;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
 use common\helpers\files\FilesHelper;
@@ -31,7 +32,7 @@ use yii\helpers\Url;
 /** @property UserWork $lastEditorWork */
 /** @property EventBranchWork[] $eventBranchWorks */
 
-class EventWork extends Event
+class EventWork extends Event implements FileInterface
 {
     use EventTrait;
 
@@ -306,7 +307,7 @@ class EventWork extends Event
      * @return array
      * @throws \yii\base\InvalidConfigException
      */
-    public function getFileLinks($filetype)
+    public function getFileLinks($filetype) : array
     {
         if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
             throw new InvalidArgumentException('Неизвестный тип файла');
@@ -329,6 +330,31 @@ class EventWork extends Event
         }
 
         return FilesHelper::createFileLinks($this, $filetype, $addPath);
+    }
+
+    private function createAddPaths($filetype)
+    {
+        if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
+            throw new InvalidArgumentException('Неизвестный тип файла');
+        }
+
+        $addPath = '';
+        switch ($filetype) {
+            case FilesHelper::TYPE_PROTOCOL:
+                $addPath = FilesHelper::createAdditionalPath(EventWork::tableName(), FilesHelper::TYPE_PROTOCOL);
+                break;
+            case FilesHelper::TYPE_PHOTO:
+                $addPath = FilesHelper::createAdditionalPath(EventWork::tableName(), FilesHelper::TYPE_PHOTO);
+                break;
+            case FilesHelper::TYPE_REPORT:
+                $addPath = FilesHelper::createAdditionalPath(EventWork::tableName(), FilesHelper::TYPE_REPORT);
+                break;
+            case FilesHelper::TYPE_OTHER:
+                $addPath = FilesHelper::createAdditionalPath(EventWork::tableName(), FilesHelper::TYPE_OTHER);
+                break;
+        }
+
+        return $addPath;
     }
 
     public function beforeSave($insert)
@@ -477,5 +503,10 @@ class EventWork extends Event
     public function getEventBranchWorks()
     {
         return $this->hasMany(EventBranchWork::class, ['event_id' => 'id']);
+    }
+
+    public function getFilePaths($filetype): array
+    {
+        return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
     }
 }

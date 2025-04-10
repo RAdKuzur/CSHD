@@ -9,6 +9,7 @@ use common\models\scaffold\OrderTrainingGroupParticipant;
 /**
  * @property TrainingGroupParticipantWork $trainingGroupParticipantOutWork
  * @property TrainingGroupParticipantWork $trainingGroupParticipantInWork
+ * @property TrainingGroupParticipantWork $allTrainingGroupParticipantWork
  */
 class OrderTrainingGroupParticipantWork extends OrderTrainingGroupParticipant
 {
@@ -41,7 +42,7 @@ class OrderTrainingGroupParticipantWork extends OrderTrainingGroupParticipant
         return $this->hasOne(TrainingGroupParticipantWork::class, ['id' => 'training_group_participant_in_id']);
     }
 
-    public function getAllTrainingGroupParticipant()
+    public function getAllTrainingGroupParticipantWork()
     {
         $query1 = $this->getTrainingGroupParticipantOutWork()->toBase();
         $query2 = $this->getTrainingGroupParticipantInWork()->toBase();

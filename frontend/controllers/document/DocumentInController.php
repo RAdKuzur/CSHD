@@ -156,6 +156,7 @@ class DocumentInController extends DocumentController
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
+            var_dump($availablePositions);
             $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
             if ($model->load(Yii::$app->request->post())) {
@@ -244,7 +245,7 @@ class DocumentInController extends DocumentController
             $response .= "|split|";
             $response .= HtmlBuilder::buildOptionList($this->companyRepository->getList());
         } else {
-            // Получаем позиции для указанного ID
+            // Получаем должности для указанного ID
             $positions = $this->positionRepository->getList($id);
             $response .= count($positions) > 0 ? HtmlBuilder::buildOptionList($positions) : HtmlBuilder::createEmptyOption();
             $response .= "|split|";

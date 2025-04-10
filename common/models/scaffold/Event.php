@@ -2,6 +2,7 @@
 
 namespace common\models\scaffold;
 
+use frontend\models\work\educational\training_group\TrainingGroupWork;
 use Yii;
 
 /**
@@ -35,6 +36,7 @@ use Yii;
  * @property int|null $last_edit_id
  * @property string|null $created_at
  * @property string|null $updated_at
+ * @property int|null $training_group_id
  *
  * @property User $creator
  * @property EventBranch[] $eventBranches
@@ -42,6 +44,7 @@ use Yii;
  * @property PeopleStamp $responsible1
  * @property PeopleStamp $responsible2
  * @property EventTrainingGroup[] $eventTrainingGroups
+ * @property TrainingGroup $trainingGroup
  */
 class Event extends \yii\db\ActiveRecord
 {
@@ -67,6 +70,7 @@ class Event extends \yii\db\ActiveRecord
             [['responsible1_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeopleStamp::class, 'targetAttribute' => ['responsible1_id' => 'id']],
             [['responsible2_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeopleStamp::class, 'targetAttribute' => ['responsible2_id' => 'id']],
             [['regulation_id'], 'exist', 'skipOnError' => true, 'targetClass' => Regulation::class, 'targetAttribute' => ['regulation_id' => 'id']],
+            [['training_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => TrainingGroup::class, 'targetAttribute' => ['training_group_id' => 'id']],
             [['creator_id', 'last_edit_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['creator_id' => 'id']],
         ];
     }
@@ -161,6 +165,11 @@ class Event extends \yii\db\ActiveRecord
     public function getDocumentOrder()
     {
         return $this->hasOne(DocumentOrder::class, ['id' => 'order_id']);
+    }
+
+    public function getTrainingGroup()
+    {
+        return $this->hasOne(TrainingGroup::class, ['id' => 'training_group_id']);
     }
 
     public function getScopes()

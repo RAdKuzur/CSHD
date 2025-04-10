@@ -206,6 +206,11 @@ class TrainingGroupRepository
             ->all();
     }
 
+    public function getUnarchiveGroups()
+    {
+        return TrainingGroupWork::find()->where(['archive' => TrainingGroupWork::NO_ARCHIVE])->all();
+    }
+
     public function getGroupPitchInPeriod(string $leftDate, string $rightDate)
     {
         return TrainingGroupWork::find()

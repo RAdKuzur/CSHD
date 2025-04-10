@@ -6,6 +6,7 @@ use frontend\models\work\dictionaries\CompanyWork;
 use frontend\models\work\dictionaries\PositionWork;
 use frontend\models\work\general\PeoplePositionCompanyBranchWork;
 use frontend\models\work\general\PeopleWork;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\jui\DatePicker;
@@ -58,11 +59,7 @@ use yii\widgets\ActiveForm;
 
         <div class="container-items">
             <h5 class="panel-title pull-left">Должность</h5><!-- widgetBody -->
-            <div class="pull-right">
-                <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-            </div>
             <div class="item panel panel-default" id = "item"><!-- widgetItem -->
-                <button type="button" class="remove-item btn btn-danger btn-xs"><span class="glyphicon glyphicon-minus"></span></button>
                 <div class="panel-heading">
                     <div class="clearfix"></div>
                 </div>
@@ -73,7 +70,14 @@ use yii\widgets\ActiveForm;
                             'prompt' => '---',
                             'id' => 'org'
                         ];
-                        echo $form->field($model, 'companies[]')->dropDownList(ArrayHelper::map($companies, 'id', 'name'), $params)->label('Организация');
+                        echo $form->field($model, 'companies[]')->widget(Select2::classname(), [
+                            'data' => ArrayHelper::map($companies, 'id', 'name'),
+                            'size' => Select2::LARGE,
+                            'options' => $params,
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ])->label('Организация');
                         ?>
 
                         <?php
@@ -83,7 +87,14 @@ use yii\widgets\ActiveForm;
                         ];
                         echo $form
                             ->field($model, 'positions[]')
-                            ->dropDownList(ArrayHelper::map($positions, 'id', 'name'), $params)
+                            ->widget(Select2::classname(), [
+                                'data' => ArrayHelper::map($positions, 'id', 'name'),
+                                'size' => Select2::LARGE,
+                                'options' => $params,
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ])
                             ->label('Должность');
                         ?>
                     </div>

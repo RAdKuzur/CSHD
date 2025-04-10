@@ -19,6 +19,7 @@ use common\repositories\educational\TrainingProgramRepository;
 use common\repositories\educational\VisitRepository;
 use common\repositories\general\ErrorsRepository;
 use common\repositories\order\DocumentOrderRepository;
+use frontend\models\work\educational\CertificateWork;
 use frontend\models\work\educational\journal\VisitLesson;
 use frontend\models\work\educational\journal\VisitWork;
 use frontend\models\work\educational\training_group\TeacherGroupWork;
@@ -873,7 +874,8 @@ class ErrorJournalService
         $lowerBound = strtotime("-$daysCount days", $currentDate);
         $targetDate = strtotime("today");
 
-        if (count($experts) == 0 && $targetDate >= $lowerBound) {
+        if ($group->trainingProgramWork->certificate_type == CertificateTypeDictionary::PROJECT_PITCH &&
+            count($experts) == 0 && $targetDate >= $lowerBound) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::JOURNAL_023,
@@ -898,7 +900,8 @@ class ErrorJournalService
         $lowerBound = strtotime("-$daysCount days", $currentDate);
         $targetDate = strtotime("today");
 
-        if (!(count($experts) == 0 && $targetDate >= $lowerBound)) {
+        if ($group->trainingProgramWork->certificate_type != CertificateTypeDictionary::PROJECT_PITCH ||
+            !(count($experts) == 0 && $targetDate >= $lowerBound)) {
             $this->errorsRepository->delete($error);
         }
     }
@@ -909,7 +912,8 @@ class ErrorJournalService
         /** @var TrainingGroupWork $group */
         $group = $this->groupRepository->get($rowId);
 
-        if (!empty($group->protection_date) && $group->finish_date >= $group->protection_date) {
+        if ($group->trainingProgramWork->certificate_type == CertificateTypeDictionary::PROJECT_PITCH &&
+            !empty($group->protection_date) && $group->finish_date >= $group->protection_date) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::JOURNAL_024,
@@ -929,7 +933,8 @@ class ErrorJournalService
         $error = $this->errorsRepository->get($errorId);
         $group = $this->groupRepository->get($error->table_row_id);
 
-        if ($group->finish_date < $group->protection_date) {
+        if ($group->trainingProgramWork->certificate_type != CertificateTypeDictionary::PROJECT_PITCH ||
+            $group->finish_date < $group->protection_date) {
             $this->errorsRepository->delete($error);
         }
     }

@@ -101,7 +101,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
                 $query->alias('responsiblePeople');
             },
-            /*'orderTrainingGroupParticipantWork' => function ($query) {
+            'orderTrainingGroupParticipantWork' => function ($query) {
                 $query->alias('orderParticipant');
             },
             'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork' => function ($query) {
@@ -110,7 +110,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork' => function ($query) {
                 $query->alias('participantIn');
             },
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork' => function ($query) {
+            /*'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork' => function ($query) {
                 $query->alias('foreignEventParticipantOut');
             },
             'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork' => function ($query) {

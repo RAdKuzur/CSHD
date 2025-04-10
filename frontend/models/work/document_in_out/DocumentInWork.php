@@ -409,7 +409,7 @@ class DocumentInWork extends DocumentIn implements FileInterface
 
     public function getNumberWithDate()
     {
-        $date = DateFormatter::format($this->local_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
+        $date = DateFormatter::format($this->real_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
         return "№$this->local_number $this->document_theme ($this->real_number от $date)";
     }
 }

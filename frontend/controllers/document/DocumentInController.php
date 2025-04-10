@@ -156,7 +156,6 @@ class DocumentInController extends DocumentController
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
-            var_dump($availablePositions);
             $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
             if ($model->load(Yii::$app->request->post())) {

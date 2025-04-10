@@ -10,6 +10,7 @@ class NomenclatureDictionary extends BaseDictionary
     public const ADMIN_ORDER = '02-02';
     public const COD_ADD = '13-01';
     public const COD_DEL = '13-02';
+    public const COD_TRANSFER = '13-19';
     public const TECHNOPARK_ADD = '09-01';
     public const TECHNOPARK_DEL = '09-02';
     public const TECHNOPARK_ADD_BUDGET = '09-22';
@@ -27,7 +28,7 @@ class NomenclatureDictionary extends BaseDictionary
     public const MOB_QUANT_DEL = '12-02';
 
     public const ADMIN_NOMENCLATURES = [self::ADMIN_ORDER];
-    public const COD_NOMENCLATURES = [self::COD_ADD, self::COD_DEL];
+    public const COD_NOMENCLATURES = [self::COD_ADD, self::COD_DEL, self::COD_TRANSFER];
     public const TECHNOPARK_NOMENCLATURES = [self::TECHNOPARK_ADD, self::TECHNOPARK_DEL, self::TECHNOPARK_ADD_BUDGET, self::TECHNOPARK_DEL_BUDGET];
     public const QUANTORIUM_NOMENCLATURES = [self::QUANTORIUM_ADD, self::QUANTORIUM_DEL, self::QUANTORIUM_ADD_BUDGET, self::QUANTORIUM_DEL_BUDGET];
     public const CDNTT_NOMENCLATURES = [self::CDNTT_ADD, self::CDNTT_DEL, self::CDNTT_ADD_BUDGET, self::CDNTT_DEL_BUDGET, self::CDNTT_TRANSFER];
@@ -40,6 +41,7 @@ class NomenclatureDictionary extends BaseDictionary
             self::ADMIN_ORDER => '02-02 Приказы директора по основной деятельности',
             self::COD_ADD => '13-01 Приказы о зачислении обучающихся',
             self::COD_DEL => '13-02 Приказы об отчислении обучающихся',
+            self::COD_TRANSFER => '13-19 Приказы о переводе',
             self::TECHNOPARK_ADD => '09-01 Приказы о зачислении обучающихся',
             self::TECHNOPARK_DEL => '09-02 Приказы об отчислении обучающихся',
             self::TECHNOPARK_ADD_BUDGET => '09-22 Приказы о зачислении обучающихся (по внебюджетной деятельности)',
@@ -63,6 +65,7 @@ class NomenclatureDictionary extends BaseDictionary
             $this->list[self::ADMIN_ORDER],
             $this->list[self::COD_ADD],
             $this->list[self::COD_DEL],
+            $this->list[self::COD_TRANSFER],
             $this->list[self::TECHNOPARK_ADD],
             $this->list[self::TECHNOPARK_DEL],
             $this->list[self::TECHNOPARK_ADD_BUDGET],
@@ -138,6 +141,7 @@ class NomenclatureDictionary extends BaseDictionary
                 return $this->list = [
                     self::COD_ADD => '13-01 Приказы о зачислении обучающихся',
                     self::COD_DEL => '13-02 Приказы об отчислении обучающихся',
+                    self::COD_TRANSFER => '13-19 Приказы о переводе',
                 ];
             case BranchDictionary::MOBILE_QUANTUM:
                 return $this->list = [
@@ -171,7 +175,7 @@ class NomenclatureDictionary extends BaseDictionary
             return self::ORDER_DEDUCT;
         }
         // перевод
-        if($nomenclature == NomenclatureDictionary::CDNTT_TRANSFER){
+        if($nomenclature == NomenclatureDictionary::CDNTT_TRANSFER || $nomenclature == NomenclatureDictionary::COD_TRANSFER){
             return self::ORDER_TRANSFER;
         }
         return self::ORDER_INIT;

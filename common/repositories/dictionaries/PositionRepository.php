@@ -24,9 +24,7 @@ class PositionRepository
         $query = PositionWork::find();
         if ($peopleId) {
             $subQuery = PeoplePositionCompanyBranchWork::find()->where(['people_id' => $peopleId])->all();
-            var_dump(PeoplePositionCompanyBranchWork::find()->where(['people_id' => $peopleId])->createCommand()->getRawSql());
             $query->andWhere(['IN', 'id', ArrayHelper::getColumn($subQuery, 'position_id')]);
-            var_dump($query->createCommand()->getRawSql());die;
         }
 
         return $query->all();

@@ -43,6 +43,9 @@ class OrderTrainingGroupParticipantWork extends OrderTrainingGroupParticipant
 
     public function getAllTrainingGroupParticipant()
     {
-        return $this->hasMany(TrainingGroupParticipantWork::class, ['IN', 'id', ['training_group_participant_out_id', 'training_group_participant_in_id']]);
+        $query1 = $this->getTrainingGroupParticipantOutWork()->toBase();
+        $query2 = $this->getTrainingGroupParticipantInWork()->toBase();
+
+        return $query1->union($query2);
     }
 }

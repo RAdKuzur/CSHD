@@ -151,15 +151,13 @@ class DocumentInController extends DocumentController
         if ($this->lockWizard->lockObject($id, DocumentInWork::tableName(), Yii::$app->user->id)) {
             $model = $this->repository->get($id);
             /** @var DocumentInWork $model */
-            $model->setValuesForUpdate();
 
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
-            var_dump($model->id);
-            var_dump($model->correspondentWork);die;
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
             $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
+            $model->setValuesForUpdate();
             if ($model->load(Yii::$app->request->post())) {
                 $this->lockWizard->unlockObject($id, DocumentInWork::tableName());
                 $this->service->getPeopleStamps($model);

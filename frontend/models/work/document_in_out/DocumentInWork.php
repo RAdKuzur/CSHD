@@ -273,7 +273,7 @@ class DocumentInWork extends DocumentIn implements FileInterface
         $docOut = Yii::createObject(DocumentOutRepository::class)->get($inOutDoc->document_out_id);
         $answerName = "Исходящее № {$docOut->getFullNumber()} от {$docOut->getDate()} \"{$docOut->getDocumentTheme()}\"";
 
-        return StringFormatter::stringAsLink($answerName, Url::to([Yii::$app->frontUrls::DOC_IN_VIEW, 'id' => $inOutDoc->document_out_id]));
+        return StringFormatter::stringAsLink($answerName, Url::to([Yii::$app->frontUrls::DOC_OUT_VIEW, 'id' => $inOutDoc->document_out_id]));
     }
 
     /**

@@ -147,7 +147,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= $model->event->orderParticipantWork ?
                             StringFormatter::stringAsLink(
                                 $model->event->orderParticipantWork->getFullName(),
-                                Url::to([Yii::$app->frontUrls::ORDER_MAIN_VIEW, 'id' => $model->id])) :
+                                Url::to([Yii::$app->frontUrls::ORDER_EVENT_VIEW, 'id' => $model->id])) :
                             '---'; ?>
                     </div>
                 </div>

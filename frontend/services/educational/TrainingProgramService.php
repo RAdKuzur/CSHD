@@ -44,6 +44,7 @@ class TrainingProgramService implements DatabaseServiceInterface
     {
         $this->fileService = $fileService;
         $this->peopleStampService = $peopleStampService;
+        $this->filenameGenerator = $filenameGenerator;
         $this->repository = $repository;
     }
 

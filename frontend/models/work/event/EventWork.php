@@ -189,7 +189,7 @@ class EventWork extends Event implements FileInterface
     public function getEventGroupRaw()
     {
         $result = '';
-        $eventGroups = $this->eventTrainingGroupWork;
+        $eventGroups = $this->trainingGroupWork;
 
         if (!$eventGroups) {
             $result = '-----';

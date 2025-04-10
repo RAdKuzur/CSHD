@@ -874,7 +874,8 @@ class ErrorJournalService
         $lowerBound = strtotime("-$daysCount days", $currentDate);
         $targetDate = strtotime("today");
 
-        if (count($experts) == 0 && $targetDate >= $lowerBound) {
+        if ($group->trainingProgramWork->certificate_type == CertificateTypeDictionary::PROJECT_PITCH &&
+            count($experts) == 0 && $targetDate >= $lowerBound) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::JOURNAL_023,
@@ -899,7 +900,8 @@ class ErrorJournalService
         $lowerBound = strtotime("-$daysCount days", $currentDate);
         $targetDate = strtotime("today");
 
-        if (!(count($experts) == 0 && $targetDate >= $lowerBound)) {
+        if ($group->trainingProgramWork->certificate_type != CertificateTypeDictionary::PROJECT_PITCH ||
+            !(count($experts) == 0 && $targetDate >= $lowerBound)) {
             $this->errorsRepository->delete($error);
         }
     }

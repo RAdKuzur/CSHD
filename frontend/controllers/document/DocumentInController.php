@@ -154,6 +154,8 @@ class DocumentInController extends DocumentController
             $model->setValuesForUpdate();
 
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
+            var_dump($model->id);
+            var_dump($model->correspondentWork);die;
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
             $mainCompanyWorkers = $this->peopleRepository->getAll();

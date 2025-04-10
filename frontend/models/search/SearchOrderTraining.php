@@ -101,7 +101,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
                 $query->alias('responsiblePeople');
             },
-            'orderTrainingGroupParticipantWork',
+            /*'orderTrainingGroupParticipantWork',
             'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork',
             'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork.participantWork' => function ($query) {
                 $query->alias('foreignEventParticipant');

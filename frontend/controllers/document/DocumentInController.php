@@ -151,13 +151,13 @@ class DocumentInController extends DocumentController
         if ($this->lockWizard->lockObject($id, DocumentInWork::tableName(), Yii::$app->user->id)) {
             $model = $this->repository->get($id);
             /** @var DocumentInWork $model */
-            $model->setValuesForUpdate();
 
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
             $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
+            $model->setValuesForUpdate();
             if ($model->load(Yii::$app->request->post())) {
                 $this->lockWizard->unlockObject($id, DocumentInWork::tableName());
                 $this->service->getPeopleStamps($model);
@@ -244,7 +244,7 @@ class DocumentInController extends DocumentController
             $response .= "|split|";
             $response .= HtmlBuilder::buildOptionList($this->companyRepository->getList());
         } else {
-            // Получаем позиции для указанного ID
+            // Получаем должности для указанного ID
             $positions = $this->positionRepository->getList($id);
             $response .= count($positions) > 0 ? HtmlBuilder::buildOptionList($positions) : HtmlBuilder::createEmptyOption();
             $response .= "|split|";

@@ -16,7 +16,7 @@ class PositionRepository
 
     /**
      * Возвращает список должностей
-     * @param int|null $peopleId если передан параметр, то возвращает список должностей человека @see PeoplePositionBranchWork
+     * @param int|null $peopleId если передан параметр, то возвращает список должностей человека {@see PositionWork}
      * @return array
      */
     public function getList(int $peopleId = null): array

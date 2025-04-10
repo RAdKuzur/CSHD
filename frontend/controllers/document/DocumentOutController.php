@@ -153,7 +153,6 @@ class DocumentOutController extends DocumentController
         if ($this->lockWizard->lockObject($id, DocumentOutWork::tableName(), Yii::$app->user->id)) {
             $model = $this->repository->get($id);
             /** @var DocumentOutWork $model */
-            $model->setValuesForUpdate();
 
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
@@ -161,6 +160,7 @@ class DocumentOutController extends DocumentController
             $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
             $filesAnswer = $this->repository->getDocumentInWithoutAnswer();
+            $model->setValuesForUpdate();
             if ($model->load(Yii::$app->request->post())) {
                 $this->lockWizard->unlockObject($id, DocumentOutWork::tableName());
                 $local_id = $model->getAnswer();

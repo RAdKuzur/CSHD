@@ -109,6 +109,7 @@ class OrderTrainingController extends DocumentController
                 $this->orderPeopleRepository->getResponsiblePeople($id)
             )
         );
+        $model->checkFilesExist();
         $status = $this->orderTrainingService->getStatus($model);
         $groups = $this->orderTrainingService->getGroupTable($model) ;
         $participants = $this->orderTrainingService->getGroupParticipantTable($model, $status);

@@ -80,6 +80,7 @@ $tempArchive = $session->get("archiveIn");
                 ['attribute' => 'executorName', 'label' => 'Исполнитель', 'encodeLabel' => false, 'value' => function (OrderMainWork $model) {
                     return $model->executorWork ? $model->executorWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS) : '---';
                 }],
+                ['attribute' => 'key_words', 'encodeLabel' => false, 'label' => 'Ключевые<br>слова'],
 
                 ['class' => VerticalActionColumn::class],
             ],

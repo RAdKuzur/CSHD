@@ -256,6 +256,7 @@ class OrderEventController extends DocumentController
             )
         );
         $modelOrderEvent = $this->orderEventRepository->get($id);
+        $modelOrderEvent->checkFilesExist();
         $foreignEvent = $this->foreignEventRepository->getByDocOrderId($modelOrderEvent->id);
         $actTable = $this->actParticipantService->createActTable($foreignEvent->id);
         return $this->render('view',

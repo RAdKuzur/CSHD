@@ -15,6 +15,7 @@ use common\repositories\document_in_out\DocumentInRepository;
 use common\repositories\document_in_out\DocumentOutRepository;
 use common\repositories\document_in_out\InOutDocumentsRepository;
 use frontend\models\work\dictionaries\CompanyWork;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\dictionaries\PositionWork;
 use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\general\PeopleWork;
@@ -155,7 +156,7 @@ class DocumentInWork extends DocumentIn implements FileInterface
     public function getCorrespondentName()
     {
         $correspondent = $this->correspondentWork;
-        return $correspondent ? $correspondent->getFIO(PeopleWork::FIO_SURNAME_INITIALS_WITH_POSITION) : '---';
+        return $correspondent ? $this->positionWork->name . ' ' . $correspondent->getFIO(PersonInterface::FIO_SURNAME_INITIALS) : '---';
     }
 
     public function getSendMethodName()
@@ -408,7 +409,7 @@ class DocumentInWork extends DocumentIn implements FileInterface
 
     public function getNumberWithDate()
     {
-        $date = DateFormatter::format($this->local_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
-        return "№$this->local_number $this->document_theme (от $date)";
+        $date = DateFormatter::format($this->real_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
+        return "№$this->local_number $this->document_theme ($this->real_number от $date)";
     }
 }

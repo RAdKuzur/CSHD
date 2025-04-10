@@ -113,7 +113,7 @@ use yii\widgets\ActiveForm;
             'class' => 'form-control pos',
             'prompt' => '---',
         ];
-        var_dump($availablePositions);
+        var_dump(ArrayHelper::map($availablePositions, 'id', 'name'));
         echo $form->field($model, 'position_id')->widget(Select2::classname(), [
             'data' => ArrayHelper::map($availablePositions, 'id', 'name'),
             'size' => Select2::LARGE,

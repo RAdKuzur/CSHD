@@ -182,7 +182,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             $this->finishDateSearch);
         $this->filterForeignEventSurname($query);
         $this->filterGroupName($query);
-        $this->filterBranch($query);
+        //$this->filterBranch($query);
     }
 
     /**

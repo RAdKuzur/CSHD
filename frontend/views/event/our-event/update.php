@@ -12,6 +12,7 @@ use yii\helpers\Html;
 /* @var $people PeopleWork */
 /* @var $regulations RegulationWork */
 /* @var $branches array */
+/* @var $groups array */
 /* @var $protocolFiles */
 /* @var $photoFiles */
 /* @var $reportingFiles */
@@ -37,6 +38,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         'people' => $people,
         'regulations' => $regulations,
         'branches' => $branches,
+        'groups' => $groups,
         'protocolFiles' => $protocolFiles,
         'photoFiles' => $photoFiles,
         'reportingFiles' => $reportingFiles,

@@ -4,6 +4,7 @@ use common\helpers\DateFormatter;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\general\PeopleWork;
 use frontend\models\work\regulation\RegulationWork;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -14,6 +15,7 @@ use yii\widgets\ActiveForm;
 /* @var $people PeopleWork */
 /* @var $regulations RegulationWork */
 /* @var $branches array */
+/* @var $groups array */
 /* @var $protocolFiles */
 /* @var $photoFiles */
 /* @var $reportingFiles */
@@ -133,6 +135,15 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'regulation_id')->dropDownList(ArrayHelper::map($regulations, 'id', 'name'), ['prompt' => 'Нет'])->label('Положение по мероприятию'); ?>
+    <?= $form->field($model, 'training_group_id')
+        ->widget(Select2::classname(), [
+        'data' => ArrayHelper::map($groups, 'id', 'number'),
+        'size' => Select2::LARGE,
+        'options' => ['prompt' => '---'],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ])->label('Связанная учебная группа'); ?>
 
     <div class="checkList">
         <div class="checkHeader">

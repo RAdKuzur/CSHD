@@ -10,6 +10,7 @@ use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\SortHelper;
 use common\repositories\dictionaries\PeopleRepository;
+use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\event\EventRepository;
 use common\repositories\general\FilesRepository;
 use common\repositories\regulation\RegulationRepository;
@@ -36,6 +37,7 @@ class OurEventController extends DocumentController
     private EventRepository $repository;
     private EventService $service;
     private PeopleRepository $peopleRepository;
+    private TrainingGroupRepository $groupRepository;
     private RegulationRepository $regulationRepository;
     private LockWizard $lockWizard;
 
@@ -46,6 +48,7 @@ class OurEventController extends DocumentController
         EventService $service,
         PeopleRepository $peopleRepository,
         RegulationRepository $regulationRepository,
+        TrainingGroupRepository $groupRepository,
         LockWizard $lockWizard,
         $config = [])
     {
@@ -54,6 +57,7 @@ class OurEventController extends DocumentController
         $this->service = $service;
         $this->peopleRepository = $peopleRepository;
         $this->regulationRepository = $regulationRepository;
+        $this->groupRepository = $groupRepository;
         $this->lockWizard = $lockWizard;
     }
 
@@ -144,6 +148,7 @@ class OurEventController extends DocumentController
             'people' => $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO, SORT_ASC),
             'regulations' => $this->regulationRepository->getOrderedList(),
             'branches' => ArrayHelper::getColumn($this->repository->getBranches($model->id), 'branch'),
+            'groups' => $this->groupRepository->getUnarchiveGroups(),
         ]);
     }
 
@@ -188,6 +193,7 @@ class OurEventController extends DocumentController
                 'people' => $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO, SORT_ASC),
                 'regulations' => $this->regulationRepository->getOrderedList(),
                 'branches' => ArrayHelper::getColumn($this->repository->getBranches($model->id), 'branch'),
+                'groups' => $this->groupRepository->getUnarchiveGroups(),
                 'protocolFiles' => $tables['protocol'],
                 'photoFiles' => $tables['photo'],
                 'reportingFiles' => $tables['report'],

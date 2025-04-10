@@ -12,6 +12,7 @@ use common\models\scaffold\Event;
 use common\models\work\UserWork;
 use common\repositories\event\EventRepository;
 use common\repositories\regulation\RegulationRepository;
+use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\general\PeopleWork;
 use frontend\models\work\order\DocumentOrderWork;
@@ -31,6 +32,7 @@ use yii\helpers\Url;
 /** @property UserWork $creatorWork */
 /** @property UserWork $lastEditorWork */
 /** @property EventBranchWork[] $eventBranchWorks */
+/** @property TrainingGroupWork $trainingGroupWork */
 
 class EventWork extends Event implements FileInterface
 {
@@ -503,6 +505,11 @@ class EventWork extends Event implements FileInterface
     public function getEventBranchWorks()
     {
         return $this->hasMany(EventBranchWork::class, ['event_id' => 'id']);
+    }
+
+    public function getTrainingGroupWork()
+    {
+        return $this->hasOne(TrainingGroupWork::class, ['id' => 'training_group_id']);
     }
 
     public function getFilePaths($filetype): array

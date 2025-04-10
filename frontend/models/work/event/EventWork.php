@@ -231,7 +231,9 @@ class EventWork extends Event
         $result = '';
         $scopes = ArrayHelper::getColumn($eventScopes, 'participation_scope');
         foreach ($scopes as $scope) {
-            $result .= Yii::$app->participationScope->get($scope) . ', ';
+            if ($scope) {
+                $result .= Yii::$app->participationScope->get($scope) . ', ';
+            }
         }
 
         return substr($result, 0, -2);

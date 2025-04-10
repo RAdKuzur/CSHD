@@ -104,7 +104,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderTrainingGroupParticipantWork' => function ($query) {
                 $query->alias('orderParticipant');
             },
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork' => function ($query) {
+            /*'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork' => function ($query) {
                 $query->alias('participantOut');
             },
             'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork' => function ($query) {

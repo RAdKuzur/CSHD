@@ -77,6 +77,19 @@ class SearchTrainingGroup extends Model implements SearchInterfaces
         $this->load($params);
     }
 
+    private function addAccess(ActiveQuery $query)
+    {
+        /** @var UserWork $user */
+        $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
+        $specialGroups = new PbacGroupAccess(
+            new PbacGroupData(
+                $user,
+                [$user->akaWork->branch]
+            )
+        );
+        return $specialGroups->getAllowedGroupsQuery($query);
+    }
+
     /**
      * Создает экземпляр DataProvider с учетом поискового запроса (фильтров или сортировки)
      *
@@ -100,15 +113,7 @@ class SearchTrainingGroup extends Model implements SearchInterfaces
                 },
             ]);
 
-        /** @var UserWork $user */
-        $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
-        $specialGroups = new PbacGroupAccess(
-            new PbacGroupData(
-                $user,
-                [$user->akaWork->branch]
-            )
-        );
-        $query = $specialGroups->getAllowedGroupsQuery($query);
+        $query = $this->addAccess($query);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

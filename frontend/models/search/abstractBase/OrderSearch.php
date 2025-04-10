@@ -14,9 +14,9 @@ class OrderSearch extends Model
     public string $responsibleName;     // ответственный
     public string $bringName;           // проект вносит
     public string $executorName;        // кто исполняет
-    public string $keyWords;
-    public string $startDateSearch;    // стартовая дата поиска документов
-    public string $finishDateSearch;   // конечная дата поиска документов
+    public string $keyWords;            // ключевые слова
+    public string $startDateSearch;     // стартовая дата поиска документов
+    public string $finishDateSearch;    // конечная дата поиска документов
 
 
     public function rules()
@@ -68,6 +68,11 @@ class OrderSearch extends Model
             'desc' => ['order_number' => SORT_DESC, 'order_copy_id' => SORT_DESC, 'order_postfix' => SORT_DESC],
         ];
 
+        $dataProvider->sort->attributes['orderDate'] = [
+            'asc' => ['order_date' => SORT_ASC],
+            'desc' => ['order_date' => SORT_DESC],
+        ];
+
         $dataProvider->sort->attributes['orderName'] = [
             'asc' => ['order_name' => SORT_ASC],
             'desc' => ['order_name' => SORT_DESC],
@@ -92,6 +97,7 @@ class OrderSearch extends Model
      * @param string $orderName
      * @param string $responsibleName
      * @param string $executorName
+     * @param string $bringName
      * @param string $keyWords
      * @param string $startDateSearch
      * @param string $finishDateSearch
@@ -150,6 +156,7 @@ class OrderSearch extends Model
      * Фильтрует по тому кто вносит проект
      *
      * @param ActiveQuery $query
+     * @param string $executorName
      * @return void
      */
     private function filterExecutorName(ActiveQuery $query, string $executorName) {
@@ -165,6 +172,7 @@ class OrderSearch extends Model
      * Фильтрует по тому кто исполняет
      *
      * @param ActiveQuery $query
+     * @param string $bringName
      * @return void
      */
     private function filterBringName(ActiveQuery $query, string $bringName) {
@@ -180,6 +188,7 @@ class OrderSearch extends Model
      * Фильтрует по ответственным
      *
      * @param ActiveQuery $query
+     * @param string $responsibleName
      * @return void
      */
     private function filterResponsibleName(ActiveQuery $query, string $responsibleName) {

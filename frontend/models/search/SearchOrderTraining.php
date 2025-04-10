@@ -2,7 +2,11 @@
 
 namespace frontend\models\search;
 
+use common\components\dictionaries\base\BranchDictionary;
+use common\components\dictionaries\base\NomenclatureDictionary;
 use common\components\interfaces\SearchInterfaces;
+use common\helpers\search\SearchFieldHelper;
+use common\helpers\StringFormatter;
 use frontend\models\search\abstractBase\OrderSearch;
 use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\order\OrderTrainingWork;
@@ -11,9 +15,17 @@ use yii\db\ActiveQuery;
 
 class SearchOrderTraining extends OrderSearch implements SearchInterfaces
 {
+    public int $branch;
+    public string $groupName;
+    public string $participantName;
+
     public function rules()
     {
-        return parent::rules();
+        return array_merge(parent::rules(), [
+            [['branch'], 'integer'],
+            [['groupName', 'participantName'], 'string'],
+            [['branch', 'groupName', 'participantName'], 'safe'],
+        ]);
     }
 
     public function __construct(
@@ -24,7 +36,10 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         string $executorName = '',
         string $keyWords = '',
         string $startDateSearch = '',
-        string $finishDateSearch = ''
+        string $finishDateSearch = '',
+        string $groupName = '',
+        string $participantName = '',
+        int $branch = SearchFieldHelper::EMPTY_FIELD
     ) {
         parent::__construct(
             $orderNumber,
@@ -36,6 +51,9 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             $startDateSearch,
             $finishDateSearch
         );
+        $this->groupName = $groupName;
+        $this->participantName = $participantName;
+        $this->branch = $branch;
     }
 
     /**
@@ -46,7 +64,65 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
      */
     public function loadParams($params)
     {
+        if (count($params) > 1) {
+            $params['SearchOrderTraining']['branch'] = StringFormatter::stringAsInt($params['SearchOrderTraining']['branch']);
+        }
+
         $this->load($params);
+    }
+
+    /**
+     * Добавление связок с другими таблицами
+     *
+     * @param ActiveQuery $query
+     * @return ActiveQuery
+     */
+    private function addJoinsToQuery(ActiveQuery $query) : ActiveQuery
+    {
+        return $query->joinWith([
+            'bringWork' => function ($query) {
+                $query->alias('bring');
+            },
+            'bringWork.peopleWork' => function ($query) {
+                $query->alias('bringPeople');
+            },
+            'executorWork' => function ($query) {
+                $query->alias('executor');
+            },
+            'executorWork.peopleWork' => function ($query) {
+                $query->alias('executorPeople');
+            },
+            'orderPeopleWorks' => function ($query) {
+                $query->alias('orderPeople');
+            },
+            'orderPeopleWorks.peopleStampWork' => function ($query) {
+                $query->alias('orderStamp');
+            },
+            'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
+                $query->alias('responsiblePeople');
+            },
+            'orderTrainingGroupParticipantWork' => function ($query) {
+                $query->alias('orderParticipant');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork' => function ($query) {
+                $query->alias('participantOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork' => function ($query) {
+                $query->alias('participantIn');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork' => function ($query) {
+                $query->alias('foreignEventParticipantOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork' => function ($query) {
+                $query->alias('foreignEventParticipantIn');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.trainingGroupWork' => function ($query) {
+                $query->alias('groupOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork' => function ($query) {
+                $query->alias('groupIn');
+            },
+        ]);
     }
 
     /**
@@ -60,30 +136,9 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $this->loadParams($params);
 
         $query = OrderTrainingWork::find()
-            ->where(['type' => DocumentOrderWork::ORDER_TRAINING])
-            ->joinWith([
-                'bringWork' => function ($query) {
-                    $query->alias('bring');
-                },
-                'bringWork.peopleWork' => function ($query) {
-                    $query->alias('bringPeople');
-                },
-                'executorWork' => function ($query) {
-                    $query->alias('executor');
-                },
-                'executorWork.peopleWork' => function ($query) {
-                    $query->alias('executorPeople');
-                },
-                'orderPeopleWorks' => function ($query) {
-                    $query->alias('orderPeople');
-                },
-                'orderPeopleWorks.peopleStampWork' => function ($query) {
-                    $query->alias('orderStamp');
-                },
-                'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
-                    $query->alias('responsiblePeople');
-                }
-            ]);
+            ->where(['type' => DocumentOrderWork::ORDER_TRAINING]);
+
+        $query = $this->addJoinsToQuery($query);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -102,7 +157,8 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
      * @param ActiveDataProvider $dataProvider
      * @return void
      */
-    public function sortAttributes(ActiveDataProvider $dataProvider) {
+    public function sortAttributes(ActiveDataProvider $dataProvider)
+    {
         parent::sortAttributes($dataProvider);
     }
 
@@ -112,7 +168,8 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterQueryParams(ActiveQuery $query) {
+    public function filterQueryParams(ActiveQuery $query)
+    {
         $this->filterAbstractQueryParams(
             $query,
             $this->orderNumber,
@@ -123,5 +180,73 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             $this->keyWords,
             $this->startDateSearch,
             $this->finishDateSearch);
+        $this->filterForeignEventSurname($query);
+        $this->filterGroupName($query);
+        $this->filterBranch($query);
+    }
+
+    /**
+     * Фильтр по названию учебной группы
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterGroupName(ActiveQuery $query)
+    {
+        if (!empty($this->groupName)) {
+            $query->andFilterWhere([
+                'or',
+                ['like', 'LOWER(groupOut.number)', mb_strtolower($this->groupName)],
+                ['like', 'LOWER(groupIn.number)', mb_strtolower($this->groupName)]
+            ]);
+        }
+    }
+
+    /**
+     * Фильтр по фамилии участника деятельности фигурирующего в приказе
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterForeignEventSurname(ActiveQuery $query)
+    {
+        if (!empty($this->participantName)) {
+            $query->andFilterWhere([
+                'or',
+                ['like', 'LOWER(foreignEventParticipantOut.surname)', mb_strtolower($this->participantName)],
+                ['like', 'LOWER(foreignEventParticipantIn.surname)', mb_strtolower($this->participantName)]
+            ]);
+        }
+    }
+
+    /**
+     * Фильтр по отделам
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterBranch(ActiveQuery $query)
+    {
+        if (!StringFormatter::isEmpty($this->branch) && $this->branch != SearchFieldHelper::EMPTY_FIELD) {
+            $nom = [];
+            switch ($this->branch) {
+                case BranchDictionary::QUANTORIUM:
+                    $nom = NomenclatureDictionary::QUANTORIUM_NOMENCLATURES;
+                    break;
+                case BranchDictionary::TECHNOPARK:
+                    $nom = NomenclatureDictionary::TECHNOPARK_NOMENCLATURES;
+                    break;
+                case BranchDictionary::CDNTT:
+                    $nom = NomenclatureDictionary::CDNTT_NOMENCLATURES;
+                    break;
+                case BranchDictionary::MOBILE_QUANTUM:
+                    $nom = NomenclatureDictionary::MOB_QUANT_NOMENCLATURES;
+                    break;
+                case BranchDictionary::COD:
+                    $nom = NomenclatureDictionary::COD_NOMENCLATURES;
+                    break;
+            }
+            $query->andFilterWhere(['IN', 'order_number', $nom]);
+        }
     }
 }

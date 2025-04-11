@@ -913,7 +913,7 @@ class ErrorJournalService
         $group = $this->groupRepository->get($rowId);
 
         if ($group->trainingProgramWork->certificate_type == CertificateTypeDictionary::PROJECT_PITCH &&
-            !empty($group->protection_date) && $group->finish_date >= $group->protection_date) {
+            !empty($group->protection_date) && $group->finish_date > $group->protection_date) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::JOURNAL_024,
@@ -934,7 +934,7 @@ class ErrorJournalService
         $group = $this->groupRepository->get($error->table_row_id);
 
         if ($group->trainingProgramWork->certificate_type != CertificateTypeDictionary::PROJECT_PITCH ||
-            $group->finish_date < $group->protection_date) {
+            $group->finish_date <= $group->protection_date) {
             $this->errorsRepository->delete($error);
         }
     }

@@ -17,6 +17,7 @@ use yii\helpers\Html;
 /* @var $photoFiles */
 /* @var $reportingFiles */
 /* @var $otherFiles */
+/* @var $modelGroups array */
 
 $this->title = 'Редактировать мероприятие: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Мероприятия', 'url' => ['index']];
@@ -43,6 +44,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         'photoFiles' => $photoFiles,
         'reportingFiles' => $reportingFiles,
         'otherFiles' => $otherFiles,
+        'modelGroups' => $modelGroups,
     ]) ?>
 
 </div>

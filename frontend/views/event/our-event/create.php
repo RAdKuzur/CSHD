@@ -11,6 +11,7 @@ use yii\helpers\Html;
 /* @var $regulations RegulationWork */
 /* @var $branches array */
 /* @var $groups array */
+/* @var $modelGroups array */
 
 $this->title = 'Добавить мероприятие';
 $this->params['breadcrumbs'][] = ['label' => 'Мероприятия', 'url' => ['index']];
@@ -28,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'regulations' => $regulations,
         'branches' => $branches,
         'groups' => $groups,
+        'modelGroups' => $modelGroups,
     ]) ?>
 
 </div>

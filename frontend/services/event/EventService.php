@@ -9,8 +9,10 @@ use common\helpers\html\HtmlCreator;
 use common\services\DatabaseServiceInterface;
 use common\services\general\files\FileService;
 use common\services\general\PeopleStampService;
+use frontend\events\event\CreateEventGroupEvent;
 use frontend\events\general\FileCreateEvent;
 use frontend\models\work\document_in_out\DocumentOutWork;
+use frontend\models\work\event\EventGroupWork;
 use frontend\models\work\event\EventWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
@@ -213,5 +215,19 @@ class EventService implements DatabaseServiceInterface
             $peopleStampId = $this->peopleStampService->createStampFromPeople($model->responsible2_id);
             $model->responsible2_id = $peopleStampId;
         }
+    }
+
+    /**
+     * @param EventWork $form
+     * @param EventGroupWork[] $modelGroups
+     * @return void
+     */
+    public function attachGroups(EventWork $form, array $modelGroups, int $eventId)
+    {
+        foreach ($modelGroups as $modelGroup) {
+            $form->recordEvent(new CreateEventGroupEvent($modelGroup->training_group_id, $eventId), EventGroupWork::class);
+        }
+
+        $form->releaseEvents();
     }
 }

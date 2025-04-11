@@ -31,6 +31,7 @@ use yii\helpers\Url;
 /** @property UserWork $creatorWork */
 /** @property UserWork $lastEditorWork */
 /** @property EventBranchWork[] $eventBranchWorks */
+/** @property EventGroupWork[] $eventGroupWorks */
 
 class EventWork extends Event implements FileInterface
 {
@@ -186,19 +187,18 @@ class EventWork extends Event implements FileInterface
 
     public function getEventGroupRaw()
     {
-        /*$result = '';
-        $eventGroups = $this->trainingGroupWork;
-
+        $eventGroups = $this->eventGroupWorks;
         if (!$eventGroups) {
-            $result = '-----';
-        }
-        foreach ($eventGroups as $eventGroup) {
-            $trainingGroup = $eventGroup->trainingGroup;
-            $result .= StringFormatter::stringAsLink("{$trainingGroup->number}", Url::to([Yii::$app->frontUrls::TRAINING_GROUP_VIEW, 'id' => $trainingGroup->id])) . ', ';
+            return '---';
         }
 
-        return substr($result, 0, -2);*/
-        return '---';
+        return implode(', ', array_map(function (EventGroupWork $eventGroup) {
+            return StringFormatter::stringAsLink(
+                    "{$eventGroup->trainingGroupWork->number}",
+                    Url::to([Yii::$app->frontUrls::TRAINING_GROUP_VIEW, 'id' => $eventGroup->training_group_id]
+                )
+            );
+        }, $eventGroups));
     }
 
     public function getKeyWord()
@@ -509,5 +509,10 @@ class EventWork extends Event implements FileInterface
     public function getFilePaths($filetype): array
     {
         return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
+    }
+
+    public function getEventGroupWorks()
+    {
+        return $this->hasMany(EventGroupWork::class, ['event_id' => 'id']);
     }
 }

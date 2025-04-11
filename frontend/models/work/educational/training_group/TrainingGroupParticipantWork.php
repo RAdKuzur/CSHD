@@ -9,6 +9,7 @@ use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use common\models\scaffold\TrainingGroupParticipant;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\educational\CertificateWork;
 use frontend\models\work\general\PeopleStampWork;
 use Yii;
@@ -121,6 +122,13 @@ class TrainingGroupParticipantWork extends TrainingGroupParticipant
         $model = ForeignEventParticipantsWork::findOne($this->participant_id);
         return $model->getFullFio();
     }
+
+    public function getFullFioWithBirthdate()
+    {
+        $birthdate = DateFormatter::format($this->participantWork->birthdate, DateFormatter::Ymd_dash, DateFormatter::dmy_dot);
+        return $this->participantWork->getFIO(PersonInterface::FIO_FULL) . " ($birthdate)";
+    }
+
     public function setStatus($status)
     {
         $this->status = $status;

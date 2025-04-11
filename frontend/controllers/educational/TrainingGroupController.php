@@ -43,6 +43,7 @@ use frontend\models\work\educational\training_group\TrainingGroupExpertWork;
 use frontend\models\work\educational\training_group\TrainingGroupLessonWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
+use frontend\models\work\general\PeopleWork;
 use frontend\models\work\ProjectThemeWork;
 use frontend\services\educational\GroupDocumentService;
 use frontend\services\educational\GroupLessonService;
@@ -145,10 +146,10 @@ class TrainingGroupController extends DocumentController
             Model::loadMultiple($modelTeachers, Yii::$app->request->post());
             if (Model::validateMultiple($modelTeachers, ['id'])) {
                 $form->teachers = $modelTeachers;
-                $groupModel->generateNumber($this->peopleRepository->get($form->teachers[0]->peopleId));
+                $groupModel->generateNumber($this->peopleRepository->get($form->teachers[0]->peopleId) ? : new PeopleWork());
             }
             else {
-                $groupModel->generateNumber('');
+                $groupModel->generateNumber(new PeopleWork());
             }
 
             $form->id = $this->trainingGroupRepository->save($groupModel);

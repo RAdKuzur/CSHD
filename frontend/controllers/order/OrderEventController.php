@@ -283,7 +283,7 @@ class OrderEventController extends DocumentController
                 [new ActParticipantForm],
                 $this->teamService->getNamesByForeignEventId($modelForeignEvent->id),
                 array_unique(ArrayHelper::getColumn($this->actParticipantRepository->getByForeignEventIds([$modelForeignEvent->id]), 'nomination')),
-                $this->foreignEventParticipantsRepository->getSortedList(),
+                $this->foreignEventParticipantsRepository->getSortedList(ForeignEventParticipantsRepository::SORT_FIO),
                 $this->companyRepository->getList(),
                 $this->actParticipantService->createActTable($modelForeignEvent->id),
                 $this->documentOrderService->getUploadedFilesTables($modelOrderEvent),

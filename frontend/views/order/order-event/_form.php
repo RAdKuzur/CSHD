@@ -520,6 +520,10 @@ use yii\widgets\DetailView;
         </div>
     </div>
 
+    <?php if ($actTable != NULL): ?>
+        <?= $actTable; ?>
+    <?php endif; ?>
+
     <div id = "commands">
         <fieldset id="nom-team-block">
         <div class="main-div">
@@ -757,10 +761,6 @@ use yii\widgets\DetailView;
             <?php DynamicFormWidget::end(); ?>
         </div>
     </div>
-
-    <?php if ($actTable != NULL): ?>
-        <?= $actTable; ?>
-    <?php endif; ?>
 
     <?= $form->field($model, 'key_words')->textInput()->label('Ключевые слова') ?>
     <?= $form->field($model, 'scanFile')->fileInput()->label('Скан документа') ?>

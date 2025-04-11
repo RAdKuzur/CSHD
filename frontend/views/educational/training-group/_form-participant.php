@@ -3,6 +3,8 @@
 use common\components\wizards\AlertMessageWizard;
 use common\models\scaffold\TrainingGroup;
 use frontend\forms\training_group\TrainingGroupParticipantForm;
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
+use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
@@ -83,7 +85,9 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                                 <div class="flexx">
                                     <div class="flx1">
                                         <?= $form->field($modelChild, "[{$i}]participant_id")->widget(Select2::classname(), [
-                                            'data' => ArrayHelper::map($childs, 'id', 'fullFio'),
+                                            'data' => ArrayHelper::map($childs, 'id', function (ForeignEventParticipantsWork $model) {
+                                                return $model->getFullFioWithBirthdate();
+                                            }),
                                             'size' => Select2::LARGE,
                                             'options' => ['prompt' => 'Выберите ученика'],
                                             'pluginOptions' => [

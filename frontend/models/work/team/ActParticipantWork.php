@@ -116,13 +116,14 @@ class ActParticipantWork extends ActParticipant
         }
         return $participants;
     }
-    public function getParticipantString(){
+    public function getParticipantString()
+    {
         $participants = '';
         $squadParticipants = SquadParticipantWork::findAll(['act_participant_id' => $this->id]);
         foreach($squadParticipants as $squadParticipant){
             $persons = ForeignEventParticipantsWork::findAll($squadParticipant["participant_id"]);
             foreach($persons as $person){
-                $participants = $participants . $person->firstname . ' ' . $person->surname . ' ' . $person->patronymic ."\n" ;
+                $participants = $participants . $person->surname . ' ' . $person->firstname . ' ' . $person->patronymic ."\n" ;
             }
         }
         return $participants;
@@ -134,7 +135,7 @@ class ActParticipantWork extends ActParticipant
         $participants = [];
         foreach ($squadParticipants as $participant) {
             $participants[] = StringFormatter::stringAsLink(
-                $participant->participantWork->getFIO(PeopleWork::FIO_SURNAME_INITIALS),
+                $participant->participantWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS),
                 Url::to(['/dictionaries/foreign-event-participants/view', 'id' => $participant->participant_id])
             );
         }

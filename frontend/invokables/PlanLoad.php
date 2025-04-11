@@ -5,10 +5,12 @@ namespace frontend\invokables;
 
 
 use common\helpers\common\HeaderWizard;
+use common\helpers\DateFormatter;
 use common\helpers\files\FilePaths;
 use frontend\models\work\educational\training_group\LessonThemeWork;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
 
@@ -48,7 +50,8 @@ class PlanLoad
 
         foreach ($this->lessonThemes as $lessonTheme) {
             $inputData->getActiveSheet()->setCellValue('A' . (11 + $c), $c);
-            $inputData->getActiveSheet()->setCellValue('B' . (11 + $c), $lessonTheme->trainingGroupLessonWork->lesson_date);
+            $lessonDate = DateFormatter::format($lessonTheme->trainingGroupLessonWork->lesson_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
+            $inputData->getActiveSheet()->setCellValue('B' . (11 + $c), $lessonDate);
             $inputData->getActiveSheet()->setCellValue(
                 'C' . (11 + $c),
                 mb_substr($lessonTheme->trainingGroupLessonWork->lesson_start_time, 0, -3) . ' - ' . mb_substr($lessonTheme->trainingGroupLessonWork->lesson_end_time, 0, -3)
@@ -64,26 +67,20 @@ class PlanLoad
 
     private function setStyles(Spreadsheet $inputData)
     {
-        $styleArray = array('fill' => array(
-            'type' => 'solid',
-            'color' => array('rgb' => 'FFFFFF')
-        ),
-            'borders' => array(
-                'bottom' => array('style' => 'thin'),
-                'right' => array('style' => 'thin'),
-                'top' => array('style' => 'thin'),
-                'left' => array('style' => 'thin')
-            )
-        );
-
         for ($i = 11; $i < 11 + count($this->lessonThemes); $i++) {
-            $inputData->getActiveSheet()->getStyle('A'.$i.':B'.($i+1))->applyFromArray($styleArray);
-            $inputData->getActiveSheet()->getStyle('B'.$i.':C'.($i+1))->applyFromArray($styleArray);
-            $inputData->getActiveSheet()->getStyle('C'.$i.':D'.($i+1))->applyFromArray($styleArray);
-            $inputData->getActiveSheet()->getStyle('D'.$i.':E'.($i+1))->applyFromArray($styleArray);
-            $inputData->getActiveSheet()->getStyle('E'.$i.':F'.($i+1))->applyFromArray($styleArray);
-            $inputData->getActiveSheet()->getStyle('F'.$i.':G'.($i+1))->applyFromArray($styleArray);
+            $inputData->getActiveSheet()->getStyle('A'.$i.':B'.($i+1))->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
+            $inputData->getActiveSheet()->getStyle('B'.$i.':C'.($i+1))->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
+            $inputData->getActiveSheet()->getStyle('C'.$i.':D'.($i+1))->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
+            $inputData->getActiveSheet()->getStyle('D'.$i.':E'.($i+1))->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
+            $inputData->getActiveSheet()->getStyle('E'.$i.':F'.($i+1))->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
+            $inputData->getActiveSheet()->getStyle('F'.$i.':G'.($i+1))->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
         }
-        $inputData->getActiveSheet()->getStyle('A12:G'. (11 + count($this->lessonThemes)))->applyFromArray($styleArray);
+
+        $inputData
+            ->getActiveSheet()
+            ->getStyle('A12:G'. (11 + count($this->lessonThemes)))
+            ->getBorders()
+            ->getOutline()
+            ->setBorderStyle(Border::BORDER_THIN);
     }
 }

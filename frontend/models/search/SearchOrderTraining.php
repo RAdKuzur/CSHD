@@ -80,7 +80,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
      */
     private function addJoinsToQuery(ActiveQuery $query) : ActiveQuery
     {
-        return $query->joinWith([
+        return $query = $query->joinWith([
             'bringWork' => function ($query) {
                 $query->alias('bring');
             },
@@ -102,7 +102,9 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
                 $query->alias('responsiblePeople');
             },
-            /*'orderTrainingGroupParticipantWork' => function ($query) {
+        ]);
+        /*$query->joinWith([
+            'orderTrainingGroupParticipantWork' => function ($query) {
                 $query->alias('orderGroupParticipant');
             },
             'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork' => function ($query) {
@@ -122,8 +124,8 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             },
             'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork' => function ($query) {
                 $query->alias('groupIn');
-            },*/
-        ]);
+            },
+        ], true, 'INNER JOIN');*/
     }
 
     /**

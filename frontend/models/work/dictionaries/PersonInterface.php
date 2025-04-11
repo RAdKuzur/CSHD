@@ -11,6 +11,7 @@ interface PersonInterface
     const FIO_SURNAME_INITIALS = 2;
     const FIO_WITH_POSITION = 3;
     const FIO_SURNAME_INITIALS_WITH_POSITION = 4;
+    const FIO_WITH_POSITION_COMPANY = 5;
 
     const BASE_BIRTHDATE = '1900-01-01';
 

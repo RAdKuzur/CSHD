@@ -37,7 +37,7 @@ class PeopleProvider implements PeopleProviderInterface
 
     public function getAll()
     {
-        return PeopleWork::find()->all();
+        return PeopleWork::find()->orderBy(['surname' => SORT_ASC, 'firstname' => SORT_ASC, 'patronymic' => SORT_ASC])->all();
     }
 
     public function getPositionsCompanies($id)

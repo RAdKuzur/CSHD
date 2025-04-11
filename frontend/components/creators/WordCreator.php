@@ -519,7 +519,10 @@ class WordCreator
                 $cell->addText(Yii::$app->branches->get($branch->branch), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
 
             $cell = $table->addCell(4000);
-            $cell->addText($oneActPart->actParticipantWork->teacherWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
+            if ($oneActPart->actParticipantWork->teacher_id != null){
+                $cell->addText($oneActPart->actParticipantWork->teacherWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
+            }
+
             if ($oneActPart->actParticipantWork->teacher2_id != null)
                 $cell->addText($oneActPart->actParticipantWork->teacher2Work->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
 

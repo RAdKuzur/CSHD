@@ -26,6 +26,7 @@ use frontend\models\work\educational\training_group\TrainingGroupParticipantWork
 use frontend\models\work\event\EventGroupWork;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\event\ForeignEventWork;
+use frontend\models\work\order\DocumentOrderWork;
 use frontend\services\event\EventService;
 use Yii;
 use yii\filters\VerbFilter;
@@ -168,7 +169,7 @@ class OurEventController extends DocumentController
             'branches' => ArrayHelper::getColumn($this->repository->getBranches($model->id), 'branch'),
             'groups' => $this->groupRepository->getUnarchiveGroups(),
             'modelGroups' => $modelGroups,
-            'orders' => $this->documentOrderRepository->getAllMain() ? : []
+            'orders' => $this->documentOrderRepository->getAllMain() ? : [new DocumentOrderWork]
         ]);
     }
 
@@ -226,7 +227,7 @@ class OurEventController extends DocumentController
                 'reportingFiles' => $tables['report'],
                 'otherFiles' => $tables['other'],
                 'modelGroups' => $modelGroups,
-                'orders' => $this->documentOrderRepository->getAllMain() ? : []
+                'orders' => $this->documentOrderRepository->getAllMain() ? : [new DocumentOrderWork]
             ]);
         }
         else {

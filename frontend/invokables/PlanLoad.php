@@ -69,7 +69,7 @@ class PlanLoad
     {
         $styleArray = array('fill' => array(
             'type' => 'solid',
-            'color' => array('rgb' => 'FFFFFF')
+            'color' => array('rgb' => '000000')
         ),
             'borders' => array(
                 'bottom' => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR),

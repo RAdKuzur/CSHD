@@ -2,14 +2,19 @@
 
 namespace frontend\models\search;
 
+use common\components\access\pbac\data\PbacOrderData;
+use common\components\access\pbac\PbacOrderAccess;
 use common\components\dictionaries\base\BranchDictionary;
 use common\components\dictionaries\base\NomenclatureDictionary;
 use common\components\interfaces\SearchInterfaces;
 use common\helpers\search\SearchFieldHelper;
 use common\helpers\StringFormatter;
+use common\models\work\UserWork;
+use common\repositories\general\UserRepository;
 use frontend\models\search\abstractBase\OrderSearch;
 use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\order\OrderTrainingWork;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 
@@ -140,6 +145,16 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $query = OrderTrainingWork::find()
             ->where(['type' => DocumentOrderWork::ORDER_TRAINING]);
 
+        /** @var UserWork $user */
+        $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
+        $specialOrders = new PbacOrderAccess(
+            new PbacOrderData(
+                $user,
+                $user->akaWork->branch[0]
+            )
+        );
+
+        $query = $specialOrders->getAllowedOrdersQuery($query);
         $query = $this->addJoinsToQuery($query);
 
         $dataProvider = new ActiveDataProvider([

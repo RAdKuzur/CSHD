@@ -4,6 +4,7 @@ namespace common\repositories\order;
 
 use frontend\models\work\order\DocumentOrderWork;
 use Yii;
+use yii\db\ActiveQuery;
 
 class DocumentOrderRepository
 {
@@ -25,9 +26,17 @@ class DocumentOrderRepository
         return DocumentOrderWork::find()->where(['type' => DocumentOrderWork::ORDER_MAIN])->all();
     }
 
-    public function getExceptByIdAndStatus($id, $type){
+    public function getExceptByIdAndStatus($id, $type)
+    {
         return DocumentOrderWork::find()->andWhere(['<>', 'id', $id])->andWhere(['type' => $type])->andWhere(['state' => DocumentOrderWork::ACTUAL])->all();
     }
+
+    public function filterByBranch(ActiveQuery $query, int $branch)
+    {
+        $nomenclatures = Yii::$app->nomenclature->getListByBranch($branch);
+        return $query->andWhere(['IN', 'order_number', $nomenclatures]);
+    }
+
     public function prepareDelete($id){
         $command = Yii::$app->db->createCommand();
         $command->delete(DocumentOrderWork::tableName(), ['id' => $id]);

@@ -113,7 +113,8 @@ class NomenclatureDictionary extends BaseDictionary
         return null;
     }
 
-    public function getListByBranch($branch){
+    public function getListByBranch($branch)
+    {
         switch ($branch){
             case BranchDictionary::TECHNOPARK:
                 return $this->list = [

@@ -144,6 +144,7 @@ class FillController extends Controller
         $fIds[58] = $this->functionRepository->save(PermissionFunctionWork::fill('Получение ошибок материальных ценностей', 'get_material_errors', 58));
         $fIds[59] = $this->functionRepository->save(PermissionFunctionWork::fill('Получение ошибок своего отдела', 'get_branch_errors', 59));
         $fIds[60] = $this->functionRepository->save(PermissionFunctionWork::fill('Получение ошибок всех отделов', 'get_all_errors', 60));
+        $fIds[61] = $this->functionRepository->save(PermissionFunctionWork::fill('Взаимодействие с приказами своего отдела', 'order_branch', PermissionFunctionWork::PERMISSION_BRANCH_ORDER));
     }
 
     private function createAdminRole()
@@ -208,5 +209,6 @@ class FillController extends Controller
         $this->templateFunctionRepository->save(PermissionTemplateFunctionWork::fill(8, 58));
         $this->templateFunctionRepository->save(PermissionTemplateFunctionWork::fill(8, 59));
         $this->templateFunctionRepository->save(PermissionTemplateFunctionWork::fill(8, 60));
+        $this->templateFunctionRepository->save(PermissionTemplateFunctionWork::fill(8, 61));
     }
 }

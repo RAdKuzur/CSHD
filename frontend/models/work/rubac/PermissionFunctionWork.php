@@ -10,6 +10,8 @@ class PermissionFunctionWork extends PermissionFunction
     const PERMISSION_BRANCH_GROUPS_ID = 3;
     const PERMISSION_ALL_GROUPS_ID = 4;
 
+    const PERMISSION_BRANCH_ORDER = 61;
+
     public static function fill($name, $shortCode, $id = null)
     {
         $entity = new static();

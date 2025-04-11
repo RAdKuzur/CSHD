@@ -52,7 +52,7 @@ class PlanLoad
         $c = 1;
 
         $inputData->getActiveSheet()->setCellValue('C8', $this->groupNumber);
-        $inputData->getActiveSheet()->setCellValue('C9', $this->branch);
+        $inputData->getActiveSheet()->setCellValue('C9', Yii::$app->branches->get($this->branch));
 
         foreach ($this->lessonThemes as $lessonTheme) {
             $inputData->getActiveSheet()->setCellValue('A' . (11 + $c), $c);

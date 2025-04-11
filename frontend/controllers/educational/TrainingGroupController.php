@@ -638,7 +638,8 @@ class TrainingGroupController extends DocumentController
         $lessonThemes = $this->lessonThemeRepository->getByTrainingGroupId($id);
         $loader = new PlanLoad(
             $lessonThemes,
-            $group->number
+            $group->number,
+            $group->branch
         );
         $loader();
     }

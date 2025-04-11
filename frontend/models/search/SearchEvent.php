@@ -123,6 +123,7 @@ class SearchEvent extends Model implements SearchInterfaces
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
         ]);
 
         $this->sortAttributes($dataProvider);

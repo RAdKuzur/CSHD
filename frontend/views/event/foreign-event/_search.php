@@ -23,17 +23,18 @@ use yii\widgets\ActiveForm;
         SearchFieldHelper::dateField('startDateSearch', 'Дата учета достижения с', 'Дата учета достижения с'),
         SearchFieldHelper::dateField('finishDateSearch', 'Дата учета достижения по', 'Дата учета достижения по'),
         SearchFieldHelper::textField('eventName' , 'Наименование мероприятия', 'Наименование мероприятия'),
-        SearchFieldHelper::textField('eventLevel', 'Уровень мероприятия', 'Уровень мероприятия'),
-        SearchFieldHelper::textField('eventWay', 'Формат проведения', 'Формат проведения'),
+        SearchFieldHelper::dropdownField('eventLevel', 'Уровень мероприятия', Yii::$app->eventLevel->getList(), 'Уровень мероприятия'),
+        SearchFieldHelper::dropdownField('eventWay', 'Формат проведения', Yii::$app->eventWay->getList(), 'Формат проведения'),
         SearchFieldHelper::textField('city', 'Город мероприятия', 'Город мероприятия'),
         SearchFieldHelper::textField('organizerName', 'Организатор', 'Организатор'),
         SearchFieldHelper::textField('nameParticipant', 'Фамилия участника', 'Фамилия участника'),
         SearchFieldHelper::textField('nameTeacher', 'Фамилия педагога', 'Фамилия педагога'),
         SearchFieldHelper::dropdownField('branch', 'Отдел', Yii::$app->branches->getOnlyEducational(), 'Отдел'),
+
         SearchFieldHelper::textField('keyWord', 'Ключевые слова', 'Ключевые слова'),
     );
 
-    echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::REG_EVENT_INDEX); ?>
+    echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::FOREIGN_EVENT_INDEX); ?>
 
     <?php ActiveForm::end(); ?>
 

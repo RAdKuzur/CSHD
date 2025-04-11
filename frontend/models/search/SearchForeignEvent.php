@@ -3,6 +3,7 @@
 namespace frontend\models\search;
 
 use common\components\interfaces\SearchInterfaces;
+use common\helpers\DateFormatter;
 use common\helpers\search\SearchFieldHelper;
 use common\helpers\StringFormatter;
 use frontend\models\work\event\ForeignEventWork;
@@ -12,7 +13,7 @@ use yii\db\ActiveQuery;
 
 class SearchForeignEvent extends Model implements SearchInterfaces
 {
-    public string $eventLevel;             // уровень мероприятия
+    public int $eventLevel;             // уровень мероприятия
     public string $startDateSearch;     // дата начала поиска в диапазоне дат
     public string $finishDateSearch;    // дата окончания поиска в диапазоне дат
     public string $nameParticipant;     // фамилия участника
@@ -21,7 +22,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
     public string $organizerName;       // организатор
     public string $eventName;           // наименование мероприятия
     public string $city;                // город
-    public string $eventWay;               // формат проведения
+    public int $eventWay;               // формат проведения
     public string $keyWord;             // ключевые слова
 
     public function rules()
@@ -45,8 +46,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         string $eventName = '',
         string $nameParticipant = '',
         string $nameTeacher = '',
-        string $eventLevel = '',
-        string $eventWay = '',
+        int $eventLevel = SearchFieldHelper::EMPTY_FIELD,
+        int $eventWay = SearchFieldHelper::EMPTY_FIELD,
         int $branch = SearchFieldHelper::EMPTY_FIELD,
         string $organizerName = '',
         string $city = '',
@@ -77,6 +78,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
     {
         if (count($params) > 1) {
             $params['SearchForeignEvent']['branch'] = StringFormatter::stringAsInt($params['SearchForeignEvent']['branch']);
+            $params['SearchForeignEvent']['eventLevel'] = StringFormatter::stringAsInt($params['SearchForeignEvent']['eventLevel']);
+            $params['SearchForeignEvent']['eventWay'] = StringFormatter::stringAsInt($params['SearchForeignEvent']['eventWay']);
         }
 
         $this->load($params);
@@ -87,32 +90,11 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         $this->loadParams($params);
 
         $query = ForeignEventWork::find()
-            /*->joinWith([
-                'documentOrderWork' => function ($query) {
-                    $query->alias('orderMain');
+            ->joinWith([
+                'organizerWork' => function ($query) {
+                    $query->alias('organizer');
                 },
-                'regulationWork' => function ($query) {
-                    $query->alias('regulation');
-                },
-                'scopesWork' => function ($query) {
-                    $query->alias('scopes');
-                },
-                'eventBranchWorks' => function ($query) {
-                    $query->alias('branches');
-                },
-                'responsible1Work' => function ($query) {
-                    $query->alias('resp1');
-                },
-                'responsible1Work.peopleWork' => function ($query) {
-                    $query->alias('responsibleOne');
-                },
-                'responsible2Work' => function ($query) {
-                    $query->alias('resp2');
-                },
-                'responsible2Work.peopleWork' => function ($query) {
-                    $query->alias('responsibleTwo');
-                },
-            ])*/;
+            ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -142,6 +124,11 @@ class SearchForeignEvent extends Model implements SearchInterfaces
             'desc' => ['city' => SORT_DESC],
         ];
 
+        $dataProvider->sort->attributes['companyString'] = [
+            'asc' => ['organizer.name' => SORT_ASC],
+            'desc' => ['organizer.name' => SORT_DESC],
+        ];
+
         $dataProvider->sort->attributes['eventWayString'] = [
             'asc' => ['format' => SORT_ASC],
             'desc' => ['format' => SORT_DESC],
@@ -158,8 +145,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         ];
 
         $dataProvider->sort->attributes['participantCount'] = [
-            /*'asc' => ['start_date' => SORT_ASC],
-            'desc' => ['start_date' => SORT_DESC],*/
+            /*'asc' => ['count(actParticipant)' => SORT_ASC],
+            'desc' => ['count(actParticipant)' => SORT_DESC],*/
         ];
 
         $dataProvider->sort->attributes['winners'] = [
@@ -174,15 +161,13 @@ class SearchForeignEvent extends Model implements SearchInterfaces
     }
 
     public function filterQueryParams(ActiveQuery $query) {
-        /*$this->filterDate($query);
+        $this->filterDate($query);
         $this->filterName($query);
-        $this->filterWay($query);
-        $this->filterType($query);
+        $this->filterOrganizer($query);
+        $this->filterCity($query);
         $this->filterLevel($query);
-        $this->filterForm($query);
-        $this->filterScope($query);
-        $this->filterBranch($query);
-        $this->filterResponsible($query);*/
+        $this->filterEventWay($query);
+        $this->filterKeyWords($query);
     }
 
     /**
@@ -198,8 +183,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
             $dateTo =  $this->finishDateSearch ? date('Y-m-d', strtotime($this->finishDateSearch)) : date('Y-m-d');
 
             $query->andWhere(['or',
-                ['between', 'start_date', $dateFrom, $dateTo],
-                ['between', 'finish_date', $dateFrom, $dateTo],
+                ['between', 'begin_date', $dateFrom, $dateTo],
+                ['between', 'end_date', $dateFrom, $dateTo],
             ]);
         }
     }
@@ -212,7 +197,68 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      */
     public function filterName(ActiveQuery $query) {
         if (!empty($this->eventName)) {
-            $query->andWhere(['like', 'LOWER(event.name)', mb_strtolower($this->eventName)]);
+            $query->andWhere(['like', 'LOWER(name)', mb_strtolower($this->eventName)]);
+        }
+    }
+
+    /**
+     * Фильтрация по организаторам
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterOrganizer(ActiveQuery $query) {
+        if (!empty($this->organizerName)) {
+            $query->andWhere(['like', 'LOWER(organizer.name)', mb_strtolower($this->organizerName)]);
+        }
+    }
+
+    /**
+     * Фильтрация по городу
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterCity(ActiveQuery $query) {
+        if (!empty($this->city)) {
+            $query->andWhere(['like', 'LOWER(city)', mb_strtolower($this->city)]);
+        }
+    }
+
+    /**
+     * Фильтрация по уровню мероприятия
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterLevel(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->eventLevel) && $this->eventLevel !== SearchFieldHelper::EMPTY_FIELD) {
+            $query->andWhere(['level' => $this->eventLevel]);
+        }
+    }
+
+    /**
+     * Фильтрация по формату проведения
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterEventWay(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->eventWay) && $this->eventWay !== SearchFieldHelper::EMPTY_FIELD) {
+            $query->andWhere(['format' => $this->eventWay]);
+        }
+    }
+
+    /**
+     * Фильтрует по ключевым словам
+     *
+     * @param ActiveQuery $query
+     * @param string $keyWords
+     * @return void
+     */
+    private function filterKeyWords(ActiveQuery $query) {
+        if (!empty($this->keyWord)) {
+            $query->andFilterWhere(['like', 'LOWER(key_words)', mb_strtolower($this->keyWord)]);
         }
     }
 }

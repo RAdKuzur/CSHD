@@ -160,7 +160,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 
                                     <?= $form->field($expert, "[{$i}]expertId")->widget(Select2::classname(), [
                                         'data' => ArrayHelper::map($peoples, 'id', function (PeopleWork $model) {
-                                            return $model->getFIO(PersonInterface::FIO_WITH_POSITION);
+                                            return $model->getFIO(PersonInterface::FIO_WITH_POSITION_COMPANY);
                                         }),
                                         'size' => Select2::LARGE,
                                         'options' => ['prompt' => 'Выберите эксперта'],

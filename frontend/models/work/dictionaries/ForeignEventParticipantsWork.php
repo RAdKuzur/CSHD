@@ -222,6 +222,13 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
         }
     }
 
+    public function getFullFioWithBirthdate()
+    {
+        $birthdate = DateFormatter::format($this->birthdate, DateFormatter::Ymd_dash, DateFormatter::dmy_dot);
+        return $this->getFIO(PersonInterface::FIO_FULL) . " ($birthdate)";
+    }
+
+
     public function beforeValidate()
     {
         $this->birthdate = DateFormatter::format($this->birthdate, DateFormatter::dmY_dot, DateFormatter::Ymd_dash);

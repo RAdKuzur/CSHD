@@ -102,22 +102,28 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
                 $query->alias('responsiblePeople');
             },
-            'orderTrainingGroupParticipantWork',
-
-            /*'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork.participantWork' => function ($query) {
-                $query->alias('foreignEventParticipant');
+            'orderTrainingGroupParticipantWork' => function ($query) {
+                $query->alias('orderGroupParticipant');
             },
-            'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork.trainingGroupWork' => function ($query) {
-                $query->alias('group');
-            },*/
-
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork',
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork',
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork',
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork',
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.trainingGroupWork',
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork'
-        ]);
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork' => function ($query) {
+                $query->alias('trainingGroupParticipantOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork' => function ($query) {
+                $query->alias('trainingGroupParticipantIn');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork' => function ($query) {
+                $query->alias('participantOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork' => function ($query) {
+                $query->alias('participantIn');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.trainingGroupWork' => function ($query) {
+                $query->alias('groupOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork' => function ($query) {
+                $query->alias('groupIn');
+            },
+        ], true, 'JOIN');
     }
 
     /**
@@ -142,7 +148,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
 
         $this->sortAttributes($dataProvider);
         $this->filterQueryParams($query);
-
+        //var_dump($query->createCommand()->getRawSql());die();
         return $dataProvider;
     }
 

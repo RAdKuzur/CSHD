@@ -219,6 +219,11 @@ class TrainingGroupRepository
             ->all();
     }
 
+    public function getSameGroups(int $id, string $number)
+    {
+        return TrainingGroupWork::find()->where(['like', 'number', $number.'%', false])->andWhere(['!=', 'id', $id])->all();
+    }
+
     public function getAttachedGroupsByOrder($orderId, $status){
         if ($status == NomenclatureDictionary::ORDER_ENROLL){
             $participants = ArrayHelper::getColumn($this->orderTrainingGroupParticipantRepository->getByOrderIds($orderId), 'training_group_participant_in_id');

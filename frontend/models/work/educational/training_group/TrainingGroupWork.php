@@ -7,6 +7,7 @@ use common\components\traits\ErrorTrait;
 use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
 use common\models\work\UserWork;
+use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\general\PeopleStampRepository;
 use frontend\models\work\dictionaries\PersonInterface;
 use common\events\EventTrait;
@@ -142,8 +143,10 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
         $teacherCode = $teacher->short;
         $addCode = 1;
 
-        $sameNameGroups = TrainingGroupWork::find()->where(['like', 'number', $this->number.'%', false])->andWhere(['!=', 'id', $this->id])->all();
+        /** @var TrainingGroupWork[] $sameNameGroups */
+        $sameNameGroups = (Yii::createObject(TrainingGroupRepository::class))->getSameGroups($this->id, $this->number);
         $pattern = '/\.(d+)$/';
+        var_dump($sameNameGroups);die;
         for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
             preg_match($pattern, $sameNameGroups[$i]->number, $matches);
             $number1 = $matches[1];

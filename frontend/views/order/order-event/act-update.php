@@ -202,40 +202,38 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                     ])->label('ФИО участников'); ?>
                                 </div>
                                 <?php
-                                $params = [
+                                $params1 = [
                                     'id' => 'teacher',
                                     'class' => 'form-control pos',
                                     'prompt' => '---',
                                 ];
+
+                                $params2 = [
+                                    'id' => 'teacher',
+                                    'class' => 'form-control pos',
+                                    'prompt' => '---',
+                                ];
+
                                 echo $form
                                     ->field($modelAct, "[{$i}]firstTeacher")
                                     ->widget(Select2::classname(), [
                                         'data' => ArrayHelper::map($people, 'id', 'fullFio'),
                                         'size' => Select2::LARGE,
-                                        'options' => $params,
+                                        'options' => $params1,
                                         'pluginOptions' => [
                                             'allowClear' => true
                                         ],
                                     ])->label('ФИО первого педагога');
-                                /*echo $form
+                                echo $form
                                     ->field($modelAct, "[{$i}]secondTeacher")
                                     ->widget(Select2::classname(), [
                                         'data' => ArrayHelper::map($people, 'id', 'fullFio'),
                                         'size' => Select2::LARGE,
-                                        'options' => $params,
+                                        'options' => $params2,
                                         'pluginOptions' => [
                                             'allowClear' => true
                                         ],
-                                    ])->label('ФИО второго педагога (при необходимости)');*/
-
-                                echo $form
-                                    ->field($modelAct, "[{$i}]firstTeacher")
-                                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО первого учителя');
-                                echo $form
-                                    ->field($modelAct, "[{$i}]secondTeacher")
-                                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО второго учителя (при необходимости)');
+                                    ])->label('ФИО второго педагога (при необходимости)');
                                 ?>
                                 <?= $form->field($modelAct, "[{$i}]actFiles")->fileInput()->label('Представленные материалы') ?>
                                 <?= $tables ?>

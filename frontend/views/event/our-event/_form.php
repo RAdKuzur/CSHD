@@ -134,65 +134,7 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
-    <div class="bordered-div">
-        <div class="">
-            <?php DynamicFormWidget::begin([
-                'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
-                'widgetBody' => '.container-items', // required: css class selector
-                'widgetItem' => '.item', // required: css class
-                'limit' => 100, // the maximum times, an element can be cloned (default 999)
-                'min' => 0,
-                'insertButton' => '.add-item', // css class
-                'deleteButton' => '.remove-item', // css class
-                'model' => $modelGroups[0],
-                'formId' => 'dynamic-form',
-                'formFields' => [
-                    'id',
-                    'participant_id',
-                    'send_method'
-                ],
-            ]); ?>
-
-
-            <div class="container-items"><!-- widgetContainer -->
-                <div class="panel-title">
-                    <h5 class="panel-title pull-left">Связанные учебные группы</h5><!-- widgetBody -->
-                    <div class="pull-right">
-                        <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
-                    </div>
-                </div>
-                <?php foreach ($modelGroups as $i => $modelGroup): ?>
-                    <div class="item panel panel-default"><!-- widgetBody -->
-                        <div class="panel-heading">
-                            <div class="pull-right">
-                                <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="flexx">
-                                    <div class="flx1">
-                                        <?= $form->field($modelGroup, "[{$i}]training_group_id")->widget(Select2::classname(), [
-                                            'data' => ArrayHelper::map($groups, 'id', function (TrainingGroupWork $model) {
-                                                return $model->getNumber();
-                                            }),
-                                            'size' => Select2::LARGE,
-                                            'options' => ['prompt' => 'Выберите группу'],
-                                            'pluginOptions' => [
-                                                'allowClear' => true
-                                            ],
-                                        ])->label('Учебная группа'); ?>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-            <?php DynamicFormWidget::end(); ?>
-        </div>
-    </div>
+    
 
     <?= $form->field($model, 'key_words')->textInput(['maxlength' => true]) ?>
 

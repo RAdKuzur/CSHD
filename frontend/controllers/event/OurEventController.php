@@ -15,6 +15,7 @@ use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\event\EventGroupRepository;
 use common\repositories\event\EventRepository;
 use common\repositories\general\FilesRepository;
+use common\repositories\order\DocumentOrderRepository;
 use common\repositories\regulation\RegulationRepository;
 use common\services\general\files\FileService;
 use DomainException;
@@ -43,6 +44,7 @@ class OurEventController extends DocumentController
     private PeopleRepository $peopleRepository;
     private TrainingGroupRepository $groupRepository;
     private EventGroupRepository $eventGroupRepository;
+    private DocumentOrderRepository $documentOrderRepository;
     private RegulationRepository $regulationRepository;
     private LockWizard $lockWizard;
 
@@ -53,6 +55,7 @@ class OurEventController extends DocumentController
         EventService $service,
         PeopleRepository $peopleRepository,
         EventGroupRepository $eventGroupRepository,
+        DocumentOrderRepository $documentOrderRepository,
         RegulationRepository $regulationRepository,
         TrainingGroupRepository $groupRepository,
         LockWizard $lockWizard,
@@ -63,6 +66,7 @@ class OurEventController extends DocumentController
         $this->service = $service;
         $this->peopleRepository = $peopleRepository;
         $this->eventGroupRepository = $eventGroupRepository;
+        $this->documentOrderRepository = $documentOrderRepository;
         $this->regulationRepository = $regulationRepository;
         $this->groupRepository = $groupRepository;
         $this->lockWizard = $lockWizard;
@@ -163,7 +167,8 @@ class OurEventController extends DocumentController
             'regulations' => $this->regulationRepository->getOrderedList(),
             'branches' => ArrayHelper::getColumn($this->repository->getBranches($model->id), 'branch'),
             'groups' => $this->groupRepository->getUnarchiveGroups(),
-            'modelGroups' => $modelGroups
+            'modelGroups' => $modelGroups,
+            'orders' => $this->documentOrderRepository->getAllMain() ? : []
         ]);
     }
 
@@ -220,7 +225,8 @@ class OurEventController extends DocumentController
                 'photoFiles' => $tables['photo'],
                 'reportingFiles' => $tables['report'],
                 'otherFiles' => $tables['other'],
-                'modelGroups' => $modelGroups
+                'modelGroups' => $modelGroups,
+                'orders' => $this->documentOrderRepository->getAllMain() ? : []
             ]);
         }
         else {

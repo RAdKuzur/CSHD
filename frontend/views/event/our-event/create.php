@@ -2,16 +2,18 @@
 
 use frontend\models\work\event\EventWork;
 use frontend\models\work\general\PeopleWork;
+use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\regulation\RegulationWork;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model EventWork */
 /* @var $people PeopleWork */
-/* @var $regulations RegulationWork */
+/* @var $regulations RegulationWork[] */
 /* @var $branches array */
 /* @var $groups array */
 /* @var $modelGroups array */
+/* @var $orders DocumentOrderWork[] */
 
 $this->title = 'Добавить мероприятие';
 $this->params['breadcrumbs'][] = ['label' => 'Мероприятия', 'url' => ['index']];
@@ -30,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'branches' => $branches,
         'groups' => $groups,
         'modelGroups' => $modelGroups,
+        'orders' => $orders
     ]) ?>
 
 </div>

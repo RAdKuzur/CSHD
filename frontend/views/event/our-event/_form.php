@@ -4,6 +4,7 @@ use common\helpers\DateFormatter;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\general\PeopleWork;
+use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\regulation\RegulationWork;
 use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
@@ -15,7 +16,7 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model EventWork */
 /* @var $people PeopleWork */
-/* @var $regulations RegulationWork */
+/* @var $regulations RegulationWork[] */
 /* @var $branches array */
 /* @var $groups array */
 /* @var $protocolFiles */
@@ -23,6 +24,7 @@ use yii\widgets\ActiveForm;
 /* @var $reportingFiles */
 /* @var $otherFiles */
 /* @var $modelGroups array */
+/* @var $orders DocumentOrderWork[] */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -196,6 +198,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'order_id')->dropDownList(ArrayHelper::map($orders, 'id', function (DocumentOrderWork $model) {
+        return $model->getFullName();
+    }), ['prompt' => 'Нет'])->label('Приказ по мероприятию'); ?>
     <?= $form->field($model, 'regulation_id')->dropDownList(ArrayHelper::map($regulations, 'id', 'name'), ['prompt' => 'Нет'])->label('Положение по мероприятию'); ?>
 
     <div class="checkList">

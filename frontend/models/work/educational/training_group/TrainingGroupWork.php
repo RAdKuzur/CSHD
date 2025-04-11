@@ -145,11 +145,10 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
 
         /** @var TrainingGroupWork[] $sameNameGroups */
         $sameNameGroups = (Yii::createObject(TrainingGroupRepository::class))->getSameGroups($this->id, $this->number);
-        $pattern = '/\.(d+)$/';
+        $pattern = '/(\d+)\.$/';
         if (count($sameNameGroups) == 1) {
             preg_match($pattern, $sameNameGroups[0]->number, $matches);
             $number1 = $matches[1];
-            var_dump($matches[0]);
             var_dump($matches[1]);
             $addCode = (string)((int)$number1 + 1);
         } else {

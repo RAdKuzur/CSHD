@@ -411,6 +411,7 @@ class TrainingGroupCombinedForm extends Model
         }
 
         foreach ($this->orders as $order) {
+            /** @var OrderTrainingWork $order */
             $result .= StringFormatter::stringAsLink(
                 'Приказ № '.$order->getFullName(),
                 Url::to([Yii::$app->frontUrls::ORDER_TRAINING_VIEW, 'id' => $order->id])

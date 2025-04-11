@@ -213,10 +213,7 @@ class OrderSearch extends Model
             $dateFrom = $startDateSearch ? date('Y-m-d', strtotime($startDateSearch)) : DateFormatter::DEFAULT_STUDY_YEAR_START;
             $dateTo =  $finishDateSearch ? date('Y-m-d', strtotime($finishDateSearch)) : date('Y-m-d');
 
-            $query->andWhere(['or',
-                ['between', 'local_date', $dateFrom, $dateTo],
-                ['between', 'real_date', $dateFrom, $dateTo],
-            ]);
+            $query->andWhere(['between', 'order_date', $dateFrom, $dateTo]);
         }
     }
 

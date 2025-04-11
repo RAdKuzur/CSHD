@@ -80,7 +80,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
      */
     private function addJoinsToQuery(ActiveQuery $query) : ActiveQuery
     {
-        return $query = $query->joinWith([
+        return $query->joinWith([
             'bringWork' => function ($query) {
                 $query->alias('bring');
             },

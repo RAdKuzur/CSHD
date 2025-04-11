@@ -5,6 +5,7 @@ namespace frontend\models\work\educational\training_group;
 
 use common\events\EventTrait;
 use common\models\scaffold\OrderTrainingGroupParticipant;
+use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 
 /**
  * @property TrainingGroupParticipantWork $trainingGroupParticipantOutWork
@@ -40,13 +41,5 @@ class OrderTrainingGroupParticipantWork extends OrderTrainingGroupParticipant
     public function getTrainingGroupParticipantInWork()
     {
         return $this->hasOne(TrainingGroupParticipantWork::class, ['id' => 'training_group_participant_in_id']);
-    }
-
-    public function getAllTrainingGroupParticipantWork()
-    {
-        $query1 = $this->getTrainingGroupParticipantOutWork()->toBase();
-        $query2 = $this->getTrainingGroupParticipantInWork()->toBase();
-
-        return $query1->union($query2);
     }
 }

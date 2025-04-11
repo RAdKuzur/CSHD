@@ -8,6 +8,7 @@ use common\components\interfaces\SearchInterfaces;
 use common\helpers\search\SearchFieldHelper;
 use common\helpers\StringFormatter;
 use frontend\models\search\abstractBase\OrderSearch;
+use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\order\OrderTrainingWork;
 use yii\data\ActiveDataProvider;
@@ -101,33 +102,21 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
                 $query->alias('responsiblePeople');
             },
-            /*'orderTrainingGroupParticipantWork',
-            'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork',
-            'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork.participantWork' => function ($query) {
+            //'orderTrainingGroupParticipantWork',
+
+            /*'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork.participantWork' => function ($query) {
                 $query->alias('foreignEventParticipant');
             },
             'orderTrainingGroupParticipantWork.allTrainingGroupParticipantWork.trainingGroupWork' => function ($query) {
                 $query->alias('group');
-            },
-
-            /*'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork' => function ($query) {
-                $query->alias('participantOut');
-            },
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork' => function ($query) {
-                $query->alias('participantIn');
-            },
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork' => function ($query) {
-                $query->alias('foreignEventParticipantOut');
-            },
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork' => function ($query) {
-                $query->alias('foreignEventParticipantIn');
-            },
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.trainingGroupWork' => function ($query) {
-                $query->alias('groupOut');
-            },
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork' => function ($query) {
-                $query->alias('groupIn');
             },*/
+
+            /*'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork',
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork',
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork',
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork',
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.trainingGroupWork',
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork',*/
         ]);
     }
 
@@ -188,7 +177,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             $this->finishDateSearch);
         //$this->filterForeignEventSurname($query);
         //$this->filterGroupName($query);
-        //$this->filterBranch($query);
+        $this->filterBranch($query);
     }
 
     /**

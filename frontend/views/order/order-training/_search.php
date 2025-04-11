@@ -27,7 +27,7 @@ $searchFields = array_merge(
     SearchFieldHelper::textField('executorName', 'Фамилия исполнителя', 'Фамилия исполнителя'),
     //SearchFieldHelper::textField('participantName', 'Фамилия обучающегося', 'Фамилия обучающегося'),
     //SearchFieldHelper::textField('groupName', 'Название учебной группы', 'Название учебной группы'),
-    //SearchFieldHelper::dropdownField('branch', 'Отдел', Yii::$app->branches->getOnlyEducational(), 'Отдел'),
+    SearchFieldHelper::dropdownField('branch', 'Отдел', Yii::$app->branches->getOnlyEducational(), 'Отдел'),
 );
 
 echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::ORDER_TRAINING_INDEX); ?>

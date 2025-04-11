@@ -520,6 +520,10 @@ use yii\widgets\DetailView;
         </div>
     </div>
 
+    <?php if ($actTable != NULL): ?>
+        <?= $actTable; ?>
+    <?php endif; ?>
+
     <div id = "commands">
         <fieldset id="nom-team-block">
         <div class="main-div">
@@ -612,10 +616,6 @@ use yii\widgets\DetailView;
             'id' => 'toggle-button',
         ]) ?>
     </div>
-
-    <?php if ($actTable != NULL): ?>
-        <?= $actTable; ?>
-    <?php endif; ?>
 
     <div class="bordered-div" id="acts">
             <?php DynamicFormWidget::begin([

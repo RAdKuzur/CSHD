@@ -60,7 +60,7 @@ class FixCopyController extends Controller
         $events = EventWork::find()->all();
         foreach ($events as $event) {
             $eventId = $event->id;
-            $oldEvent = Yii::$app->db->createCommand("SELECT * FROM event_participants WHERE event_id = $eventId")->queryOne();
+            $oldEvent = Yii::$app->old_db->createCommand("SELECT * FROM event_participants WHERE event_id = $eventId")->queryOne();
             if($oldEvent) {
                 $event->child_participants_count = $oldEvent['child_participants'];
                 $event->child_rst_participants_count = $oldEvent['child_rst_participants'];

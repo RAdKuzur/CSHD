@@ -209,6 +209,27 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                 ];
                                 echo $form
                                     ->field($modelAct, "[{$i}]firstTeacher")
+                                    ->widget(Select2::classname(), [
+                                        'data' => ArrayHelper::map($people, 'id', 'fullFio'),
+                                        'size' => Select2::LARGE,
+                                        'options' => $params,
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                    ])->label('ФИО первого педагога');
+                                /*echo $form
+                                    ->field($modelAct, "[{$i}]secondTeacher")
+                                    ->widget(Select2::classname(), [
+                                        'data' => ArrayHelper::map($people, 'id', 'fullFio'),
+                                        'size' => Select2::LARGE,
+                                        'options' => $params,
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                    ])->label('ФИО второго педагога (при необходимости)');*/
+
+                                echo $form
+                                    ->field($modelAct, "[{$i}]firstTeacher")
                                     ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
                                     ->label('ФИО первого учителя');
                                 echo $form

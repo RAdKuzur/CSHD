@@ -2,6 +2,7 @@
 
 namespace frontend\facades;
 
+use common\helpers\SortHelper;
 use common\repositories\dictionaries\ForeignEventParticipantsRepository;
 use frontend\services\act_participant\ActParticipantService;
 use frontend\services\team\TeamService;
@@ -37,7 +38,7 @@ class ActParticipantFacade
 
     public function prepareActFacade($act){
         $modelAct = $this->actParticipantService->createForms($act);
-        $people = $this->peopleRepository->getOrderedList();
+        $people = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
         $participants = $this->foreignEventParticipantsRepository->getAll();
         $nominations = array_unique(ArrayHelper::getColumn($this->actParticipantRepository->getByForeignEventIds([$act[0]->foreign_event_id]), 'nomination'));
         $teams = $this->teamService->getNamesByForeignEventId($act[0]->foreign_event_id);

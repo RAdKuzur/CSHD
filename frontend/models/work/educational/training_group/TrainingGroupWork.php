@@ -149,7 +149,6 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
         if (count($sameNameGroups) == 1) {
             preg_match($pattern, $sameNameGroups[0]->number, $matches);
             $number1 = $matches[1];
-            var_dump($matches[1]);
             $addCode = (string)((int)$number1 + 1);
         } else {
             for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
@@ -167,7 +166,6 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
 
 
         $this->number = "$thematicDirection.$level.$teacherCode.$date.$addCode";
-        var_dump($this->number);die;
 
         return $this->number;
     }

@@ -360,11 +360,11 @@ class EventWork extends Event implements FileInterface
 
     public function beforeSave($insert)
     {
-        if ($this->creator_id == null) {
+        /*if ($this->creator_id == null) {
             $this->creator_id = Yii::$app->user->identity->getId();
         }
         $this->last_edit_id = Yii::$app->user->identity->getId();
-
+        */
         return parent::beforeSave($insert); 
     }
 

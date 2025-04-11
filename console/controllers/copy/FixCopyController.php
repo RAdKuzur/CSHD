@@ -7,6 +7,7 @@ use frontend\models\work\educational\training_group\LessonThemeWork;
 use frontend\models\work\educational\training_group\OrderTrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\ThematicPlanWork;
+use frontend\models\work\event\EventWork;
 use frontend\services\educational\TrainingGroupService;
 use Yii;
 use yii\console\Controller;
@@ -50,6 +51,26 @@ class FixCopyController extends Controller
                     $orderTGP->training_group_participant_out_id = $inId;
                     $orderTGP->save();
                 }
+            }
+        }
+    }
+    public function actionFixEvents(){
+        /* @var $event EventWork */
+        ini_set('memory_limit', '-1');
+        $events = EventWork::find()->all();
+        foreach ($events as $event) {
+            $eventId = $event->id;
+            $oldEvent = Yii::$app->old_db->createCommand("SELECT * FROM event_participants WHERE event_id = $eventId")->queryOne();
+            //$scope = Yii::$app->old_db->createCommand("SELECT * FROM event_scope WHERE event_id = $eventId")->queryOne();
+            if($oldEvent) {
+                //$event->participation_scope = $oldEvent;
+                $event->child_participants_count = $oldEvent['child_participants'];
+                $event->child_rst_participants_count = $oldEvent['child_rst_participants'];
+                $event->teacher_participants_count = $oldEvent['teacher_participants'];
+                $event->other_participants_count = $oldEvent['other_participants'];
+                $event->age_left_border = $oldEvent['age_left_border'];
+                $event->age_right_border = $oldEvent['age_right_border'];
+                $event->save();
             }
         }
     }

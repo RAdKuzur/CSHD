@@ -8,6 +8,7 @@ use frontend\models\work\educational\training_group\OrderTrainingGroupParticipan
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\ThematicPlanWork;
 use frontend\models\work\event\EventWork;
+use frontend\models\work\general\FilesWork;
 use frontend\services\educational\TrainingGroupService;
 use Yii;
 use yii\console\Controller;
@@ -70,6 +71,22 @@ class FixCopyController extends Controller
                 $event->age_right_border = $oldEvent['age_right_border'];
                 $event->save();
             }
+        }
+    }
+    public function actionFixFiles()
+    {
+        $files = FilesWork::find()->where(['table_name' => TrainingGroupWork::tableName()])->all();
+        foreach ($files as $file) {
+            $file->delete();
+        }
+        $files = Yii::$app->db->createCommand("SELECT * FROM temp")->queryAll();
+        foreach ($files as $file) {
+            $model = new FilesWork();
+            $model->table_name = TrainingGroupWork::tableName();
+            $model->table_row_id = $file['table_row_id'];
+            $model->file_type = $file['file_type'];
+            $model->filepath = $file['filepath'];
+            $model->save();
         }
     }
 }

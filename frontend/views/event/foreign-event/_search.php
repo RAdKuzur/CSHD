@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
         SearchFieldHelper::textField('keyWord', 'Ключевые слова', 'Ключевые слова'),
     );
 
-    echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::REG_EVENT_INDEX); ?>
+    echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::FOREIGN_EVENT_INDEX); ?>
 
     <?php ActiveForm::end(); ?>
 

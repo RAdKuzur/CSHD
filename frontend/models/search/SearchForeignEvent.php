@@ -145,8 +145,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         ];
 
         $dataProvider->sort->attributes['participantCount'] = [
-            /*'asc' => ['start_date' => SORT_ASC],
-            'desc' => ['start_date' => SORT_DESC],*/
+            /*'asc' => ['count(actParticipant)' => SORT_ASC],
+            'desc' => ['count(actParticipant)' => SORT_DESC],*/
         ];
 
         $dataProvider->sort->attributes['winners'] = [
@@ -167,6 +167,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         $this->filterCity($query);
         $this->filterLevel($query);
         $this->filterEventWay($query);
+        $this->filterKeyWords($query);
     }
 
     /**
@@ -231,7 +232,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @return void
      */
     public function filterLevel(ActiveQuery $query) {
-        if (!empty($this->eventLevel)) {
+        if (!StringFormatter::isEmpty($this->eventLevel) && $this->eventLevel !== SearchFieldHelper::EMPTY_FIELD) {
             $query->andWhere(['level' => $this->eventLevel]);
         }
     }
@@ -243,8 +244,21 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @return void
      */
     public function filterEventWay(ActiveQuery $query) {
-        if (!empty($this->eventWay)) {
+        if (!StringFormatter::isEmpty($this->eventWay) && $this->eventWay !== SearchFieldHelper::EMPTY_FIELD) {
             $query->andWhere(['format' => $this->eventWay]);
+        }
+    }
+
+    /**
+     * Фильтрует по ключевым словам
+     *
+     * @param ActiveQuery $query
+     * @param string $keyWords
+     * @return void
+     */
+    private function filterKeyWords(ActiveQuery $query) {
+        if (!empty($this->keyWord)) {
+            $query->andFilterWhere(['like', 'LOWER(key_words)', mb_strtolower($this->keyWord)]);
         }
     }
 }

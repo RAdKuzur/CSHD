@@ -111,12 +111,12 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
                 $query->alias('group');
             },*/
 
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork',
+            /*'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork',
             'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork',
             'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork',
             'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork',
             'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.trainingGroupWork',
-            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork',
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork',*/
         ]);
     }
 
@@ -177,7 +177,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             $this->finishDateSearch);
         //$this->filterForeignEventSurname($query);
         //$this->filterGroupName($query);
-        //$this->filterBranch($query);
+        $this->filterBranch($query);
     }
 
     /**

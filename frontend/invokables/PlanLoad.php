@@ -19,16 +19,19 @@ class PlanLoad
     const TEMPLATE_FILENAME = 'template_KUG.xlsx';
 
     /** @var LessonThemeWork[] $lessonThemes */
-    public array $lessonThemes;
-    public string $groupNumber;
+    private array $lessonThemes;
+    private string $groupNumber;
+    private string $branch;
 
     public function __construct(
         array $lessonThemes,
-        string $groupNumber
+        string $groupNumber,
+        string $branch
     )
     {
         $this->lessonThemes = $lessonThemes;
         $this->groupNumber = $groupNumber;
+        $this->branch = $branch;
     }
 
     public function __invoke()
@@ -47,6 +50,9 @@ class PlanLoad
     public function fill(Spreadsheet $inputData)
     {
         $c = 1;
+
+        $inputData->getActiveSheet()->setCellValue('C8', $this->groupNumber);
+        $inputData->getActiveSheet()->setCellValue('C9', Yii::$app->branches->get($this->branch));
 
         foreach ($this->lessonThemes as $lessonTheme) {
             $inputData->getActiveSheet()->setCellValue('A' . (11 + $c), $c);

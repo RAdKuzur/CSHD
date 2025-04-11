@@ -3,18 +3,20 @@
 namespace frontend\models\search;
 
 
+use common\components\interfaces\SearchInterfaces;
+use common\helpers\search\SearchFieldHelper;
 use frontend\models\work\dictionaries\PositionWork;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 /**
  * SearchPosition represents the model behind the search form of `app\models\common\Position`.
  */
-class SearchPosition extends PositionWork
+class SearchPosition extends Model implements SearchInterfaces
 {
-    /**
-     * {@inheritdoc}
-     */
+    public string $name;
+
     public function rules()
     {
         return [
@@ -23,47 +25,79 @@ class SearchPosition extends PositionWork
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
+    public function __construct(
+        string $name = '',
+        $config = []
+    )
+    {
+        parent::__construct($config);
+        $this->name = $name;
+    }
+
     /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
+     * @param $params
+     * @return void
+     */
+    public function loadParams($params)
+    {
+        $this->load($params);
+    }
+
+    /**
+     * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
     {
-        $query = PositionWork::find();
+        $this->loadParams($params);
 
-        // add conditions that should always apply here
+        $query = PositionWork::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['name' => SORT_ASC]]
         ]);
 
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-        ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name]);
+        $this->sortAttributes($dataProvider);
+        $this->filterQueryParams($query);
 
         return $dataProvider;
+    }
+
+    /**
+     * @param ActiveDataProvider $dataProvider
+     * @return void
+     */
+    public function sortAttributes(ActiveDataProvider $dataProvider)
+    {
+        $dataProvider->sort->attributes['name'] = [
+            'asc' => ['name' => SORT_ASC],
+            'desc' => ['name' => SORT_DESC],
+        ];
+    }
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterQueryParams(ActiveQuery $query)
+    {
+        $this->filterName($query);
+    }
+
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterName(ActiveQuery $query) {
+        if (!empty($this->name)) {
+            $query->andWhere(['like', 'LOWER(name)', mb_strtolower($this->name)]);
+        }
     }
 }

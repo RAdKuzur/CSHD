@@ -2,13 +2,14 @@
 
 use app\components\VerticalActionColumn;
 use common\helpers\html\HtmlCreator;
+use frontend\models\search\SearchPosition;
 use kartik\export\ExportMenu;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\models\SearchPosition */
+/* @var $searchModel SearchPosition */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $buttonsAct */
 
@@ -49,7 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['searchModel' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

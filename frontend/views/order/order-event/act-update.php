@@ -210,11 +210,11 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                 echo $form
                                     ->field($modelAct, "[{$i}]firstTeacher")
                                     ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО первого учителя');
+                                    ->label('ФИО первого педагога');
                                 echo $form
                                     ->field($modelAct, "[{$i}]secondTeacher")
                                     ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО второго учителя (при необходимости)');
+                                    ->label('ФИО второго педагога (при необходимости)');
                                 ?>
                                 <?= $form->field($modelAct, "[{$i}]actFiles")->fileInput()->label('Представленные материалы') ?>
                                 <?= $tables ?>

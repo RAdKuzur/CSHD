@@ -209,12 +209,26 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                 ];
                                 echo $form
                                     ->field($modelAct, "[{$i}]firstTeacher")
-                                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО первого педагога');
+                                    ->widget(Select2::classname(), [
+                                        'data' => ArrayHelper::map($people, 'id', 'fullFio'),
+                                        'option' => $params,
+                                        'size' => Select2::LARGE,
+                                        'options' => ['prompt' => 'Выберите эксперта'],
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                    ])->label('ФИО первого педагога');
                                 echo $form
                                     ->field($modelAct, "[{$i}]secondTeacher")
-                                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО второго педагога (при необходимости)');
+                                    ->widget(Select2::classname(), [
+                                        'data' => ArrayHelper::map($people, 'id', 'fullFio'),
+                                        'option' => $params,
+                                        'size' => Select2::LARGE,
+                                        'options' => ['prompt' => 'Выберите эксперта'],
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                    ])->label('ФИО второго педагога (при необходимости)');
                                 ?>
                                 <?= $form->field($modelAct, "[{$i}]actFiles")->fileInput()->label('Представленные материалы') ?>
                                 <?= $tables ?>

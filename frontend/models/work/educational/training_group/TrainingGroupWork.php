@@ -143,27 +143,28 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
         $teacherCode = $teacher->short;
         $addCode = 1;
 
-        /** @var TrainingGroupWork[] $sameNameGroups */
-        $sameNameGroups = (Yii::createObject(TrainingGroupRepository::class))->getSameGroups($this->id, $this->number);
-        $pattern = '/\.(\d+)$/';
-        if (count($sameNameGroups) == 1) {
-            preg_match($pattern, $sameNameGroups[0]->number, $matches);
-            $number1 = $matches[1];
-            $addCode = (string)((int)$number1 + 1);
-        } else {
-            for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
-                preg_match($pattern, $sameNameGroups[$i]->number, $matches);
+        if ($this->id) {
+            /** @var TrainingGroupWork[] $sameNameGroups */
+            $sameNameGroups = (Yii::createObject(TrainingGroupRepository::class))->getSameGroups($this->id, $this->number);
+            $pattern = '/\.(\d+)$/';
+            if (count($sameNameGroups) == 1) {
+                preg_match($pattern, $sameNameGroups[0]->number, $matches);
                 $number1 = $matches[1];
-                preg_match($pattern, $sameNameGroups[$i + 1]->number, $matches);
-                $number2 = $matches[1];
-                if ($number2 - $number1 > 1) {
-                    $addCode = (string)((int)$number1 + 1);
-                    break;
+                $addCode = (string)((int)$number1 + 1);
+            } else {
+                for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
+                    preg_match($pattern, $sameNameGroups[$i]->number, $matches);
+                    $number1 = $matches[1];
+                    preg_match($pattern, $sameNameGroups[$i + 1]->number, $matches);
+                    $number2 = $matches[1];
+                    if ($number2 - $number1 > 1) {
+                        $addCode = (string)((int)$number1 + 1);
+                        break;
+                    }
+                    $addCode = (string)((int)$number2 + 1);
                 }
-                $addCode = (string)((int)$number2 + 1);
             }
         }
-
 
         $this->number = "$thematicDirection.$level.$teacherCode.$date.$addCode";
 

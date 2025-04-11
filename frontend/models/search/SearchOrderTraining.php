@@ -132,6 +132,20 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         ], true, 'INNER JOIN');*/
     }
 
+    private function specialOrders(ActiveQuery $query)
+    {
+        /** @var UserWork $user */
+        $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
+        $specialOrders = new PbacOrderAccess(
+            new PbacOrderData(
+                $user,
+                $user->akaWork->peoplePositionCompanyBranchWork[0]->branch ? : 0
+            )
+        );
+
+        return $specialOrders->getAllowedOrdersQuery($query);
+    }
+
     /**
      * Создает экземпляр DataProvider с учетом поискового запроса (фильтров или сортировки)
      *
@@ -145,16 +159,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $query = OrderTrainingWork::find()
             ->where(['type' => DocumentOrderWork::ORDER_TRAINING]);
 
-        /** @var UserWork $user */
-        $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
-        $specialOrders = new PbacOrderAccess(
-            new PbacOrderData(
-                $user,
-                $user->akaWork->peoplePositionCompanyBranchWork[0]->branch ? : 0
-            )
-        );
-
-        $query = $specialOrders->getAllowedOrdersQuery($query);
+        $query = $this->specialOrders($query);
         $query = $this->addJoinsToQuery($query);
 
         $dataProvider = new ActiveDataProvider([

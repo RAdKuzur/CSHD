@@ -2,6 +2,7 @@
 
 namespace frontend\models\work\event;
 
+use common\components\interfaces\FileInterface;
 use common\components\traits\ErrorTrait;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
@@ -32,7 +33,7 @@ use yii\helpers\Url;
  * @property DocumentOrderWork $addOrderParticipantWork
  * @property ActParticipantWork[] $actParticipantWorks
  */
-class ForeignEventWork extends ForeignEvent
+class ForeignEventWork extends ForeignEvent implements FileInterface
 {
     use EventTrait, ErrorTrait;
 
@@ -132,7 +133,7 @@ class ForeignEventWork extends ForeignEvent
         return $result;
     }
 
-    public function getFileLinks($filetype)
+    public function getFileLinks($filetype) : array
     {
         if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
             throw new InvalidArgumentException('Неизвестный тип файла');
@@ -209,5 +210,25 @@ class ForeignEventWork extends ForeignEvent
     public function getAddOrderParticipantWork()
     {
         return $this->hasOne(DocumentOrderWork::class, ['id' => 'add_order_participant_id']);
+    }
+
+    public function getFilePaths($filetype): array
+    {
+        return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
+    }
+
+    private function createAddPaths($filetype)
+    {
+        if (!array_key_exists($filetype, FilesHelper::getFileTypes())) {
+            throw new InvalidArgumentException('Неизвестный тип файла');
+        }
+        $addPath = '';
+        switch ($filetype) {
+            case FilesHelper::TYPE_DOC:
+                $addPath = FilesHelper::createAdditionalPath($this::tableName(), FilesHelper::TYPE_DOC);
+                break;
+        }
+
+        return $addPath;
     }
 }

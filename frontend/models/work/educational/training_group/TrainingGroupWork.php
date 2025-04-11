@@ -166,6 +166,7 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
 
 
         $this->number = "$thematicDirection.$level.$teacherCode.$date.$addCode";
+        var_dump($this->number);die;
 
         return $this->number;
     }

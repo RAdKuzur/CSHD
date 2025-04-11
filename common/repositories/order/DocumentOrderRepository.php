@@ -33,7 +33,7 @@ class DocumentOrderRepository
 
     public function filterByBranch(ActiveQuery $query, int $branch)
     {
-        $nomenclatures = Yii::$app->nomenclature->getListByBranch($branch);
+        $nomenclatures = array_keys(Yii::$app->nomenclature->getListByBranch($branch));
         return $query->andWhere(['IN', 'order_number', $nomenclatures]);
     }
 

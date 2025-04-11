@@ -30,7 +30,6 @@ use yii\widgets\ActiveForm;
         SearchFieldHelper::textField('nameParticipant', 'Фамилия участника', 'Фамилия участника'),
         SearchFieldHelper::textField('nameTeacher', 'Фамилия педагога', 'Фамилия педагога'),
         SearchFieldHelper::dropdownField('branch', 'Отдел', Yii::$app->branches->getOnlyEducational(), 'Отдел'),
-
         SearchFieldHelper::textField('keyWord', 'Ключевые слова', 'Ключевые слова'),
     );
 

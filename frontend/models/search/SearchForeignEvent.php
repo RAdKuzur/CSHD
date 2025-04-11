@@ -7,6 +7,7 @@ use common\helpers\DateFormatter;
 use common\helpers\search\SearchFieldHelper;
 use common\helpers\StringFormatter;
 use frontend\models\work\event\ForeignEventWork;
+use frontend\models\work\team\ActParticipantWork;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
@@ -94,6 +95,24 @@ class SearchForeignEvent extends Model implements SearchInterfaces
                 'organizerWork' => function ($query) {
                     $query->alias('organizer');
                 },
+                'actParticipantWorks' => function ($query) {
+                    $query->alias('act');
+                },
+                'actParticipantWorks.actParticipantBranchWork' => function ($query) {
+                    $query->alias('branch');
+                },
+                'actParticipantWorks.teacherWork' => function ($query) {
+                    $query->alias('teacherOne');
+                },
+                'actParticipantWorks.teacher2Work' => function ($query) {
+                    $query->alias('teacherTwo');
+                },
+                'actParticipantWorks.squadParticipantWork' => function ($query) {
+                    $query->alias('squad');
+                },
+                'actParticipantWorks.squadParticipantWork.participantWork' => function ($query) {
+                    $query->alias('participant');
+                },
             ]);
 
         $dataProvider = new ActiveDataProvider([
@@ -140,8 +159,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         ];
 
         $dataProvider->sort->attributes['teachers'] = [
-            /*'asc' => ['orderMain.order_name' => SORT_ASC],
-            'desc' => ['orderMain.order_name' => SORT_DESC],*/
+            'asc' => ['teacherOne.surname' => SORT_ASC, 'teacherTwo.surname' => SORT_ASC],
+            'desc' => ['teacherOne.surname' => SORT_DESC, 'teacherTwo.surname' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['participantCount'] = [
@@ -150,13 +169,13 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         ];
 
         $dataProvider->sort->attributes['winners'] = [
-            /*'asc' => ['regulation.name' => SORT_ASC],
-            'desc' => ['regulation.name' => SORT_DESC],*/
+            'asc' => ['participant.surname' => SORT_ASC],
+            'desc' => ['participant.surname' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['prizes'] = [
-            /*'asc' => ['regulation.name' => SORT_ASC],
-            'desc' => ['regulation.name' => SORT_DESC],*/
+            'asc' => ['participant.surname' => SORT_ASC],
+            'desc' => ['participant.surname' => SORT_DESC],
         ];
     }
 
@@ -168,6 +187,9 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         $this->filterLevel($query);
         $this->filterEventWay($query);
         $this->filterKeyWords($query);
+        $this->filterTeacher($query);
+        $this->filterBranch($query);
+        $this->filterParticipant($query);
     }
 
     /**
@@ -176,7 +198,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterDate(ActiveQuery $query) {
+    private function filterDate(ActiveQuery $query) {
         if (!empty($this->startDateSearch) || !empty($this->finishDateSearch))
         {
             $dateFrom = $this->startDateSearch ? date('Y-m-d', strtotime($this->startDateSearch)) : DateFormatter::DEFAULT_STUDY_YEAR_START;
@@ -195,7 +217,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterName(ActiveQuery $query) {
+    private function filterName(ActiveQuery $query) {
         if (!empty($this->eventName)) {
             $query->andWhere(['like', 'LOWER(name)', mb_strtolower($this->eventName)]);
         }
@@ -207,7 +229,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterOrganizer(ActiveQuery $query) {
+    private function filterOrganizer(ActiveQuery $query) {
         if (!empty($this->organizerName)) {
             $query->andWhere(['like', 'LOWER(organizer.name)', mb_strtolower($this->organizerName)]);
         }
@@ -219,7 +241,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterCity(ActiveQuery $query) {
+    private function filterCity(ActiveQuery $query) {
         if (!empty($this->city)) {
             $query->andWhere(['like', 'LOWER(city)', mb_strtolower($this->city)]);
         }
@@ -231,7 +253,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterLevel(ActiveQuery $query) {
+    private function filterLevel(ActiveQuery $query) {
         if (!StringFormatter::isEmpty($this->eventLevel) && $this->eventLevel !== SearchFieldHelper::EMPTY_FIELD) {
             $query->andWhere(['level' => $this->eventLevel]);
         }
@@ -243,7 +265,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      * @param ActiveQuery $query
      * @return void
      */
-    public function filterEventWay(ActiveQuery $query) {
+    private function filterEventWay(ActiveQuery $query) {
         if (!StringFormatter::isEmpty($this->eventWay) && $this->eventWay !== SearchFieldHelper::EMPTY_FIELD) {
             $query->andWhere(['format' => $this->eventWay]);
         }
@@ -259,6 +281,46 @@ class SearchForeignEvent extends Model implements SearchInterfaces
     private function filterKeyWords(ActiveQuery $query) {
         if (!empty($this->keyWord)) {
             $query->andFilterWhere(['like', 'LOWER(key_words)', mb_strtolower($this->keyWord)]);
+        }
+    }
+
+    /**
+     * Поиск по фамилии педагога
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterTeacher(ActiveQuery $query) {
+        if (!empty($this->nameTeacher)) {
+            $query->andWhere(['or',
+                ['like', 'LOWER(teacherOne.surname)', mb_strtolower($this->nameTeacher)],
+                ['like', 'LOWER(teacherTwo.surname)', mb_strtolower($this->nameTeacher)],
+            ]);
+        }
+    }
+
+    /**
+     * Фильтрация по отделу учета
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterBranch(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->branch) && $this->branch !== SearchFieldHelper::EMPTY_FIELD) {
+            $query->andWhere(['branch.branch' => $this->branch]);
+        }
+    }
+
+    /**
+     * Фильтрация по фамилии участника
+     *
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterParticipant(ActiveQuery $query)
+    {
+        if (!empty($this->nameParticipant)) {
+            $query->andWhere(['like', 'LOWER(participant.surname)', mb_strtolower($this->nameParticipant)]);
         }
     }
 }

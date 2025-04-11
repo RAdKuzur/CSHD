@@ -150,7 +150,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $specialOrders = new PbacOrderAccess(
             new PbacOrderData(
                 $user,
-                $user->akaWork->branch[0]
+                $user->akaWork->peoplePositionCompanyBranchWork[0]->branch ? : 0
             )
         );
 

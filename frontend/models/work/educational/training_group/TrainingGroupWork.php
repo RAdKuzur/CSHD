@@ -149,7 +149,8 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
         if (count($sameNameGroups) == 1) {
             preg_match($pattern, $sameNameGroups[0]->number, $matches);
             $number1 = $matches[1];
-            var_dump($sameNameGroups[0]->number);
+            var_dump($matches[0]);
+            var_dump($matches[1]);
             $addCode = (string)((int)$number1 + 1);
         } else {
             for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {

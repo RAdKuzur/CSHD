@@ -1,5 +1,6 @@
 <?php
 
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\team\ActParticipantWork;
 use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
@@ -190,7 +191,9 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                 ]) ?>
                                 <div>
                                     <?= $form->field($modelAct, "[{$i}]participant")->widget(Select2::classname(), [
-                                        'data' => ArrayHelper::map($participants,'id','fullFio'),
+                                        'data' => ArrayHelper::map($participants,'id',function (ForeignEventParticipantsWork $model) {
+                                            return $model->getFullFioWithBirthdate();
+                                        }),
                                         'size' => Select2::LARGE,
                                         'options' => [
                                             'prompt' => 'Выберите участника' ,

@@ -221,6 +221,7 @@ class TrainingGroupRepository
             ->where(['>', 'protection_date', $leftDate])
             ->andWhere(['<', 'protection_date', $rightDate])
             ->andWhere(['trainingProgramWork.certificate_type' => CertificateTypeDictionary::PROJECT_PITCH])
+            ->orderBy(['protection_date' => SORT_ASC])
             ->all();
     }
 

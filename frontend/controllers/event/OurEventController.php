@@ -226,7 +226,7 @@ class OurEventController extends DocumentController
                 'photoFiles' => $tables['photo'],
                 'reportingFiles' => $tables['report'],
                 'otherFiles' => $tables['other'],
-                'modelGroups' => $modelGroups,
+                'modelGroups' => count($modelGroups) > 0 ? $modelGroups : [new EventGroupWork],
                 'orders' => $this->documentOrderRepository->getAllMain() ? : [new DocumentOrderWork]
             ]);
         }

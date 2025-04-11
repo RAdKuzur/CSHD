@@ -8,6 +8,7 @@ use common\helpers\common\HeaderWizard;
 use common\helpers\DateFormatter;
 use common\helpers\files\FilePaths;
 use frontend\models\work\educational\training_group\LessonThemeWork;
+use Mpdf\Css\Border;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -71,10 +72,10 @@ class PlanLoad
             'color' => array('rgb' => 'FFFFFF')
         ),
             'borders' => array(
-                'bottom' => array('style' => 'thick'),
-                'right' => array('style' => 'thick'),
-                'top' => array('style' => 'thick'),
-                'left' => array('style' => 'thick')
+                'bottom' => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR),
+                'right' => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR),
+                'top' => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR),
+                'left' => array('style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_HAIR)
             )
         );
 

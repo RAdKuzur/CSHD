@@ -90,7 +90,7 @@ class ForeignEventForm extends Model
 
     private ActParticipantRepository $actParticipantRepository;
     private ParticipantAchievementRepository $achievementRepository;
-    private OrderEventRepository $orderEventRepository;
+    private ?OrderEventRepository $orderEventRepository;
     private ForeignEventRepository $foreignEventRepository;
     private SquadParticipantRepository $squadParticipantRepository;
 

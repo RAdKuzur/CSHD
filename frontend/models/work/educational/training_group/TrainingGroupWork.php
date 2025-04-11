@@ -146,20 +146,24 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
         /** @var TrainingGroupWork[] $sameNameGroups */
         $sameNameGroups = (Yii::createObject(TrainingGroupRepository::class))->getSameGroups($this->id, $this->number);
         $pattern = '/\.(d+)$/';
-        for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
-            preg_match($pattern, $sameNameGroups[$i]->number, $matches);
+        if (count($sameNameGroups) == 1) {
+            preg_match($pattern, $sameNameGroups[0]->number, $matches);
             $number1 = $matches[1];
-            preg_match($pattern, $sameNameGroups[$i + 1]->number, $matches);
-            $number2 = $matches[1];
-            var_dump($number1);
-            var_dump($number2);
-            die;
-            if ($number2 - $number1 > 1) {
-                $addCode = (string)((int)$number1 + 1);
-                break;
+            $addCode = (string)((int)$number1 + 1);
+        } else {
+            for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
+                preg_match($pattern, $sameNameGroups[$i]->number, $matches);
+                $number1 = $matches[1];
+                preg_match($pattern, $sameNameGroups[$i + 1]->number, $matches);
+                $number2 = $matches[1];
+                if ($number2 - $number1 > 1) {
+                    $addCode = (string)((int)$number1 + 1);
+                    break;
+                }
+                $addCode = (string)((int)$number2 + 1);
             }
-            $addCode = (string)((int)$number2 + 1);
         }
+
 
         $this->number = "$thematicDirection.$level.$teacherCode.$date.$addCode";
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b619a82bf047c01e7b5254b158c9879d",
+    "content-hash": "4dfc90106d6b1c73543e3665f297f563",
     "packages": [
         {
             "name": "arhitector/yandex",
@@ -5266,6 +5266,80 @@
                 "source": "https://github.com/unclead/yii2-multiple-input"
             },
             "time": "2024-04-21T10:54:03+00:00"
+        },
+        {
+            "name": "wapmorgan/morphos",
+            "version": "3.2.29",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wapmorgan/Morphos.git",
+                "reference": "08012186ff7957766fea67114846f2840fad63f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wapmorgan/Morphos/zipball/08012186ff7957766fea67114846f2840fad63f9",
+                "reference": "08012186ff7957766fea67114846f2840fad63f9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "php": ">=7.3",
+                "phpunit/phpunit": "~9.5.20"
+            },
+            "suggest": {
+                "ext-readline": "For using interactive version of script"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/English/functions.php",
+                    "src/Russian/functions.php"
+                ],
+                "psr-4": {
+                    "morphos\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sergey Vanyushin",
+                    "email": "wapmorgan@gmail.com",
+                    "role": "developer"
+                }
+            ],
+            "description": "A morphological solution for Russian and English language written completely in PHP. Provides classes to inflect personal names, geographical names, decline and pluralize nouns, generate cardinal and ordinal numerals, spell out money amounts and time.",
+            "homepage": "http://morphos.io",
+            "keywords": [
+                "Numerals",
+                "adjectives",
+                "cardinal",
+                "declension",
+                "english",
+                "geographical names",
+                "human-friendly",
+                "inflection",
+                "language",
+                "money",
+                "morphology",
+                "nouns",
+                "ordinal",
+                "personal names",
+                "pluralization",
+                "russian",
+                "spelling",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/wapmorgan/Morphos/issues",
+                "source": "https://github.com/wapmorgan/Morphos/tree/3.2.29"
+            },
+            "time": "2023-08-08T22:15:35+00:00"
         },
         {
             "name": "wbraganca/yii2-dynamicform",

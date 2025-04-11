@@ -38,7 +38,7 @@ class ActParticipantFacade
 
     public function prepareActFacade($act){
         $modelAct = $this->actParticipantService->createForms($act);
-        $people = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO, SORT_ASC);
+        $people = $this->peopleRepository->getPeopleFromMainCompany();
         $participants = $this->foreignEventParticipantsRepository->getAll();
         $nominations = array_unique(ArrayHelper::getColumn($this->actParticipantRepository->getByForeignEventIds([$act[0]->foreign_event_id]), 'nomination'));
         $teams = $this->teamService->getNamesByForeignEventId($act[0]->foreign_event_id);

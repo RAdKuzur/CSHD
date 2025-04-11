@@ -61,7 +61,7 @@ class ForeignEventForm extends Model
     public $minister;
     public $minAge;
     public $maxAge;
-    public OrderEventWork $orderParticipant;
+    public ?OrderEventWork $orderParticipant;
     public string $docTable;
 
     public string $squadParticipants;
@@ -90,7 +90,7 @@ class ForeignEventForm extends Model
 
     private ActParticipantRepository $actParticipantRepository;
     private ParticipantAchievementRepository $achievementRepository;
-    private ?OrderEventRepository $orderEventRepository;
+    private OrderEventRepository $orderEventRepository;
     private ForeignEventRepository $foreignEventRepository;
     private SquadParticipantRepository $squadParticipantRepository;
 

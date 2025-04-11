@@ -229,7 +229,7 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                     ->widget(Select2::classname(), [
                                         'data' => ArrayHelper::map($people, 'id', 'fullFio'),
                                         'size' => Select2::LARGE,
-                                        'options' => $params2,
+                                        /*'options' => $params2,*/
                                         'pluginOptions' => [
                                             'allowClear' => true
                                         ],

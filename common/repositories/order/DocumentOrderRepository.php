@@ -19,6 +19,12 @@ class DocumentOrderRepository
     {
         return DocumentOrderWork::find()->where(['type' => $type])->andWhere(['state' => DocumentOrderWork::ACTUAL])->all();
     }
+
+    public function getAllMain()
+    {
+        return DocumentOrderWork::find()->where(['type' => DocumentOrderWork::ORDER_MAIN])->all();
+    }
+
     public function getExceptByIdAndStatus($id, $type){
         return DocumentOrderWork::find()->andWhere(['<>', 'id', $id])->andWhere(['type' => $type])->andWhere(['state' => DocumentOrderWork::ACTUAL])->all();
     }

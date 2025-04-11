@@ -43,7 +43,7 @@ use Yii;
  * @property Regulation $regulation
  * @property PeopleStamp $responsible1
  * @property PeopleStamp $responsible2
- * @property EventTrainingGroup[] $eventTrainingGroups
+ * @property EventGroup[] $eventGroups
  */
 class Event extends \yii\db\ActiveRecord
 {
@@ -170,8 +170,8 @@ class Event extends \yii\db\ActiveRecord
         return $this->hasMany(EventScope::class, ['event_id' => 'id']);
     }
 
-    public function getTrainingGroups()
+    public function getEventGroups()
     {
-        return $this->hasMany(EventTrainingGroup::class, ['event_id' => 'id']);
+        return $this->hasMany(EventGroup::class, ['event_id' => 'id']);
     }
 }

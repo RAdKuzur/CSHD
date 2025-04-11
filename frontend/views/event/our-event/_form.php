@@ -1,10 +1,13 @@
 <?php
 
 use common\helpers\DateFormatter;
+use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\general\PeopleWork;
+use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\regulation\RegulationWork;
 use kartik\select2\Select2;
+use kidzen\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -13,13 +16,15 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model EventWork */
 /* @var $people PeopleWork */
-/* @var $regulations RegulationWork */
+/* @var $regulations RegulationWork[] */
 /* @var $branches array */
 /* @var $groups array */
 /* @var $protocolFiles */
 /* @var $photoFiles */
 /* @var $reportingFiles */
 /* @var $otherFiles */
+/* @var $modelGroups array */
+/* @var $orders DocumentOrderWork[] */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -39,7 +44,6 @@ use yii\widgets\ActiveForm;
 
 <script src="/scripts/sisyphus/sisyphus.js"></script>
 <script src="/scripts/sisyphus/sisyphus.min.js"></script>
-
 
 <div class="event-form field-backing">
 
@@ -130,10 +134,73 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
+    <div class="bordered-div">
+        <div class="">
+            <?php DynamicFormWidget::begin([
+                'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
+                'widgetBody' => '.container-items', // required: css class selector
+                'widgetItem' => '.item', // required: css class
+                'limit' => 100, // the maximum times, an element can be cloned (default 999)
+                'min' => 0,
+                'insertButton' => '.add-item', // css class
+                'deleteButton' => '.remove-item', // css class
+                'model' => $modelGroups[0],
+                'formId' => 'dynamic-form',
+                'formFields' => [
+                    'id',
+                    'participant_id',
+                    'send_method'
+                ],
+            ]); ?>
+
+
+            <div class="container-items"><!-- widgetContainer -->
+                <div class="panel-title">
+                    <h5 class="panel-title pull-left">Связанные учебные группы</h5><!-- widgetBody -->
+                    <div class="pull-right">
+                        <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                    </div>
+                </div>
+                <?php foreach ($modelGroups as $i => $modelGroup): ?>
+                    <div class="item panel panel-default"><!-- widgetBody -->
+                        <div class="panel-heading">
+                            <div class="pull-right">
+                                <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="flexx">
+                                    <div class="flx1">
+                                        <?= $form->field($modelGroup, "[{$i}]training_group_id")->widget(Select2::classname(), [
+                                            'data' => ArrayHelper::map($groups, 'id', function (TrainingGroupWork $model) {
+                                                return $model->getNumber();
+                                            }),
+                                            'size' => Select2::LARGE,
+                                            'options' => ['prompt' => 'Выберите группу'],
+                                            'pluginOptions' => [
+                                                'allowClear' => true
+                                            ],
+                                        ])->label('Учебная группа'); ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php DynamicFormWidget::end(); ?>
+        </div>
+    </div>
+
     <?= $form->field($model, 'key_words')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
+    <?= $form->field($model, 'order_id')->dropDownList(ArrayHelper::map($orders, 'id', function (DocumentOrderWork $model) {
+        return $model->getFullName();
+    }), ['prompt' => 'Нет'])->label('Приказ по мероприятию'); ?>
     <?= $form->field($model, 'regulation_id')->dropDownList(ArrayHelper::map($regulations, 'id', 'name'), ['prompt' => 'Нет'])->label('Положение по мероприятию'); ?>
 
     <div class="checkList">

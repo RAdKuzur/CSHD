@@ -9,18 +9,24 @@ use common\helpers\ButtonsFormatter;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\SortHelper;
+use common\Model;
 use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\educational\TrainingGroupRepository;
+use common\repositories\event\EventGroupRepository;
 use common\repositories\event\EventRepository;
 use common\repositories\general\FilesRepository;
+use common\repositories\order\DocumentOrderRepository;
 use common\repositories\regulation\RegulationRepository;
 use common\services\general\files\FileService;
 use DomainException;
 use frontend\events\event\CreateEventBranchEvent;
 use frontend\events\event\CreateEventScopeEvent;
 use frontend\models\search\SearchEvent;
+use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
+use frontend\models\work\event\EventGroupWork;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\event\ForeignEventWork;
+use frontend\models\work\order\DocumentOrderWork;
 use frontend\services\event\EventService;
 use Yii;
 use yii\filters\VerbFilter;
@@ -38,6 +44,8 @@ class OurEventController extends DocumentController
     private EventService $service;
     private PeopleRepository $peopleRepository;
     private TrainingGroupRepository $groupRepository;
+    private EventGroupRepository $eventGroupRepository;
+    private DocumentOrderRepository $documentOrderRepository;
     private RegulationRepository $regulationRepository;
     private LockWizard $lockWizard;
 
@@ -47,6 +55,8 @@ class OurEventController extends DocumentController
         EventRepository $repository,
         EventService $service,
         PeopleRepository $peopleRepository,
+        EventGroupRepository $eventGroupRepository,
+        DocumentOrderRepository $documentOrderRepository,
         RegulationRepository $regulationRepository,
         TrainingGroupRepository $groupRepository,
         LockWizard $lockWizard,
@@ -56,6 +66,8 @@ class OurEventController extends DocumentController
         $this->repository = $repository;
         $this->service = $service;
         $this->peopleRepository = $peopleRepository;
+        $this->eventGroupRepository = $eventGroupRepository;
+        $this->documentOrderRepository = $documentOrderRepository;
         $this->regulationRepository = $regulationRepository;
         $this->groupRepository = $groupRepository;
         $this->lockWizard = $lockWizard;
@@ -124,6 +136,7 @@ class OurEventController extends DocumentController
     public function actionCreate()
     {
         $model = new EventWork();
+        $modelGroups = [new EventGroupWork];
 
         if ($model->load(Yii::$app->request->post())) {
             $this->service->getPeopleStamps($model);
@@ -135,6 +148,12 @@ class OurEventController extends DocumentController
 
             $this->repository->save($model);
             $this->service->saveFilesFromModel($model);
+
+            $modelGroups = Model::createMultiple(EventGroupWork::classname());
+            Model::loadMultiple($modelGroups, Yii::$app->request->post());
+            if (Model::validateMultiple($modelGroups, ['training_group_id'])) {
+                $this->service->attachGroups($model, $modelGroups, $model->id);
+            }
 
             $model->recordEvent(new CreateEventBranchEvent($model->id, $model->branches), get_class($model));
             $model->recordEvent(new CreateEventScopeEvent($model->id, $model->scopes), get_class($model));
@@ -149,6 +168,8 @@ class OurEventController extends DocumentController
             'regulations' => $this->regulationRepository->getOrderedList(),
             'branches' => ArrayHelper::getColumn($this->repository->getBranches($model->id), 'branch'),
             'groups' => $this->groupRepository->getUnarchiveGroups(),
+            'modelGroups' => $modelGroups,
+            'orders' => $this->documentOrderRepository->getAllMain() ? : [new DocumentOrderWork]
         ]);
     }
 
@@ -164,6 +185,7 @@ class OurEventController extends DocumentController
         if ($this->lockWizard->lockObject($id, ForeignEventWork::tableName(), Yii::$app->user->id)) {
             /** @var EventWork $model */
             $model = $this->repository->get($id);
+            $modelGroups = $this->eventGroupRepository->getGroupsFromEvent($id);
             $model->fillSecondaryFields();
             $model->setValuesForUpdate();
 
@@ -180,6 +202,12 @@ class OurEventController extends DocumentController
 
                 $this->repository->save($model);
                 $this->service->saveFilesFromModel($model);
+
+                $modelGroups = Model::createMultiple(EventGroupWork::classname());
+                Model::loadMultiple($modelGroups, Yii::$app->request->post());
+                if (Model::validateMultiple($modelGroups, ['training_group_id'])) {
+                    $this->service->attachGroups($model, $modelGroups, $model->id);
+                }
 
                 $model->recordEvent(new CreateEventBranchEvent($model->id, $model->branches), get_class($model));
                 $model->recordEvent(new CreateEventScopeEvent($model->id, $model->scopes), get_class($model));
@@ -198,6 +226,8 @@ class OurEventController extends DocumentController
                 'photoFiles' => $tables['photo'],
                 'reportingFiles' => $tables['report'],
                 'otherFiles' => $tables['other'],
+                'modelGroups' => count($modelGroups) > 0 ? $modelGroups : [new EventGroupWork],
+                'orders' => $this->documentOrderRepository->getAllMain() ? : [new DocumentOrderWork]
             ]);
         }
         else {

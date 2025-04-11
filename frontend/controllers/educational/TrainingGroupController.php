@@ -310,7 +310,7 @@ class TrainingGroupController extends DocumentController
                         $formBase->teachers = $modelTeachers;
                         $groupModel->generateNumber($this->peopleRepository->get($formBase->teachers[0]->peopleId));
                     } else {
-                        $groupModel->generateNumber('');
+                        $groupModel->generateNumber(new PeopleWork());
                     }
 
                     $formBase->id = $this->trainingGroupRepository->save($groupModel);

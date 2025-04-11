@@ -25,6 +25,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
     public string $city;                // город
     public int $eventWay;               // формат проведения
     public string $keyWord;             // ключевые слова
+    public int $countParticipant;       // вычисляемое поле количество участников
 
     public function rules()
     {
@@ -164,8 +165,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
         ];
 
         $dataProvider->sort->attributes['participantCount'] = [
-            /*'asc' => ['count(actParticipant)' => SORT_ASC],
-            'desc' => ['count(actParticipant)' => SORT_DESC],*/
+            'asc' => ['min_age' => SORT_ASC],
+            'desc' => ['min_age' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['winners'] = [

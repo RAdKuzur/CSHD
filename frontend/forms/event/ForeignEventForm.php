@@ -3,6 +3,7 @@
 namespace frontend\forms\event;
 
 use common\helpers\DateFormatter;
+use common\helpers\html\HtmlCreator;
 use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\order\OrderEventWork;
@@ -184,7 +185,7 @@ class ForeignEventForm extends Model
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Редактировать',
+                    HtmlCreator::IconUpdate(),
                     Url::to('update-participant'),
                     [
                         'id' => ArrayHelper::getColumn($squads, 'act_participant_id'),
@@ -216,7 +217,7 @@ class ForeignEventForm extends Model
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Редактировать',
+                    HtmlCreator::IconUpdate(),
                     Url::to('update-achievement'),
                     [
                         'id' => ArrayHelper::getColumn($achievements, 'id'),
@@ -224,7 +225,7 @@ class ForeignEventForm extends Model
                     ]
                 ),
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-achievement'),
                     [
                         'id' => ArrayHelper::getColumn($achievements, 'id'),
@@ -326,7 +327,7 @@ class ForeignEventForm extends Model
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($docLink), $this->id), 'fileId' => ArrayHelper::getColumn($docLink, 'id')])
             ]

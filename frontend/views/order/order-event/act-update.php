@@ -203,13 +203,13 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                 </div>
                                 <?php
                                 $params1 = [
-                                    'id' => 'teacher',
+                                    'id' => 'teacher1',
                                     'class' => 'form-control pos',
                                     'prompt' => '---',
                                 ];
 
                                 $params2 = [
-                                    'id' => 'teacher',
+                                    'id' => 'teacher2',
                                     'class' => 'form-control pos',
                                     'prompt' => '---',
                                 ];
@@ -229,7 +229,7 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                     ->widget(Select2::classname(), [
                                         'data' => ArrayHelper::map($people, 'id', 'fullFio'),
                                         'size' => Select2::LARGE,
-                                        /*'options' => $params2,*/
+                                        'options' => $params2,
                                         'pluginOptions' => [
                                             'allowClear' => true
                                         ],

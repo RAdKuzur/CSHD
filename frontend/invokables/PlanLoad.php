@@ -8,9 +8,9 @@ use common\helpers\common\HeaderWizard;
 use common\helpers\DateFormatter;
 use common\helpers\files\FilePaths;
 use frontend\models\work\educational\training_group\LessonThemeWork;
-use Mpdf\Css\Border;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
 
@@ -67,6 +67,7 @@ class PlanLoad
 
     private function setStyles(Spreadsheet $inputData)
     {
+
         $styleArray = array('fill' => array(
             'type' => 'solid',
             'color' => array('rgb' => '000000')
@@ -88,5 +89,12 @@ class PlanLoad
             $inputData->getActiveSheet()->getStyle('F'.$i.':G'.($i+1))->applyFromArray($styleArray);
         }
         $inputData->getActiveSheet()->getStyle('A12:G'. (11 + count($this->lessonThemes)))->applyFromArray($styleArray);
+
+        $inputData
+            ->getActiveSheet()
+            ->getStyle('A12:G'. (11 + count($this->lessonThemes)))
+            ->getBorders()
+            ->getOutline()
+            ->setBorderStyle(Border::BORDER_THICK);
     }
 }

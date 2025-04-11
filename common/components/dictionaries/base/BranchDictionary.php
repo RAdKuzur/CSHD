@@ -19,7 +19,7 @@ class BranchDictionary extends BaseDictionary
             self::TECHNOPARK => 'Технопарк',
             self::QUANTORIUM => 'Кванториум',
             self::CDNTT => 'ЦДНТТ',
-            self::COD => 'ЦОД',
+            self::COD => 'Центр одаренных детей',
             self::MOBILE_QUANTUM => 'Мобильный Кванториум',
             self::PLANETARIUM => 'Планетарий',
             self::ADMINISTRATION => 'Администрация',
@@ -45,7 +45,7 @@ class BranchDictionary extends BaseDictionary
             self::TECHNOPARK => 'Технопарк',
             self::QUANTORIUM => 'Кванториум',
             self::CDNTT => 'ЦДНТТ',
-            self::COD => 'ЦОД',
+            self::COD => 'Центр одаренных детей',
             self::MOBILE_QUANTUM => 'Мобильный Кванториум',
         ];
     }
@@ -61,7 +61,7 @@ class BranchDictionary extends BaseDictionary
             case "ЦДНТТ":
                 $id = 3;
                 break;
-            case "ЦОД":
+            case "Центр одаренных детей":
                 $id = 4;
                 break;
             case "Мобильный Кванториум":

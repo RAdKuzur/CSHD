@@ -211,9 +211,8 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                     ->field($modelAct, "[{$i}]firstTeacher")
                                     ->widget(Select2::classname(), [
                                         'data' => ArrayHelper::map($people, 'id', 'fullFio'),
-                                        'option' => $params,
                                         'size' => Select2::LARGE,
-                                        'options' => ['prompt' => 'Выберите эксперта'],
+                                        'options' => $params,
                                         'pluginOptions' => [
                                             'allowClear' => true
                                         ],
@@ -222,9 +221,8 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                     ->field($modelAct, "[{$i}]secondTeacher")
                                     ->widget(Select2::classname(), [
                                         'data' => ArrayHelper::map($people, 'id', 'fullFio'),
-                                        'option' => $params,
                                         'size' => Select2::LARGE,
-                                        'options' => ['prompt' => 'Выберите эксперта'],
+                                        'options' => $params,
                                         'pluginOptions' => [
                                             'allowClear' => true
                                         ],

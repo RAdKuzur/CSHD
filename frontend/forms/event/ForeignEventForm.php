@@ -61,7 +61,7 @@ class ForeignEventForm extends Model
     public $minister;
     public $minAge;
     public $maxAge;
-    public OrderEventWork $orderParticipant;
+    public ?OrderEventWork $orderParticipant;
     public string $docTable;
 
     public string $squadParticipants;

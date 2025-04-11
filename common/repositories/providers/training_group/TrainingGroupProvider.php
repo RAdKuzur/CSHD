@@ -159,12 +159,12 @@ class TrainingGroupProvider implements TrainingGroupProviderInterface
 
     public function getByBranchQuery($branch)
     {
-        return TrainingGroupWork::find()->where(['branch' => $branch])->andWhere(['archive' => TrainingGroupWork::NO_ARCHIVE])->orderBy(['start_date' => SORT_DESC]);
+        return TrainingGroupWork::find()->where(['branch' => $branch])->orderBy(['start_date' => SORT_DESC]);
     }
 
     public function getByBranch(array $branches)
     {
-        return TrainingGroupWork::find()->where(['IN', 'branch', $branches])->all();
+        return TrainingGroupWork::find()->where(['IN', 'branch', $branches])->orderBy(['start_date' => SORT_DESC])->all();
     }
 
     public function delete(TrainingGroupWork $model)

@@ -10,7 +10,6 @@ use common\components\dictionaries\base\NomenclatureDictionary;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
 use common\repositories\order\OrderMainRepository;
-use frontend\models\work\general\PeopleWork;
 use Yii;
 /**
  * @property PeopleStampWork $correspondentWork
@@ -28,10 +27,6 @@ class OrderTrainingWork extends DocumentOrderWork
     /**
      * @return string
      */
-    public function getFullName()
-    {
-        return "{$this->order_number} {$this->order_name}";
-    }
 
     public function generateOrderNumber()
     {

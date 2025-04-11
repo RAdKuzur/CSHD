@@ -95,6 +95,6 @@ class PlanLoad
             ->getStyle('A12:G'. (11 + count($this->lessonThemes)))
             ->getBorders()
             ->getOutline()
-            ->setBorderStyle(Border::BORDER_MEDIUM);
+            ->setBorderStyle(Border::BORDER_OMIT);
     }
 }

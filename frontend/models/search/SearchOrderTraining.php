@@ -8,7 +8,6 @@ use common\components\interfaces\SearchInterfaces;
 use common\helpers\search\SearchFieldHelper;
 use common\helpers\StringFormatter;
 use frontend\models\search\abstractBase\OrderSearch;
-use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\order\OrderTrainingWork;
 use yii\data\ActiveDataProvider;

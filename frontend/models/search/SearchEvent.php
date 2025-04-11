@@ -11,9 +11,6 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 
-/**
- * SearchEvent represents the model behind the search form of `app\models\common\Event`.
- */
 class SearchEvent extends Model implements SearchInterfaces
 {
     public string $startDateSearch;     // дата начала поиска в диапазоне дат

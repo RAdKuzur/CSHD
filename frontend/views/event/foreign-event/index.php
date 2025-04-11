@@ -97,11 +97,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'companyString', 'label' => 'Организатор', 'value' => function (ForeignEventWork $model) {
                 return $model->organizerWork->name;
             }],
-            ['attribute' => 'begin_date', 'label' => 'Дата<br>начала', 'encodeLabel' => false, 'value' => function (ForeignEventWork $model) {
-                return DateFormatter::format($model->begin_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
-            }],
-            ['attribute' => 'end_date', 'label' => 'Дата<br>окончания', 'encodeLabel' => false, 'value' => function (ForeignEventWork $model) {
-                return DateFormatter::format($model->end_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
+            ['attribute' => 'period', 'label' => 'Период проведения', 'encodeLabel' => false, 'value' => function (ForeignEventWork $model) {
+                return DateFormatter::format($model->begin_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot)
+                    . ' - ' . DateFormatter::format($model->end_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
             }],
             ['attribute' => 'city', 'label' => 'Город'],
             ['attribute' => 'eventWayString', 'label' => 'Формат<br>проведения', 'encodeLabel' => false, 'value' => function(ForeignEventWork $model){

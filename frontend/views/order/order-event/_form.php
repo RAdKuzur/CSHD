@@ -613,6 +613,10 @@ use yii\widgets\DetailView;
         ]) ?>
     </div>
 
+    <?php if ($actTable != NULL): ?>
+        <?= $actTable; ?>
+    <?php endif; ?>
+
     <div class="bordered-div" id="acts">
             <?php DynamicFormWidget::begin([
                 'widgetContainer' => 'dynamicform_wrapper_act', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
@@ -757,10 +761,6 @@ use yii\widgets\DetailView;
             <?php DynamicFormWidget::end(); ?>
         </div>
     </div>
-
-    <?php if ($actTable != NULL): ?>
-        <?= $actTable; ?>
-    <?php endif; ?>
 
     <?= $form->field($model, 'key_words')->textInput()->label('Ключевые слова') ?>
     <?= $form->field($model, 'scanFile')->fileInput()->label('Скан документа') ?>

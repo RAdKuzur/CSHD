@@ -122,7 +122,7 @@ class ActParticipantWork extends ActParticipant
         foreach($squadParticipants as $squadParticipant){
             $persons = ForeignEventParticipantsWork::findAll($squadParticipant["participant_id"]);
             foreach($persons as $person){
-                $participants = $participants . $person->firstname . ' ' . $person->surname . ' ' . $person->patronymic ."\n" ;
+                $participants = $participants . $person->surname . ' ' . $person->firstname . ' ' . $person->patronymic ."\n" ;
             }
         }
         return $participants;

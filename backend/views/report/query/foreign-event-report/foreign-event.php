@@ -26,6 +26,14 @@ $this->params['breadcrumbs'][] = $this->title;
         border-radius: 10px;
         margin-right: 10px;
     }
+
+    .ant-tooltip {
+        position: absolute;
+        left: 100%; /* Позиционирует элемент справа */
+        top: 50%; /* Центрирует по вертикали */
+        transform: translateY(-50%); /* Центрирует элемент от середины */
+        z-index: 9999; /* Убедитесь, что элемент сверху */
+    }
 </style>
 
 <div class="man-hours-report-form" style="margin-top: 0.5em">

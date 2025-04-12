@@ -3,6 +3,7 @@
 use backend\forms\report\ManHoursReportForm;
 use backend\services\report\ReportFacade;
 use common\helpers\DateFormatter;
+use frontend\models\work\general\PeopleWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -201,11 +202,11 @@ $this->title = 'Генерация отчета по обучающимся';
 
     <div class="panel-body" style="padding: 0; margin: 0"></div>
 
-    <?= var_dump($model->teachers) ?>
-
     <div class="col-xs-8 block-report" id="teachers" style="display: none">
         <?= $form->field($model, 'teacher')->dropDownList(
-                ArrayHelper::map($model->teachers, 'id', 'fullName'),
+                ArrayHelper::map($model->teachers, 'id', function (PeopleWork $people) {
+                    return $people->getFullFio();
+                }),
                 ['prompt' => 'Все педагоги']
         )->label('<b>Педагог</b>');
         ?>

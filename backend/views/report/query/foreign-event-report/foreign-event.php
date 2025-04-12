@@ -28,11 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
     }
 
     .ant-tooltip {
-        position: absolute;
-        left: 100%; /* Позиционирует элемент справа */
-        top: 50%; /* Центрирует по вертикали */
-        transform: translateY(-50%); /* Центрирует элемент от середины */
-        z-index: 9999; /* Убедитесь, что элемент сверху */
+        z-index: 9999;
     }
 </style>
 

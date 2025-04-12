@@ -29,6 +29,7 @@ class ErrorAssociationHelper
     {
         return [
             ErrorDictionary::DOCUMENT_001,
+            ErrorDictionary::DOCUMENT_002,
             ErrorDictionary::DOCUMENT_003,
         ];
     }

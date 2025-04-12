@@ -50,10 +50,9 @@ $this->params['breadcrumbs'][] = 'Группа '.$this->title;
                         !$model->trainingGroup->isArchive()
                     ); ?>
                 </div>
-                <?php var_dump(Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_BRANCH_GROUPS_ID) ||
-                    Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_ALL_GROUPS_ID)); if (
-                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_BRANCH_GROUPS_ID) ||
-                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_ALL_GROUPS_ID)
+                <?php if (
+                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), 'view_branch_groups') ||
+                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), 'view_all_groups')
                 ): ?>
                     <div style="margin: 1.1em 1em 1.1em 0">
                         <?= HtmlBuilder::createDualityButton(

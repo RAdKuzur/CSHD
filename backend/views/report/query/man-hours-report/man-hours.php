@@ -15,6 +15,7 @@ use yii\widgets\ActiveForm;
 
 <?php
 $this->title = 'Генерация отчета по обучающимся';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <style>
@@ -43,7 +44,7 @@ $this->title = 'Генерация отчета по обучающимся';
 </style>
 
 <div class="man-hours-report-form">
-
+    <h1>Отчет по обучающимся</h1>
     <h5><b>Введите период для генерации отчета</b></h5>
     <div class="float-container-report">
         <div class="col-xs-4 block-report float-block-report">

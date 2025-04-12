@@ -201,6 +201,7 @@ $this->title = 'Генерация отчета по обучающимся';
 
     <div class="panel-body" style="padding: 0; margin: 0"></div>
 
+    <?= var_dump($model->teachers) ?>
 
     <div class="col-xs-8 block-report" id="teachers" style="display: none">
         <?= $form->field($model, 'teacher')->dropDownList(

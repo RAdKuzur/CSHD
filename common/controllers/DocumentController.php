@@ -102,7 +102,8 @@ class DocumentController extends Controller
                 $zip->addFile($fileData['obj']->file, $filename);
             } else {
                 $filename = FilesHelper::getFilenameFromPath($fileData['obj']->filepath);
-                $content = file_get_contents($fileData['obj']->file);
+                $file = YandexDiskContext::info(YandexDiskContext::BASE_FOLDER . $fileData['obj']->filepath);
+                $content = file_get_contents($file['file']);
                 $zip->addFromString($filename, $content);
             }
         }

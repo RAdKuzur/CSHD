@@ -2,16 +2,21 @@
 
 namespace console\controllers\copy;
 
+use common\components\dictionaries\base\ProjectTypeDictionary;
 use common\models\scaffold\TrainingGroup;
+use DomainException;
 use frontend\models\work\educational\training_group\LessonThemeWork;
 use frontend\models\work\educational\training_group\OrderTrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\ThematicPlanWork;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\general\FilesWork;
+use frontend\models\work\ProjectThemeWork;
 use frontend\services\educational\TrainingGroupService;
 use Yii;
 use yii\console\Controller;
+use yii\web\ServerErrorHttpException;
+
 /* @var $lessonTheme LessonThemeWork*/
 class FixCopyController extends Controller
 {
@@ -87,6 +92,36 @@ class FixCopyController extends Controller
             $model->file_type = $file['file_type'];
             $model->filepath = $file['filepath'];
             $model->save();
+        }
+    }
+    public function actionFixGroupProjectTheme()
+    {
+        /* @var $theme ProjectThemeWork */
+        $themes = ProjectThemeWork::find()->all();
+        foreach ($themes as $theme) {
+            $themeId = $theme->id;
+            $groupProjectTheme = Yii::$app->old_db->createCommand("SELECT * FROM group_project_themes WHERE project_theme_id = $themeId")->queryOne();
+            if ($groupProjectTheme){
+                $theme->project_type = $groupProjectTheme['project_type_id'];
+            }
+            else {
+                $theme->project_type = ProjectTypeDictionary::TECHNICAL;
+            }
+
+            if(!$theme->save()){
+                throw new DomainException('Ошибка сохранения темы проекта. Проблемы: '.json_encode($theme->getErrors()));
+            };
+        }
+    }
+    public function actionFixProjectTheme(){
+        $themes = ProjectThemeWork::find()->all();
+        foreach ($themes as $theme) {
+            $themeId = $theme->id;
+            $item = Yii::$app->db->createCommand("SELECT * FROM temp WHERE id = $themeId")->queryOne();
+            $theme->project_type = $item['project_type'];
+            if(!$theme->save()){
+                throw new DomainException('Ошибка сохранения темы проекта. Проблемы: '.json_encode($theme->getErrors()));
+            };
         }
     }
 }

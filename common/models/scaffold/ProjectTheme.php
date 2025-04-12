@@ -27,8 +27,8 @@ class ProjectTheme extends \yii\db\ActiveRecord
     {
         return [
             [['project_type'], 'integer'],
-            [['name'], 'string', 'max' => 128],
-            [['description'], 'string', 'max' => 256],
+            [['name'], 'string', 'max' => 1000],
+            [['description'], 'string', 'max' => 10000],
         ];
     }
 

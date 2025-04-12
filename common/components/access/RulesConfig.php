@@ -78,7 +78,9 @@ class RulesConfig
                 'update-lesson',
                 'sub-auds',
                 'create-protocol',
-                'delete-theme'
+                'delete-theme',
+                'pitch-confirm-group',
+                'pitch-decline-group'
             ]
         ],
 
@@ -95,7 +97,9 @@ class RulesConfig
                 'update-lesson',
                 'sub-auds',
                 'create-protocol',
-                'delete-theme'
+                'delete-theme',
+                'pitch-confirm-group',
+                'pitch-decline-group'
             ]
         ],
 

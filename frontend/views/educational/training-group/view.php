@@ -51,8 +51,8 @@ $this->params['breadcrumbs'][] = 'Группа '.$this->title;
                     ); ?>
                 </div>
                 <?php if (
-                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), 'view_branch_groups') ||
-                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), 'view_all_groups')
+                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), 'edit_branch_groups') ||
+                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), 'edit_all_groups')
                 ): ?>
                     <div style="margin: 1.1em 1em 1.1em 0">
                         <?= HtmlBuilder::createDualityButton(

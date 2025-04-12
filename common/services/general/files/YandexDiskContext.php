@@ -53,7 +53,7 @@ class YandexDiskContext
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('GET')
-            ->setUrl('https://cloud-api.yandex.net/v1/disk/resources')
+            ->setUrl('https://cloud-api.yandex.net/v1/disk/resources/download')
             ->setHeaders([
                'Authorization' => 'OAuth ' . $accessToken
             ])
@@ -92,5 +92,22 @@ class YandexDiskContext
 // Отдаем файл
         echo $data;
         exit;
+    }
+    static public function downloadFileContent($url)
+    {
+        $ch = curl_init($url);
+
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true, // <--- важно!
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; YourApp/1.0)',
+            CURLOPT_TIMEOUT => 30,
+        ]);
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        return $data;
     }
 }

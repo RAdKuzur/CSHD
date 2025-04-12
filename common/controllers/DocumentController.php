@@ -50,8 +50,9 @@ class DocumentController extends Controller
         }
         else {
             $fp = fopen('php://output', 'r');
+            $filename = FilesHelper::getFilenameFromPath($data['obj']->filepath);
             $file = YandexDiskContext::info(YandexDiskContext::BASE_FOLDER . $data['obj']->filepath);
-            YandexDiskContext::download($file['file'], $file['name']);
+            YandexDiskContext::download($file['href'], $filename);
             $data['obj']->file->download($fp);
             fseek($fp, 0);
             fclose($fp);
@@ -103,8 +104,15 @@ class DocumentController extends Controller
             } else {
                 $filename = FilesHelper::getFilenameFromPath($fileData['obj']->filepath);
                 $file = YandexDiskContext::info(YandexDiskContext::BASE_FOLDER . $fileData['obj']->filepath);
-                $content = file_get_contents($file['file']);
-                $zip->addFromString($filename, $content);
+                if ($file['href']){
+                    $content = YandexDiskContext::downloadFileContent($file['href']);
+                    $zip->addFromString($filename, $content);
+                    //old file download system
+                    /*
+                    $content = file_get_contents($file['file']);
+                    $zip->addFromString($filename, $content);
+                    */
+                }
             }
         }
 

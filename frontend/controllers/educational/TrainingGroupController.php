@@ -230,6 +230,28 @@ class TrainingGroupController extends DocumentController
         return $this->redirect(['view', 'id' => $id]);
     }
 
+    public function actionPitchConfirmGroup($id)
+    {
+        /** @var TrainingGroupWork $model */
+        $model = $this->trainingGroupRepository->get($id);
+        $model->setPitchConfirm(TrainingGroupWork::PITCH_CONFIRM);
+        $this->trainingGroupRepository->save($model);
+        Yii::$app->session->setFlash('success', 'Группа допущена к защите');
+
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    public function actionPitchDeclineGroup($id)
+    {
+        /** @var TrainingGroupWork $model */
+        $model = $this->trainingGroupRepository->get($id);
+        $model->setPitchConfirm(TrainingGroupWork::PITCH_DECLINE);
+        $this->trainingGroupRepository->save($model);
+        Yii::$app->session->setFlash('success', 'Группа не допущена до защиты');
+
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
     /**
      * Сохранение статусов архивов учебных групп
      * @return false|string

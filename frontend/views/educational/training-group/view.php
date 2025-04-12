@@ -4,6 +4,7 @@ use common\helpers\ButtonsFormatter;
 use common\helpers\html\HtmlBuilder;
 use frontend\forms\training_group\TrainingGroupCombinedForm;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
+use frontend\models\work\rubac\PermissionFunctionWork;
 use frontend\services\educational\JournalService;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -49,6 +50,19 @@ $this->params['breadcrumbs'][] = 'Группа '.$this->title;
                         !$model->trainingGroup->isArchive()
                     ); ?>
                 </div>
+                <?php if (
+                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_BRANCH_GROUPS_ID) ||
+                        Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_ALL_GROUPS_ID)
+                ): ?>
+                    <div style="margin: 1.1em 1em 1.1em 0">
+                        <?= HtmlBuilder::createDualityButton(
+                            ['Допустить к защите', 'Не допускать к защите'],
+                            [Url::to(['pitch-confirm-group', 'id' => $model->id]), Url::to(['pitch-decline-group', 'id' => $model->id])],
+                            [['btn', 'btn-success'], ['btn', 'btn-primary']],
+                            !$model->trainingGroup->isPitchConfirm()
+                        ); ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

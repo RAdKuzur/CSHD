@@ -46,6 +46,9 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
     const NO_ARCHIVE = 0;
     const IS_ARCHIVE = 1;
 
+    const PITCH_DECLINE = 0;
+    const PITCH_CONFIRM = 1;
+
     public static function fill(
         $startDate,
         $endDate,
@@ -105,12 +108,31 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
     }
 
     /**
+     * Изменяем значение допуска группы к защите
+     * @param int $confirm
+     * @return void
+     */
+    public function setPitchConfirm(int $confirm)
+    {
+        $this->protection_confirm = $confirm;
+    }
+
+    /**
      * Проверяем является ли группа архивной
      * @return bool
      */
     public function isArchive()
     {
         return $this->archive == self::IS_ARCHIVE;
+    }
+
+    /**
+     * Проверяем является ли группа допущенной к защите
+     * @return bool
+     */
+    public function isPitchConfirm()
+    {
+        return $this->protection_confirm == self::PITCH_CONFIRM;
     }
 
     /**

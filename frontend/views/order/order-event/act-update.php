@@ -1,5 +1,6 @@
 <?php
 
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\team\ActParticipantWork;
 use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
@@ -190,7 +191,9 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                 ]) ?>
                                 <div>
                                     <?= $form->field($modelAct, "[{$i}]participant")->widget(Select2::classname(), [
-                                        'data' => ArrayHelper::map($participants,'id','fullFio'),
+                                        'data' => ArrayHelper::map($participants,'id',function (ForeignEventParticipantsWork $model) {
+                                            return $model->getFullFioWithBirthdate();
+                                        }),
                                         'size' => Select2::LARGE,
                                         'options' => [
                                             'prompt' => 'Выберите участника' ,
@@ -202,19 +205,38 @@ $this->params['breadcrumbs'][] = 'Редактирование';
                                     ])->label('ФИО участников'); ?>
                                 </div>
                                 <?php
-                                $params = [
-                                    'id' => 'teacher',
+                                $params1 = [
+                                    'id' => 'teacher1',
                                     'class' => 'form-control pos',
                                     'prompt' => '---',
                                 ];
+
+                                $params2 = [
+                                    'id' => 'teacher2',
+                                    'class' => 'form-control pos',
+                                    'prompt' => '---',
+                                ];
+
                                 echo $form
                                     ->field($modelAct, "[{$i}]firstTeacher")
-                                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО первого учителя');
+                                    ->widget(Select2::classname(), [
+                                        'data' => ArrayHelper::map($people, 'id', 'fullFio'),
+                                        'size' => Select2::LARGE,
+                                        'options' => $params1,
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                    ])->label('ФИО первого педагога');
                                 echo $form
                                     ->field($modelAct, "[{$i}]secondTeacher")
-                                    ->dropDownList(ArrayHelper::map($people, 'id', 'fullFio'), $params)
-                                    ->label('ФИО второго учителя (при необходимости)');
+                                    ->widget(Select2::classname(), [
+                                        'data' => ArrayHelper::map($people, 'id', 'fullFio'),
+                                        'size' => Select2::LARGE,
+                                        'options' => $params2,
+                                        'pluginOptions' => [
+                                            'allowClear' => true
+                                        ],
+                                    ])->label('ФИО второго педагога (при необходимости)');
                                 ?>
                                 <?= $form->field($modelAct, "[{$i}]actFiles")->fileInput()->label('Представленные материалы') ?>
                                 <?= $tables ?>

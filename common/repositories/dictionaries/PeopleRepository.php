@@ -112,7 +112,7 @@ class PeopleRepository
 
     public function getByIds($ids)
     {
-        return PeopleWork::find()->where(['id' => $ids])->all();
+        return PeopleWork::find()->where(['id' => $ids])->orderBy(['surname' => SORT_ASC, 'firstname' => SORT_ASC, 'patronymic' => SORT_ASC])->all();
     }
 
     public function save(PeopleWork $people)

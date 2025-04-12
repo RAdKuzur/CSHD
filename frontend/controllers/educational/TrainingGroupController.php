@@ -452,7 +452,7 @@ class TrainingGroupController extends DocumentController
             $model = $this->trainingGroupRepository->get($id);
             if (!$model->isArchive()) {
                 $formPitch = new PitchGroupForm($id);
-                $peoples = $this->peopleRepository->getPeopleFromMainCompany();
+                $peoples = $this->peopleRepository->getAll();
 
                 if ($formPitch->load(Yii::$app->request->post())) {
                     $this->lockWizard->unlockObject($id, TrainingGroupWork::tableName());

@@ -2,12 +2,15 @@
 
 namespace common\repositories\educational;
 
+use common\components\dictionaries\base\CertificateTypeDictionary;
 use common\components\dictionaries\base\NomenclatureDictionary;
 use common\components\traits\CommonDatabaseFunctions;
 use common\repositories\providers\training_group\TrainingGroupProvider;
 use common\repositories\providers\training_group\TrainingGroupProviderInterface;
 use DomainException;
+use frontend\models\work\educational\CertificateWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
+use frontend\models\work\educational\training_program\TrainingProgramWork;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -214,8 +217,11 @@ class TrainingGroupRepository
     public function getGroupPitchInPeriod(string $leftDate, string $rightDate)
     {
         return TrainingGroupWork::find()
+            ->joinWith(['trainingProgramWork trainingProgramWork'])
             ->where(['>', 'protection_date', $leftDate])
             ->andWhere(['<', 'protection_date', $rightDate])
+            ->andWhere(['trainingProgramWork.certificate_type' => CertificateTypeDictionary::PROJECT_PITCH])
+            ->orderBy(['protection_date' => SORT_ASC])
             ->all();
     }
 

@@ -4,7 +4,9 @@ use common\components\wizards\AlertMessageWizard;
 use common\helpers\DateFormatter;
 use common\models\scaffold\TrainingGroup;
 use frontend\forms\training_group\PitchGroupForm;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\educational\training_group\TrainingGroupExpertWork;
+use frontend\models\work\general\PeopleWork;
 use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
@@ -103,8 +105,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                                         ->label('Тема проекта') ?>
 
                                     <?= $form->field($theme, "[{$i}]project_type")->dropDownList(
-                                        Yii::$app->projectType->getList(),
-                                        ['prompt' => '---']
+                                        Yii::$app->projectType->getList()
                                     )->label('Тип проекта'); ?>
 
                                     <?= $form->field($theme, "[{$i}]description")->textarea(
@@ -158,7 +159,9 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                                     <?= $form->field($expert, "[{$i}]id")->hiddenInput()->label(false) ?>
 
                                     <?= $form->field($expert, "[{$i}]expertId")->widget(Select2::classname(), [
-                                        'data' => ArrayHelper::map($peoples, 'id', 'fullFio'),
+                                        'data' => ArrayHelper::map($peoples, 'id', function (PeopleWork $model) {
+                                            return $model->getFIO(PersonInterface::FIO_WITH_POSITION_COMPANY);
+                                        }),
                                         'size' => Select2::LARGE,
                                         'options' => ['prompt' => 'Выберите эксперта'],
                                         'pluginOptions' => [

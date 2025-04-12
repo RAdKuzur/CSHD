@@ -74,6 +74,8 @@ class PeopleWork extends People implements PersonInterface
                 return $this->getFioPosition();
             case self::FIO_SURNAME_INITIALS_WITH_POSITION:
                 return $this->getPositionSurnameInitials();
+            case self::FIO_WITH_POSITION_COMPANY:
+                return $this->getFioPositionCompany();
             default:
                 throw new InvalidArgumentException('Неизвестный тип вывода ФИО');
         }
@@ -95,6 +97,16 @@ class PeopleWork extends People implements PersonInterface
     {
         $positions = implode(', ', $this->getPositions());
         return "{$this->getFullFio()} ({$positions})";
+    }
+
+    public function getFioPositionCompany()
+    {
+        $positions = $this->peoplePositionCompanyBranchWork;
+        $positionCompany = array_map(function (PeoplePositionCompanyBranchWork $model) {
+            return $model->companyWork->name . ' - ' . $model->positionWork->name;
+        }, $positions);
+
+        return $this->getFullFio() . ' (' . implode(', ', $positionCompany) . ')';
     }
 
     public function getPositionSurnameInitials()

@@ -78,14 +78,30 @@ class ErrorDocumentService
         }
     }
 
+    // Проверка на отсутствие редактируемого документа
     public function makeDocument_002($rowId)
     {
-        // deprecated
+        $order = $this->orderRepository->get($rowId);
+        if (count($order->getFileLinks(FilesHelper::TYPE_DOC)) == 0) {
+            $this->errorsRepository->save(
+                ErrorsWork::fill(
+                    ErrorDictionary::DOCUMENT_002,
+                    DocumentOrderWork::tableName(),
+                    $rowId,
+                    Yii::$app->errors->get(ErrorDictionary::DOCUMENT_002)->getErrorState()
+                )
+            );
+        }
     }
 
     public function fixDocument_002($errorId)
     {
-        // deprecated
+        /** @var ErrorsWork $error */
+        $error = $this->errorsRepository->get($errorId);
+        $order = $this->orderRepository->get($error->table_row_id);
+        if (count($order->getFileLinks(FilesHelper::TYPE_DOC)) > 0) {
+            $this->errorsRepository->delete($error);
+        }
     }
 
     // Проверка на отсутствие ключевых слов

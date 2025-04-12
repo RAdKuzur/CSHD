@@ -79,11 +79,11 @@ class ManHoursReportForm extends Model
             ArrayHelper::getColumn($teacherGroups, 'teacher_id')
         );
 
-        var_dump($peopleStamps);
-
         $this->teachers = $this->peopleRepository->getByIds(
             ArrayHelper::getColumn($peopleStamps, 'people_id')
         );
+
+        var_dump($this->teachers);
 
         parent::__construct($config);
     }

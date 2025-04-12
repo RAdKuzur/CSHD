@@ -4,7 +4,6 @@ use backend\forms\report\ManHoursReportForm;
 use backend\services\report\ReportFacade;
 use common\helpers\DateFormatter;
 use frontend\models\work\general\PeopleWork;
-use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -204,19 +203,12 @@ $this->title = 'Генерация отчета по обучающимся';
     <div class="panel-body" style="padding: 0; margin: 0"></div>
 
     <div class="col-xs-8 block-report" id="teachers" style="display: none">
-        <?= $form->field($model, 'teacher')->widget(Select2::classname(), [
-            'data' => ArrayHelper::map($model->teachers, 'id', function (PeopleWork $people) {
-                return $people->getFullFio();
-            }),
-            'size' => Select2::LARGE,
-            'options' => [
-                'prompt' => 'Все педагоги',
-                'multiple' => true
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ])->label('<b>Педагог</b>');
+        <?= $form->field($model, 'teacher')->dropDownList(
+                ArrayHelper::map($model->teachers, 'id', function (PeopleWork $people) {
+                    return $people->getFullFio();
+                }),
+                ['prompt' => 'Все педагоги']
+        )->label('<b>Педагог</b>');
         ?>
     </div>
     <div class="col-xs-8 block-report" id="mode">

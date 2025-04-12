@@ -2,6 +2,7 @@
 
 use backend\forms\report\ForeignEventReportForm;
 use backend\services\report\ReportFacade;
+use common\helpers\html\HtmlBuilder;
 use frontend\models\work\event\ParticipantAchievementWork;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -28,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
 </style>
 
 <div class="man-hours-report-form">
-    <h1>Отчет по УЧЕТУ ДОСТИЖЕНИЙ в мероприятиях</h1>
+    <h1>Отчет по УЧЕТУ ДОСТИЖЕНИЙ в мероприятиях <?= HtmlBuilder::createTooltipIcon('Отчет генерируется не по мероприятиям РШТ, а по внешним мероприятиям (те, в которых участвуют наши обучающиеся') ?></h1>
     <h5><b>Введите период для генерации отчета</b></h5>
     <div class="col-xs-6 block-report">
 

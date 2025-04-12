@@ -6,7 +6,7 @@ class ProjectTypeDictionary extends BaseDictionary
 {
     const TECHNICAL = 1;
     const RESEARCH = 2;
-    const CREATIVE = 2;
+    const CREATIVE = 3;
     const MEDIA = 4;
     const JOURNALISTIC = 5;
 

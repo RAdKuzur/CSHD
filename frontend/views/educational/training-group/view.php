@@ -50,7 +50,8 @@ $this->params['breadcrumbs'][] = 'Группа '.$this->title;
                         !$model->trainingGroup->isArchive()
                     ); ?>
                 </div>
-                <?php if (
+                <?php var_dump(Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_BRANCH_GROUPS_ID) ||
+                    Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_ALL_GROUPS_ID)); if (
                         Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_BRANCH_GROUPS_ID) ||
                         Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), PermissionFunctionWork::PERMISSION_ALL_GROUPS_ID)
                 ): ?>

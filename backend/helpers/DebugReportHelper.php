@@ -20,12 +20,7 @@ class DebugReportHelper
         $focus = Yii::$app->focus->get($participant->trainingGroupWork->trainingProgramWork->focus);
         $thematicDirection = Yii::$app->thematicDirection->get($participant->trainingGroupWork->trainingProgramWork->thematic_direction);
         $allowRemote = Yii::$app->allowRemote->get($participant->trainingGroupWork->trainingProgramWork->allow_remote);
-        try {
-            $projectType = Yii::$app->projectType->get($participant->groupProjectThemesWork->projectThemeWork->project_type);
-        }
-        catch (\Exception $e) {
-            var_dump($participant->groupProjectThemesWork->projectThemeWork->project_type);
-        }
+        $projectType = Yii::$app->projectType->get($participant->groupProjectThemesWork->projectThemeWork->project_type);
         $teacher = count($participant->trainingGroupWork->teachersWork) > 0 ?
             $participant->trainingGroupWork->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS):
             '';

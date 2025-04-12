@@ -69,7 +69,7 @@ class HtmlBuilder
                     '.self::paintSVG($svgLink, $svgColorClass).'
                     <div class="ant-tooltip">
                         <div class="ant-tooltip-arrow"></div>
-                        <div class="ant-tooltip-content" style=" z-index: 999">
+                        <div class="ant-tooltip-content">
                             '.$content.'
                         </div>
                     </div>

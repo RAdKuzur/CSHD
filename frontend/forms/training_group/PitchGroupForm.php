@@ -88,6 +88,7 @@ class PitchGroupForm extends Model
                 array_merge(['Тип проекта'], array_map(function ($value) {
                     return Yii::$app->projectType->get($value);
                 }, ArrayHelper::getColumn($this->prevThemes, 'projectThemeWork.project_type'))),
+                array_merge(['Описание'], ArrayHelper::getColumn($this->prevThemes, 'projectThemeWork.description')),
                 array_merge(['Подтверждена'], array_map(function ($value) {
                     return $value ? 'Да' : 'Нет';
                 }, ArrayHelper::getColumn($this->prevThemes, 'confirm')))

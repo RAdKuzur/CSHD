@@ -19,6 +19,7 @@ use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\educational\GroupProjectThemesRepository;
 use common\repositories\educational\LessonThemeRepository;
 use common\repositories\educational\TrainingGroupLessonRepository;
+use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\educational\TrainingProgramRepository;
 use common\repositories\general\FilesRepository;
@@ -49,6 +50,7 @@ use frontend\services\educational\GroupDocumentService;
 use frontend\services\educational\GroupLessonService;
 use frontend\services\educational\GroupProjectThemesService;
 use frontend\services\educational\JournalService;
+use frontend\services\educational\TrainingGroupParticipantService;
 use frontend\services\educational\TrainingGroupService;
 use Yii;
 use yii\web\UploadedFile;
@@ -62,6 +64,7 @@ class TrainingGroupController extends DocumentController
     private TrainingProgramRepository $trainingProgramRepository;
     private TrainingGroupRepository $trainingGroupRepository;
     private TrainingGroupLessonRepository $groupLessonRepository;
+    private TrainingGroupParticipantService $groupParticipantService;
     private ForeignEventParticipantsRepository $participantsRepository;
     private PeopleRepository $peopleRepository;
     private AuditoriumRepository $auditoriumRepository;
@@ -82,6 +85,7 @@ class TrainingGroupController extends DocumentController
         TrainingProgramRepository $trainingProgramRepository,
         TrainingGroupRepository $trainingGroupRepository,
         TrainingGroupLessonRepository $groupLessonRepository,
+        TrainingGroupParticipantService $groupParticipantService,
         ForeignEventParticipantsRepository $participantsRepository,
         PeopleRepository $peopleRepository,
         AuditoriumRepository $auditoriumRepository,
@@ -99,6 +103,7 @@ class TrainingGroupController extends DocumentController
         $this->trainingProgramRepository = $trainingProgramRepository;
         $this->trainingGroupRepository = $trainingGroupRepository;
         $this->groupLessonRepository = $groupLessonRepository;
+        $this->groupParticipantService = $groupParticipantService;
         $this->participantsRepository = $participantsRepository;
         $this->peopleRepository = $peopleRepository;
         $this->auditoriumRepository = $auditoriumRepository;
@@ -396,7 +401,7 @@ class TrainingGroupController extends DocumentController
 
                 return $this->render('_form-participant', [
                     'model' => $formParticipant,
-                    'modelChilds' => count($formParticipant->participants) > 0 ? $formParticipant->participants : [new TrainingGroupParticipantWork],
+                    'modelChilds' => [new TrainingGroupParticipantWork],
                     'childs' => $childs,
                     'buttonsAct' => $this->getButtonsForm($model),
                 ]);
@@ -560,7 +565,7 @@ class TrainingGroupController extends DocumentController
 
     public function actionDeleteLesson($groupId, $entityId)
     {
-        /** @var TrainingGroupLessonWork $model */
+        /** @var TrainingGroupLessonWork $result */
         $result = $this->lessonService->delete($entityId);
 
         if ($result) {
@@ -570,8 +575,20 @@ class TrainingGroupController extends DocumentController
             Yii::$app->session->setFlash('danger', 'Ошибка удаления занятия');
         }
 
-        $model->releaseEvents();
+        $result->releaseEvents();
         return $this->redirect(['schedule-form', 'id' => $groupId]);
+    }
+
+    public function actionDeleteParticipant($groupId, $entityId)
+    {
+        /** @var TrainingGroupParticipantWork $result */
+        $result = $this->groupParticipantService->delete($entityId);
+
+        if ($result != -1) {
+            Yii::$app->session->setFlash('success', 'Обучающийся успешно удален');
+        }
+
+        return $this->redirect(['participant-form', 'id' => $groupId]);
     }
 
     public function actionDeleteTheme($groupId, $entityId)

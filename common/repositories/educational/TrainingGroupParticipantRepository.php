@@ -2,6 +2,7 @@
 
 namespace common\repositories\educational;
 
+use common\components\traits\CommonDatabaseFunctions;
 use frontend\models\work\order\OrderTrainingWork;
 use common\components\dictionaries\base\NomenclatureDictionary;
 use common\repositories\providers\group_participant\TrainingGroupParticipantProvider;
@@ -17,6 +18,8 @@ use yii\helpers\ArrayHelper;
 
 class TrainingGroupParticipantRepository
 {
+    use CommonDatabaseFunctions;
+
     private $provider;
     private OrderTrainingGroupParticipantRepository $orderTrainingGroupParticipantRepository;
     public function __construct(

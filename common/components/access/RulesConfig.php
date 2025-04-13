@@ -61,7 +61,8 @@ class RulesConfig
                 'delete-lesson',
                 'update-lesson',
                 'sub-auds',
-                'delete-theme'
+                'delete-theme',
+                'delete-participant'
             ]
         ],
 
@@ -80,7 +81,8 @@ class RulesConfig
                 'create-protocol',
                 'delete-theme',
                 'pitch-confirm-group',
-                'pitch-decline-group'
+                'pitch-decline-group',
+                'delete-participant'
             ]
         ],
 
@@ -99,7 +101,8 @@ class RulesConfig
                 'create-protocol',
                 'delete-theme',
                 'pitch-confirm-group',
-                'pitch-decline-group'
+                'pitch-decline-group',
+                'delete-participant'
             ]
         ],
 

@@ -109,7 +109,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                                     )->label('Тип проекта'); ?>
 
                                     <?= $form->field($theme, "[{$i}]description")->textarea(
-                                        ['rows' => 3]
+                                        ['rows' => 5]
                                     )->label('Краткое описание проекта') ?>
                                 </div>
                             </div>

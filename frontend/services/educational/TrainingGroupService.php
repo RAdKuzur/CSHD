@@ -344,22 +344,8 @@ class TrainingGroupService implements DatabaseServiceInterface
         }
         $newParticipants = array_unique($newParticipants);
 
-        $addParticipants = $this->setDifference($newParticipants, $form->prevParticipants, ParticipantGroupCompare::class);
-        $delParticipants = $this->setDifference($form->prevParticipants, $newParticipants, ParticipantGroupCompare::class);
-
-        foreach ($addParticipants as $participant) {
-            $form->recordEvent(new CreateTrainingGroupParticipantEvent($form->id, $participant->participant_id, $participant->send_method), TrainingGroupParticipantWork::className());
-        }
-
-        foreach ($delParticipants as $participant) {
-            $form->recordEvent(new DeleteVisitEvent($participant->id), VisitWork::className());
-            $form->recordEvent(new DeleteTrainingGroupParticipantEvent($participant->id), TrainingGroupParticipantWork::className());
-        }
-
         foreach ($newParticipants as $participant) {
-            if ($participant->id !== null) {
-                $form->recordEvent(new UpdateTrainingGroupParticipantEvent($participant->id, $participant->participant_id, $participant->send_method), TrainingGroupParticipantWork::className());
-            }
+            $form->recordEvent(new CreateTrainingGroupParticipantEvent($form->id, $participant->participant_id, $participant->send_method), TrainingGroupParticipantWork::className());
         }
     }
 

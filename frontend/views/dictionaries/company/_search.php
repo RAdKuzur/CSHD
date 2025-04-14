@@ -8,7 +8,6 @@ use yii\widgets\ActiveForm;
 /* @var $searchModel SearchCompany */
 ?>
 
-
 <?php $form = ActiveForm::begin([
     'action' => ['index'], // Действие контроллера для обработки поиска
     'method' => 'get', // Метод GET для передачи параметров в URL
@@ -16,7 +15,6 @@ use yii\widgets\ActiveForm;
 ]); ?>
 
 <?php
-
 $searchFields = array_merge(
     SearchFieldHelper::textField('inn', 'ИНН', 'ИНН'),
     SearchFieldHelper::textField('name' , 'Полное или краткое наименование', 'Полное или краткое наименование'),

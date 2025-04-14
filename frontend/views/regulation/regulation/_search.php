@@ -2,10 +2,11 @@
 
 use common\helpers\html\HtmlBuilder;
 use common\helpers\search\SearchFieldHelper;
+use frontend\models\search\SearchRegulation;
 use frontend\models\work\regulation\RegulationWork;
 use yii\widgets\ActiveForm;
 
-/* @var $searchModel \frontend\models\search\SearchRegulation */
+/* @var $searchModel SearchRegulation */
 
 ?>
 

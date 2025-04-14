@@ -153,7 +153,7 @@ class RegulationSearch extends Model
      * @return void
      */
     private function filterStatus(ActiveQuery $query, int $status) {
-        if (!StringFormatter::isEmpty($status) && $status !== RegulationWork::STATE_ACTIVE)
+        if (!StringFormatter::isEmpty($status) && $status !== SearchFieldHelper::EMPTY_FIELD)
         {
             $query->andFilterWhere(['like', 'regulation.state', $status]);
         }

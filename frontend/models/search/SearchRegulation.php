@@ -14,12 +14,12 @@ use yii\db\ActiveQuery;
 
 class SearchRegulation extends RegulationSearch implements SearchInterfaces
 {
-    public int $numberBoard;    // Номер совета
+    public string $numberBoard;    // Номер совета
 
     public function rules()
     {
         return array_merge(parent::rules(), [
-            [['numberBoard'], 'integer'],
+            [['numberBoard'], 'number'],
         ]);
     }
 
@@ -29,7 +29,7 @@ class SearchRegulation extends RegulationSearch implements SearchInterfaces
         string $nameRegulation = '',
         string $orderName = '',
         int $status = SearchFieldHelper::EMPTY_FIELD,
-        int $numberBoard = SearchFieldHelper::EMPTY_FIELD
+        string $numberBoard = ''
     ) {
         parent::__construct(
             $startDateSearch,
@@ -125,9 +125,9 @@ class SearchRegulation extends RegulationSearch implements SearchInterfaces
      */
     public function filterQueryParams(ActiveQuery $query)
     {
-        //parent::filterAbstractQueryParams($query, $this->startDateSearch, $this->finishDateSearch, $this->nameRegulation, $this->orderName, $this->status);
+        parent::filterAbstractQueryParams($query, $this->startDateSearch, $this->finishDateSearch, $this->nameRegulation, $this->orderName, $this->status);
 
-        //$this->filterNumberBoard($query);
+        $this->filterNumberBoard($query);
     }
 
     /**

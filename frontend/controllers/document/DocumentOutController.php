@@ -150,9 +150,6 @@ class DocumentOutController extends DocumentController
 
     public function actionUpdate($id)
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
         if ($this->lockWizard->lockObject($id, DocumentOutWork::tableName(), Yii::$app->user->id)) {
             $model = $this->repository->get($id);
             /** @var DocumentOutWork $model */

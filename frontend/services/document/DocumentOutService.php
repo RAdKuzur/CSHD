@@ -67,7 +67,6 @@ class DocumentOutService implements DatabaseServiceInterface
 
     public function saveFilesFromModel(DocumentOutWork $model)
     {
-        var_dump('OK!!!!');
         if ($model->scanFile !== null) {
             $filename = $this->filenameGenerator->generateFileName($model, FilesHelper::TYPE_SCAN);
 

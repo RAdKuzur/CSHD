@@ -5,118 +5,187 @@ namespace frontend\models\search;
 use frontend\models\work\general\PeopleWork;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 /**
  * SearchDocumentIn represents the model behind the search form of `app\models\common\DocumentIn`.
  */
 class SearchPeople extends PeopleWork
 {
-    /**
-     * {@inheritdoc}
-     */
+    public string $name;
+    public string $surname;
+    public string $patronymic;
+    public string $organized;
+    public string $position;
+
     public function rules()
     {
         return [
-
+            [['id'], 'integer'],
+            [['name', 'surname', 'patronymic', 'position', 'organized'], 'string'],
+            [['name', 'surname', 'patronymic', 'position', 'organized'], 'safe'],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function scenarios()
     {
-        // bypass scenarios() implementation in the parent class
         return Model::scenarios();
     }
 
+    public function __construct(
+        string $name = '',
+        string $surname = '',
+        string $patronymic = '',
+        string $position = '',
+        string $organized = '',
+        $config = []
+    )
+    {
+        parent::__construct($config);
+        $this->name = $name;
+        $this->surname = $surname;
+        $this->patronymic = $patronymic;
+        $this->position = $position;
+        $this->organized = $organized;
+    }
+
     /**
-     * Creates data provider instance with search query applied
-     *
-     * @param array $params
-     *
+     * @param $params
+     * @return void
+     */
+    public function loadParams($params)
+    {
+        $this->load($params);
+    }
+
+    /**
+     * @param $params
      * @return ActiveDataProvider
      */
     public function search($params)
     {
-        $this->load($params);
-        $query = PeopleWork::find();
+        $this->loadParams($params);
 
-        /*if ($this->localDate !== '' && $this->localDate !== null) {
-            $dates = DateFormatter::splitDates($this->localDate);
-            $query->andWhere(
-                ['BETWEEN', 'local_date',
-                    DateFormatter::format($dates[0], DateFormatter::dmy_dot, DateFormatter::Ymd_dash),
-                    DateFormatter::format($dates[1], DateFormatter::dmy_dot, DateFormatter::Ymd_dash)]);
-        }
-
-        if ($this->realDate !== '' && $this->realDate !== null) {
-            $dates = DateFormatter::splitDates($this->realDate);
-            $query->andWhere(['BETWEEN', 'real_date', $dates[0], $dates[1]]);
-        }*/
+        $query = PeopleWork::find()
+            ->joinWith([
+                'peoplePositionCompanyBranchWork' => function ($query) {
+                    $query->alias('peoplePositionCompanyBranch');
+                },
+                'peoplePositionCompanyBranchWork.companyWork' => function ($query) {
+                    $query->alias('companyWork');
+                },
+                'peoplePositionCompanyBranchWork.positionWork' => function ($query) {
+                    $query->alias('positionWork');
+                },
+            ]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
+            'sort' => ['defaultOrder' => ['surname' => SORT_ASC, 'firstname' => SORT_ASC, 'patronymic' => SORT_ASC]]
         ]);
 
-        /*$dataProvider->sort->attributes['fullNumber'] = [
-            'asc' => ['local_number' => SORT_ASC, 'local_postfix' => SORT_ASC],
-            'desc' => ['local_number' => SORT_DESC, 'local_postfix' => SORT_DESC],
-        ];
+        $this->sortAttributes($dataProvider);
+        $this->filterQueryParams($query);
 
-        $dataProvider->sort->attributes['localDate'] = [
-            'asc' => ['local_date' => SORT_ASC],
-            'desc' => ['local_date' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['realDate'] = [
-            'asc' => ['real_date' => SORT_ASC],
-            'desc' => ['real_date' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['realNumber'] = [
-            'asc' => ['real_number' => SORT_ASC],
-            'desc' => ['real_number' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['companyName'] = [
-            'asc' => ['company.name' => SORT_ASC],
-            'desc' => ['company.name' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['documentTheme'] = [
-            'asc' => ['document_theme' => SORT_ASC],
-            'desc' => ['document_theme' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['sendMethodName'] = [
-            'asc' => ['send_method' => SORT_ASC],
-            'desc' => ['send_method' => SORT_DESC],
-        ];
-
-        $dataProvider->sort->attributes['needAnswer'] = [
-            'asc' => ['need_answer' => SORT_DESC],
-            'desc' => ['need_answer' => SORT_ASC],
-        ];
-
-        //var_dump($this->realDate);
-
-        if (!$this->validate()) {
-            return $dataProvider;
-        }
-
-        // строгие фильтры
-        $query->andFilterWhere([
-            'send_method' => $this->sendMethodName,
-        ]);
-
-        // гибкие фильтры Like
-        $query->andFilterWhere(['like', "CONCAT(local_number, '/', local_postfix)", $this->fullNumber])
-            ->andFilterWhere(['like', 'real_number', $this->realNumber])
-            ->andFilterWhere(['like', 'company.name', $this->companyName])
-            ->andFilterWhere(['like', 'document_theme', $this->documentTheme])
-            ->andFilterWhere(['like', 'real_number', $this->realNumber]);*/
         return $dataProvider;
+    }
+
+    /**
+     * @param ActiveDataProvider $dataProvider
+     * @return void
+     */
+    public function sortAttributes(ActiveDataProvider $dataProvider)
+    {
+        $dataProvider->sort->attributes['surname'] = [
+            'asc' => ['surname' => SORT_ASC],
+            'desc' => ['surname' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['firstname'] = [
+            'asc' => ['firstname' => SORT_ASC],
+            'desc' => ['firstname' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['patronymic'] = [
+            'asc' => ['patronymic' => SORT_ASC],
+            'desc' => ['patronymic' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['position'] = [
+            'asc' => ['positionWork.name' => SORT_ASC],
+            'desc' => ['positionWork.name' => SORT_DESC],
+        ];
+
+        $dataProvider->sort->attributes['organized'] = [
+            'asc' => ['companyWork.name' => SORT_ASC],
+            'desc' => ['companyWork.name' => SORT_DESC],
+        ];
+    }
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterQueryParams(ActiveQuery $query)
+    {
+        $this->filterName($query);
+        $this->filterSurname($query);
+        $this->filterPatronymic($query);
+        $this->filterPosition($query);
+        $this->filterOrganized($query);
+    }
+
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterName(ActiveQuery $query) {
+        if (!empty($this->name)) {
+            $query->andWhere(['like', 'LOWER(firstname)', mb_strtolower($this->name)]);
+        }
+    }
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterSurname(ActiveQuery $query) {
+        if (!empty($this->surname)) {
+            $query->andWhere(['like', 'LOWER(surname)', mb_strtolower($this->surname)]);
+        }
+    }
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterPatronymic(ActiveQuery $query) {
+        if (!empty($this->patronymic)) {
+            $query->andWhere(['like', 'LOWER(patronymic)', mb_strtolower($this->patronymic)]);
+        }
+    }
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterPosition(ActiveQuery $query) {
+        if (!empty($this->position)) {
+            $query->andWhere(['like', 'LOWER(positionWork.name)', mb_strtolower($this->position)]);
+        }
+    }
+
+    /**
+     * @param ActiveQuery $query
+     * @return void
+     */
+    private function filterOrganized(ActiveQuery $query) {
+        if (!empty($this->organized)) {
+            $query->andWhere(['or',
+                ['like', 'LOWER(companyWork.name)', mb_strtolower($this->organized)],
+                ['like', 'LOWER(companyWork.short_name)', mb_strtolower($this->organized)]
+            ]);
+        }
     }
 }

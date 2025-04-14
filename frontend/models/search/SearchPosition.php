@@ -2,9 +2,7 @@
 
 namespace frontend\models\search;
 
-
 use common\components\interfaces\SearchInterfaces;
-use common\helpers\search\SearchFieldHelper;
 use frontend\models\work\dictionaries\PositionWork;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;

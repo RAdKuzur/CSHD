@@ -425,7 +425,9 @@ class OrderTrainingService
                     $deleteOrderParticipant = $this->orderTrainingGroupParticipantRepository->getUnique($deleteParticipant, $model->id);
                     if ($this->isPossibleToDeleteOrderTrainingGroupParticipant($deleteOrderParticipant->training_group_participant_in_id)) {
                         $visit = $this->visitRepository->getByTrainingGroupParticipant($deleteOrderParticipant->training_group_participant_in_id);
-                        $this->visitRepository->delete($visit);
+                        if($visit) {
+                            $this->visitRepository->delete($visit);
+                        }
                         $newTrainingGroupParticipant = $this->trainingGroupParticipantRepository->get($deleteOrderParticipant->training_group_participant_in_id);
                         $model->recordEvent(new DeleteOrderTrainingGroupParticipantEvent($deleteParticipant, $deleteOrderParticipant->training_group_participant_in_id, $model->id), OrderTrainingGroupParticipantWork::class);
                         $model->recordEvent(new DeleteTrainingGroupParticipantEvent($newTrainingGroupParticipant->id), TrainingGroupParticipantWork::class);

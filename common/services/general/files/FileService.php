@@ -51,7 +51,6 @@ class FileService
      */
     public function uploadFile(UploadedFile $file, $filename, $params = '')
     {
-        var_dump('OK!!!');
         if (array_key_exists('filepath', $params)) {
             $finalPath = $params['filepath'];
         }

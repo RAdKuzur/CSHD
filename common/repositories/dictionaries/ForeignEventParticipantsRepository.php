@@ -76,7 +76,7 @@ class ForeignEventParticipantsRepository
     }
     public function getAll()
     {
-        return ForeignEventParticipantsWork::find()->all();
+        return ForeignEventParticipantsWork::find()->orderBy(['surname' => SORT_ASC, 'firstname' => SORT_ASC, 'patronymic' => SORT_ASC])->all();
     }
     public function delete(ForeignEventParticipantsWork $participant)
     {

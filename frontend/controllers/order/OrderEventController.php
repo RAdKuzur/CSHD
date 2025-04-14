@@ -140,7 +140,8 @@ class OrderEventController extends DocumentController
         ]);
     }
 
-    public function actionCreate() {
+    public function actionCreate()
+    {
         $form = new OrderEventBuilderForm(
             new OrderEventForm(),
             $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO),

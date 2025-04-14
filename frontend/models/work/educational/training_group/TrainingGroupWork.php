@@ -156,13 +156,13 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
         return '<div class=flexx>' . $this->number . ' ' . $this->getRawArchive() . '</div>';
     }
 
-    public function generateNumber(PeopleWork $teacher)
+    public function generateNumber(?PeopleWork $teacher)
     {
         $level = $this->trainingProgramWork->level;
         $level++;
         $thematicDirection = $this->trainingProgramWork->thematic_direction ? Yii::$app->thematicDirection->getAbbreviation($this->trainingProgramWork->thematic_direction) : '';
         $date = DateFormatter::format($this->start_date, DateFormatter::Ymd_dash, DateFormatter::Ymd_without_separator);
-        $teacherCode = $teacher->short;
+        $teacherCode = $teacher ? $teacher->short : '';
         $addCode = 1;
 
         if ($this->id) {

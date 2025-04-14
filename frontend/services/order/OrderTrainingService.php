@@ -4,9 +4,14 @@ namespace frontend\services\order;
 
 use common\helpers\StringFormatter;
 use common\repositories\dictionaries\ForeignEventParticipantsRepository;
+use common\repositories\educational\TrainingGroupLessonRepository;
+use common\repositories\educational\VisitRepository;
 use frontend\events\educational\training_group\CreateOrderTrainingGroupParticipantEvent;
 use frontend\events\educational\training_group\DeleteOrderTrainingGroupParticipantEvent;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
+use frontend\models\work\educational\journal\VisitLesson;
+use frontend\models\work\educational\journal\VisitWork;
+use frontend\models\work\educational\training_group\TrainingGroupLessonWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\general\OrderPeopleWork;
 use frontend\models\work\order\DocumentOrderWork;
@@ -35,6 +40,8 @@ class OrderTrainingService
     private OrderMainFileNameGenerator $filenameGenerator;
 
     private TrainingGroupParticipantRepository $trainingGroupParticipantRepository;
+    private TrainingGroupLessonRepository $lessonRepository;
+    private VisitRepository $visitRepository;
     private TrainingGroupRepository $trainingGroupRepository;
     private OrderTrainingGroupParticipantRepository $orderTrainingGroupParticipantRepository;
     private ForeignEventParticipantsRepository $foreignEventParticipantsRepository;
@@ -42,6 +49,8 @@ class OrderTrainingService
         FileService $fileService,
         OrderMainFileNameGenerator $filenameGenerator,
         TrainingGroupParticipantRepository $trainingGroupParticipantRepository,
+        TrainingGroupLessonRepository $lessonRepository,
+        VisitRepository $visitRepository,
         TrainingGroupRepository $trainingGroupRepository,
         OrderTrainingGroupParticipantRepository $orderTrainingGroupParticipantRepository,
         ForeignEventParticipantsRepository $foreignEventParticipantsRepository
@@ -51,6 +60,8 @@ class OrderTrainingService
         $this->fileService = $fileService;
         $this->filenameGenerator = $filenameGenerator;
         $this->trainingGroupParticipantRepository = $trainingGroupParticipantRepository;
+        $this->lessonRepository = $lessonRepository;
+        $this->visitRepository = $visitRepository;
         $this->trainingGroupRepository = $trainingGroupRepository;
         $this->orderTrainingGroupParticipantRepository = $orderTrainingGroupParticipantRepository;
         $this->foreignEventParticipantsRepository = $foreignEventParticipantsRepository;
@@ -177,7 +188,7 @@ class OrderTrainingService
     public function createOrderTrainingGroupParticipantEvent(OrderTrainingWork $model, $status, $post){
         $participantIds = $post['group-participant-selection'];
         $error = false;
-        if($status == NomenclatureDictionary::ORDER_ENROLL) {
+        if ($status == NomenclatureDictionary::ORDER_ENROLL) {
             if ($participantIds != NULL) {
                 foreach ($participantIds as $participantId) {
                     if ($this->compareDate($model, $status, $participantId)) {
@@ -191,7 +202,7 @@ class OrderTrainingService
                 }
             }
         }
-        if($status == NomenclatureDictionary::ORDER_DEDUCT) {
+        if ($status == NomenclatureDictionary::ORDER_DEDUCT) {
             if ($participantIds != NULL) {
                 foreach ($participantIds as $participantId) {
                     if ($this->compareDate($model, $status, $participantId)) {
@@ -205,11 +216,11 @@ class OrderTrainingService
                 }
             }
         }
-        if($status == NomenclatureDictionary::ORDER_TRANSFER) {
+        if ($status == NomenclatureDictionary::ORDER_TRANSFER) {
             $transferGroupIds = $post['transfer-group'];
-            if($participantIds != NULL){
+            if ($participantIds != NULL){
                 foreach ($participantIds as $participantId) {
-                    if($transferGroupIds[$participantId] != NULL && $this->compareDate($model, $status, $participantId)) {
+                    if ($transferGroupIds[$participantId] != NULL && $this->compareDate($model, $status, $participantId)) {
                         if (!$this->isPossibleToInsertTrainingGroupParticipant($transferGroupIds[$participantId], ($this->trainingGroupParticipantRepository->get($participantId))->participant_id)) {
                             $newTrainingGroupParticipant = TrainingGroupParticipantWork::fill(
                                 $transferGroupIds[$participantId],
@@ -222,6 +233,24 @@ class OrderTrainingService
                                 OrderTrainingWork::class);
                             //update old TrainingGroupParticipant
                             $this->trainingGroupParticipantRepository->setStatus($participantId, $status - 1);
+
+                            // Создаем новые записи в журнале (visits)
+                            /** @var TrainingGroupLessonWork[] $lessons */
+                            $lessons = $this->lessonRepository->getLessonsFromGroup($newTrainingGroupParticipant->training_group_id);
+                            // Конвертируем занятия
+                            $newLessons = [];
+                            foreach ($lessons as $lesson) {
+                                $newLessons[] = new VisitLesson(
+                                    $lesson->id,
+                                    VisitWork::NONE,
+                                    $this->lessonRepository->get($lesson->id)
+                                );
+                            }
+                            $visit = VisitWork::fill(
+                                $newTrainingGroupParticipant->id,
+                                TrainingGroupLessonWork::convertLessonsToJson($newLessons) ? : ''
+                            );
+                            $this->visitRepository->save($visit);
                         }
                         else {
                             $error = DocumentOrderWork::ERROR_RELATION;
@@ -230,6 +259,8 @@ class OrderTrainingService
                     else {
                         $error = DocumentOrderWork::ERROR_DATE_PARTICIPANT;
                     }
+
+
                 }
             }
         }

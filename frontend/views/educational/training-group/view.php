@@ -118,7 +118,7 @@ $this->params['breadcrumbs'][] = 'Группа '.$this->title;
                     Yii::$app->frontUrls::CERTIFICATE_SEND_ALL,
                     ButtonsFormatter::BTN_SUCCESS,
                     '',
-                    ButtonsFormatter::createParameterLink($model->id)),
+                    ButtonsFormatter::createParameterLink($model->id, 'groupId')),
             );
             echo HtmlBuilder::createGroupButton($links);
             ?>

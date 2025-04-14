@@ -424,10 +424,13 @@ class OrderTrainingService
                 foreach ($deleteParticipants as $deleteParticipant) {
                     $deleteOrderParticipant = $this->orderTrainingGroupParticipantRepository->getUnique($deleteParticipant, $model->id);
                     if ($this->isPossibleToDeleteOrderTrainingGroupParticipant($deleteOrderParticipant->training_group_participant_in_id)) {
+                        $visit = $this->visitRepository->getByTrainingGroupParticipant($deleteOrderParticipant->training_group_participant_in_id);
+                        $this->visitRepository->delete($visit);
                         $newTrainingGroupParticipant = $this->trainingGroupParticipantRepository->get($deleteOrderParticipant->training_group_participant_in_id);
                         $model->recordEvent(new DeleteOrderTrainingGroupParticipantEvent($deleteParticipant, $deleteOrderParticipant->training_group_participant_in_id, $model->id), OrderTrainingGroupParticipantWork::class);
                         $model->recordEvent(new DeleteTrainingGroupParticipantEvent($newTrainingGroupParticipant->id), TrainingGroupParticipantWork::class);
                         $this->trainingGroupParticipantRepository->setStatus($deleteOrderParticipant->training_group_participant_out_id, NomenclatureDictionary::ORDER_ENROLL);
+
                     }
                     else {
                         $error = DocumentOrderWork::ERROR_RELATION;

@@ -18,6 +18,7 @@ use frontend\models\work\educational\training_program\TrainingProgramWork;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\general\OrderPeopleWork;
 use frontend\models\work\general\PeoplePositionCompanyBranchWork;
+use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\team\ActParticipantWork;
 use frontend\models\work\team\SquadParticipantWork;
@@ -872,8 +873,7 @@ class WordCreator
         $cell = $table->addCell(1000);
         $cell->addText('1', array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(4000);
-        $posOne = $pos->where(['people_id' => $order->executor_id])->one();
-        $cell->addText($order->executor->getFIO(PersonInterface::FIO_SURNAME_INITIALS) . '. ', array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
+        $cell->addText($order->executor->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(3000);
         $cell->addText(mb_strtolower(mb_substr($order->executor->positionWork->name, 0, 1)) . mb_substr($order->executor->positionWork->name, 1), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(10000);
@@ -891,10 +891,10 @@ class WordCreator
         $cell = $table->addCell(1000);
         $cell->addText('2', array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(4000);
-        $posOne = $pos->where(['people_id' => $order->bring_id])->one();
-        $cell->addText($order->bring->getFIO(PersonInterface::FIO_SURNAME_INITIALS) . '. ', array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
+        //$posOne = PeopleStampWork::find()->where(['id' => $order->bring_id])->one();
+        $cell->addText($order->bring->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(4000);
-        $cell->addText(mb_strtolower(mb_substr($posOne->position->name, 0, 1)) . mb_substr($posOne->position->name, 1), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
+        $cell->addText(mb_strtolower(mb_substr($order->bring->positionWork->name, 0, 1)) . mb_substr($order->bring->positionWork->name, 1), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(9000);
         $text = '- своевременное ознакомление ';
         if ($countTeacher == 1)

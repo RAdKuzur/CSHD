@@ -447,6 +447,23 @@ class OrderTrainingService
                             $this->trainingGroupParticipantRepository->save($newTrainingGroupParticipant);
                             $model->recordEvent(new CreateOrderTrainingGroupParticipantEvent($createParticipant, $newTrainingGroupParticipant->id, $model->id), OrderTrainingGroupParticipantWork::class);
                             $this->trainingGroupParticipantRepository->setStatus($createParticipant, $status - 1);
+                            // Создаем новые записи в журнале (visits)
+                            /** @var TrainingGroupLessonWork[] $lessons */
+                            $lessons = $this->lessonRepository->getLessonsFromGroup($newTrainingGroupParticipant->training_group_id);
+                            // Конвертируем занятия
+                            $newLessons = [];
+                            foreach ($lessons as $lesson) {
+                                $newLessons[] = new VisitLesson(
+                                    $lesson->id,
+                                    VisitWork::NONE,
+                                    $this->lessonRepository->get($lesson->id)
+                                );
+                            }
+                            $visit = VisitWork::fill(
+                                $newTrainingGroupParticipant->id,
+                                TrainingGroupLessonWork::convertLessonsToJson($newLessons) ? : ''
+                            );
+                            $this->visitRepository->save($visit);
                         }
                         else {
                             $error = DocumentOrderWork::ERROR_RELATION;

@@ -1,31 +1,29 @@
 <?php
 
-use yii\helpers\Html;
+use common\helpers\html\HtmlBuilder;
+use common\helpers\search\SearchFieldHelper;
+use frontend\models\search\SearchCompany;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\SearchCompany */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $searchModel SearchCompany */
 ?>
 
-<!--<div class="company-search">
 
-    <?php /*$form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); */?>
+<?php $form = ActiveForm::begin([
+    'action' => ['index'], // Действие контроллера для обработки поиска
+    'method' => 'get', // Метод GET для передачи параметров в URL
+    'options' => ['data-pjax' => true], // Для использования Pjax
+]); ?>
 
-    <?php /*= $form->field($model, 'id') */?>
+<?php
 
-    <?php /*= $form->field($model, 'company_type_id') */?>
+$searchFields = array_merge(
+    SearchFieldHelper::textField('inn', 'ИНН', 'ИНН'),
+    SearchFieldHelper::textField('name' , 'Полное или краткое наименование', 'Полное или краткое наименование'),
+    SearchFieldHelper::dropdownField('type', 'Тип организации', Yii::$app->companyType->getList(), 'Тип организации'),
+    SearchFieldHelper::dropdownField('is_contractor', 'Контрагент', $searchModel::CONTRACTOR , 'Контрагент'),
+);
 
-    <?php /*= $form->field($model, 'name') */?>
+echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 2, Yii::$app->frontUrls::COMPANY_INDEX); ?>
 
-    <div class="form-group">
-        <?php /*= Html::submitButton('Search', ['class' => 'btn btn-primary']) */?>
-        <?php /*= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) */?>
-    </div>
-
-    <?php /*ActiveForm::end(); */?>
-
-</div>-->
+<?php ActiveForm::end(); ?>

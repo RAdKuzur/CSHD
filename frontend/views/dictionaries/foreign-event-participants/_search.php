@@ -18,12 +18,12 @@ use yii\widgets\ActiveForm;
 $searchFields = array_merge(
     SearchFieldHelper::textField('participantSurname' , 'Фамилия участника деятельности', 'Фамилия участника деятельности'),
     SearchFieldHelper::textField('participantName' , 'Имя участника деятельности', 'Имя участника деятельности'),
-    SearchFieldHelper::textField('participantPatronymic' , 'Имя участника деятельности', 'Имя участника деятельности'),
+    SearchFieldHelper::textField('participantPatronymic' , 'Отчество участника деятельности', 'Отчество участника деятельности'),
     SearchFieldHelper::dropdownField('branch', 'Отдел обучения', Yii::$app->branches->getOnlyEducational(), 'Все отделы'),
     SearchFieldHelper::dropdownField('restrictions', 'Ограничения ПД', $searchModel::RESTRICTIONS),
     SearchFieldHelper::dropdownField('incorrect', 'Некорректные данные', $searchModel::INCORRECT)
 );
 
-echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 2, Yii::$app->frontUrls::PARTICIPANT_INDEX); ?>
+echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::PARTICIPANT_INDEX); ?>
 
 <?php ActiveForm::end(); ?>

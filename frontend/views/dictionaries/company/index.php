@@ -57,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['searchModel' => $searchModel]); ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

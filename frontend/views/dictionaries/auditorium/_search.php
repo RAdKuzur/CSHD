@@ -1,39 +1,30 @@
 <?php
 
-use yii\helpers\Html;
+use common\helpers\html\HtmlBuilder;
+use common\helpers\search\SearchFieldHelper;
+use frontend\models\search\SearchAuditorium;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\SearchAuditorium */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $searchModel SearchAuditorium */
 ?>
 
-<!--<div class="auditorium-search">
+<?php $form = ActiveForm::begin([
+    'action' => ['index'], // Действие контроллера для обработки поиска
+    'method' => 'get', // Метод GET для передачи параметров в URL
+    'options' => ['data-pjax' => true], // Для использования Pjax
+]); ?>
 
-    <?php /*$form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); */?>
+<?php
 
-    <?php /*= $form->field($model, 'id') */?>
+$searchFields = array_merge(
+    SearchFieldHelper::textField('globalNumber', 'Глобальный номер', 'Глобальный номер'),
+    SearchFieldHelper::textField('name' , 'Имя', 'Имя'),
+    SearchFieldHelper::textField('square', 'Площадь', 'Площадь'),
+    SearchFieldHelper::dropdownField('type', 'Тип помещения', Yii::$app->auditoriumType->getList(), 'Тип помещения'),
+    SearchFieldHelper::dropdownField('is_education', 'Для образовательной деятельности', $searchModel::EDUCATIONAL , 'Для образовательной деятельности'),
+    SearchFieldHelper::dropdownField('branch', 'Отдел', Yii::$app->branches->getList(), 'Отдел'),
+);
 
-    <?php /*= $form->field($model, 'name') */?>
+echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::AUDITORIUM_INDEX); ?>
 
-    <?php /*= $form->field($model, 'square') */?>
-
-    <?php /*= $form->field($model, 'text') */?>
-
-    <?php /*= $form->field($model, 'files') */?>
-
-    <?php /*// echo $form->field($model, 'is_education') */?>
-
-    <?php /*// echo $form->field($model, 'branch_id') */?>
-
-    <div class="form-group">
-        <?php /*= Html::submitButton('Search', ['class' => 'btn btn-primary']) */?>
-        <?php /*= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) */?>
-    </div>
-
-    <?php /*ActiveForm::end(); */?>
-
-</div>-->
+<?php ActiveForm::end(); ?>

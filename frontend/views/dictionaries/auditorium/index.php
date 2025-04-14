@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['searchModel' => $searchModel]); ?>
 
     <div style="margin-bottom: 10px">
 

@@ -51,6 +51,7 @@ class FileService
      */
     public function uploadFile(UploadedFile $file, $filename, $params = '')
     {
+        var_dump('OK!!!');
         if (array_key_exists('filepath', $params)) {
             $finalPath = $params['filepath'];
         }
@@ -62,7 +63,7 @@ class FileService
         }
 
         // тут будет стратегия для загрузки на яндекс диск... потом
-        var_dump('OK!!!');
+
         if ($file) {
             $file->saveAs(Yii::$app->basePath . $finalPath . $filename);
             if ($file->size > self::FILE_LIMIT){

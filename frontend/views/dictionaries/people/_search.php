@@ -1,37 +1,29 @@
 <?php
 
-use yii\helpers\Html;
+use common\helpers\html\HtmlBuilder;
+use common\helpers\search\SearchFieldHelper;
+use frontend\models\search\SearchPeople;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\SearchPeople */
-/* @var $form yii\widgets\ActiveForm */
+/* @var $searchModel SearchPeople */
 ?>
 
-<!--<div class="people-search">
+<?php $form = ActiveForm::begin([
+    'action' => ['index'], // Действие контроллера для обработки поиска
+    'method' => 'get', // Метод GET для передачи параметров в URL
+    'options' => ['data-pjax' => true], // Для использования Pjax
+]); ?>
 
-    <?php /*$form = ActiveForm::begin([
-        'action' => ['index'],
-        'method' => 'get',
-    ]); */?>
+<?php
 
-    <?/*= $form->field($model, 'id') */?>
+$searchFields = array_merge(
+    SearchFieldHelper::textField('surname', 'Фамилия', 'Фамилия'),
+    SearchFieldHelper::textField('name' , 'Имя', 'Имя'),
+    SearchFieldHelper::textField('patronymic', 'Отчетство', 'Отчетство'),
+    SearchFieldHelper::textField('organized', 'Должность', 'Должность'),
+    SearchFieldHelper::textField('position', 'Организация', 'Организация'),
+);
 
-    <?/*= $form->field($model, 'firstname') */?>
+echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::PEOPLE_INDEX); ?>
 
-    <?/*= $form->field($model, 'secondname') */?>
-
-    <?/*= $form->field($model, 'patronymic') */?>
-
-    <?/*= $form->field($model, 'company_id') */?>
-
-    <?php /*// echo $form->field($model, 'position_id') */?>
-
-    <div class="form-group">
-        <?/*= Html::submitButton('Search', ['class' => 'btn btn-primary']) */?>
-        <?/*= Html::resetButton('Reset', ['class' => 'btn btn-outline-secondary']) */?>
-    </div>
-
-    <?php /*ActiveForm::end(); */?>
-
-</div>-->
+<?php ActiveForm::end(); ?>

@@ -41,19 +41,11 @@ class PbacGroupAccess implements PbacComponentInterface
 
         if (!$accessAllGroups) {
             if ($accessBranchGroups) {
-                $query1 = $this->groupBuilder->filterGroupsByBranches($query, $this->data->branches);
+                $query = $this->groupBuilder->filterGroupsByBranches($query, $this->data->branches);
             }
             if ($accessTheirGroups) {
                 $stampsId = ArrayHelper::getColumn($this->peopleStampRepository->getByPeopleId($this->data->user->aka), 'id');
-                $query2 = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
-            }
-
-            if (!empty($query1) && !empty($query2)) {
-                $query = $query1->union($query2, true);
-            } elseif (!empty($query1)) {
-                $query = $query1;
-            } elseif (!empty($query2)) {
-                $query = $query2;
+                $query = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
             }
         }
 

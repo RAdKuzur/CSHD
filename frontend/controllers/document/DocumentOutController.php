@@ -153,7 +153,7 @@ class DocumentOutController extends DocumentController
         if ($this->lockWizard->lockObject($id, DocumentOutWork::tableName(), Yii::$app->user->id)) {
             $model = $this->repository->get($id);
             /** @var DocumentOutWork $model */
-
+            phpinfo();
             $correspondentList = $this->peopleRepository->getOrderedList(SortHelper::ORDER_TYPE_FIO);
             $availablePositions = $this->positionRepository->getList($model->correspondentWork->people_id);
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);

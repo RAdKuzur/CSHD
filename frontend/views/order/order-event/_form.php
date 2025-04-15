@@ -86,6 +86,7 @@ use yii\widgets\DetailView;
             document.getElementById('documentorderwork-supplement-compliance_document').childNodes[0].childNodes[0].checked = true;
         }
         document.getElementsByClassName('form-group field-documentorderwork-foreign_event-is_minpros')[0].childNodes[4].style.color = 'white';
+        console.log('booobs');
         displayDetails();
     }
 

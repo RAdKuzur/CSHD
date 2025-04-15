@@ -64,8 +64,8 @@ use yii\widgets\DetailView;
 
     //let nominations = [];
     //let team = [];
-    let team = [<?php echo json_encode($teams); ?>];
-    let nominations = [<?php echo json_encode($nominations); ?>];
+    let team = [...<?php echo json_encode($teams); ?>];
+    let nominations = [...<?php echo json_encode($nominations); ?>];
     window.onload = function(){
         var actsDiv = document.getElementById('acts');
         var commandsDiv = document.getElementById('commands');

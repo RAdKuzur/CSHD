@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
+    <?= phpinfo(); ?>
     <?= HtmlBuilder::createErrorsBlock(DocumentOutWork::tableName(), $model->id) ?>
     <div class="card">
         <div class="card-block-1">

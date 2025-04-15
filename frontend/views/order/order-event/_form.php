@@ -75,12 +75,12 @@ use yii\widgets\DetailView;
         commandsDiv.style.opacity = '1'; // Восстанавливаем непрозрачность
         console.log(nominations);
         if (nominations != null) {
-            nominations = [...nominations];
+            nominations = Object.values(nominations);
             console.log(nominations);
             FinishNom();
         }
         if (team != null) {
-            team = [...team];
+            team = Object.values(team);
             FinishTeam();
         }
         if (document.getElementById('documentorderwork-order_date').value === '')

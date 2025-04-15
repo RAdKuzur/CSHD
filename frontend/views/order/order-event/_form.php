@@ -64,10 +64,9 @@ use yii\widgets\DetailView;
 
     //let nominations = [];
     //let team = [];
-    let team = <?php echo json_encode($teams); ?>;
-    let nominations = <?php echo json_encode($nominations); ?>;
+    let team = [<?php echo json_encode($teams); ?>];
+    let nominations = [<?php echo json_encode($nominations); ?>];
     window.onload = function(){
-        console.log(nominations);
         var actsDiv = document.getElementById('acts');
         var commandsDiv = document.getElementById('commands');
         actsDiv.style.pointerEvents = 'none'; // Блокируем ввод
@@ -86,7 +85,6 @@ use yii\widgets\DetailView;
             document.getElementById('documentorderwork-supplement-compliance_document').childNodes[0].childNodes[0].checked = true;
         }
         document.getElementsByClassName('form-group field-documentorderwork-foreign_event-is_minpros')[0].childNodes[4].style.color = 'white';
-        console.log('booobs');
         displayDetails();
     }
 
@@ -194,6 +192,7 @@ use yii\widgets\DetailView;
                 option.innerHTML = nominations[i];
                 elem[z].appendChild(option);
             }
+            console.log(nominations);
             if (nominations.includes(value)){
                 elem[z].value = value;
             }

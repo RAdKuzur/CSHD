@@ -274,6 +274,11 @@ div.panel-title {
 .event-create .form-group, .event-update .form-group,
 .local-responsibility-create .form-group, .local-responsibility-create .form-group,
 .training-program-create .form-group, .training-program-update .form-group, .temporary-journal-form .form-group,
-.foreign-event-participants-form .form-group, .foreign-event-form .form-group, .foreign-event-form .col-xs-4 {
+.foreign-event-participants-form .form-group, .foreign-event-form .form-group, .foreign-event-form .col-xs-4,
+.company-form .form-group, .position-form .form-group, .auditorium-form .form-group {
     margin-bottom: 1em;
+}
+
+.people-form .item {
+    margin: 0!important;
 }

@@ -14,7 +14,9 @@ $this->params['breadcrumbs'][] = 'Редактирование';
 ?>
 <div class="auditorium-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="substrate">
+        <h3><?= Html::encode($this->title) ?></h3>
+    </div>
 
     <?= $this->render('_form', [
         'model' => $model,

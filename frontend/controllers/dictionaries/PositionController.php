@@ -47,8 +47,12 @@ class PositionController extends Controller
 
     public function actionView($id)
     {
+        $links = ButtonsFormatter::updateDeleteLinks($id);
+        $buttonHtml = HtmlBuilder::createGroupButton($links);
+
         return $this->render('view', [
             'model' => $this->repository->get($id),
+            'buttonsAct' => $buttonHtml
         ]);
     }
 

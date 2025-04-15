@@ -21,15 +21,8 @@ use yii\widgets\ActiveForm;
 /* @var $modelPeoplePositionBranch PeoplePositionCompanyBranchWork */
 
 ?>
-<style>
-    .bordered-div {
-        border: 2px solid #000; /* Черная рамка */
-        padding: 10px;          /* Отступы внутри рамки */
-        border-radius: 5px;    /* Скругленные углы (по желанию) */
-        margin: 10px 0;        /* Отступы сверху и снизу */
-    }
-</style>
-<div class="people-form">
+
+<div class="people-form field-backing">
 
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
@@ -97,10 +90,7 @@ use yii\widgets\ActiveForm;
                             ])
                             ->label('Должность');
                         ?>
-                    </div>
-                </div>
-                <div class = "form-label">
-                    <div class="panel-body">
+
                         <?php
                         $params = [
                             'id' => 'branch',
@@ -121,9 +111,9 @@ use yii\widgets\ActiveForm;
     </div>
     <div id="orghid" <?= !$model->inMainCompany() ? 'hidden' : '' ?>>
 
-        <?= $form->field($model, 'short')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'short')->textInput(['maxlength' => true])->label('ФИО код') ?>
         <?= $form->field($model, 'genitive_surname')->textInput(['maxlength' => true])->label('Фамилия в обороте "назначить <i>кого</i>"') ?>
-        <?= $form->field($model, 'branch')->dropDownList(Yii::$app->branches->getList(), ['prompt' => '---']); ?>
+        <?= $form->field($model, 'branch')->dropDownList(Yii::$app->branches->getList(), ['prompt' => '---'])->label('Отдел по трудовому договору'); ?>
         <?= $form->field($model, 'birthdate')->widget(DatePicker::class, [
             'dateFormat' => 'php:d.m.Y',
             'language' => 'ru',
@@ -136,18 +126,20 @@ use yii\widgets\ActiveForm;
                 'changeMonth' => true,
                 'changeYear' => true,
                 'yearRange' => '1900:2100',
-            ]]) ?>
+            ]])->label('Дата рождения') ?>
 
-        <?= $form->field($model, 'sex')->radioList(array(
+        <div class="bordered-div checkBlock">
+            <?= $form->field($model, 'sex')->radioList(array(
                 0 => 'Мужской',
                 1 => 'Женский',
                 2 => 'Другое'
-        ), ['value' => $model->sex, 'class' => 'i-checks']) ?>
+            ), ['value' => $model->sex, 'class' => 'i-checks'])->label('Пол') ?>
+        </div>
     </div>
 
 
     <div class="form-group">
-        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

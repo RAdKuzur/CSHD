@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /* @var $otherFiles */
 ?>
 
-<div class="auditorium-form">
+<div class="auditorium-form field-backing">
 
     <?php $form = ActiveForm::begin(['id' => 'some-form1']); ?>
 
@@ -31,8 +31,8 @@ use yii\widgets\ActiveForm;
     }
     ?>
 
-    <?= $form->field($model, 'capacity')->textInput() ?>
-    <?= $form->field($model, 'auditorium_type')->dropDownList(Yii::$app->auditoriumType->getList(), ['prompt' => '---']); ?>
+    <?= $form->field($model, 'capacity')->textInput()->label('Количество рабочих мест для обучающихся') ?>
+    <?= $form->field($model, 'auditorium_type')->dropDownList(Yii::$app->auditoriumType->getList(), ['prompt' => '---'])->label('Тип аудитории'); ?>
 
     </div>
 
@@ -46,7 +46,7 @@ use yii\widgets\ActiveForm;
     <?php endif; ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

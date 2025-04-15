@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <div class="flexx space">
-            <div class="flexx">
+            <div class="flexx flex-wrap">
                 <?= $buttonsAct; ?>
             </div>
             <div class="flexx">

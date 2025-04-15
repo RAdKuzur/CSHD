@@ -67,4 +67,18 @@
     .index-card:nth-child(2) {
         margin-top: 2em;
     }
+
+    .icon-button {
+        flex-basis: calc(50% - 1em);
+        margin-bottom: 0.5em!important;
+        font-size: 0.85em;
+    }
+
+    .button-icon {
+        margin-bottom: 0.5em!important;
+    }
+
+    .flexx {
+        flex-wrap: wrap;
+    }
 }

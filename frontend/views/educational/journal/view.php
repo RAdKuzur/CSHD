@@ -79,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <?= $lesson->getPrettyStatus() ?>
                                 </td>
                             <?php endforeach; ?>
-                            <td style="display: <?= $model->isProjectCertificate() ? 'block' : 'none';?>">
+                            <td class="project-participant" style="display: <?= $model->isProjectCertificate() ? 'block' : 'none';?>">
                                 <?= $participantLesson->groupProjectThemesWork->projectThemeWork->name; ?>
                             </td>
                             <td class="status-participant" style="display: <?= $model->isControlWorkCertificate() ? 'block' : 'none';?>">

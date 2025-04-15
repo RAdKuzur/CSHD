@@ -15,6 +15,7 @@ use app\events\general\OrderPeopleDeleteByIdEvent;
 use app\events\team\TeamNameDeleteEvent;
 use common\components\dictionaries\base\NomenclatureDictionary;
 use common\helpers\DateFormatter;
+use common\helpers\html\HtmlCreator;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\educational\OrderTrainingGroupParticipantRepository;
 use common\repositories\event\ForeignEventRepository;
@@ -168,7 +169,7 @@ class DocumentOrderService
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($scanLinks), $model->id), 'fileId' => ArrayHelper::getColumn($scanLinks, 'id')])
             ]
@@ -181,7 +182,7 @@ class DocumentOrderService
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($docLinks), $model->id), 'fileId' => ArrayHelper::getColumn($docLinks, 'id')])
             ]
@@ -194,7 +195,7 @@ class DocumentOrderService
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($appLinks), $model->id), 'fileId' => ArrayHelper::getColumn($appLinks, 'id')])
             ]

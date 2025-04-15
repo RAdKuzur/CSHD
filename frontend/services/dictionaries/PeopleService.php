@@ -3,6 +3,7 @@
 namespace frontend\services\dictionaries;
 
 use common\helpers\DateFormatter;
+use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\event\ParticipantAchievementRepository;
@@ -171,7 +172,7 @@ class PeopleService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-position'),
                     ['id' => ArrayHelper::getColumn($positionCompanyBranches, 'id'), 'modelId' => array_fill(0, count($positionCompanyBranches), $modelId)])
             ]

@@ -5,6 +5,7 @@ namespace frontend\services\dictionaries;
 use common\helpers\files\filenames\AuditoriumFileNameGenerator;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
 use common\services\DatabaseServiceInterface;
 use common\services\general\files\FileService;
 use frontend\events\general\FileCreateEvent;
@@ -74,7 +75,7 @@ class AuditoriumService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($otherLinks), $model->id), 'fileId' => ArrayHelper::getColumn($otherLinks, 'id')])
             ]

@@ -6,6 +6,7 @@ use common\helpers\ErrorAssociationHelper;
 use common\helpers\files\filenames\DocumentOutFileNameGenerator;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
 use common\repositories\document_in_out\InOutDocumentsRepository;
 use common\services\DatabaseServiceInterface;
 use common\services\general\files\FileService;
@@ -155,7 +156,7 @@ class DocumentOutService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($scanLinks), $model->id), 'fileId' => ArrayHelper::getColumn($scanLinks, 'id')])
             ]
@@ -168,7 +169,7 @@ class DocumentOutService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($docLinks), $model->id), 'fileId' => ArrayHelper::getColumn($docLinks, 'id')])
             ]
@@ -181,7 +182,7 @@ class DocumentOutService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($appLinks), $model->id), 'fileId' => ArrayHelper::getColumn($appLinks, 'id')])
             ]

@@ -3,6 +3,7 @@
 namespace frontend\services\act_participant;
 
 use common\helpers\ErrorAssociationHelper;
+use common\helpers\html\HtmlCreator;
 use common\repositories\general\PeopleStampRepository;
 use common\services\general\PeopleStampService;
 use frontend\models\work\event\ForeignEventWork;
@@ -235,11 +236,11 @@ class ActParticipantService
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Редактировать',
+                    HtmlCreator::IconUpdate(),
                     Url::to('act'),
                     ['id' => ArrayHelper::getColumn($model, 'id')]),
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('act-delete'),
                     ['id' => ArrayHelper::getColumn($model, 'id')]),
             ]
@@ -255,7 +256,7 @@ class ActParticipantService
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($links), $model->foreignEventWork->order_participant_id), 'fileId' => ArrayHelper::getColumn($links, 'id')])
             ]

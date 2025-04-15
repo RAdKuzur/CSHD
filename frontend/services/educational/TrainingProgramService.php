@@ -160,7 +160,7 @@ class TrainingProgramService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($mainLinks), $model->id), 'fileId' => ArrayHelper::getColumn($mainLinks, 'id')])
             ]
@@ -173,7 +173,7 @@ class TrainingProgramService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($docLinks), $model->id), 'fileId' => ArrayHelper::getColumn($docLinks, 'id')])
             ]
@@ -186,7 +186,7 @@ class TrainingProgramService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($contractLinks), $model->id), 'fileId' => ArrayHelper::getColumn($contractLinks, 'id')])
             ]

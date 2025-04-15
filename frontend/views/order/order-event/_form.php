@@ -39,7 +39,268 @@ use yii\widgets\DetailView;
         margin: 0;
     }
 </style>
+<script>
+    function displayDetails()
+    {
+        var elem = document.getElementById('documentorderwork-supplement-compliance_document').getElementsByTagName('input');
+        var details = document.getElementById('details');
 
+        if (elem[0].checked)
+            details.style.display = "none";
+        else
+            details.style.display = "flex";
+
+        let item = [1, 2, 3];
+        item.forEach((element) => {
+            if (elem[element].checked)
+                details.childNodes[2*element-1].hidden = false;
+            else
+                details.childNodes[2*element-1].hidden = true;
+        });
+    }
+
+    let listId = 'nomDdList'; //айди выпадающего списка, в который будут добавлены номинации
+    let listId2 = 'teamDdList'; //айди выпадающего списка, в который будут добавлены команды
+
+    //let nominations = [];
+    //let team = [];
+    let team = <?php echo json_encode($teams); ?>;
+    let nominations = <?php echo json_encode($nominations); ?>;
+    window.onload = function(){
+        var actsDiv = document.getElementById('acts');
+        var commandsDiv = document.getElementById('commands');
+        actsDiv.style.pointerEvents = 'none'; // Блокируем ввод
+        actsDiv.style.opacity = '0.5'; // Уменьшаем непрозрачность
+        commandsDiv.style.pointerEvents = 'auto'; // Разблокируем ввод
+        commandsDiv.style.opacity = '1'; // Восстанавливаем непрозрачность
+        if (nominations != null) {
+            FinishNom();
+        }
+        if (team != null) {
+            FinishTeam();
+        }
+        if (document.getElementById('documentorderwork-order_date').value === '')
+        {
+            document.getElementById('documentorderwork-supplement-foreign_event_goals_id').childNodes[0].childNodes[0].checked = true;
+            document.getElementById('documentorderwork-supplement-compliance_document').childNodes[0].childNodes[0].checked = true;
+        }
+        document.getElementsByClassName('form-group field-documentorderwork-foreign_event-is_minpros')[0].childNodes[4].style.color = 'white';
+        displayDetails();
+    }
+
+    function AddElem(list_row, list_item, arr, list_name)
+    {
+        let item = document.getElementsByClassName(list_row)[0];
+        let itemCopy = item.cloneNode(true)
+        itemCopy.getElementsByClassName(list_item)[0].innerHTML = '<span>' + arr[i] + '</span>'
+        itemCopy.style.display = 'flex';
+
+        let list = document.getElementById(list_name);
+        list.append(itemCopy);
+    }
+
+    function AddNom()
+    {
+        let elem = document.getElementById('nom-name');
+        elem.value = elem.value.replace(/ +/g, ' ').trim();
+
+        if (elem.value !== '' && nominations.indexOf(elem.value) === -1)
+        {
+            nominations.push(elem.value);
+
+            let item = document.getElementsByClassName('nomination-list-row')[0];
+            let itemCopy = item.cloneNode(true)
+            itemCopy.getElementsByClassName('nomination-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
+            itemCopy.style.display = 'flex';
+
+            let list = document.getElementById('list');
+            list.append(itemCopy);
+
+            elem.value = '';
+        }
+        else
+            alert('Вы ввели пустые или повторные данные!');
+        FinishNom();
+    }
+
+    function AddTeam()
+    {
+        let elem = document.getElementById('team-name');
+        elem.value = elem.value.replace(/ +/g, ' ').trim();
+
+        if (elem.value !== '' && team.indexOf(elem.value) === -1)
+        {
+            team.push(elem.value);
+
+            let item = document.getElementsByClassName('team-list-row')[0];
+            let itemCopy = item.cloneNode(true)
+            itemCopy.getElementsByClassName('team-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
+            itemCopy.style.display = 'flex';
+
+            let list = document.getElementById('list2');
+            list.append(itemCopy);
+
+            elem.value = '';
+        }
+        else
+            alert('Вы ввели пустые или повторные данные!');
+
+        FinishTeam();
+    }
+
+    function DelNom(elem)
+    {
+        let orig = elem.parentNode.parentNode;
+
+        let name = elem.parentNode.parentNode.getElementsByClassName('nomination-list-item')[0].childNodes[0].textContent;
+        nominations.splice(nominations.indexOf(name), 1);
+        elem.parentNode.parentNode.parentNode.removeChild(orig);
+
+        FinishNom();
+    }
+
+    function DelTeam(elem)
+    {
+        let orig = elem.parentNode.parentNode;
+
+        let name = elem.parentNode.parentNode.getElementsByClassName('team-list-item')[0].childNodes[0].textContent;
+        team.splice(team.indexOf(name), 1);
+        elem.parentNode.parentNode.parentNode.removeChild(orig);
+
+        FinishTeam();
+    }
+
+    function FinishNom()
+    {
+        let elem = document.getElementsByClassName(listId);
+        for (let z = 0; z < elem.length; z++)
+        {
+            let value = null;
+            if(elem[z].options.selectedIndex !== 0){
+                value = elem[z].options[elem[z].selectedIndex].value;
+            }
+            while (elem[z].options.length) {
+                elem[z].options[0] = null;
+            }
+
+            elem[z].appendChild(new Option("--", 'NULL'));
+
+            for (let i = 0; i < nominations.length; i++)
+            {
+                var option = document.createElement('option');
+                option.value = nominations[i];
+                option.innerHTML = nominations[i];
+                elem[z].appendChild(option);
+            }
+            if (nominations.includes(value)){
+                elem[z].value = value;
+            }
+        }
+    }
+
+    function FinishTeam()
+    {
+        let elem = document.getElementsByClassName(listId2);
+
+        for (let z = 0; z < elem.length; z++)
+        {
+            let value = null;
+            if(elem[z].options.selectedIndex !== 0){
+                value = elem[z].options[elem[z].selectedIndex].value;
+            }
+            while (elem[z].options.length) {
+                elem[z].options[0] = null;
+            }
+
+            elem[z].appendChild(new Option("--", 'NULL'));
+
+            for (let i = 0; i < team.length; i++)
+            {
+                var option = document.createElement('option');
+                option.value = team[i];
+                option.innerHTML = team[i];
+                elem[z].appendChild(option);
+            }
+            if (team.includes(value)){
+                elem[z].value = value;
+            }
+        }
+    }
+
+    function NextStep()
+    {
+        let foreign = document.getElementById('foreign-block');
+        let nom = document.getElementById('nom-team-block');
+        let btn = document.getElementById('nextBtn');
+
+        foreign.disabled = !foreign.disabled;
+        nom.disabled = !nom.disabled;
+        if (foreign.disabled === false)
+        {
+            foreign.style.filter = 'blur(0px)';
+            nom.style.filter = 'blur(1px)';
+            btn.innerHTML = 'Вернуться к заполнению номинаций и команд';
+        }
+        else
+        {
+            nom.style.filter = 'blur(0px)';
+            foreign.style.filter = 'blur(1px)';
+            btn.innerHTML = 'Перейти к заполнению участников мероприятия';
+        }
+    }
+
+    function NewPart()
+    {
+        let nom = document.getElementsByClassName(listId);
+        let teams = document.getElementsByClassName(listId2);
+        let item = teams.length - 1;    // добавляем только новым участникам команды и номинации
+
+        while (teams[item].options.length) {
+            teams[item].options[0] = null;
+        }
+
+        while (nom[item].options.length) {
+            nom[item].options[0] = null;
+        }
+
+        teams[item].appendChild(new Option("--", 'NULL'));
+        nom[item].appendChild(new Option("--", 'NULL'));
+
+        for (let i = 0; i < team.length; i++)
+        {
+            var option = document.createElement('option');
+            option.value = team[i];
+            option.innerHTML = team[i];
+            teams[item].appendChild(option);
+        }
+
+        for (let i = 0; i < nominations.length; i++)
+        {
+            var option = document.createElement('option');
+            option.value = nominations[i];
+            option.innerHTML = nominations[i];
+            nom[item].appendChild(option);
+        }
+    }
+
+    function ClickBranch(elem, index)
+    {
+        if (index === 4)
+        {
+            let parent = elem.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
+            let childs = parent.querySelectorAll('.col-xs-4');
+            let first_gen = childs[1].querySelectorAll('.form-group');
+            let second_gen = first_gen[3].querySelectorAll('.form-control');
+            if (second_gen[0].hasAttribute('disabled'))
+                second_gen[0].removeAttribute('disabled');
+            else
+            {
+                second_gen[0].value = 1;
+                second_gen[0].setAttribute('disabled', 'disabled');
+            }
+        }
+    }
+</script>
 
 <div class="order-event-form field-backing">
     <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
@@ -521,268 +782,6 @@ use yii\widgets\DetailView;
     </div>
 </div>
 
-<script>
-    function displayDetails()
-    {
-        var elem = document.getElementById('documentorderwork-supplement-compliance_document').getElementsByTagName('input');
-        var details = document.getElementById('details');
-
-        if (elem[0].checked)
-            details.style.display = "none";
-        else
-            details.style.display = "flex";
-
-        let item = [1, 2, 3];
-        item.forEach((element) => {
-            if (elem[element].checked)
-                details.childNodes[2*element-1].hidden = false;
-            else
-                details.childNodes[2*element-1].hidden = true;
-        });
-    }
-
-    let listId = 'nomDdList'; //айди выпадающего списка, в который будут добавлены номинации
-    let listId2 = 'teamDdList'; //айди выпадающего списка, в который будут добавлены команды
-
-    //let nominations = [];
-    //let team = [];
-    let team = <?php echo json_encode($teams); ?>;
-    let nominations = <?php echo json_encode($nominations); ?>;
-    window.onload = function(){
-        var actsDiv = document.getElementById('acts');
-        var commandsDiv = document.getElementById('commands');
-        actsDiv.style.pointerEvents = 'none'; // Блокируем ввод
-        actsDiv.style.opacity = '0.5'; // Уменьшаем непрозрачность
-        commandsDiv.style.pointerEvents = 'auto'; // Разблокируем ввод
-        commandsDiv.style.opacity = '1'; // Восстанавливаем непрозрачность
-        if (nominations != null) {
-            FinishNom();
-        }
-        if (team != null) {
-            FinishTeam();
-        }
-        if (document.getElementById('documentorderwork-order_date').value === '')
-        {
-            document.getElementById('documentorderwork-supplement-foreign_event_goals_id').childNodes[0].childNodes[0].checked = true;
-            document.getElementById('documentorderwork-supplement-compliance_document').childNodes[0].childNodes[0].checked = true;
-        }
-        document.getElementsByClassName('form-group field-documentorderwork-foreign_event-is_minpros')[0].childNodes[4].style.color = 'white';
-        displayDetails();
-    }
-
-    function AddElem(list_row, list_item, arr, list_name)
-    {
-        let item = document.getElementsByClassName(list_row)[0];
-        let itemCopy = item.cloneNode(true)
-        itemCopy.getElementsByClassName(list_item)[0].innerHTML = '<span>' + arr[i] + '</span>'
-        itemCopy.style.display = 'flex';
-
-        let list = document.getElementById(list_name);
-        list.append(itemCopy);
-    }
-
-    function AddNom()
-    {
-        let elem = document.getElementById('nom-name');
-        elem.value = elem.value.replace(/ +/g, ' ').trim();
-
-        if (elem.value !== '' && nominations.indexOf(elem.value) === -1)
-        {
-            nominations.push(elem.value);
-
-            let item = document.getElementsByClassName('nomination-list-row')[0];
-            let itemCopy = item.cloneNode(true)
-            itemCopy.getElementsByClassName('nomination-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
-            itemCopy.style.display = 'flex';
-
-            let list = document.getElementById('list');
-            list.append(itemCopy);
-
-            elem.value = '';
-        }
-        else
-            alert('Вы ввели пустые или повторные данные!');
-        FinishNom();
-    }
-
-    function AddTeam()
-    {
-        let elem = document.getElementById('team-name');
-        elem.value = elem.value.replace(/ +/g, ' ').trim();
-
-        if (elem.value !== '' && team.indexOf(elem.value) === -1)
-        {
-            team.push(elem.value);
-
-            let item = document.getElementsByClassName('team-list-row')[0];
-            let itemCopy = item.cloneNode(true)
-            itemCopy.getElementsByClassName('team-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
-            itemCopy.style.display = 'flex';
-
-            let list = document.getElementById('list2');
-            list.append(itemCopy);
-
-            elem.value = '';
-        }
-        else
-            alert('Вы ввели пустые или повторные данные!');
-
-        FinishTeam();
-    }
-
-    function DelNom(elem)
-    {
-        let orig = elem.parentNode.parentNode;
-
-        let name = elem.parentNode.parentNode.getElementsByClassName('nomination-list-item')[0].childNodes[0].textContent;
-        nominations.splice(nominations.indexOf(name), 1);
-        elem.parentNode.parentNode.parentNode.removeChild(orig);
-
-        FinishNom();
-    }
-
-    function DelTeam(elem)
-    {
-        let orig = elem.parentNode.parentNode;
-
-        let name = elem.parentNode.parentNode.getElementsByClassName('team-list-item')[0].childNodes[0].textContent;
-        team.splice(team.indexOf(name), 1);
-        elem.parentNode.parentNode.parentNode.removeChild(orig);
-
-        FinishTeam();
-    }
-
-    function FinishNom()
-    {
-        let elem = document.getElementsByClassName(listId);
-        for (let z = 0; z < elem.length; z++)
-        {
-            let value = null;
-            if(elem[z].options.selectedIndex !== 0){
-                value = elem[z].options[elem[z].selectedIndex].value;
-            }
-            while (elem[z].options.length) {
-                elem[z].options[0] = null;
-            }
-
-            elem[z].appendChild(new Option("--", 'NULL'));
-
-            for (let i = 0; i < nominations.length; i++)
-            {
-                var option = document.createElement('option');
-                option.value = nominations[i];
-                option.innerHTML = nominations[i];
-                elem[z].appendChild(option);
-            }
-            if (nominations.includes(value)){
-                elem[z].value = value;
-            }
-        }
-    }
-
-    function FinishTeam()
-    {
-        let elem = document.getElementsByClassName(listId2);
-
-        for (let z = 0; z < elem.length; z++)
-        {
-            let value = null;
-            if(elem[z].options.selectedIndex !== 0){
-                value = elem[z].options[elem[z].selectedIndex].value;
-            }
-            while (elem[z].options.length) {
-                elem[z].options[0] = null;
-            }
-
-            elem[z].appendChild(new Option("--", 'NULL'));
-
-            for (let i = 0; i < team.length; i++)
-            {
-                var option = document.createElement('option');
-                option.value = team[i];
-                option.innerHTML = team[i];
-                elem[z].appendChild(option);
-            }
-            if (team.includes(value)){
-                elem[z].value = value;
-            }
-        }
-    }
-
-    function NextStep()
-    {
-        let foreign = document.getElementById('foreign-block');
-        let nom = document.getElementById('nom-team-block');
-        let btn = document.getElementById('nextBtn');
-
-        foreign.disabled = !foreign.disabled;
-        nom.disabled = !nom.disabled;
-        if (foreign.disabled === false)
-        {
-            foreign.style.filter = 'blur(0px)';
-            nom.style.filter = 'blur(1px)';
-            btn.innerHTML = 'Вернуться к заполнению номинаций и команд';
-        }
-        else
-        {
-            nom.style.filter = 'blur(0px)';
-            foreign.style.filter = 'blur(1px)';
-            btn.innerHTML = 'Перейти к заполнению участников мероприятия';
-        }
-    }
-
-    function NewPart()
-    {
-        let nom = document.getElementsByClassName(listId);
-        let teams = document.getElementsByClassName(listId2);
-        let item = teams.length - 1;    // добавляем только новым участникам команды и номинации
-
-        while (teams[item].options.length) {
-            teams[item].options[0] = null;
-        }
-
-        while (nom[item].options.length) {
-            nom[item].options[0] = null;
-        }
-
-        teams[item].appendChild(new Option("--", 'NULL'));
-        nom[item].appendChild(new Option("--", 'NULL'));
-
-        for (let i = 0; i < team.length; i++)
-        {
-            var option = document.createElement('option');
-            option.value = team[i];
-            option.innerHTML = team[i];
-            teams[item].appendChild(option);
-        }
-
-        for (let i = 0; i < nominations.length; i++)
-        {
-            var option = document.createElement('option');
-            option.value = nominations[i];
-            option.innerHTML = nominations[i];
-            nom[item].appendChild(option);
-        }
-    }
-
-    function ClickBranch(elem, index)
-    {
-        if (index === 4)
-        {
-            let parent = elem.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode;
-            let childs = parent.querySelectorAll('.col-xs-4');
-            let first_gen = childs[1].querySelectorAll('.form-group');
-            let second_gen = first_gen[3].querySelectorAll('.form-control');
-            if (second_gen[0].hasAttribute('disabled'))
-                second_gen[0].removeAttribute('disabled');
-            else
-            {
-                second_gen[0].value = 1;
-                second_gen[0].setAttribute('disabled', 'disabled');
-            }
-        }
-    }
-</script>
 <script>
     function checkType(chkBoxName) {
         var participantNumber = chkBoxName.split('-')[1]; // Разделяем строку и берем номер

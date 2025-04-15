@@ -5,6 +5,7 @@ namespace frontend\services\regulation;
 use common\helpers\files\filenames\RegulationFileNameGenerator;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
+use common\helpers\html\HtmlCreator;
 use common\services\DatabaseServiceInterface;
 use common\services\general\files\FileService;
 use frontend\events\general\FileCreateEvent;
@@ -73,7 +74,7 @@ class RegulationService implements DatabaseServiceInterface
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-file'),
                     ['modelId' => array_fill(0, count($scanLinks), $model->id), 'fileId' => ArrayHelper::getColumn($scanLinks, 'id')])
             ]

@@ -4,6 +4,7 @@ namespace frontend\services\order;
 
 use app\events\document_order\DocumentOrderChangeStatusEvent;
 use app\events\RegulationChangeStatusEvent;
+use common\helpers\html\HtmlCreator;
 use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\general\PeopleStampRepository;
 use common\services\general\PeopleStampService;
@@ -94,7 +95,7 @@ class OrderMainService {
             ],
             [
                 HtmlBuilder::createButtonsArray(
-                    'Удалить',
+                    HtmlCreator::IconDelete(),
                     Url::to('delete-document'),
                     ['id' => ArrayHelper::getColumn($expires, 'id'), 'modelId' => array_fill(0, count($expires), $modelId)])
             ]

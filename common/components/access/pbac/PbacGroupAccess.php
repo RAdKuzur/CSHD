@@ -11,6 +11,7 @@ use common\repositories\rubac\UserPermissionFunctionRepository;
 use frontend\models\work\rubac\PermissionFunctionWork;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 class PbacGroupAccess implements PbacComponentInterface
@@ -40,14 +41,22 @@ class PbacGroupAccess implements PbacComponentInterface
 
         if (!$accessAllGroups) {
             if ($accessBranchGroups) {
-                $query = $this->groupBuilder->filterGroupsByBranches($query, $this->data->branches);
+                $query1 = $this->groupBuilder->filterGroupsByBranches($query, $this->data->branches);
             }
             if ($accessTheirGroups) {
                 $stampsId = ArrayHelper::getColumn($this->peopleStampRepository->getByPeopleId($this->data->user->aka), 'id');
-                $query = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
+                $query2 = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
+            }
+
+            if (!empty($query1) && !empty($query2)) {
+                $query = $query1->union($query2, true);
+            } elseif (!empty($query1)) {
+                $query = $query1;
+            } elseif (!empty($query2)) {
+                $query = $query2;
             }
         }
-        
+
         return $query;
     }
 

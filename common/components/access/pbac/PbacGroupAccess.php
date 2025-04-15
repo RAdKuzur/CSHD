@@ -40,15 +40,15 @@ class PbacGroupAccess implements PbacComponentInterface
         $accessAllGroups = $this->permissionFunctionRepository->getByUserPermissionBranch($this->data->user->id, PermissionFunctionWork::PERMISSION_ALL_GROUPS_ID);
 
         if (!$accessAllGroups) {
-            if ($accessBranchGroups) {
-                $query = $this->groupBuilder->filterGroupsByBranches($query, $this->data->branches);
-            }
             if ($accessTheirGroups) {
                 $stampsId = ArrayHelper::getColumn($this->peopleStampRepository->getByPeopleId($this->data->user->aka), 'id');
-                $query = $this->groupBuilder->filterOrGroupsByBranches($query, $stampsId);
+                $query = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
+            }
+            if ($accessBranchGroups) {
+                $query = $this->groupBuilder->filterOrGroupsByBranches($query, $this->data->branches);
             }
         }
-var_dump($query->createCommand()->getRawSql());
+
         return $query;
     }
 

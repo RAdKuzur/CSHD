@@ -48,7 +48,7 @@ class PbacGroupAccess implements PbacComponentInterface
             }
         }
 
-
+var_dump($query->createCommand()->getRawSql());
         return $query;
     }
 

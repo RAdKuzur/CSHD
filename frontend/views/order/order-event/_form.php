@@ -73,10 +73,8 @@ use yii\widgets\DetailView;
         actsDiv.style.opacity = '0.5'; // Уменьшаем непрозрачность
         commandsDiv.style.pointerEvents = 'auto'; // Разблокируем ввод
         commandsDiv.style.opacity = '1'; // Восстанавливаем непрозрачность
-        console.log(nominations);
         if (nominations != null) {
             nominations = Object.values(nominations);
-            console.log(nominations);
             FinishNom();
         }
         if (team != null) {

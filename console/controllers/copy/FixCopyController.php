@@ -154,7 +154,7 @@ class FixCopyController extends Controller
         return $preamble;
     }
     public function actionFixTemp(){
-        $query = Yii::$app->old_db->createCommand("SELECT * FROM temp")->queryAll();
+        $query = Yii::$app->db->createCommand("SELECT * FROM temp")->queryAll();
         foreach ($query as $temp) {
             $id = $temp['id'];
             $model = DocumentOrderWork::findOne($id);

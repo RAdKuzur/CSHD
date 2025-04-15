@@ -225,7 +225,9 @@ class EventService implements DatabaseServiceInterface
     public function attachGroups(EventWork $form, array $modelGroups, int $eventId)
     {
         foreach ($modelGroups as $modelGroup) {
-            $form->recordEvent(new CreateEventGroupEvent($modelGroup->training_group_id, $eventId), EventGroupWork::class);
+            if ($modelGroup->training_group_id != ''){
+                $form->recordEvent(new CreateEventGroupEvent($modelGroup->training_group_id, $eventId), EventGroupWork::class);
+            }
         }
 
         $form->releaseEvents();

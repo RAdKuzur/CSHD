@@ -196,7 +196,7 @@ class JournalForm extends Model
             $partContent = StringFormatter::stringAsLink($participant->getFIO(PersonInterface::FIO_SURNAME_INITIALS),
                 Url::to([Yii::$app->frontUrls::PARTICIPANT_VIEW, 'id' => $participant->id]));
         } else {
-            $partContent = $participant->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+            $partContent = $participant->getFIO(PersonInterface::FIO_FULL);
         }
 
         return HtmlBuilder::createTooltip(

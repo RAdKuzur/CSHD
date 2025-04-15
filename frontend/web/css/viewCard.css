@@ -284,3 +284,8 @@ td.status-block {
     max-height: 4em;
     overflow: auto;
 }
+
+.journal-form td:first-child, .journal-view td:first-child {
+    padding-right: 1em;
+    line-height: 1.2;
+}

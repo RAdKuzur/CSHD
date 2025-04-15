@@ -47,8 +47,7 @@ class PbacGroupAccess implements PbacComponentInterface
                 $query = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
             }
         }
-
-var_dump($query->createCommand()->getRawSql());
+        
         return $query;
     }
 

@@ -67,6 +67,7 @@ use yii\widgets\DetailView;
     let team = <?php echo json_encode($teams); ?>;
     let nominations = <?php echo json_encode($nominations); ?>;
     window.onload = function(){
+        console.log(nominations);
         var actsDiv = document.getElementById('acts');
         var commandsDiv = document.getElementById('commands');
         actsDiv.style.pointerEvents = 'none'; // Блокируем ввод

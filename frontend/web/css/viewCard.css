@@ -255,10 +255,6 @@ a:has(.tooltip-span) {
     margin-top: 1em;
 }
 
-.project-participant {
-    width: 12em;
-}
-
 .project-participant div {
     padding-top: 0.3em;
 }
@@ -285,4 +281,6 @@ td.status-block {
 
 .project-participant {
     width: 25em;
+    max-height: 4em;
+    overflow: auto;
 }

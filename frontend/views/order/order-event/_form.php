@@ -64,8 +64,8 @@ use yii\widgets\DetailView;
 
     //let nominations = [];
     //let team = [];
-    let team = [...<?php echo json_encode($teams); ?>];
-    let nominations = [...<?php echo json_encode($nominations); ?>];
+    let team = <?php echo json_encode($teams); ?>;
+    let nominations = <?php echo json_encode($nominations); ?>;
     window.onload = function(){
         var actsDiv = document.getElementById('acts');
         var commandsDiv = document.getElementById('commands');
@@ -73,10 +73,14 @@ use yii\widgets\DetailView;
         actsDiv.style.opacity = '0.5'; // Уменьшаем непрозрачность
         commandsDiv.style.pointerEvents = 'auto'; // Разблокируем ввод
         commandsDiv.style.opacity = '1'; // Восстанавливаем непрозрачность
+        console.log(nominations);
         if (nominations != null) {
+            nominations = [...nominations];
+            console.log(nominations);
             FinishNom();
         }
         if (team != null) {
+            team = [...team];
             FinishTeam();
         }
         if (document.getElementById('documentorderwork-order_date').value === '')
@@ -192,7 +196,7 @@ use yii\widgets\DetailView;
                 option.innerHTML = nominations[i];
                 elem[z].appendChild(option);
             }
-            console.log(nominations);
+
             if (nominations.includes(value)){
                 elem[z].value = value;
             }

@@ -221,7 +221,7 @@ a:has(.tooltip-span) {
 }
 
 .status-block, .status-active {
-    margin-right: 0.5em;
+    /*margin-right: 0.5em;*/
 }
 
 .icon-button, .button-icon {
@@ -273,4 +273,8 @@ a:has(.tooltip-span) {
     left: 0;
     z-index: 99;
     background: white;
+}
+
+.status-block {
+    background-color: var(--block-color);
 }

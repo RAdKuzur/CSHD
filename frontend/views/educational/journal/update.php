@@ -128,7 +128,7 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
                                 </div>
                             </td>
                             <?php foreach ($participantLesson->lessonIds as $index => $lesson): ?>
-                                <td class="status-participant attendance <?= array_search($lesson->lessonId, $permissionsLessons) ? '' : 'status-block' ?>">
+                                <td class="status-participant attendance <?= in_array($lesson->lessonId, $permissionsLessons, true) ? '' : 'status-block' ?>">
                                     <?= $form->field($lesson, "[$participantLesson->trainingGroupParticipantId][$index]lessonId")
                                         ->hiddenInput(['value' => $lesson->lessonId])
                                         ->label(false) ?>

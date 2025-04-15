@@ -239,19 +239,20 @@ class TrainingGroupCombinedForm extends Model
         $result = [];
         foreach ($this->participants as $participant) {
             /** @var TrainingGroupParticipantWork $participant */
-            $partLink = StringFormatter::stringAsLink($participant->participantWork->getFIO(PersonInterface::FIO_FULL),
-                Url::to([Yii::$app->frontUrls::PARTICIPANT_VIEW, 'id' => $participant->participant_id]));
-            $certificateLink = StringFormatter::stringAsLink($participant->getRawCertificate(),
-                Url::to([Yii::$app->frontUrls::CERTIFICATE_VIEW, 'id' => $participant->certificateWork->id]));
+            if (!is_null($participant->participantWork)){
+                $partLink = StringFormatter::stringAsLink($participant->participantWork->getFIO(PersonInterface::FIO_FULL),
+                    Url::to([Yii::$app->frontUrls::PARTICIPANT_VIEW, 'id' => $participant->participant_id]));
+                $certificateLink = StringFormatter::stringAsLink($participant->getRawCertificate(),
+                    Url::to([Yii::$app->frontUrls::CERTIFICATE_VIEW, 'id' => $participant->certificateWork->id]));
 
-            $result[] = HtmlBuilder::createSubtitleAndClarification(
-                $partLink,
-                ' ' . $participant->participantWork->createRawDisclosurePDProhibited()
-                . ' ' . $participant->getRawStatus()
-                . ' ' . $certificateLink,
-                '');
+                $result[] = HtmlBuilder::createSubtitleAndClarification(
+                    $partLink,
+                    ' ' . $participant->participantWork->createRawDisclosurePDProhibited()
+                    . ' ' . $participant->getRawStatus()
+                    . ' ' . $certificateLink,
+                    '');
+            }
         }
-
         return HtmlBuilder::arrayToAccordion($result);
     }
 

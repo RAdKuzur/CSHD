@@ -990,7 +990,7 @@ class WordCreator
 
         $section->addTextBreak(1);
         $countPasta = $pastaAlDente->where(['order_id' => $order->id])->count();
-        if ($order->study_type == 0)        // Ф-3
+        if ($order->preamble == 1)        // Ф-3
         {
             $text = '          В связи с завершением обучения в ГАОУ АО ДО «РШТ», на основании ';
             if ($countPasta > 1)
@@ -998,7 +998,7 @@ class WordCreator
             else
                 $text .= 'протокола итоговой аттестации от «___»_______ 20___ г.';
         }
-        else if ($order->study_type == 1)    //Ф-4
+        else if ($order->preamble == 2)    //Ф-4
         {
             $text = '          В связи с завершением обучения в ГАОУ АО ДО «РШТ»», на основании ';
             if ($countPasta > 1)
@@ -1006,7 +1006,7 @@ class WordCreator
             else
                 $text .= 'протокола итоговой аттестации от «___»_______ 20___ г.';
         }
-        else if ($order->study_type == 2)
+        else if ($order->preamble == 3)
         {
             $text = '          В связи с досрочным прекращением образовательных отношений на основании статьи 61 Федерального закона от 29.12.2012 № 273-ФЗ «Об образовании в Российской Федерации» и ';
             if ($countPasta > 1)
@@ -1020,30 +1020,30 @@ class WordCreator
         $section->addText($text, array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         $section->addText('ПРИКАЗЫВАЮ:', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
 
-        if ($order->study_type == 0 && $countPasta > 1)
+        if ($order->preamble == 1 && $countPasta > 1)
         {
             $section->addText('          1.	Отчислить обучающихся согласно Приложению к настоящему приказу.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
             $section->addText('          2.	Выдать обучающимся, указанным в Приложении к настоящему приказу, сертификаты об успешном завершении обучения.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         }
-        if ($order->study_type == 0 && $countPasta == 1)
+        if ($order->preamble == 1 && $countPasta == 1)
         {
             $section->addText('          1.	Отчислить обучающегося согласно Приложению к настоящему приказу.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
             $section->addText('          2.	Выдать обучающемуся, указанному в Приложении к настоящему приказу, сертификат об успешном завершении обучения.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         }
-        if ($order->study_type == 1 && $countPasta > 1)
+        if ($order->preamble == 2 && $countPasta > 1)
         {
             $section->addText('          1.	Отчислить обучающихся согласно Приложению к настоящему приказу.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
             $section->addText('          2.	Выдать обучающимся, не прошедшим итоговую форму контроля и указанным в Приложении к настоящему приказу, справки об обучении в ГАОУ АО ДО «РШТ» установленного учреждением образца.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         }
-        if ($order->study_type == 1 && $countPasta == 1)
+        if ($order->preamble == 2 && $countPasta == 1)
         {
             $section->addText('          1.	Отчислить обучающегося согласно Приложению к настоящему приказу.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
             $section->addText('          2.	Выдать обучающемуся, не прошедшему итоговую форму контроля и указанному в Приложении к настоящему приказу, справку об обучении в ГАОУ АО ДО «РШТ» установленного учреждением образца.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
         }
-        if ($order->study_type == 0 || $order->study_type == 1)
+        if ($order->preamble == 1 || $order->preamble == 2)
             $section->addText('          3.	Контроль исполнения приказа оставляю за собой.', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0));
 
-        if ($order->study_type == 2)
+        if ($order->preamble == 3)
         {
             if ($trG->where(['id' => $groups[0]->id])->one()->budget === 1)
             {
@@ -1077,7 +1077,7 @@ class WordCreator
             }
         }
 
-        if ($order->study_type == 3)
+        if ($order->preamble == 4)
         {
             if ($countPasta > 1)
             {
@@ -1138,7 +1138,7 @@ class WordCreator
             $cell->addText($fio . '/');
         }
 
-        if (($order->study_type == 2 && $trG->where(['id' => $groups[0]->id])->one()->budget !== 1) || $order->study_type == 3)
+        if (($order->preamble == 3 && $trG->where(['id' => $groups[0]->id])->one()->budget !== 1) || $order->preamble == 4)
         {
             $section = $inputData->addSection(array('marginTop' => WordWizard::convertMillimetersToTwips(20),
                 'marginLeft' => WordWizard::convertMillimetersToTwips(30),
@@ -1185,7 +1185,7 @@ class WordCreator
         $cell = $table->addCell(10000);
         $cell->addText('', null, array('spaceAfter' => 0));
         $cell = $table->addCell(8000);
-        if (($order->study_type == 2 && $trG->where(['id' => $groups[0]->id])->one()->budget !== 1) || $order->study_type == 3)
+        if (($order->preamble == 3 && $trG->where(['id' => $groups[0]->id])->one()->budget !== 1) || $order->preamble == 4)
             $cell->addText('Приложение №2', array('size' => '12'), array('align' => 'left', 'spaceAfter' => 0));
         else
             $cell->addText('Приложение', array('size' => '12'), array('align' => 'left', 'spaceAfter' => 0));
@@ -1367,11 +1367,11 @@ class WordCreator
         $cell->addTextBreak(1);
 
         $section->addTextBreak(1);
-        if ($order->study_type == 0)
+        if ($order->preamble == 5)
         {
             $text = 'На основании решения Педагогического совета ГАОУ АО ДО «РШТ» от «____»_________ 20___ г. № ______, в соответствии с п. 2.1.1 Положения о порядке и основаниях перевода, отчисления и восстановления обучающихся государственного автономного образовательного учреждения Астраханской области дополнительного образования «Региональный школьный технопарк»';
         }
-        if ($order->study_type == 1 || $order->study_type == 2)
+        if ($order->preamble == 6 || $order->preamble == 7)
         {
             $text = 'На основании ';
             if ($countPart <= 1)
@@ -1379,9 +1379,9 @@ class WordCreator
             else
                 $text .= 'заявлений родителей (или законных представителей) ';
 
-            if ($order->study_type == 1)
+            if ($order->preamble == 6)
                 $text .= 'и решения Педагогического совета ГАОУ АО ДО «РШТ» от «____»_________ 20___ г. № ______, в соответствии с п. 2.1.2 Положения о порядке и основаниях перевода, отчисления и восстановления обучающихся государственного автономного образовательного учреждения Астраханской области дополнительного образования «Региональный школьный технопарк»';
-            else if ($order->study_type == 2)
+            else if ($order->preamble == 7)
                 $text .= 'от «___»_________ 20___ г., в соответствии с п. 2.1.3 Положения о порядке и основаниях перевода, отчисления и восстановления обучающихся государственного автономного образовательного учреждения Астраханской области дополнительного образования «Региональный школьный технопарк»';
         }
 
@@ -1389,7 +1389,7 @@ class WordCreator
 
         $section->addText('ПРИКАЗЫВАЮ:', array('lineHeight' => 1.0), array('align' => 'both', 'spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
 
-        if ($order->study_type == 0)
+        if ($order->preamble == 5)
         {
             $text = '          1.	Перевести ';
             if ($countPart <= 1)
@@ -1398,12 +1398,12 @@ class WordCreator
                 $text .= 'обучающихся, успешно прошедших итоговую форму контроля, ';
             $text .= 'на следующий год обучения по дополнительным общеразвивающим программам согласно Приложению к настоящему приказу.';
         }
-        if ($order->study_type == 1 || $order->study_type == 2)
+        if ($order->preamble == 6 || $order->preamble == 7)
         {
             // если внезапно, по какой-то причине вошли в условие, значит регистратор приказа накосячил
-            if (((count($programsIN) > 1 || count($programsOUT) > 1) && $order->study_type == 1) || ((count($groups) > 1 /*|| count($groupsID) > 1*/) && $order->study_type == 2))
+            if (((count($programsIN) > 1 || count($programsOUT) > 1) && $order->preamble == 6) || ((count($groups) > 1 /*|| count($groupsID) > 1*/) && $order->preamble == 7))
             {
-                if ($order->study_type == 1)
+                if ($order->preamble == 6)
                     $message = ['Невозможно сгенерировать приказ, т.к. отсутствуют утвержденные формы! К приказу о переводе из одной ДОП в другую ДОП добавлено слишком много учебных групп с разными образовательными программами.', 'При генерации приказа ID='.$orderId.' обнаружена ошибка: у всех групп (из которой переводят) должна быть одна ДОП, у всех групп в которую переводят тоже должна быть одна ДОП. Регистратор приказа создает приказ по которому отсутствует утвержденная форма'];
                 else
                     $message = ['Невозможно сгенерировать приказ, т.к. отсутствуют утвержденные формы! К приказу о переводе из одной группы в другую добавлено слишком много учебных групп.', 'При генерации приказа ID='.$orderId.' обнаружена ошибка: должна быть одна группа из которой переводят и одна группа в которую переводят. Регистратор приказа создает приказ по которому отсутствует утвержденная форма'];
@@ -1411,15 +1411,15 @@ class WordCreator
                 return;
             }
 
-            if ($order->study_type == 1)
+            if ($order->preamble == 6)
             {
                 $text = '          1.	Перевести с обучения по дополнительной общеразвивающей программе «' . $programsOUT[0]->name . '» ('. mb_substr(mb_strtolower($programsOUT[0]->stringFocus), 0, mb_strlen($programsOUT[0]->stringFocus) - 2, "utf-8")
                     . 'ой направленности) на обучение по дополнительной общеразвивающей программе «' . $programsIN[0]->name . '» ('. mb_substr(mb_strtolower($programsIN[0]->stringFocus), 0, mb_strlen($programsIN[0]->stringFocus) - 2, "utf-8") . 'ой направленности) ';
             }
-            else if ($order->study_type == 2)
+            else if ($order->preamble == 7)
             {
-                $oldGr = TrainingGroupWork::find()->where(['id' => $groupsOUT[0]->id])->one();
-                $newGr = TrainingGroupWork::find()->where(['id' => $groupsID[0]])->one();
+                $oldGr = TrainingGroupWork::find()->where(['id' => $groupsID[0]])->one();
+                $newGr = TrainingGroupWork::find()->where(['id' => $groupsOUT[0]->id])->one();
 
                 $text = '          1.	Перевести из учебной группы ' . $oldGr->number . ' в учебную группу ' . $newGr->number .  ' в рамках обучения по дополнительной общеразвивающей программе «' . $programsIN[0]->name . '», '
                     . mb_substr(mb_strtolower(Yii::$app->focus->get($programsIN[0]->focus)), 0, mb_strlen(Yii::$app->focus->get($programsIN[0]->focus)) - 2, "utf-8") . 'ой направленности ';

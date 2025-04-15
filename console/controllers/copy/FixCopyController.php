@@ -2,6 +2,7 @@
 
 namespace console\controllers\copy;
 
+use common\components\dictionaries\base\NomenclatureDictionary;
 use common\components\dictionaries\base\ProjectTypeDictionary;
 use common\models\scaffold\TrainingGroup;
 use DomainException;
@@ -11,6 +12,7 @@ use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\ThematicPlanWork;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\general\FilesWork;
+use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\ProjectThemeWork;
 use frontend\services\educational\TrainingGroupService;
 use Yii;
@@ -122,6 +124,42 @@ class FixCopyController extends Controller
             if(!$theme->save()){
                 throw new DomainException('Ошибка сохранения темы проекта. Проблемы: '.json_encode($theme->getErrors()));
             };
+        }
+    }
+    public function actionFixOrderPreamble()
+    {
+        $orders = Yii::$app->old_db->createCommand("SELECT * FROM document_order")->queryAll();
+        foreach ($orders as $order) {
+            $id = $order['id'];
+            $newOrder = DocumentOrderWork::findOne($id);
+            $newOrder->preamble = $this->fixPreamble($order);
+            if(!$newOrder->save()){
+                throw new DomainException('Ошибка сохранения темы проекта. Проблемы: '.json_encode($newOrder->getErrors()));
+            }
+        }
+    }
+    public function fixPreamble($order)
+    {
+        $number = $order['order_number'];
+        $preamble = NULL;
+        if (NomenclatureDictionary::getStatus($number) == NomenclatureDictionary::ORDER_DEDUCT){
+            $preamble = $order['study_type'] + 1;
+        }
+        else if (NomenclatureDictionary::getStatus($number) == NomenclatureDictionary::ORDER_TRANSFER) {
+            $preamble = $order['study_type'] + 5;
+        }
+        else {
+            $preamble = NULL;
+        }
+        return $preamble;
+    }
+    public function actionFixTemp(){
+        $query = Yii::$app->old_db->createCommand("SELECT * FROM temp")->queryAll();
+        foreach ($query as $temp) {
+            $id = $temp['id'];
+            $model = DocumentOrderWork::findOne($id);
+            $model->preamble = $temp['preamble'];
+            $model->save();
         }
     }
 }

@@ -52,7 +52,8 @@ class DocumentOrder extends \yii\db\ActiveRecord
         return [
             [['order_copy_id', 'signed_id', 'bring_id', 'executor_id', 'creator_id', 'last_edit_id', 'type', 'state', 'nomenclature_id', 'study_type', 'preamble'], 'integer'],
             [['order_date'], 'safe'],
-            [['order_number', 'order_name', 'key_words', 'order_postfix'], 'string', 'max' => 255],
+            [['order_number', 'order_postfix'], 'string', 'max' => 255],
+            [['order_name', 'key_words'], 'string', 'max' => 10000],
             [['signed_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeopleStampWork::class, 'targetAttribute' => ['signed_id' => 'id']],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeopleStampWork::class, 'targetAttribute' => ['executor_id' => 'id']],
             [['bring_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeopleStampWork::class, 'targetAttribute' => ['bring_id' => 'id']],

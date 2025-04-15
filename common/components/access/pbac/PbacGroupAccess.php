@@ -48,7 +48,7 @@ class PbacGroupAccess implements PbacComponentInterface
                 $query = $this->groupBuilder->filterOrGroupsByBranches($query, $this->data->branches);
             }
         }
-var_dump($query->createCommand()->getRawSql());
+
         return $query;
     }
 

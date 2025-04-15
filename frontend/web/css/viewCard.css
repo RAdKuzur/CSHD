@@ -278,3 +278,11 @@ a:has(.tooltip-span) {
 td.status-block {
     background-color: var(--block-color);
 }
+
+.journal-form tr, .journal-view tr {
+    max-height: 2em;
+}
+
+.project-participant {
+    width: 25em;
+}

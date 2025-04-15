@@ -65,7 +65,7 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
     </div>
 
     <div class="control-unit">
-        <div class="control-label">Выберите статус одной из кнопок расположенных ниже и нажмите на ячейки или столбцы, в которые необходимо установить значение</div>
+        <div class="control-label">Выберите статус одной из кнопок расположенных ниже и нажмите на ячейки или столбцы, в которые необходимо установить значение. Если ячейка окрашена серым цветом, значит она заблокирована от изменений.</div>
         <div class="icons-container flexx space-around">
             <div class="icon-button flexx btn-secondary btn" onclick="changeCursorAndSaveIcon(IconTurnoutLink, event)">Явка<?= HtmlBuilder::paintSVG(FilePaths::SVG_TURNOUT)?></div>
             <div class="icon-button flexx btn-secondary btn" onclick="changeCursorAndSaveIcon(IconNonAppearanceLink, event)">Неявка<?= HtmlBuilder::paintSVG(FilePaths::SVG_NON_APPEARANCE)?></div>

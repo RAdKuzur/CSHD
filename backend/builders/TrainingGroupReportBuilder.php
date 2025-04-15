@@ -46,6 +46,18 @@ class TrainingGroupReportBuilder
     }
 
     /**
+     * Фильтр учебных групп по отделам
+     *
+     * @param ActiveQuery $query
+     * @param int[] $branches
+     * @return ActiveQuery
+     */
+    public function filterOrGroupsByBranches(ActiveQuery $query, array $branches) : ActiveQuery
+    {
+        return $query->orWhere(['IN', 'branch', $branches]);
+    }
+
+    /**
      * Фильтр учебных групп по основе (бюджет/внебюджет)
      *
      * @param ActiveQuery $query

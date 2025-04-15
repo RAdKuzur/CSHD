@@ -45,7 +45,7 @@ class PbacGroupAccess implements PbacComponentInterface
             }
             if ($accessTheirGroups) {
                 $stampsId = ArrayHelper::getColumn($this->peopleStampRepository->getByPeopleId($this->data->user->aka), 'id');
-                $query = $this->groupBuilder->filterGroupsByTeachers($query, $stampsId);
+                $query = $this->groupBuilder->filterOrGroupsByTeachers($query, $stampsId);
             }
         }
 

@@ -48,7 +48,7 @@ class ResponsibilityFileNameGenerator implements FileNameGeneratorInterface
         $lastOtherFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_OTHER);
         /** @var FilesWork $lastOtherFile */
         if ($lastOtherFile) {
-            preg_match('/Файл(\d+)_/', basename($lastOtherFile->filepath), $matches);
+            preg_match('/Файл(\d+)_/', $lastOtherFile->filepath, $matches);
             return (int)$matches[1];
         }
 

@@ -49,6 +49,7 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
     private function getOrdinalFileNumberDoc($object)
     {
         $lastDocFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_DOC);
+        var_dump($lastDocFile);
         /** @var FilesWork $lastDocFile */
         if ($lastDocFile) {
             preg_match('/Ред(\d+)_/', basename($lastDocFile->filepath), $matches);
@@ -90,6 +91,7 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
                 'Ред'.($this->getOrdinalFileNumber($object, FilesHelper::TYPE_DOC) + $params['counter']).
                 '_Вх.'.$new_date.'_'.$object->local_number.'_'.$object->companyWork->name.'_'.$object->document_theme;
         }
+        var_dump($filename);
         $res = mb_ereg_replace('[ ]{1,}', '_', $filename);
         $res = mb_ereg_replace('[^а-яА-Я0-9._]{1}', '', $res);
         $res = StringFormatter::CutFilename($res);

@@ -49,7 +49,7 @@ class TrainingProgramFileNameGenerator implements FileNameGeneratorInterface
         $lastDocFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_DOC);
         /** @var FilesWork $lastDocFile */
         if ($lastDocFile) {
-            preg_match('/Ред(\d+)_/', basename($lastDocFile->filepath), $matches);
+            preg_match('/Ред(\d+)_/', $lastDocFile->filepath, $matches);
             return (int)$matches[1];
         }
 

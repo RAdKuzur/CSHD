@@ -53,8 +53,8 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
         /** @var FilesWork $lastDocFile */
         if ($lastDocFile) {
             var_dump('OK!!!!');
-            preg_match('/Ред(\d+)_/', basename($lastDocFile->filepath), $matches);
-            var_dump(basename($lastDocFile->filepath), $matches);
+            preg_match('/Ред(\d+)_/', $lastDocFile->filepath, $matches);
+            var_dump($lastDocFile->filepath, $matches);
             return (int)$matches[1];
         }
 

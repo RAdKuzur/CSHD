@@ -10,6 +10,7 @@ use DomainException;
 use frontend\models\work\document_in_out\DocumentInWork;
 use frontend\models\work\general\FilesWork;
 use InvalidArgumentException;
+use Yii;
 
 class DocumentInFileNameGenerator implements FileNameGeneratorInterface
 {
@@ -50,6 +51,7 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
     {
         $lastDocFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_DOC);
         var_dump($lastDocFile);
+        Yii::$app->end();
         /** @var FilesWork $lastDocFile */
         if ($lastDocFile) {
             preg_match('/Ред(\d+)_/', basename($lastDocFile->filepath), $matches);
@@ -92,6 +94,7 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
                 '_Вх.'.$new_date.'_'.$object->local_number.'_'.$object->companyWork->name.'_'.$object->document_theme;
         }
         var_dump($filename);
+        Yii::$app->end();
         $res = mb_ereg_replace('[ ]{1,}', '_', $filename);
         $res = mb_ereg_replace('[^а-яА-Я0-9._]{1}', '', $res);
         $res = StringFormatter::CutFilename($res);

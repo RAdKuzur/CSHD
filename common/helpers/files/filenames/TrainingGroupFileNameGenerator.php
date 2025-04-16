@@ -38,7 +38,7 @@ class TrainingGroupFileNameGenerator implements FileNameGeneratorInterface
         $lastDocFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_PHOTO);
         /** @var FilesWork $lastDocFile */
         if ($lastDocFile) {
-            preg_match('/Фото(\d+)_/', basename($lastDocFile->filepath), $matches);
+            preg_match('/Фото(\d+)_/', $lastDocFile->filepath, $matches);
             return (int)$matches[1];
         }
 
@@ -50,7 +50,7 @@ class TrainingGroupFileNameGenerator implements FileNameGeneratorInterface
         $lastAppFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_PRESENTATION);
         /** @var FilesWork $lastAppFile */
         if ($lastAppFile) {
-            preg_match('/През(\d+)_/', basename($lastAppFile->filepath), $matches);
+            preg_match('/През(\d+)_/', $lastAppFile->filepath, $matches);
             return (int)$matches[1];
         }
 
@@ -62,7 +62,7 @@ class TrainingGroupFileNameGenerator implements FileNameGeneratorInterface
         $lastAppFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_WORK);
         /** @var FilesWork $lastAppFile */
         if ($lastAppFile) {
-            preg_match('/Раб(\d+)_/', basename($lastAppFile->filepath), $matches);
+            preg_match('/Раб(\d+)_/', $lastAppFile->filepath, $matches);
             return (int)$matches[1];
         }
 

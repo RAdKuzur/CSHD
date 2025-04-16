@@ -51,10 +51,10 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
     {
         $lastDocFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_DOC);
         /** @var FilesWork $lastDocFile */
-        var_dump($lastDocFile);
         if ($lastDocFile) {
             var_dump('OK!!!!');
             preg_match('/Ред(\d+)_/', basename($lastDocFile->filepath), $matches);
+            var_dump($matches);
             return (int)$matches[1];
         }
 
@@ -67,7 +67,6 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
         /** @var FilesWork $lastAppFile */
         if ($lastAppFile) {
             preg_match('/Приложение(\d+)_/', basename($lastAppFile->filepath), $matches);
-            var_dump($matches);
             return (int)$matches[1];
         }
 

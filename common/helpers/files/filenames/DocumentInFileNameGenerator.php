@@ -50,8 +50,6 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
     private function getOrdinalFileNumberDoc($object)
     {
         $lastDocFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_DOC);
-        var_dump($lastDocFile);
-        Yii::$app->end();
         /** @var FilesWork $lastDocFile */
         if ($lastDocFile) {
             preg_match('/Ред(\d+)_/', basename($lastDocFile->filepath), $matches);

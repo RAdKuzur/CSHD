@@ -67,6 +67,7 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
         /** @var FilesWork $lastAppFile */
         if ($lastAppFile) {
             preg_match('/Приложение(\d+)_/', basename($lastAppFile->filepath), $matches);
+            var_dump($matches);
             return (int)$matches[1];
         }
 

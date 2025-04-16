@@ -110,9 +110,18 @@ class ActParticipantWork extends ActParticipant
         $participants = [];
         $squadParticipants = SquadParticipantWork::findAll(['act_participant_id' => $this->id]);
         foreach($squadParticipants as $squadParticipant){
-            $person = PeopleWork::findOne($squadParticipant["participant_id"]);
+            $person = ForeignEventParticipantsWork::findOne($squadParticipant["participant_id"]);
             $participants[] = $person['surname'] . ' ' . $person['firstname'] . ' ' . $person['patronymic']. "\n";
 
+        }
+        return $participants;
+    }
+    public function getParticipantsWithInintials(){
+        $participants = [];
+        $squadParticipants = SquadParticipantWork::findAll(['act_participant_id' => $this->id]);
+        foreach($squadParticipants as $squadParticipant){
+            $person = ForeignEventParticipantsWork::findOne($squadParticipant["participant_id"]);
+            $participants[] = $person->getFIO(PersonInterface::FIO_SURNAME_INITIALS) . '<br>';
         }
         return $participants;
     }
@@ -198,11 +207,12 @@ class ActParticipantWork extends ActParticipant
 
     public function getTeachersLink()
     {
-        $result = StringFormatter::stringAsLink(
-            $this->teacherWork->getFIO(PeopleWork::FIO_SURNAME_INITIALS),
-            Url::to(['/dictionaries/people/view', 'id' => $this->teacherWork->people_id])
-        );
-
+        if(!is_null($this->teacher_id)){
+            $result = StringFormatter::stringAsLink(
+                $this->teacherWork->getFIO(PeopleWork::FIO_SURNAME_INITIALS),
+                Url::to(['/dictionaries/people/view', 'id' => $this->teacherWork->people_id])
+            );
+        }
         if (!is_null($this->teacher2_id)) {
             $result .= ';' . StringFormatter::stringAsLink(
                 $this->teacher2Work->getFIO(PeopleWork::FIO_SURNAME_INITIALS),

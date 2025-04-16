@@ -77,16 +77,16 @@
         },
         {
             "name": "bower-asset/bootstrap",
-            "version": "v5.3.5",
+            "version": "v5.2.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "85f23534bd2de8041354b297516cf21959091b31"
+                "url": "git@github.com:twbs/bootstrap.git",
+                "reference": "cb021439c683d9805e2864c58095b92d405e9b11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/85f23534bd2de8041354b297516cf21959091b31",
-                "reference": "85f23534bd2de8041354b297516cf21959091b31"
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/cb021439c683d9805e2864c58095b92d405e9b11",
+                "reference": "cb021439c683d9805e2864c58095b92d405e9b11"
             },
             "type": "bower-asset"
         },

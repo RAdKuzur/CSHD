@@ -19,9 +19,10 @@ Thumbs.db
 
 # composer vendor dir
 /vendor
+/frontend/upload
 /.idea
 /backend/config
-/forntend/config
+/frontend/config
 /common/config
 # composer itself is not needed
 composer.phar

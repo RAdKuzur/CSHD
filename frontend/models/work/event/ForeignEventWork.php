@@ -149,12 +149,42 @@ class ForeignEventWork extends ForeignEvent implements FileInterface
 
     public function getWinners()
     {
-        return '';
+        $winners = [];
+        /* @var $winners ActParticipantWork */
+        /* @var $achievement ParticipantAchievementWork */
+        /* @var $participant */
+        $acts = $this->actParticipantWorks;
+        foreach ($acts as $act) {
+            $achievements = $act->participantAchievementWork;
+            foreach ($achievements as $achievement) {
+                if ($achievement->type == ParticipantAchievementWork::TYPE_WINNER){
+                    $winners[] = $act->getParticipantsWithInintials();
+                }
+            }
+        }
+        $winners = array_column($winners, 0);
+        $winners = array_map('trim', $winners);
+        return implode("\n", $winners);
     }
 
     public function getPrizes()
     {
-        return '';
+        $winners = [];
+        /* @var $winners ActParticipantWork */
+        /* @var $achievement ParticipantAchievementWork */
+        /* @var $participant */
+        $acts = $this->actParticipantWorks;
+        foreach ($acts as $act) {
+            $achievements = $act->participantAchievementWork;
+            foreach ($achievements as $achievement) {
+                if ($achievement->type == ParticipantAchievementWork::TYPE_PRIZE){
+                    $winners[] = $act->getParticipantsWithInintials();
+                }
+            }
+        }
+        $winners = array_column($winners, 0);
+        $winners = array_map('trim', $winners);
+        return implode("\n", $winners);
     }
 
     public function isTrip()

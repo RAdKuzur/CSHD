@@ -118,10 +118,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     return count($model->actParticipantWorks);
                 }
             ],
-            ['attribute' => 'winners', 'label' => 'Победители', 'value' => function(ForeignEventWork $model){
+            ['attribute' => 'winners', 'format' => 'raw' , 'label' => 'Победители', 'value' => function(ForeignEventWork $model){
                 return $model->getWinners();
             }],
-            ['attribute' => 'prizes', 'label' => 'Призёры', 'value' => function(ForeignEventWork $model){
+            ['attribute' => 'prizes', 'format' => 'raw' , 'label' => 'Призёры', 'value' => function(ForeignEventWork $model){
                 return $model->getPrizes();
             }],
 

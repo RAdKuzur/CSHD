@@ -34,7 +34,7 @@ class DocumentOrderFileNameGenerator implements FileNameGeneratorInterface
         $lastDocFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_DOC);
         /** @var FilesWork $lastDocFile */
         if ($lastDocFile) {
-            preg_match('/Ред(\d+)_/', basename($lastDocFile->filepath), $matches);
+            preg_match('/Ред(\d+)_/', $lastDocFile->filepath, $matches);
             return (int)$matches[1];
         }
 
@@ -46,7 +46,7 @@ class DocumentOrderFileNameGenerator implements FileNameGeneratorInterface
         $lastAppFile = $this->filesRepository->getLastFile($object::tableName(), $object->id, FilesHelper::TYPE_APP);
         /** @var FilesWork $lastAppFile */
         if ($lastAppFile) {
-            preg_match('/Приложение(\d+)_/', basename($lastAppFile->filepath), $matches);
+            preg_match('/Приложение(\d+)_/', $lastAppFile->filepath, $matches);
             return (int)$matches[1];
         }
 

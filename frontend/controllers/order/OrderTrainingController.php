@@ -320,21 +320,24 @@ class OrderTrainingController extends DocumentController
                 $groupCheckOption = $this->trainingGroupRepository->getAttachedGroupsByOrder($modelId,  $status);
                 $groupParticipantOption = $this->trainingGroupParticipantRepository->getAttachedParticipantByOrder($modelId, $status);
                 $dataProvider = new ActiveDataProvider([
-                    'query' => $this->trainingGroupParticipantRepository->getParticipantToEnrollUpdate($groupIds, $modelId)
+                    'query' => $this->trainingGroupParticipantRepository->getParticipantToEnrollUpdate($groupIds, $modelId),
+                    'pagination' => false
                 ]);
             }
             else if ($status == NomenclatureDictionary::ORDER_DEDUCT) {
                 $groupCheckOption = $this->trainingGroupRepository->getAttachedGroupsByOrder($modelId,  $status);
                 $groupParticipantOption = $this->trainingGroupParticipantRepository->getAttachedParticipantByOrder($modelId, $status);
                 $dataProvider = new ActiveDataProvider([
-                    'query' => $this->trainingGroupParticipantRepository->getParticipantToDeductUpdate($groupIds, $modelId)
+                    'query' => $this->trainingGroupParticipantRepository->getParticipantToDeductUpdate($groupIds, $modelId),
+                    'pagination' => false
                 ]);
             }
             else if ($status == NomenclatureDictionary::ORDER_TRANSFER){
                 $groupCheckOption = $this->trainingGroupRepository->getAttachedGroupsByOrder($modelId,  $status);
                 $groupParticipantOption = $this->trainingGroupParticipantRepository->getAttachedParticipantByOrder($modelId, $status);
                 $dataProvider = new ActiveDataProvider([
-                    'query' => $this->trainingGroupParticipantRepository->getParticipantToTransferUpdate($groupIds, $modelId)
+                    'query' => $this->trainingGroupParticipantRepository->getParticipantToTransferUpdate($groupIds, $modelId),
+                    'pagination' => false
                 ]);
             }
             else {

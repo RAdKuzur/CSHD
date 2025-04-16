@@ -182,7 +182,8 @@ class OrderTrainingService
             $query = $query->andWhere(['not in', 'id', $exceptParticipantId]);
         }
         return new ActiveDataProvider([
-            'query' => $query
+            'query' => $query,
+            'pagination' => false
         ]);
     }
     public function createOrderTrainingGroupParticipantEvent(OrderTrainingWork $model, $status, $post){

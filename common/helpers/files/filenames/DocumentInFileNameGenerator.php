@@ -91,8 +91,6 @@ class DocumentInFileNameGenerator implements FileNameGeneratorInterface
                 'Ред'.($this->getOrdinalFileNumber($object, FilesHelper::TYPE_DOC) + $params['counter']).
                 '_Вх.'.$new_date.'_'.$object->local_number.'_'.$object->companyWork->name.'_'.$object->document_theme;
         }
-        /*var_dump($this->getOrdinalFileNumber($object, FilesHelper::TYPE_DOC));
-        Yii::$app->end();*/
         $res = mb_ereg_replace('[ ]{1,}', '_', $filename);
         $res = mb_ereg_replace('[^а-яА-Я0-9._]{1}', '', $res);
         $res = StringFormatter::CutFilename($res);

@@ -12,6 +12,14 @@ use yii\helpers\Html;
 /* @var $transferGroups */
 /* @var $groupParticipantOption */
 ?>
+<style>
+    .training-group-participant {
+        max-height: 800px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding-right: 10px;
+    }
+</style>
 <div class = "training-group-participant">
 <?php
 if ($dataProvider != NULL) {

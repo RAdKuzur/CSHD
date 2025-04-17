@@ -58,6 +58,7 @@ trait EventTrait
         try {
             foreach ($this->events as $event) {
                 /** @var EventInterface $event */
+                var_dump($event->execute(), array_merge($this->queries, $event->execute()));
                 $this->queries = array_merge($this->queries, $event->execute());
             }
             $this->clearEvents();
@@ -65,7 +66,6 @@ trait EventTrait
         catch (Exception $e) {
             Yii::error('Произошла ошибка в releaseEvents - ' . $e->getMessage());
         }
-        var_dump($this->queries);
         $this->releaseQueries();
     }
 

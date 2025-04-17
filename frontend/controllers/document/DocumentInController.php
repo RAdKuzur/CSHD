@@ -122,6 +122,7 @@ class DocumentInController extends DocumentController
             if ($model->needAnswer) {
                 $model->recordEvent(new InOutDocumentCreateEvent($model->id, null, $model->dateAnswer, $model->nameAnswer), DocumentInWork::class);
             }
+            $model->releaseEvents();
             $this->service->getFilesInstances($model);
             $this->service->saveFilesFromModel($model);
             $model->releaseEvents();

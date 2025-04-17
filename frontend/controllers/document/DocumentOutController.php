@@ -185,6 +185,8 @@ class DocumentOutController extends DocumentController
                 $this->service->getFilesInstances($model);
                 $this->service->saveFilesFromModel($model);
                 $model->releaseEvents();
+                var_dump('OK!!!!');
+                Yii::$app->end();
                 $model->checkModel(ErrorAssociationHelper::getDocumentOutErrorsList(), DocumentOutWork::tableName(), $model->id);
                 $this->service->checkDocumentInErrors($model->id);
                 return $this->redirect(['view', 'id' => $model->id]);

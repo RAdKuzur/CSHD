@@ -58,7 +58,7 @@ trait EventTrait
         try {
             foreach ($this->events as $event) {
                 /** @var EventInterface $event */
-                var_dump($event->execute(), array_merge($this->queries, $event->execute()));
+                var_dump($event);
                 $this->queries = array_merge($this->queries, $event->execute());
             }
             $this->clearEvents();

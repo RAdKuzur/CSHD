@@ -46,7 +46,8 @@ class FilesRepository
         $model = FilesWork::fill($tableName, $tableRowId, $filetype, $filepath);
         $command = Yii::$app->db->createCommand();
         $command->insert($model::tableName(), $model->getAttributes());
-
+        var_dump($command->getRawSql());
+        Yii::$app->end();
         return $command->getRawSql();
     }
 

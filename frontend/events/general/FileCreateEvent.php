@@ -49,6 +49,10 @@ class FileCreateEvent implements EventInterface
 
     public function execute()
     {
+        var_dump($this->tableName,
+            $this->tableRowId,
+            $this->filetype,
+            $this->filepath);
         if ($this->isMultiLoad()) {
             return [
                 $this->repository->prepareCreate(

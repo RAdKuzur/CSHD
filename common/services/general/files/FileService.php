@@ -60,8 +60,6 @@ class FileService
         else {
             throw new DomainException('Не были переданы обязательные параметры: filepath или tableName + fileType');
         }
-        var_dump($file);
-        Yii::$app->end();
         // тут будет стратегия для загрузки на яндекс диск... потом
 
         if ($file) {

@@ -187,6 +187,7 @@ class DocumentOutController extends DocumentController
                 $model->releaseEvents();
                 $model->checkModel(ErrorAssociationHelper::getDocumentOutErrorsList(), DocumentOutWork::tableName(), $model->id);
                 $this->service->checkDocumentInErrors($model->id);
+                Yii::$app->end();
                 return $this->redirect(['view', 'id' => $model->id]);
             }
             return $this->render('update', [

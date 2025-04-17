@@ -56,6 +56,7 @@ trait EventTrait
     public function releaseEvents()
     {
         try {
+            var_dump($this->events);
             foreach ($this->events as $event) {
                 /** @var EventInterface $event */
                 $this->queries = array_merge($this->queries, $event->execute());

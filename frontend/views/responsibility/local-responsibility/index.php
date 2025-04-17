@@ -48,7 +48,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ['attribute' => 'quant', 'format' => 'raw', 'label' => 'Квант'],
                         ['attribute' => 'peopleStr', 'format' => 'raw', 'label' => 'Работник',
                             'value' => function (LocalResponsibilityWork $responsibility) {
-                                return $responsibility->peopleStampWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+                                return $responsibility->peopleStampWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS) ?? '';
                             }
                         ],
                         ['attribute' => 'regulationStr', 'format' => 'raw', 'label' => 'Положение/инструкция',
@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
 
-    <?= $this->render('_search', ['model' => $searchModel]); ?>
+    <?= $this->render('_search', ['searchModel' => $searchModel]); ?>
 
     <div style="margin-bottom: 10px">
 
@@ -101,9 +101,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             ['attribute' => 'quant', 'format' => 'raw', 'label' => 'Квант'],
-            ['attribute' => 'peopleStr', 'format' => 'raw', 'label' => 'Работник',
+            ['attribute' => 'peopleStampStr', 'format' => 'raw', 'label' => 'Работник',
                 'value' => function (LocalResponsibilityWork $responsibility) {
-                    return $responsibility->peopleStampWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+                    if ($responsibility->peopleStampWork && $responsibility->peopleStampWork->peopleWork) {
+                        return $responsibility->peopleStampWork->peopleWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+                    }
+                    return '';
                 }
             ],
             ['attribute' => 'regulationStr', 'format' => 'raw', 'label' => 'Положение/инструкция',

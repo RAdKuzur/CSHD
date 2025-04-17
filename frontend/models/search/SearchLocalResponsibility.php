@@ -2,9 +2,12 @@
 
 namespace frontend\models\search;
 
+use common\helpers\search\SearchFieldHelper;
+use common\helpers\StringFormatter;
 use frontend\models\work\responsibility\LocalResponsibilityWork;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 /**
  * SearchLocalResponsibility represents the model behind the search form of `app\models\common\LocalResponsibility`.
@@ -14,7 +17,7 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
     public $responsibilityTypeStr;
     public $branchStr;
     public $auditoriumStr;
-    public $peopleStr;
+    public $peopleStampStr;
     public $regulationStr;
     /**
      * {@inheritdoc}
@@ -22,10 +25,25 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
     public function rules()
     {
         return [
-            [['id', 'responsibility_type_id', 'branch_id', 'auditorium_id', 'people_id', 'regulation_id'], 'integer'],
+            [['id', 'responsibility_type', '$branch', 'auditorium_id', 'people_stamp_id', 'regulation_id'], 'integer'],
             [['files'], 'safe'],
-            [['responsibilityTypeStr', 'branchStr', 'auditoriumStr', 'peopleStr', 'regulationStr'], 'string'],
+            [['responsibilityTypeStr', 'branchStr', 'auditoriumStr', 'peopleStampStr', 'regulationStr'], 'string'],
         ];
+    }
+
+    public function  __construct(
+        $responsibilityTypeStr = '',
+        $branchStr= '',
+        $auditoriumStr = '',
+        $peopleStampStr = '',
+        $regulationStr = '')
+    {
+        
+        $this->responsibilityTypeStr = $responsibilityTypeStr;
+        $this->branchStr = $branchStr;
+        $this->auditoriumStr = $auditoriumStr;
+        $this->peopleStampStr = $peopleStampStr;
+        $this->regulationStr = $regulationStr;
     }
 
     /**
@@ -38,6 +56,22 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
     }
 
     /**
+     * Определение параметров загрузки данных
+     *
+     * @param $params
+     * @return void
+     */
+    public function loadParams($params)
+    {
+//        if (count($params) > 1) {
+//        // TODO! add support methods
+//        }
+
+        $this->load($params);
+    }
+
+
+    /**
      * Creates data provider instance with search query applied
      *
      * @param array $params
@@ -46,9 +80,10 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
      */
     public function search($params)
     {
-        $query = LocalResponsibilityWork::find();
+        $this->loadParams($params);
 
-        $query->joinWith(['auditorium auditorium', 'peopleStamp peopleStamp', 'regulation regulation']);
+        $query = LocalResponsibilityWork::find()
+            ->joinWith(['auditorium auditorium', 'peopleStamp.people people', 'regulation regulation']);
 
         // add conditions that should always apply here
 
@@ -56,14 +91,44 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
             'query' => $query,
         ]);
 
-        /*$dataProvider->sort->attributes['responsibilityTypeStr'] = [
-            'asc' => ['responsibilityType.name' => SORT_ASC],
-            'desc' => ['responsibilityType.name' => SORT_DESC],
+//        // grid filtering conditions
+//        $query->andFilterWhere([
+//            'id' => $this->id,
+//            'responsibility_type' => $this->responsibility_type,
+//            '$branch' => $this->branch,
+//            'auditorium_id' => $this->auditorium_id,
+//            'people_stamp_id' => $this->people_stamp_id,
+//            'regulation_id' => $this->regulation_id,
+//        ]);
+
+        $this->sortAttributes($dataProvider);
+        $this->filterQueryParams($query);
+
+        return $dataProvider;
+    }
+
+    public function filterQueryParams(ActiveQuery $query) {
+        $this->filterResponsibilityType($query);
+        $this->filterBranch($query);
+        $this->filterAuditorium($query);
+        $this->filterPeople($query);
+        $this->filterRegulation($query);
+    }
+
+    /**
+     * @param ActiveDataProvider $dataProvider
+     * @return void
+     */
+    public function sortAttributes(ActiveDataProvider $dataProvider)
+    {
+        $dataProvider->sort->attributes['responsibilityTypeStr'] = [
+            'asc' => ['responsibility_type' => SORT_ASC],
+            'desc' => ['responsibility_type' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['branchStr'] = [
-            'asc' => ['branch.name' => SORT_ASC],
-            'desc' => ['branch.name' => SORT_DESC],
+            'asc' => ['branch' => SORT_ASC],
+            'desc' => ['branch' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['auditoriumStr'] = [
@@ -71,42 +136,52 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
             'desc' => ['auditorium.name' => SORT_DESC],
         ];
 
-        $dataProvider->sort->attributes['peopleStr'] = [
-            'asc' => ['people.secondname' => SORT_ASC],
-            'desc' => ['people.secondname' => SORT_DESC],
+        $dataProvider->sort->attributes['peopleStampStr'] = [
+            'asc' => ['people.surname' => SORT_ASC],
+            'desc' => ['people.surname' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['regulationStr'] = [
             'asc' => ['regulation.name' => SORT_ASC],
             'desc' => ['regulation.name' => SORT_DESC],
         ];
-
-
-        $this->load($params);
-
-        if (!$this->validate()) {
-            // uncomment the following line if you do not want to return any records when validation fails
-            // $query->where('0=1');
-            return $dataProvider;
-        }
-
-        // grid filtering conditions
-        $query->andFilterWhere([
-            'id' => $this->id,
-            'responsibility_type_id' => $this->responsibility_type_id,
-            'branch_id' => $this->branch_id,
-            'auditorium_id' => $this->auditorium_id,
-            'people_id' => $this->people_id,
-            'regulation_id' => $this->regulation_id,
-        ]);
-
-        $query->andFilterWhere(['like', 'files', $this->files])
-            ->andFilterWhere(['like', 'responsibilityType.name', $this->responsibilityTypeStr])
-            ->andFilterWhere(['like', 'branch.name', $this->branchStr])
-            ->andFilterWhere(['like', 'auditorium.name', $this->auditoriumStr])
-            ->andFilterWhere(['like', 'people.secondname', $this->peopleStr])
-            ->andFilterWhere(['like', 'regulation.name', $this->regulationStr]);*/
-
-        return $dataProvider;
     }
+
+    public function filterResponsibilityType(ActiveQuery $query)
+    {
+        if (!StringFormatter::isEmpty($this->responsibilityTypeStr) && $this->responsibilityTypeStr != SearchFieldHelper::EMPTY_FIELD) {
+            $query->andFilterWhere(['local_responsibility.responsibility_type' => $this->responsibilityTypeStr]);
+        }
+    }
+
+    public function filterBranch(ActiveQuery $query)
+    {
+        if (!StringFormatter::isEmpty($this->branchStr) && $this->branchStr != SearchFieldHelper::EMPTY_FIELD) {
+            $query->andFilterWhere(['local_responsibility.branch'=> $this->branchStr]);
+        }
+    }
+
+    public function filterAuditorium(ActiveQuery  $query)
+    {
+        if (!StringFormatter::isEmpty($this->auditoriumStr) && $this->auditoriumStr != SearchFieldHelper::EMPTY_FIELD) {
+            $query->andFilterWhere(['auditorium.name' => $this->auditoriumStr]);
+        }
+    }
+
+    public function filterPeople(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->peopleStampStr) && $this->peopleStampStr != SearchFieldHelper::EMPTY_FIELD) {
+            $query->andFilterWhere([ 'or',
+                ['like', 'people.surname' ,$this->peopleStampStr],
+                ['like', 'people.firstname', $this->peopleStampStr],
+                ['like', 'people.patronymic', $this->peopleStampStr],]
+            );
+        }
+    }
+
+    public function filterRegulation(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->regulationStr) && $this->regulationStr != SearchFieldHelper::EMPTY_FIELD) {
+            $query->andFilterWhere(['like', 'regulation.name', $this->regulationStr]);
+        }
+    }
+
 }

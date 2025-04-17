@@ -80,7 +80,11 @@ class DocumentOutService implements DatabaseServiceInterface
                 ]
 
             );
-
+            var_dump($model::tableName(),
+                $model->id,
+                FilesHelper::TYPE_SCAN,
+                $filename,
+                FilesHelper::LOAD_TYPE_SINGLE);
             $model->recordEvent(
                 new FileCreateEvent(
                     $model::tableName(),

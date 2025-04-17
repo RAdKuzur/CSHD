@@ -29,7 +29,7 @@ trait EventTrait
         if ($event->isSingleton() && $this->exist($className)) {
             return;
         }
-
+        var_dump($event);
         $this->events[] = $event;
     }
 
@@ -55,11 +55,9 @@ trait EventTrait
 
     public function releaseEvents()
     {
-        var_dump($this->events);
         try {
             foreach ($this->events as $event) {
                 /** @var EventInterface $event */
-                var_dump($event);
                 $this->queries = array_merge($this->queries, $event->execute());
             }
             $this->clearEvents();

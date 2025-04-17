@@ -29,7 +29,6 @@ trait EventTrait
         if ($event->isSingleton() && $this->exist($className)) {
             return;
         }
-        var_dump($event);
         $this->events[] = $event;
     }
 

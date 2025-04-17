@@ -95,7 +95,7 @@ class DocumentOutService implements DatabaseServiceInterface
 
         for ($i = 1; $i < count($model->docFile) + 1; $i++) {
             $filename = $this->filenameGenerator->generateFileName($model, FilesHelper::TYPE_DOC, ['counter' => $i]);
-
+            var_dump($filename);
             $this->fileService->uploadFile(
                 $model->docFile[$i - 1],
                 $filename,

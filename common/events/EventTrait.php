@@ -55,6 +55,7 @@ trait EventTrait
 
     public function releaseEvents()
     {
+        var_dump($this->events);
         try {
             foreach ($this->events as $event) {
                 /** @var EventInterface $event */

@@ -199,7 +199,8 @@ class RulesConfig
                 'act',
                 'delete-people',
                 'act-delete',
-                'generate-order'
+                'generate-order',
+                'delete'
             ]
         ],
 

@@ -52,7 +52,7 @@ class FileCreateEvent implements EventInterface
         var_dump($this->tableName,
             $this->tableRowId,
             $this->filetype,
-            $this->filepath);
+            $this->filepath);Yii::$app->end();
         if ($this->isMultiLoad()) {
             return [
                 $this->repository->prepareCreate(

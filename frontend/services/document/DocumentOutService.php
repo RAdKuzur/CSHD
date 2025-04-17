@@ -17,6 +17,7 @@ use frontend\models\work\document_in_out\DocumentInWork;
 use frontend\models\work\document_in_out\DocumentOutWork;
 use frontend\models\work\document_in_out\InOutDocumentsWork;
 use PhpParser\Comment\Doc;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
@@ -95,6 +96,7 @@ class DocumentOutService implements DatabaseServiceInterface
                 ),
                 get_class($model)
             );
+            Yii::$app->end();
         }
 
         for ($i = 1; $i < count($model->docFile) + 1; $i++) {

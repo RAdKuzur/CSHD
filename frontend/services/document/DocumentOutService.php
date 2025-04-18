@@ -17,6 +17,7 @@ use frontend\models\work\document_in_out\DocumentInWork;
 use frontend\models\work\document_in_out\DocumentOutWork;
 use frontend\models\work\document_in_out\InOutDocumentsWork;
 use PhpParser\Comment\Doc;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
@@ -80,7 +81,6 @@ class DocumentOutService implements DatabaseServiceInterface
                 ]
 
             );
-
             $model->recordEvent(
                 new FileCreateEvent(
                     $model::tableName(),
@@ -95,7 +95,6 @@ class DocumentOutService implements DatabaseServiceInterface
 
         for ($i = 1; $i < count($model->docFile) + 1; $i++) {
             $filename = $this->filenameGenerator->generateFileName($model, FilesHelper::TYPE_DOC, ['counter' => $i]);
-
             $this->fileService->uploadFile(
                 $model->docFile[$i - 1],
                 $filename,

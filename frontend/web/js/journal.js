@@ -197,14 +197,8 @@ function applyStatusBlockToRowCells() {
  * Возврат курсора и сброс статуса указателя мыши при клике вне целевого элемента
  */
 document.addEventListener('DOMContentLoaded', function() {
-    const targetElement = document.querySelector('#journal');
-    const table = targetElement.getElementsByTagName('table')[0];
-    const secondTargetElement = document.getElementsByClassName('control-unit')[0];
-
-    /*document.body.addEventListener('click', function(event) {
-        if (!table.contains(event.target) && !secondTargetElement.contains(event.target)) {
-            currentIcon = '';
-            document.body.style.cursor = 'default';
-        }
-    });*/
+    document.body.addEventListener('dblclick', function(event) {
+        currentIcon = '';
+        document.body.style.cursor = 'default';
+    });
 });

@@ -29,7 +29,6 @@ trait EventTrait
         if ($event->isSingleton() && $this->exist($className)) {
             return;
         }
-
         $this->events[] = $event;
     }
 
@@ -65,7 +64,6 @@ trait EventTrait
         catch (Exception $e) {
             Yii::error('Произошла ошибка в releaseEvents - ' . $e->getMessage());
         }
-
         $this->releaseQueries();
     }
 

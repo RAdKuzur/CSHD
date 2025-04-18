@@ -60,7 +60,6 @@ class FileService
         else {
             throw new DomainException('Не были переданы обязательные параметры: filepath или tableName + fileType');
         }
-
         // тут будет стратегия для загрузки на яндекс диск... потом
 
         if ($file) {

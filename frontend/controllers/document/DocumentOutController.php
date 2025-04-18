@@ -182,6 +182,7 @@ class DocumentOutController extends DocumentController
                 } else {
                     $model->recordEvent(new InOutDocumentDeleteEvent($model->id), DocumentOutWork::class);
                 }
+                $model->releaseEvents();
                 $this->service->getFilesInstances($model);
                 $this->service->saveFilesFromModel($model);
                 $model->releaseEvents();

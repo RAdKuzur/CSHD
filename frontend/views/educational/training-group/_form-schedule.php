@@ -27,7 +27,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 <script>
     function changeScheduleType() {
         let type = document.getElementById('traininggroupscheduleform-type');
-
+console.log(type.getElementsByTagName('input')[0].checked);
         let firstDivs = document.querySelectorAll('[id^="manual-"][id$="--fields"]');
         let secondDivs = document.querySelectorAll('[id^="auto-"][id$="--fields"]');
 

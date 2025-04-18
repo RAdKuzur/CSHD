@@ -382,12 +382,17 @@ class ErrorDocumentService
         /** @var DocumentInWork $doc */
         $error = $this->errorsRepository->get($errorId);
         $doc = $this->documentInRepository->get($error->table_row_id);
-        if ($doc->isNeedAnswer()) {
-            /** @var InOutDocumentsWork $answer */
-            $answer = $this->inOutDocumentsRepository->getByDocumentInId($error->table_row_id);
-            if (!($answer && is_null($answer->document_out_id))) {
-                $this->errorsRepository->delete($error);
-            }
+        $inOutDocs = $this->inOutDocumentsRepository->getByDocumentInId($doc->id);
+        if (is_null($inOutDocs) || !is_null($inOutDocs->document_out_id)) {
+            $this->errorsRepository->delete($error);
         }
+        //old version
+        //if ($doc->isNeedAnswer()) {
+            /** @var InOutDocumentsWork $answer */
+        //    $answer = $this->inOutDocumentsRepository->getByDocumentInId($error->table_row_id);
+        //    if (!($answer && is_null($answer->document_out_id))) {
+        //        $this->errorsRepository->delete($error);
+        //    }
+        //}
     }
 }

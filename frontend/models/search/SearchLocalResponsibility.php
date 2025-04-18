@@ -14,11 +14,11 @@ use yii\db\ActiveQuery;
  */
 class SearchLocalResponsibility extends LocalResponsibilityWork
 {
-    public $responsibilityTypeStr;
-    public $branchStr;
-    public $auditoriumStr;
-    public $peopleStr;
-    public $regulationStr;
+    public string $responsibilityTypeStr;
+    public string $branchStr;
+    public string $auditoriumStr;
+    public string $peopleStr;
+    public string $regulationStr;
     /**
      * {@inheritdoc}
      */
@@ -34,11 +34,11 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
 
 
     public function  __construct(
-        $responsibilityTypeStr = '',
-        $branchStr= '',
-        $auditoriumStr = '',
-        $peopleStr = '',
-        $regulationStr = '')
+        string $responsibilityTypeStr = '',
+        string $branchStr= '',
+        string $auditoriumStr = '',
+        string $peopleStr = '',
+        string $regulationStr = '')
     {
         
         $this->responsibilityTypeStr = $responsibilityTypeStr;
@@ -82,8 +82,6 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
 
         $query = LocalResponsibilityWork::find()
             ->joinWith(['auditorium auditorium', 'peopleStamp.people people', 'regulation regulation']);
-
-        // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -135,28 +133,28 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
         ];
     }
 
-    public function filterResponsibilityType(ActiveQuery $query)
+    private function filterResponsibilityType(ActiveQuery $query)
     {
         if (!StringFormatter::isEmpty($this->responsibilityTypeStr) && $this->responsibilityTypeStr != SearchFieldHelper::EMPTY_FIELD) {
             $query->andFilterWhere(['local_responsibility.responsibility_type' => $this->responsibilityTypeStr]);
         }
     }
 
-    public function filterBranch(ActiveQuery $query)
+    private function filterBranch(ActiveQuery $query)
     {
         if (!StringFormatter::isEmpty($this->branchStr) && $this->branchStr != SearchFieldHelper::EMPTY_FIELD) {
             $query->andFilterWhere(['local_responsibility.branch'=> $this->branchStr]);
         }
     }
 
-    public function filterAuditorium(ActiveQuery  $query)
+    private function filterAuditorium(ActiveQuery  $query)
     {
         if (!StringFormatter::isEmpty($this->auditoriumStr) && $this->auditoriumStr != SearchFieldHelper::EMPTY_FIELD) {
             $query->andFilterWhere(['auditorium.name' => $this->auditoriumStr]);
         }
     }
 
-    public function filterPeople(ActiveQuery $query) {
+    private function filterPeople(ActiveQuery $query) {
         if (!StringFormatter::isEmpty($this->peopleStr) && $this->peopleStr != SearchFieldHelper::EMPTY_FIELD) {
             $query->andFilterWhere([ 'or',
                 ['like', 'people.surname' ,$this->peopleStr],
@@ -166,7 +164,7 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
         }
     }
 
-    public function filterRegulation(ActiveQuery $query) {
+    private function filterRegulation(ActiveQuery $query) {
         if (!StringFormatter::isEmpty($this->regulationStr) && $this->regulationStr != SearchFieldHelper::EMPTY_FIELD) {
             $query->andFilterWhere(['like', 'regulation.name', $this->regulationStr]);
         }

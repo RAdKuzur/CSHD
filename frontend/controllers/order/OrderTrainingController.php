@@ -294,17 +294,20 @@ class OrderTrainingController extends DocumentController
             //create
             if ($status == NomenclatureDictionary::ORDER_ENROLL){
                 $dataProvider = new ActiveDataProvider([
-                    'query' => $this->trainingGroupParticipantRepository->getParticipantsToEnrollCreate($groupIds)
+                    'query' => $this->trainingGroupParticipantRepository->getParticipantsToEnrollCreate($groupIds),
+                    'pagination' => false
                 ]);
             }
             if ($status == NomenclatureDictionary::ORDER_DEDUCT){
                 $dataProvider = new ActiveDataProvider([
-                    'query' => $this->trainingGroupParticipantRepository->getParticipantsToDeductCreate($groupIds)
+                    'query' => $this->trainingGroupParticipantRepository->getParticipantsToDeductCreate($groupIds),
+                    'pagination' => false
                 ]);
             }
             if ($status == NomenclatureDictionary::ORDER_TRANSFER){
                 $dataProvider = new ActiveDataProvider([
-                    'query' => $this->trainingGroupParticipantRepository->getParticipantsToTransferCreate($groupIds)
+                    'query' => $this->trainingGroupParticipantRepository->getParticipantsToTransferCreate($groupIds),
+                    'pagination' => false
                 ]);
             }
         }

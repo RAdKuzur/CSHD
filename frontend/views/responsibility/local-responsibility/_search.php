@@ -6,7 +6,6 @@ use yii\widgets\ActiveForm;
 use common\helpers\search\SearchFieldHelper;
 
 
-///* @var $this yii\web\View */
 /* @var $searchModel \frontend\models\search\SearchLocalResponsibility */
 ?>
 
@@ -22,7 +21,7 @@ use common\helpers\search\SearchFieldHelper;
         SearchFieldHelper::dropdownField("responsibilityTypeStr", "Вид ответственности", Yii::$app->responsibilityType->getList(), "Вид ответственности"),
         SearchFieldHelper::dropdownField("branchStr", "Отдел", Yii::$app->branches->getList(), "Отдел"),
         SearchFieldHelper::textField("auditoriumStr", "Помещение", "Помещение"),
-        SearchFieldHelper::textField("peopleStampStr", "Работник", "Работник"),
+        SearchFieldHelper::textField("peopleStr", "Работник", "Работник"),
         SearchFieldHelper::textField("regulationStr", "Положение", "Положение"),
     );
 

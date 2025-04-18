@@ -17,7 +17,7 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
     public $responsibilityTypeStr;
     public $branchStr;
     public $auditoriumStr;
-    public $peopleStampStr;
+    public $peopleStr;
     public $regulationStr;
     /**
      * {@inheritdoc}
@@ -27,22 +27,24 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
         return [
             [['id', 'responsibility_type', '$branch', 'auditorium_id', 'people_stamp_id', 'regulation_id'], 'integer'],
             [['files'], 'safe'],
-            [['responsibilityTypeStr', 'branchStr', 'auditoriumStr', 'peopleStampStr', 'regulationStr'], 'string'],
+            [['responsibilityTypeStr', 'branchStr', 'auditoriumStr', 'peopleStr', 'regulationStr'], 'string'],
         ];
     }
+
+
 
     public function  __construct(
         $responsibilityTypeStr = '',
         $branchStr= '',
         $auditoriumStr = '',
-        $peopleStampStr = '',
+        $peopleStr = '',
         $regulationStr = '')
     {
         
         $this->responsibilityTypeStr = $responsibilityTypeStr;
         $this->branchStr = $branchStr;
         $this->auditoriumStr = $auditoriumStr;
-        $this->peopleStampStr = $peopleStampStr;
+        $this->peopleStr = $peopleStr;
         $this->regulationStr = $regulationStr;
     }
 
@@ -63,10 +65,6 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
      */
     public function loadParams($params)
     {
-//        if (count($params) > 1) {
-//        // TODO! add support methods
-//        }
-
         $this->load($params);
     }
 
@@ -90,16 +88,6 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
-//        // grid filtering conditions
-//        $query->andFilterWhere([
-//            'id' => $this->id,
-//            'responsibility_type' => $this->responsibility_type,
-//            '$branch' => $this->branch,
-//            'auditorium_id' => $this->auditorium_id,
-//            'people_stamp_id' => $this->people_stamp_id,
-//            'regulation_id' => $this->regulation_id,
-//        ]);
 
         $this->sortAttributes($dataProvider);
         $this->filterQueryParams($query);
@@ -169,11 +157,11 @@ class SearchLocalResponsibility extends LocalResponsibilityWork
     }
 
     public function filterPeople(ActiveQuery $query) {
-        if (!StringFormatter::isEmpty($this->peopleStampStr) && $this->peopleStampStr != SearchFieldHelper::EMPTY_FIELD) {
+        if (!StringFormatter::isEmpty($this->peopleStr) && $this->peopleStr != SearchFieldHelper::EMPTY_FIELD) {
             $query->andFilterWhere([ 'or',
-                ['like', 'people.surname' ,$this->peopleStampStr],
-                ['like', 'people.firstname', $this->peopleStampStr],
-                ['like', 'people.patronymic', $this->peopleStampStr],]
+                ['like', 'people.surname' ,$this->peopleStr],
+                ['like', 'people.firstname', $this->peopleStr],
+                ['like', 'people.patronymic', $this->peopleStr],]
             );
         }
     }

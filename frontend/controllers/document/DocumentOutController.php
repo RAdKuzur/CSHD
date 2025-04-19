@@ -119,7 +119,7 @@ class DocumentOutController extends DocumentController
                 throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
             }
             $this->repository->save($model);
-            if ($model->isAnswer) {
+            if ($model->is_answer) {
                 $model->recordEvent(
                     new InOutDocumentUpdateEvent(
                         $local_id,
@@ -158,21 +158,19 @@ class DocumentOutController extends DocumentController
             $availableCompanies = $this->companyRepository->getList($model->correspondentWork->people_id);
             $mainCompanyWorkers = $this->peopleRepository->getAll();
             $tables = $this->service->getUploadedFilesTables($model);
-            $filesAnswer = $this->repository->getDocumentInWithoutAnswer();
             $model->setValuesForUpdate();
+            $filesAnswer = $this->repository->getDocumentInWithoutAnswer($model->isAnswer);
             if ($model->load(Yii::$app->request->post())) {
                 $this->lockWizard->unlockObject($id, DocumentOutWork::tableName());
-                $local_id = $model->getAnswer();
                 $this->service->getPeopleStamps($model);
-
                 if (!$model->validate()) {
                     throw new DomainException('Ошибка валидации. Проблемы: ' . json_encode($model->getErrors()));
                 }
                 $this->repository->save($model);
-                if ($model->isAnswer) {
+                if ($model->is_answer != 0) {
                     $model->recordEvent(
                         new InOutDocumentUpdateEvent(
-                            $local_id,
+                            $model->isAnswer,
                             $model->id,
                             DateFormatter::format($model->dateAnswer, DateFormatter::dmY_dot, DateFormatter::Ymd_dash),
                             $model->nameAnswer

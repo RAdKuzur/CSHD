@@ -61,17 +61,8 @@ class FileCreateEvent implements EventInterface
         }
 
         if ($this->isSingleLoad()) {
-            $exists = count($this->repository->get($this->tableName, $this->tableRowId, $this->filetype)) > 0;
+            $exists = count($this->repository->isExist($this->tableName, $this->tableRowId, $this->filetype, $this->filepath)) > 0;
             return [
-                $this->repository->prepareCreate(
-                    $this->tableName,
-                    $this->tableRowId,
-                    $this->filetype,
-                    $this->filepath
-                )
-            ];
-            //необходимо для поэтапной загрузки файлов
-            /*return [
                 $exists ?
                     $this->repository->prepareUpdate(
                         $this->tableName,
@@ -85,9 +76,8 @@ class FileCreateEvent implements EventInterface
                         $this->filetype,
                         $this->filepath
                     )
-            ];*/
+            ];
         }
 
-        return [];
     }
 }

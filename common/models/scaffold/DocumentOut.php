@@ -85,7 +85,7 @@ class DocumentOut extends \yii\db\ActiveRecord
             'creator_id' => 'Creator ID',
             'last_edit_id' => 'Last Edit ID',
             'key_words' => 'Key Words',
-            'is_answer' => 'Is Answer',
+            'is_answer' => 'Ответ',
         ];
     }
 

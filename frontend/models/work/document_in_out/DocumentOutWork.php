@@ -248,7 +248,9 @@ class DocumentOutWork extends DocumentOut implements FileInterface
 
     public function setIsAnswer()
     {
-        $this->isAnswer = (Yii::createObject(InOutDocumentsRepository::class))->getByDocumentInId($this->id) ? 1 : 0;
+        $this->isAnswer = (Yii::createObject(InOutDocumentsRepository::class))->getByDocumentOutId($this->id) ?
+            (Yii::createObject(InOutDocumentsRepository::class))->getByDocumentOutId($this->id)->document_in_id :
+            0;
     }
     public function getSendMethodName()
     {
@@ -357,7 +359,7 @@ class DocumentOutWork extends DocumentOut implements FileInterface
     public function beforeValidate()
     {
         $this->document_name = 'NAME';
-        $this->is_answer = $this->isAnswer;
+        //$this->is_answer = $this->isAnswer;
         $this->document_date = DateFormatter::format($this->document_date, DateFormatter::dmY_dot, DateFormatter::Ymd_dash);
         $this->sent_date = DateFormatter::format($this->sent_date, DateFormatter::dmY_dot, DateFormatter::Ymd_dash);
         return parent::beforeValidate(); 

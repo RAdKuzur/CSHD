@@ -168,7 +168,7 @@ use yii\widgets\ActiveForm;
             'yearRange' => DateFormatter::DEFAULT_STUDY_YEAR_RANGE,
         ]])->label('Дата отправки') ?>
     <?= $form->field($model, 'key_words')->textInput(['maxlength' => true])->label('Ключевые слова') ?>
-    <?= $form->field($model, 'isAnswer')->checkbox(['id' => 'isAnswer', 'onchange' => 'checkAnswer()']) ?>
+    <?= $form->field($model, 'is_answer')->checkbox(['id' => 'isAnswer', 'onchange' => 'checkAnswer()']) ?>
     <!-- <div id="dateAnswer" class="col-xs-4" <?= $model->isAnswer == 0 ? 'hidden' : '' ?>>
         <?= $form->field($model, 'dateAnswer')->widget(DatePicker::class, [
             'dateFormat' => 'php:d.m.Y',
@@ -188,9 +188,9 @@ use yii\widgets\ActiveForm;
     <div id="filesAnswer" class="col-xs-4" <?= $model->isAnswer == 0 ? 'hidden' : '' ?>>
         <?php
         $params = [
-            'prompt' => ''
+            'prompt' => '',
         ];
-       echo $form->field($model, "is_answer")
+       echo $form->field($model, "isAnswer")
            ->dropDownList(
                 ArrayHelper::map($filesAnswer,'id',function(DocumentInWork $model){
                     return $model->getNumberWithDate();

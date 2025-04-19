@@ -60,7 +60,7 @@ class DocumentOutRepository
         }
         return $model->id;
     }
-    public function getDocumentInWithoutAnswer()
+    public function getDocumentInWithoutAnswer($id = null)
     {
         $model = [];
         $docs = InOutDocumentsWork::find()
@@ -70,6 +70,9 @@ class DocumentOutRepository
             ->all();
         foreach ($docs as $doc) {
             $model[] = DocumentInWork::find()->where(['id' => $doc->document_in_id])->one();
+        }
+        if (!is_null($id)){
+            $model[] = DocumentInWork::find()->where(['id' => $id])->one();
         }
         return $model;
     }

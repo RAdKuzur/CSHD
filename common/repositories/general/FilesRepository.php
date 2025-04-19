@@ -102,4 +102,12 @@ class FilesRepository
 
         return $file->id;
     }
+    public function isExist($tableName, $tableRowId, $filetype, $filepath){
+        return FilesWork::find()
+            ->where(['table_name' => $tableName])
+            ->andWhere(['table_row_id' => $tableRowId])
+            ->andWhere(['file_type' => $filetype])
+            ->andWhere(['filepath' => $filepath])
+            ->all();
+    }
 }

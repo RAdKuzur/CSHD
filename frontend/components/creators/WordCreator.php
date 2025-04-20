@@ -873,7 +873,6 @@ class WordCreator
         $cell = $table->addCell(1000);
         $cell->addText('1', array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(4000);
-        var_dump($order->executor->positionWork->name, ' ', $order->bring->positionWork->name);
         $cell->addText($order->executor->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
         $cell = $table->addCell(3000);
         $cell->addText(mb_strtolower(mb_substr($order->executor->positionWork->name, 0, 1)) . mb_substr($order->executor->positionWork->name, 1), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));

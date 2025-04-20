@@ -21,11 +21,14 @@ use common\services\general\PeopleStampService;
 use DomainException;
 use frontend\events\document_in\InOutDocumentDeleteEvent;
 use frontend\events\document_in\InOutDocumentUpdateEvent;
+use frontend\events\document_out\InOutDocumentDeleteLinkEvent;
+use frontend\events\document_out\InOutDocumentUpdateLinkEvent;
 use frontend\events\general\FileDeleteEvent;
 use frontend\models\search\SearchDocumentOut;
 use frontend\models\work\document_in_out\DocumentOutWork;
 use frontend\models\work\general\FilesWork;
 use frontend\services\document\DocumentOutService;
+use frontend\services\document\InOutDocumentService;
 use Yii;
 use yii\web\Controller;
 
@@ -40,6 +43,7 @@ class DocumentOutController extends DocumentController
     private PeopleStampService $peopleStampService;
     private LockWizard $lockWizard;
     private DocumentOutService $service;
+    private InOutDocumentService $inOutDocumentService;
 
     public function __construct(
         $id,
@@ -51,6 +55,7 @@ class DocumentOutController extends DocumentController
         PeopleStampService $peopleStampService,
         LockWizard $lockWizard,
         DocumentOutService $service,
+        InOutDocumentService $inOutDocumentService,
         $config = [])
     {
         parent::__construct($id, $module, Yii::createObject(FileService::class), Yii::createObject(FilesRepository::class), $config);
@@ -61,6 +66,7 @@ class DocumentOutController extends DocumentController
         $this->service = $service;
         $this->peopleStampService = $peopleStampService;
         $this->lockWizard = $lockWizard;
+        $this->inOutDocumentService = $inOutDocumentService;
     }
 
     public function actionIndex()
@@ -111,7 +117,6 @@ class DocumentOutController extends DocumentController
         $mainCompanyWorkers = $this->peopleRepository->getAll();
         $filesAnswer = $this->repository->getDocumentInWithoutAnswer();
         if ($model->load(Yii::$app->request->post())) {
-            $local_id = $model->getAnswer();
             $model->generateDocumentNumber();
             $this->service->getPeopleStamps($model);
 
@@ -120,15 +125,13 @@ class DocumentOutController extends DocumentController
             }
             $this->repository->save($model);
             if ($model->is_answer) {
-                $model->recordEvent(
-                    new InOutDocumentUpdateEvent(
-                        $local_id,
-                        $model->id,
-                        DateFormatter::format($model->dateAnswer, DateFormatter::dmY_dot, DateFormatter::Ymd_dash),
-                        $model->nameAnswer
-                    ),
-                    DocumentOutWork::class
-                );
+                /*$model->recordEvent(
+                    new InOutDocumentUpdateLinkEvent(
+                        $model->isAnswer,
+                        $model->id
+                    ),  DocumentOutWork::class
+                );*/
+                $this->inOutDocumentService->updateLink($model->isAnswer, $model->id);
             }
             $this->service->getFilesInstances($model);
             $this->service->saveFilesFromModel($model);
@@ -168,19 +171,20 @@ class DocumentOutController extends DocumentController
                 }
                 $this->repository->save($model);
                 if ($model->is_answer != 0) {
-                    $model->recordEvent(
-                        new InOutDocumentUpdateEvent(
-                            $model->isAnswer,
-                            $model->id,
-                            DateFormatter::format($model->dateAnswer, DateFormatter::dmY_dot, DateFormatter::Ymd_dash),
-                            $model->nameAnswer
-                        ),
+
+                    /*$model->recordEvent(
+                        new InOutDocumentUpdateLinkEvent($model->isAnswer, $model->id),
                         DocumentOutWork::class
-                    );
+                    );*/
+                    $this->inOutDocumentService->deleteLink($model->id);
+                    $this->inOutDocumentService->updateLink($model->isAnswer, $model->id);
                 } else {
-                    $model->recordEvent(new InOutDocumentDeleteEvent($model->id), DocumentOutWork::class);
+                    /*$model->recordEvent(
+                        new InOutDocumentDeleteLinkEvent($model->id),
+                        DocumentOutWork::class
+                    );*/
+                    $this->inOutDocumentService->deleteLink($model->id);
                 }
-                $model->releaseEvents();
                 $this->service->getFilesInstances($model);
                 $this->service->saveFilesFromModel($model);
                 $model->releaseEvents();

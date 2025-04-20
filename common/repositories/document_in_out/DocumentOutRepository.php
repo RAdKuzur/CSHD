@@ -71,8 +71,10 @@ class DocumentOutRepository
         foreach ($docs as $doc) {
             $model[] = DocumentInWork::find()->where(['id' => $doc->document_in_id])->one();
         }
-        if (!is_null($id)){
-            $model[] = DocumentInWork::find()->where(['id' => $id])->one();
+        if (!is_null($id) && $id != 0){
+            if(count(DocumentInWork::find()->where(['id' => $id])->all()) > 0){
+                $model[] = DocumentInWork::find()->where(['id' => $id])->one();
+            }
         }
         return $model;
     }

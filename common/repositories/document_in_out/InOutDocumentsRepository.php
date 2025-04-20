@@ -45,6 +45,13 @@ class InOutDocumentsRepository
     {
         return InOutDocumentsWork::find()->where(['document_out_id' => $docOutId])->one();
     }
+    public function getByDocumentInOutId($docInId, $docOutId)
+    {
+        return InOutDocumentsWork::find()
+            ->where(['document_out_id' => $docOutId])
+            ->andWhere(['document_in_id' => $docInId])
+            ->one();
+    }
     /**
      * Подготавливает запрос для создания новой записи в таблице
      * @param $docInId
@@ -78,11 +85,32 @@ class InOutDocumentsRepository
         $command->update($model::tableName(), $model->getAttributes(), ['document_in_id' => $docInId]);
         return $command->getRawSql();
     }
+    public function prepareUpdateLink($docInId, $docOutId)
+    {
+        $model = $this->getByDocumentInId($docInId);
+        if ($model === null) {
+            throw new DomainException("Не найдена запись в in_out_documents для document_in {$docInId}");
+        }
+        $model->document_out_id = $docOutId;
+        $command = Yii::$app->db->createCommand();
+        $command->update($model::tableName(), $model->getAttributes(), ['document_in_id' => $docInId]);
+        return $command->getRawSql();
+    }
 
     public function prepareDelete($docInId)
     {
         $command = Yii::$app->db->createCommand();
         $command->delete(InOutDocumentsWork::tableName(), ['document_in_id' => $docInId]);
+        return $command->getRawSql();
+    }
+    public function prepareDeleteLink($docOutId){
+        $model = $this->getByDocumentOutId($docOutId);
+        if ($model === null) {
+            throw new DomainException("Не найдена запись в in_out_documents для document_out {$docOutId}");
+        }
+        $model->document_out_id = null;
+        $command = Yii::$app->db->createCommand();
+        $command->update($model::tableName(), $model->getAttributes(), ['document_out_id' => $docOutId]);
         return $command->getRawSql();
     }
 

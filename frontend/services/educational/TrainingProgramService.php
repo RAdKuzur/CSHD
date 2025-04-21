@@ -63,7 +63,7 @@ class TrainingProgramService implements DatabaseServiceInterface
 
             $newFilename = StringFormatter::createHash(date("Y-m-d H:i:s")) . '.' . $model->utpFile->extension;
             $this->fileService->uploadFile($model->utpFile, $newFilename, ['filepath' => FilePaths::TEMP_FILEPATH . '/']);
-            $data = ExcelWizard::getDataFromColumns(
+            $data = ExcelWizard::getDataFromUtpFiles(
                 Yii::$app->basePath . FilePaths::TEMP_FILEPATH . '/' . $newFilename,
                 ['Тема', 'Тип контроля']
             );

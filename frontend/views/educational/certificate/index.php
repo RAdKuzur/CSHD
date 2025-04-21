@@ -26,11 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
         <h1><?= Html::encode($this->title) ?></h1>
 
         <div class="flexx space">
-        <p>
-            <?php
-            echo Html::a('Добавить сертифкат(-ы)', ['create'], ['class' => 'btn btn-success'])
-            ?>
-        </p>
+            <div class="flexx">
+                <?php
+                echo Html::a('Добавить сертифкат(-ы)', ['create'], ['class' => 'btn btn-success'])
+                ?>
+            </div>
+
 
             <div style="margin-bottom: 10px;">
                 <?php

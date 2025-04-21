@@ -20,8 +20,8 @@ $searchFields = array_merge(
     SearchFieldHelper::textField('surname', 'Фамилия', 'Фамилия'),
     SearchFieldHelper::textField('name' , 'Имя', 'Имя'),
     SearchFieldHelper::textField('patronymic', 'Отчетство', 'Отчетство'),
-    SearchFieldHelper::textField('organized', 'Должность', 'Должность'),
-    SearchFieldHelper::textField('position', 'Организация', 'Организация'),
+    SearchFieldHelper::textField('position', 'Должность', 'Должность'),
+    SearchFieldHelper::textField('organized', 'Организация', 'Организация'),
 );
 
 echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::PEOPLE_INDEX); ?>

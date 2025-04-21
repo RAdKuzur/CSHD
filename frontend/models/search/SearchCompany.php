@@ -57,7 +57,7 @@ class SearchCompany extends CompanyWork
         if (count($params) > 1) {
             $params['SearchCompany']['type'] = StringFormatter::stringAsInt($params['SearchCompany']['type']);
             $params['SearchCompany']['is_contractor'] = StringFormatter::stringAsInt($params['SearchCompany']['is_contractor']);
-            $params['SearchCompany']['inn'] = StringFormatter::stringAsInt($params['SearchCompany']['inn']);
+//            $params['SearchCompany']['inn'] = StringFormatter::stringAsInt($params['SearchCompany']['inn']) != "-1" ? StringFormatter::stringAsInt($params['SearchCompany']['inn']) : "";
         }
 
         $this->load($params);

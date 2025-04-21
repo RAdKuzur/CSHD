@@ -83,7 +83,7 @@ class EventWork extends Event implements FileInterface
         return array_merge(parent::rules(), [
                 [['name', 'start_date', 'finish_date', 'address'], 'required'],
                 [['scopes', 'branches'], 'safe'],
-                ['child_rst_participants_count', 'compare', 'compareAttribute' => 'child_participants_count', 'operator' => '<=', 'message' => 'Количество детей от РШТ не должно превышать общего количества детей'],
+                ['child_rst_participants_count', 'compare', 'compareAttribute' => 'child_participants_count', 'type' => 'number','operator' => '<=', 'message' => 'Количество детей от РШТ не должно превышать общего количества детей'],
             ]
         );
     }

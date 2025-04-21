@@ -290,7 +290,7 @@ class DocumentInWork extends DocumentIn implements FileInterface
             if($links->document_out_id != null) {
                 $str = 'Исходящий документ "' . (Yii::createObject(DocumentOutRepository::class))->get($links->document_out_id)->document_theme . '"';
                 return $format == StringFormatter::FORMAT_LINK ?
-                    StringFormatter::stringAsLink($str, Url::to([Yii::$app->frontUrls::DOC_IN_VIEW, 'id' => $links->document_out_id])) : $str;
+                    StringFormatter::stringAsLink($str, Url::to([Yii::$app->frontUrls::DOC_OUT_VIEW, 'id' => $links->document_out_id])) : $str;
             }
             else {
                 return $links->date ? 'Требуется указать ответ до ' . DateFormatter::format($links->date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot) : 'Требуется указать ответ';

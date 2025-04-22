@@ -70,8 +70,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         <tr>
                             <td class="sticky-cell">
                                 <div class="flexx space">
-                                    <?= $model->getParticipantIcons($participantLesson->participant); ?>
-                                    <?= $model->getPrettyParticipant($participantLesson->participant, StringFormatter::FORMAT_LINK); ?>
+                                    <?= $participantLesson->participant ? $model->getParticipantIcons($participantLesson->participant) : NULL; ?>
+                                    <?= $participantLesson->participant ? $model->getPrettyParticipant($participantLesson->participant, StringFormatter::FORMAT_LINK) : NULL; ?>
                                 </div>
                             </td>
                             <?php foreach ($participantLesson->lessonIds as $lesson): ?>

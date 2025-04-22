@@ -25,7 +25,8 @@ $searchFields = array_merge(
     SearchFieldHelper::textField('correspondentName', 'Корреспондент', 'Корреспондент'),
     SearchFieldHelper::textField('executorName', 'Исполнитель/Кем подписан', 'Исполнитель/Кем подписан'),
     SearchFieldHelper::dropdownField('sendMethod', 'Способ получения', Yii::$app->sendMethods->getList(), 'Способ получения'),
-    SearchFieldHelper::dropdownField('status', 'Статус документа', Yii::$app->documentStatus->getListDocOut(), null, DocumentStatusDictionary::CURRENT)
+    //SearchFieldHelper::dropdownField('status', 'Статус документа', Yii::$app->documentStatus->getListDocOut(), null, DocumentStatusDictionary::CURRENT)
+    SearchFieldHelper::dropdownField('status', 'Статус документа', Yii::$app->documentStatus->getListDocOut(), 'Статус документа')
 );
 
 echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::DOC_OUT_INDEX); ?>

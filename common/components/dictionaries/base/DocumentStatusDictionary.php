@@ -19,7 +19,7 @@ class DocumentStatusDictionary extends BaseDictionary
             self::ARCHIVE => 'Архивные',
             self::EXPIRED => 'Просроченные',
             self::NEEDANSWER => 'Требуют ответа',
-            self::RESERVED => 'Резерные',
+            self::RESERVED => 'Резервные',
             self::ANSWER => 'Являются ответом',
         ];
     }
@@ -31,7 +31,7 @@ class DocumentStatusDictionary extends BaseDictionary
             self::ARCHIVE => 'Архивные',
             self::EXPIRED => 'Просроченные',
             self::NEEDANSWER => 'Требуют ответа',
-            self::RESERVED => 'Резерные',
+            self::RESERVED => 'Резервные',
         ];
     }
 
@@ -40,7 +40,7 @@ class DocumentStatusDictionary extends BaseDictionary
         return [
             self::CURRENT => 'Актуальные',
             self::ARCHIVE => 'Архивные',
-            self::RESERVED => 'Резерные',
+            self::RESERVED => 'Резервные',
             self::ANSWER => 'Являются ответом',
         ];
     }

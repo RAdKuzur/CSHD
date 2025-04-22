@@ -27,27 +27,30 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 <script>
     function changeScheduleType() {
         let type = document.getElementById('traininggroupscheduleform-type');
-console.log(type.getElementsByTagName('input')[0].checked);
-        let firstDivs = document.querySelectorAll('[id^="manual-"][id$="--fields"]');
-        let secondDivs = document.querySelectorAll('[id^="auto-"][id$="--fields"]');
+
+        let firstDivs = document.querySelectorAll('[id^="manual-"]');
+        let secondDivs = document.querySelectorAll('[id^="auto-"]');
+
+
 
         if (type.getElementsByTagName('input')[0].checked) {    // ручное заполнение
-            if (secondDivs.length > 0) {
-                secondDivs[0].style.display = 'none';
-            }
             secondDivs.forEach((element) => {
-                element.remove();
+                    element.style.display = 'none';
             });
+            // secondDivs.forEach((element) => {
+            //     element.remove();
+            // });
             firstDivs.forEach((element) => {
                 element.style.display = 'block';
             });
         } else {    // автоматическое заполнение
-            if (firstDivs.length > 0) {
-                firstDivs[0].style.display = 'none';
-            }
             firstDivs.forEach((element) => {
-                element.remove();
+                    element.style.display = 'none';
             });
+
+            // firstDivs.forEach((element) => {
+            //     element.remove();
+            // });
             secondDivs.forEach((element) => {
                 element.style.display = 'block';
             });
@@ -73,6 +76,7 @@ console.log(type.getElementsByTagName('input')[0].checked);
             <?= $scheduleTable; ?>
         <?php endif; ?>
 
+
         <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
         <div class="bordered-div">
@@ -95,7 +99,7 @@ console.log(type.getElementsByTagName('input')[0].checked);
                 'widgetContainer' => 'dynamicform_wrapper', // required: only alphanumeric characters plus "_" [A-Za-z0-9_]
                 'widgetBody' => '.container-items', // required: css class selector
                 'widgetItem' => '.item', // required: css class
-                'limit' => 4, // the maximum times, an element can be cloned (default 999)
+                'limit' => 50, // the maximum times, an element can be cloned (default 999)
                 'min' => 1, // 0 or 1 (default 1)
                 'insertButton' => '.add-item', // css class
                 'deleteButton' => '.remove-item', // css class
@@ -109,9 +113,7 @@ console.log(type.getElementsByTagName('input')[0].checked);
             <div class="container-items"><!-- widgetContainer -->
                 <div class="panel-title">
                     <h5 class="panel-title pull-left">Занятие</h5><!-- widgetBody -->
-                    <div class="pull-right">
-                        <button type="button" class="add-item btn btn-success btn-xs" onclick="changeScheduleType()"><span class="glyphicon glyphicon-plus">+</span></button>
-                    </div>
+
                 </div>
                 <?php foreach ($modelLessons as $i => $modelLesson): ?>
                 <div class="item panel panel-default" id = "item"><!-- widgetItem -->
@@ -182,8 +184,12 @@ console.log(type.getElementsByTagName('input')[0].checked);
                         </div>
                     </div>
                 <?php endforeach; ?>
+
             </div>
             <?php DynamicFormWidget::end(); ?>
+                <div class="pull-right">
+                    <button type="button" class="add-item btn btn-success" onclick="changeScheduleType()"><span class="glyphicon glyphicon-plus">+</span></button>
+                </div>
         </div>
 
         <div class="form-group">

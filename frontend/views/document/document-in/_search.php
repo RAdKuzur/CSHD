@@ -25,7 +25,8 @@ use yii\widgets\ActiveForm;
         SearchFieldHelper::textField('correspondentName', 'Корреспондент', 'Корреспондент'),
         SearchFieldHelper::textField('executorName', 'Ответственный', 'Ответственный'),
         SearchFieldHelper::dropdownField('sendMethod', 'Способ получения', Yii::$app->sendMethods->getList(), 'Способ получения'),
-        SearchFieldHelper::dropdownField('status', 'Статус документа', Yii::$app->documentStatus->getListDocIn(), null, DocumentStatusDictionary::CURRENT)
+        //SearchFieldHelper::dropdownField('status', 'Статус документа', Yii::$app->documentStatus->getListDocIn(), 'Статус документов', DocumentStatusDictionary::CURRENT)
+        SearchFieldHelper::dropdownField('status', 'Статус документа', Yii::$app->documentStatus->getListDocIn(), 'Статус документов')
     );
 
     echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::DOC_IN_INDEX); ?>

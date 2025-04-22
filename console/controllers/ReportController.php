@@ -85,38 +85,77 @@ class ReportController extends \yii\console\Controller
         }
 
     }
-    public function actionTest(){
-        $counter = 0;
-        $allGroups = TrainingGroupWork::find()
-            ->where(['and',
-                ['<=', 'start_date', '2024-12-31'],
-                ['>=', 'finish_date', '2024-01-01'],
-                ['branch' => self::BRANCH],
-                ['budget' => TrainingGroupWork::IS_BUDGET]
-            ])
-            ->all();
-        $data = [];
-        foreach ($allGroups as $group) {
-            /* @var $participant TrainingGroupParticipantWork*/
-            /* @var $project GroupProjectThemesWork*/
-            $participants = TrainingGroupParticipantWork::find()->where(['training_group_id' => $group->id])->all();
-            foreach ($participants as $participant) {
-                $project = NULL;
-                if ($participant->groupProjectThemesWork){
-                    $project = $participant->groupProjectThemesWork->projectThemeWork->name;
-                    $counter++;
+    public function actionProjects(){
+        foreach (self::BRANCHES as $branch) {
+            $counter = 0;
+            $allGroups = TrainingGroupWork::find()
+                ->joinWith('trainingProgram')
+                ->where(['and',
+                    ['<=', 'start_date', '2024-12-31'],
+                    ['>=', 'finish_date', '2024-01-01'],
+                    ['branch' => $branch],
+                    ['budget' => TrainingGroupWork::IS_BUDGET],
+                    ['training_program.focus' => 1]
+
+                ])
+                ->all();
+            $data = [];
+            foreach ($allGroups as $group) {
+                /* @var $participant TrainingGroupParticipantWork */
+                /* @var $project GroupProjectThemesWork */
+                $participants = TrainingGroupParticipantWork::find()->where(['training_group_id' => $group->id])->all();
+                foreach ($participants as $participant) {
+                    $project = NULL;
+                    if ($participant->groupProjectThemesWork) {
+                        $project = $participant->groupProjectThemesWork->projectThemeWork->name;
+                        $counter++;
+                    }
+                    $data[] = [$participant->getFullFio(), $project];
                 }
-                $data[] = [$participant->getFullFio(), $project];
+            }
+            $data = array_filter($data, function ($item) {
+                return $item[1] !== null;
+            });
+            $fullFios = array_column($data, 0); // Получаем массив ФИО
+            $uniqueFullFios = array_unique($fullFios);   // Оставляем только уникальные
+            $countUniqueParticipants = count($uniqueFullFios); // Считаем количество
+            if ($counter != 0) {
+                var_dump($countUniqueParticipants / $counter * 100);
             }
 
         }
-        $data = array_filter($data, function($item) {
-            return $item[1] !== null;
-        });
-        $fullFios = array_column($data, 0); // Получаем массив ФИО
-        $uniqueFullFios = array_unique($fullFios);   // Оставляем только уникальные
-        $countUniqueParticipants = count($uniqueFullFios); // Считаем количество
-        var_dump($countUniqueParticipants);var_dump($counter);
+    }
+    public function actionTest()
+    {
+        foreach (self::BRANCHES as $branch) {
+            $allGroups = TrainingGroupWork::find()
+                ->joinWith('trainingProgram')
+                ->where(['and',
+                    ['<=', 'start_date', '2024-12-31'],
+                    ['>=', 'finish_date', '2024-01-01'],
+                    ['branch' => $branch],
+                    ['budget' => TrainingGroupWork::IS_BUDGET],
+                    ['training_program.focus' => 1]
+
+                ])
+                ->all();
+            $participantAll = TrainingGroupParticipantWork::find()
+                ->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])
+                ->select('participant_id')
+                ->distinct()  // учитываем только уникальные participant_id
+                ->all();
+            //->orWhere(['IS NOT', 'group_project_themes_id', NULL])
+            $projects = array_merge(GroupProjectThemesWork::find()->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])->all(),
+                GroupProjectThemesWork::find()->where(['IN', 'id', ArrayHelper::getColumn($participantAll, 'id')])->all());
+            var_dump(count(array_merge(GroupProjectThemesWork::find()->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])->all(),
+                GroupProjectThemesWork::find()->where(['IN', 'id', ArrayHelper::getColumn($participantAll, 'id')])->all()))
+            );
+            var_dump(count(array_unique(ArrayHelper::getColumn($projects, 'id'))));
+            $projects = array_unique(ArrayHelper::getColumn(GroupProjectThemesWork::find()->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])->all(), 'training_group_id'));
+            //var_dump(count($projects), count($participantAll));
+
+        }
+
     }
     public function actionReportWinners(){
 

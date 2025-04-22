@@ -73,4 +73,33 @@ class ExcelWizard
 
         return $data;
     }
+    public static function getDataFromColumnUtpFiles(Worksheet $worksheet, array $columns, $rows)
+    {
+        ini_set('memory_limit', '512M');
+        $data = [];
+        for($i = 2; $i <= $rows; $i++) {
+            foreach ($columns as $j => $column) {
+                $data[$column][] = $worksheet->getCell(Coordinate::stringFromColumnIndex($j + 1) . $i)->getValue();;
+            }
+        }
+        return $data;
+    }
+    public static function getDataFromUtpFiles($filepath, array $columns)
+    {
+        ini_set('memory_limit', '512M');
+
+        $reader = new Xlsx();
+        $spreadsheet = $reader->load($filepath);
+        $worksheet = $spreadsheet->setActiveSheetIndex(0);
+        $highestRow = $worksheet->getHighestRow();
+
+        $startRow = 1;
+        $tempValue = $worksheet->getCell(Coordinate::stringFromColumnIndex(1) . $startRow)->getValue();
+        while ($startRow < $highestRow && strlen($tempValue) > 0) {
+            $startRow++;
+            $tempValue = $worksheet->getCell(Coordinate::stringFromColumnIndex(1) . $startRow)->getValue();
+        }
+        $data = self::getDataFromColumnUtpFiles($worksheet, $columns, $startRow);
+        return $data;
+    }
 }

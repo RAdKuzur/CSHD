@@ -71,14 +71,26 @@ class TrainingGroupParticipantWork extends TrainingGroupParticipant
      */
     public function getRawStatus()
     {
-        $stringStatus = '<b>' . Yii::$app->studyStatus->get($this->status) . '</b>';
-        if ($this->status == Yii::$app->studyStatus::ACTIVE || $this->status == Yii::$app->studyStatus::TRANSFER_IN) {
+        $status = 0;
+        if ($this->status == Yii::$app->studyStatus::ACTIVE) {
             $svgColor = HtmlBuilder::SVG_PRIMARY_COLOR;
-        } else if ($this->status == Yii::$app->studyStatus::DEDUCT || $this->status == Yii::$app->studyStatus::TRANSFER_OUT) {
+            if (OrderTrainingGroupParticipantWork::find()->where(['training_group_participant_in_id' => $this->id])->andWhere(['not',['training_group_participant_out_id' => null]])->one()) {
+                $status = Yii::$app->studyStatus::TRANSFER_IN;
+            } else {
+                $status = Yii::$app->studyStatus::ACTIVE;
+            }
+        } else if ($this->status == Yii::$app->studyStatus::DEDUCT) {
             $svgColor = HtmlBuilder::SVG_CRITICAL_COLOR;
+            if (OrderTrainingGroupParticipantWork::find()->where(['training_group_participant_out_id' => $this->id])->andWhere(['not',['training_group_participant_in_id' => null]])->one()) {
+                $status = Yii::$app->studyStatus::TRANSFER_OUT;
+            } else {
+                $status = Yii::$app->studyStatus::DEDUCT;
+            }
         } else {
             $svgColor = '';
         }
+
+        $stringStatus = '<b>' . Yii::$app->studyStatus->get($status) . '</b>';
         return HtmlBuilder::createTooltipIcon($stringStatus, FilePaths::SVG_STATUS, $svgColor);
     }
 

@@ -3,11 +3,18 @@
 namespace console\controllers;
 
 use common\components\dictionaries\base\BranchDictionary;
+use common\components\dictionaries\base\EventLevelDictionary;
+use common\models\scaffold\ForeignEvent;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\educational\training_group\GroupProjectThemesWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\event\EventTrainingGroupWork;
+use frontend\models\work\event\ForeignEventWork;
+use frontend\models\work\event\ParticipantAchievementWork;
+use frontend\models\work\team\ActParticipantBranchWork;
+use frontend\models\work\team\ActParticipantWork;
+use frontend\models\work\team\SquadParticipantWork;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -23,7 +30,7 @@ class ReportController extends \yii\console\Controller
         BranchDictionary::MOBILE_QUANTUM ,
         BranchDictionary::COD,
     ];
-    public function actionReportParticipantRepeat(){
+    public function actionReportParticipant(){
         foreach(self::BRANCHES as $branch) {
             $allGroups = TrainingGroupWork::find()
                 ->joinWith('trainingProgram') // Убедитесь, что связь `trainingProgram` определена в модели
@@ -47,12 +54,12 @@ class ReportController extends \yii\console\Controller
                 ->groupBy('participant_id')
                 ->having('COUNT(*) = 1')  // только те participant_id, которые встречаются 1 раз
                 ->count();
-            if($participantsAll!= 0){
+            if($participantsAll != 0){
                 var_dump(Yii::$app->branches->get($branch),  100 - ($counter / $participantsAll) * 100);
             }
         }
     }
-    public function actionReportProjectParticipant(){
+    public function actionReportProject(){
         foreach(self::BRANCHES as $branch){
             $allGroups = TrainingGroupWork::find()
                 ->joinWith('trainingProgram')
@@ -158,6 +165,41 @@ class ReportController extends \yii\console\Controller
 
     }
     public function actionReportWinners(){
+        /* @var $participant TrainingGroupParticipantWork*/
+        foreach(self::BRANCHES as $branch) {
+            $allForeignEvents = ForeignEventWork::find()
+                ->where(['and',
+                    ['<=', 'begin_date', '2024-12-31'],
+                    ['>=', 'end_date', '2024-01-01'],
+                    ['>=' , 'level' , EventLevelDictionary::REGIONAL]
+            ])->all();
 
+            //уникальные foreign_event_participant
+            $acts = ActParticipantWork::find()
+                ->where(['IN', 'foreign_event_id', ArrayHelper::getColumn($allForeignEvents, 'id')])
+                ->andWhere(['focus' => 4])
+                ->all();
+            //только акты из данного отдела:
+            $acts = array_filter($acts, function (ActParticipantWork $item) use ($branch) {
+                if(ActParticipantBranchWork::find()->where(['act_participant_id' => $item->id])->andWhere(['branch' => $branch])->exists()){
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+            //все участники
+            $participants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($acts, 'id')])->all(),'participant_id');
+            $participants = array_unique($participants);
+
+
+            $achievementActs = ArrayHelper::getColumn(ParticipantAchievementWork::find()->where(['IN', 'act_participant_id', ArrayHelper::getColumn($acts, 'id')])->all(), 'act_participant_id');
+
+            $actWinners = ActParticipantWork::find()->where(['IN', 'id', $achievementActs])->all();
+            $winnerParticipants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($actWinners, 'id')])->all(),'participant_id');
+            if (count($acts) != 0){
+                var_dump(Yii::$app->branches->get($branch), count($acts), count(array_unique($winnerParticipants))/count($participants) * 100);
+            }
+        }
     }
 }

@@ -77,7 +77,7 @@ class ExcelWizard
     {
         ini_set('memory_limit', '512M');
         $data = [];
-        for($i = 2; $i < $rows; $i++) {
+        for($i = 2; $i <= $rows; $i++) {
             foreach ($columns as $j => $column) {
                 $data[$column][] = $worksheet->getCell(Coordinate::stringFromColumnIndex($j + 1) . $i)->getValue();;
             }

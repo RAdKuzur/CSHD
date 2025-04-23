@@ -40,7 +40,7 @@ class ReportController extends \yii\console\Controller
                     ['>=', 'finish_date', '2024-01-01'],
                     ['branch' => $branch],
                     ['budget' => TrainingGroupWork::IS_BUDGET],
-                    ['training_program.focus' => 5] // Теперь `trainingProgram` доступна благодаря joinWith
+                    ['training_program.focus' => 2] // Теперь `trainingProgram` доступна благодаря joinWith
                 ])
                 ->all();
             $participantsAll = TrainingGroupParticipantWork::find()
@@ -68,7 +68,7 @@ class ReportController extends \yii\console\Controller
                     ['>=', 'finish_date', '2024-01-01'],
                     ['branch' => $branch],
                     ['budget' => TrainingGroupWork::IS_BUDGET],
-                    ['training_program.focus' => 1]
+                    ['training_program.focus' => 4]
 
                 ])
                 ->all();
@@ -106,6 +106,11 @@ class ReportController extends \yii\console\Controller
 
                 ])
                 ->all();
+            $participantsAll = TrainingGroupParticipantWork::find()
+                ->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])
+                ->select('participant_id')
+                ->distinct()  // учитываем только уникальные participant_id
+                ->all();
             $data = [];
             foreach ($allGroups as $group) {
                 /* @var $participant TrainingGroupParticipantWork */
@@ -127,7 +132,7 @@ class ReportController extends \yii\console\Controller
             $uniqueFullFios = array_unique($fullFios);   // Оставляем только уникальные
             $countUniqueParticipants = count($uniqueFullFios); // Считаем количество
             if ($counter != 0) {
-                var_dump($countUniqueParticipants / $counter * 100);
+                var_dump(Yii::$app->branches->get($branch), $countUniqueParticipants / count($participantsAll) * 100);
             }
 
         }
@@ -177,7 +182,7 @@ class ReportController extends \yii\console\Controller
             //уникальные foreign_event_participant
             $acts = ActParticipantWork::find()
                 ->where(['IN', 'foreign_event_id', ArrayHelper::getColumn($allForeignEvents, 'id')])
-                ->andWhere(['focus' => 4])
+                ->andWhere(['focus' => 1])
                 ->all();
             //только акты из данного отдела:
             $acts = array_filter($acts, function (ActParticipantWork $item) use ($branch) {
@@ -194,11 +199,14 @@ class ReportController extends \yii\console\Controller
 
 
             $achievementActs = ArrayHelper::getColumn(ParticipantAchievementWork::find()->where(['IN', 'act_participant_id', ArrayHelper::getColumn($acts, 'id')])->all(), 'act_participant_id');
-
             $actWinners = ActParticipantWork::find()->where(['IN', 'id', $achievementActs])->all();
+
             $winnerParticipants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($actWinners, 'id')])->all(),'participant_id');
+            $winnerParticipants = array_unique($winnerParticipants);
             if (count($acts) != 0){
-                var_dump(Yii::$app->branches->get($branch), count($acts), count(array_unique($winnerParticipants))/count($participants) * 100);
+                //var_dump(count($actWinners) ,count($acts),  count(array_unique($winnerParticipants)), count($participants));
+               // var_dump(Yii::$app->branches->get($branch), count($acts), count(array_unique($winnerParticipants))/count($participants) * 100);
+                var_dump(Yii::$app->branches->get($branch), count($participants), count($acts));
             }
         }
     }

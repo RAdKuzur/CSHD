@@ -659,6 +659,7 @@ class TrainingGroupController extends DocumentController
     public function actionGroupDeletion($id)
     {
         $errorString = '';
+
         $data = RequestHelper::getDataFromPost(Yii::$app->request->post(), 'check', RequestHelper::CHECKBOX);
         foreach ($data as $item) {
             $result = $this->lessonService->delete($item);
@@ -666,7 +667,8 @@ class TrainingGroupController extends DocumentController
                 $errorString .= "Ошибка удаления занятия (ID: $item)<br>";
             }
         }
-        Yii::$app->session->setFlash('danger', $errorString);
+        if ($errorString)
+            Yii::$app->session->setFlash('danger', $errorString);
         return $this->redirect(['schedule-form', 'id' => $id]);
     }
 

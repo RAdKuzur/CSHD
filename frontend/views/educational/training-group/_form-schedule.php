@@ -37,9 +37,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
             secondDivs.forEach((element) => {
                     element.style.display = 'none';
             });
-            // secondDivs.forEach((element) => {
-            //     element.remove();
-            // });
+
             firstDivs.forEach((element) => {
                 element.style.display = 'block';
             });
@@ -48,9 +46,6 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                     element.style.display = 'none';
             });
 
-            // firstDivs.forEach((element) => {
-            //     element.remove();
-            // });
             secondDivs.forEach((element) => {
                 element.style.display = 'block';
             });
@@ -209,4 +204,38 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
     const intervalId = setInterval(() => {
         refreshLock();
     }, 600000);
+
+    //Активация всех checkbox нажатием главного
+
+    document.addEventListener('DOMContentLoaded', function()
+    {
+        const masterCheckbox = document.querySelector('.checkbox-group');
+        const checkboxes = document.querySelectorAll('.check');
+
+        if (masterCheckbox) {
+            masterCheckbox.addEventListener('change', function() {
+                checkboxes.forEach(cb => cb.checked = this.checked);
+            });
+
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+                    masterCheckbox.checked = allChecked;
+                });
+            });
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#dynamicForm').on('beforeSubmit', function (e) {
+            $('[id^="manual-"], [id^="auto"]').each(function () {
+                if (this.style.display === 'none') {
+                    $(this).find('input, select, textarea').prop('disable', true);
+                }
+            });
+            return true;
+
+        });
+
+    });
 </script>

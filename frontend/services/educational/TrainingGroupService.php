@@ -335,12 +335,14 @@ class TrainingGroupService implements DatabaseServiceInterface
         $newParticipants = [];
         foreach ($form->participants as $participant) {
             /** @var TrainingGroupParticipantWork $participant */
-            $newParticipants[] = TrainingGroupParticipantWork::fill(
-                $form->id,
-                $participant->participant_id,
-                $participant->send_method,
-                $participant->id ? : null
-            );
+            if ($participant->participant_id != ''){
+                $newParticipants[] = TrainingGroupParticipantWork::fill(
+                    $form->id,
+                    $participant->participant_id,
+                    $participant->send_method,
+                    $participant->id ? : null
+                );
+            }
         }
         $newParticipants = array_unique($newParticipants);
 

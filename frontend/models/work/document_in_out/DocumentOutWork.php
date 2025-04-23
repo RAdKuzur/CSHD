@@ -10,6 +10,7 @@ use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use common\models\scaffold\DocumentOut;
+use common\models\work\ErrorsWork;
 use common\models\work\UserWork;
 use common\repositories\document_in_out\DocumentInRepository;
 use common\repositories\document_in_out\DocumentOutRepository;
@@ -374,4 +375,15 @@ class DocumentOutWork extends DocumentOut implements FileInterface
 
         return parent::beforeSave($insert); 
     }
+
+    public function getErrorState()
+    {
+        return ErrorsWork::find()
+            ->where([
+                'table_name' => static::tableName(),
+                'table_row_id' => $this->id,
+            ])
+            ->exists();
+    }
+
 }

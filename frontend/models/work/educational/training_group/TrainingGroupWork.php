@@ -6,6 +6,7 @@ use common\components\interfaces\FileInterface;
 use common\components\traits\ErrorTrait;
 use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
+use common\models\work\ErrorsWork;
 use common\models\work\UserWork;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\general\PeopleStampRepository;
@@ -19,6 +20,7 @@ use frontend\models\work\educational\training_program\TrainingProgramWork;
 use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\general\PeopleWork;
 use InvalidArgumentException;
+use PhpParser\Node\Stmt\If_;
 use Yii;
 use yii\helpers\Url;
 
@@ -399,4 +401,14 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
     {
         return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
     }
+    public function getErrorState(): bool
+    {
+        return ErrorsWork::find()
+            ->where([
+                'table_name' => static::tableName(),
+                'table_row_id' => $this->id,
+            ])
+            ->exists();
+    }
+
 }

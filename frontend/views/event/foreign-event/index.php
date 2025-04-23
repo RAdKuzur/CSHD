@@ -127,8 +127,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => VerticalActionColumn::class],
         ],
+        'tableOptions' => [
+            'class' => 'table table-bordered', // УБИРАЕМ БАЗОВЫЙ STRIPE ИНАЧЕ ОШИБКИ НЕКОРРЕКТНО ОТОБРАЖАЮТСЯ
+        ],
         'rowOptions' => function ($model) {
-            return ['data-href' => Url::to([Yii::$app->frontUrls::FOREIGN_EVENT_VIEW, 'id' => $model->id])];
+            return [
+                    'data-href' => Url::to([Yii::$app->frontUrls::FOREIGN_EVENT_VIEW, 'id' => $model->id]),
+                    'class' => 'tr-link' . ($model->getErrorState() ? ' error-row' : ''),];
         },
     ]); ?>
 

@@ -10,6 +10,7 @@ use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use common\models\scaffold\DocumentIn;
+use common\models\work\ErrorsWork;
 use common\models\work\UserWork;
 use common\repositories\document_in_out\DocumentInRepository;
 use common\repositories\document_in_out\DocumentOutRepository;
@@ -412,4 +413,16 @@ class DocumentInWork extends DocumentIn implements FileInterface
         $date = DateFormatter::format($this->real_date, DateFormatter::Ymd_dash, DateFormatter::dmY_dot);
         return "№$this->local_number $this->document_theme ($this->real_number от $date)";
     }
+
+    public function getErrorState()
+    {
+        return ErrorsWork::find()
+            ->where([
+                'table_name' => static::tableName(),
+                'table_row_id' => $this->id,
+            ])
+            ->exists();
+    }
+
+
 }

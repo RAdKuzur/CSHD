@@ -11,6 +11,7 @@ use common\helpers\html\HtmlBuilder;
 use common\models\scaffold\ForeignEvent;
 use common\models\scaffold\PeopleStamp;
 use common\models\work\UserWork;
+use common\models\work\ErrorsWork;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\general\PeopleStampRepository;
 use frontend\models\work\dictionaries\CompanyWork;
@@ -261,4 +262,16 @@ class ForeignEventWork extends ForeignEvent implements FileInterface
 
         return $addPath;
     }
+
+    public function getErrorState()
+    {
+        return ErrorsWork::find()
+            ->where([
+                'table_name' => static::tableName(),
+                'table_row_id' => $this->id,
+            ])
+            ->exists();
+    }
+
+
 }

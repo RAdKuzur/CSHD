@@ -484,6 +484,16 @@ body {
     cursor: pointer;
 }
 
+/* Стиль для строк с ошибками */
+.tr-link.error-row {
+    background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
+/* Альтернативный вариант, если фон не применяется */
+.tr-link.error-row td {
+    background-color: rgba(255, 0, 0, 0.1) !important;
+}
+
 .accordion-block {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);

@@ -83,10 +83,9 @@ class ReportTimurController extends \yii\console\Controller
                 'and',
                 ['<=', 'begin_date', '2024-12-31'],
                 ['>=', 'end_date', '2024-01-01'],
-                ['level' => EventLevelDictionary::REGIONAL],
+                ['>=' , 'level' , EventLevelDictionary::REGIONAL]
             ])
             ->all();
-
         if (empty($allEvents)) {
             echo "Нет событий, которые проходили в 2024 году.";
         }
@@ -129,6 +128,80 @@ class ReportTimurController extends \yii\console\Controller
 
             $percentage = count($winnerParticipants) / count($participants) * 100;
             var_dump(Yii::$app->branches->get($branch), count($BranchActs), $percentage);
+        }
+
+    }
+
+
+    public function actionProjects()
+    {
+        // 1. Оптимизированный запрос для получения мероприятий
+        $eventIds = ForeignEventWork::find()
+            ->select('id')
+            ->where(['and',
+                ['<=', 'begin_date', '2024-12-31'],
+                ['>=', 'end_date', '2024-01-01'],
+                ['>=', 'level', EventLevelDictionary::REGIONAL]
+            ])
+            ->column();
+
+// 2. Получаем только ID участников мероприятий с проектной деятельностью
+        $actIds = ActParticipantWork::find()
+            ->select('id')
+            ->where(['IN', 'foreign_event_id', $eventIds])
+            ->andWhere(['focus' => 1])
+            ->column();
+
+// 3. Предварительно получаем все связи участников с отделами
+        $branchParticipants = (new \yii\db\Query())
+            ->select(['branch', 'act_participant_id'])
+            ->from('act_participant_branch')
+            ->where(['IN', 'act_participant_id', $actIds])
+            ->all();
+
+// Группируем по отделам
+        $branchActMap = [];
+        foreach ($branchParticipants as $item) {
+            $branchActMap[$item['branch']][] = $item['act_participant_id'];
+        }
+
+        foreach (self::BRANCHES as $branch) {
+            // 4. Участники мероприятий для текущего отдела
+            $branchActIds = $branchActMap[$branch] ?? [];
+
+            $participantIds = SquadParticipantWork::find()
+                ->select('participant_id')
+                ->distinct()
+                ->where(['IN', 'act_participant_id', $branchActIds])
+                ->column();
+
+            $participantsCount = count($participantIds);
+
+            // 5. Все обучающиеся в группах для текущего отдела
+            $allGroups = TrainingGroupWork::find()
+                ->select('id')
+                ->joinWith('trainingProgram')
+                ->where(['and',
+                    ['<=', 'start_date', '2024-12-31'],
+                    ['>=', 'finish_date', '2024-01-01'],
+                    ['branch' => $branch],
+                    ['budget' => TrainingGroupWork::IS_BUDGET],
+                    ['training_program.focus' => 1]
+                ])
+                ->column();
+
+            $participantsAllCount = TrainingGroupParticipantWork::find()
+                ->select('participant_id')
+                ->distinct()
+                ->where(['IN', 'training_group_id', $allGroups])
+                ->count();
+
+            // 6. Расчет доли
+            $generalCount = $participantsAllCount + $participantsCount;
+            if ($generalCount > 0) {
+                $percentage = ($participantsCount / $generalCount) * 100;
+                echo Yii::$app->branches->get($branch) . ': ' . round($percentage, 2) . "%\n";
+            }
         }
 
     }

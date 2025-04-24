@@ -83,7 +83,7 @@ class TrainingGroupLessonWork extends TrainingGroupLesson
     {
         return array_merge(parent::rules(), [
             [['autoDate'], 'safe'],
-            [['auditorium_id'], 'required']
+//            [['auditorium_id'], 'required']
 
         ]);
     }

@@ -31,23 +31,31 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         let firstDivs = document.querySelectorAll('[id^="manual-"]');
         let secondDivs = document.querySelectorAll('[id^="auto-"]');
 
-
+        console.log(firstDivs, secondDivs)
 
         if (type.getElementsByTagName('input')[0].checked) {    // ручное заполнение
             secondDivs.forEach((element) => {
+                if (element.style.display === 'block') {
                     element.style.display = 'none';
+                }
             });
 
             firstDivs.forEach((element) => {
-                element.style.display = 'block';
+                if (element.style.display === 'none') {
+                    element.style.display = 'block';
+                }
             });
         } else {    // автоматическое заполнение
             firstDivs.forEach((element) => {
+                if (element.style.display === 'block') {
                     element.style.display = 'none';
+                }
             });
 
             secondDivs.forEach((element) => {
-                element.style.display = 'block';
+                if (element.style.display === 'none') {
+                    element.style.display = 'block';
+                }
             });
         }
     }
@@ -183,7 +191,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
             </div>
             <?php DynamicFormWidget::end(); ?>
                 <div class="pull-right">
-                    <button type="button" class="add-item btn btn-success" onclick="changeScheduleType()"><span class="glyphicon glyphicon-plus">+</span></button>
+                    <button type="button" class="add-item btn btn-success"><span class="glyphicon glyphicon-plus">+</span></button>
                 </div>
         </div>
 
@@ -205,8 +213,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         refreshLock();
     }, 600000);
 
-    //Активация всех checkbox нажатием главного
-
+    //Активация всех checkbox нажатием главного при удалении
     document.addEventListener('DOMContentLoaded', function()
     {
         const masterCheckbox = document.querySelector('.checkbox-group');
@@ -226,6 +233,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         }
     });
 
+    // дезактивация скрытых полей при сохранении расписания
     document.addEventListener('DOMContentLoaded', function () {
         $('#dynamicForm').on('beforeSubmit', function (e) {
             $('[id^="manual-"], [id^="auto"]').each(function () {
@@ -234,8 +242,16 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                 }
             });
             return true;
-
         });
-
     });
+
+    // вызов метода смены типа расписания при создании новой группы полей
+    document.addEventListener('DOMContentLoaded', function () {
+        $('.dynamicform_wrapper').on('afterInsert', function (e, item) {
+            changeScheduleType();
+        });
+    });
+
+
+
 </script>

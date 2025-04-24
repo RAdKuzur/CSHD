@@ -40,7 +40,7 @@ class ReportController extends \yii\console\Controller
                     ['>=', 'finish_date', '2024-01-01'],
                     ['branch' => $branch],
                     ['budget' => TrainingGroupWork::IS_BUDGET],
-                    ['training_program.focus' => 2] // Теперь `trainingProgram` доступна благодаря joinWith
+                    ['training_program.focus' => 4] // Теперь `trainingProgram` доступна благодаря joinWith
                 ])
                 ->all();
             $participantsAll = TrainingGroupParticipantWork::find()
@@ -103,7 +103,6 @@ class ReportController extends \yii\console\Controller
                     ['branch' => $branch],
                     ['budget' => TrainingGroupWork::IS_BUDGET],
                     ['training_program.focus' => 1]
-
                 ])
                 ->all();
             $participantsAll = TrainingGroupParticipantWork::find()
@@ -147,8 +146,7 @@ class ReportController extends \yii\console\Controller
                     ['>=', 'finish_date', '2024-01-01'],
                     ['branch' => $branch],
                     ['budget' => TrainingGroupWork::IS_BUDGET],
-                    ['training_program.focus' => 1]
-
+                    ['training_program.focus' => 2]
                 ])
                 ->all();
             $participantAll = TrainingGroupParticipantWork::find()
@@ -156,18 +154,23 @@ class ReportController extends \yii\console\Controller
                 ->select('participant_id')
                 ->distinct()  // учитываем только уникальные participant_id
                 ->all();
-            //->orWhere(['IS NOT', 'group_project_themes_id', NULL])
-            $projects = array_merge(GroupProjectThemesWork::find()->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])->all(),
-                GroupProjectThemesWork::find()->where(['IN', 'id', ArrayHelper::getColumn($participantAll, 'id')])->all());
-            var_dump(count(array_merge(GroupProjectThemesWork::find()->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])->all(),
-                GroupProjectThemesWork::find()->where(['IN', 'id', ArrayHelper::getColumn($participantAll, 'id')])->all()))
-            );
-            var_dump(count(array_unique(ArrayHelper::getColumn($projects, 'id'))));
-            $projects = array_unique(ArrayHelper::getColumn(GroupProjectThemesWork::find()->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])->all(), 'training_group_id'));
-            //var_dump(count($projects), count($participantAll));
 
+            $allParticipantProject = ArrayHelper::getColumn(TrainingGroupParticipantWork::find()
+                ->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])
+                ->andWhere(['IS NOT', 'group_project_themes_id', NULL])
+                ->select('participant_id')
+                ->distinct()
+                ->all(), 'participant_id');
+            $projects = GroupProjectThemesWork::find()->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])->all();
+            $participants = ArrayHelper::getColumn(TrainingGroupParticipantWork::find()->where(['IN', 'id' , ArrayHelper::getColumn($projects, 'id')])->all(), 'participant_id');
+            /*if ($branch == BranchDictionary::MOBILE_QUANTUM) {
+                var_dump($participants, $allParticipantProject );
+            }*/
+            /*$array = array_unique(array_merge($participants, $allParticipantProject));*/
+            if( count($participantAll) != 0) {
+                var_dump(Yii::$app->branches->get($branch), count($allParticipantProject) / count($participantAll) * 100);
+            }
         }
-
     }
     public function actionReportWinners(){
         /* @var $participant TrainingGroupParticipantWork*/
@@ -178,6 +181,43 @@ class ReportController extends \yii\console\Controller
                     ['>=', 'end_date', '2024-01-01'],
                     ['>=' , 'level' , EventLevelDictionary::REGIONAL]
             ])->all();
+
+            //уникальные foreign_event_participant
+            $acts = ActParticipantWork::find()
+                ->where(['IN', 'foreign_event_id', ArrayHelper::getColumn($allForeignEvents, 'id')])
+                ->andWhere(['focus' => 4])
+                ->all();
+            //только акты из данного отдела:
+            $acts = array_filter($acts, function (ActParticipantWork $item) use ($branch) {
+                if(ActParticipantBranchWork::find()->where(['act_participant_id' => $item->id])->andWhere(['branch' => $branch])->exists()){
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            });
+            //все участники
+            $participants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($acts, 'id')])->all(),'participant_id');
+            $participants = array_unique($participants);
+
+            $achievementActs = ArrayHelper::getColumn(ParticipantAchievementWork::find()->where(['IN', 'act_participant_id', ArrayHelper::getColumn($acts, 'id')])->all(), 'act_participant_id');
+            $actWinners = ActParticipantWork::find()->where(['IN', 'id', $achievementActs])->all();
+            $winnerParticipants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($actWinners, 'id')])->all(),'participant_id');
+            $winnerParticipants = array_unique($winnerParticipants);
+            if (count($acts) != 0){
+                 var_dump(Yii::$app->branches->get($branch), count($winnerParticipants)/count($participants) * 100);
+            }
+        }
+    }
+    public function actionReportEventParticipant()
+    {
+        foreach (self::BRANCHES as $branch) {
+            $allForeignEvents = ForeignEventWork::find()
+                ->where(['and',
+                    ['<=', 'begin_date', '2024-12-31'],
+                    ['>=', 'end_date', '2024-01-01'],
+                    ['>=' , 'level' , EventLevelDictionary::REGIONAL]
+                ])->all();
 
             //уникальные foreign_event_participant
             $acts = ActParticipantWork::find()
@@ -196,17 +236,25 @@ class ReportController extends \yii\console\Controller
             //все участники
             $participants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($acts, 'id')])->all(),'participant_id');
             $participants = array_unique($participants);
+            $allGroups = TrainingGroupWork::find()
+                ->joinWith('trainingProgram')
+                ->where(['and',
+                    ['<=', 'start_date', '2024-12-31'],
+                    ['>=', 'finish_date', '2024-01-01'],
+                    ['branch' => $branch],
+                    ['budget' => TrainingGroupWork::IS_BUDGET],
+                    ['training_program.focus' => 1]
 
-
-            $achievementActs = ArrayHelper::getColumn(ParticipantAchievementWork::find()->where(['IN', 'act_participant_id', ArrayHelper::getColumn($acts, 'id')])->all(), 'act_participant_id');
-            $actWinners = ActParticipantWork::find()->where(['IN', 'id', $achievementActs])->all();
-
-            $winnerParticipants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($actWinners, 'id')])->all(),'participant_id');
-            $winnerParticipants = array_unique($winnerParticipants);
-            if (count($acts) != 0){
-                //var_dump(count($actWinners) ,count($acts),  count(array_unique($winnerParticipants)), count($participants));
-               // var_dump(Yii::$app->branches->get($branch), count($acts), count(array_unique($winnerParticipants))/count($participants) * 100);
-                var_dump(Yii::$app->branches->get($branch), count($participants), count($acts));
+                ])
+                ->all();
+            $participantsAll = TrainingGroupParticipantWork::find()
+                ->where(['IN', 'training_group_id', ArrayHelper::getColumn($allGroups, 'id')])
+                ->select('participant_id')
+                ->distinct()  // учитываем только уникальные participant_id
+                ->all();
+            $generalCount = count($participantsAll) + count($participants);
+            if ($generalCount != 0) {
+                var_dump(Yii::$app->branches->get($branch), count($participants) / $generalCount * 100);
             }
         }
     }

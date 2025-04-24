@@ -237,12 +237,12 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
 
     public function isMale()
     {
-        return $this->sex === 'Мужской';
+        return $this->sex == 0;
     }
 
     public function isFemale()
     {
-        return $this->sex === 'Женский';
+        return $this->sex == 1;
     }
 
     public function getPrettyAchieves()

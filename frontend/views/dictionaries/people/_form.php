@@ -128,13 +128,15 @@ use yii\widgets\ActiveForm;
                 'yearRange' => '1900:2100',
             ]])->label('Дата рождения') ?>
 
-        <div class="bordered-div checkBlock">
-            <?= $form->field($model, 'sex')->radioList(array(
-                0 => 'Мужской',
-                1 => 'Женский',
-                2 => 'Другое'
-            ), ['value' => $model->sex, 'class' => 'i-checks'])->label('Пол') ?>
-        </div>
+
+    </div>
+
+    <div class="bordered-div checkBlock">
+        <?= $form->field($model, 'sex')->radioList(array(
+            0 => 'Мужской',
+            1 => 'Женский',
+            2 => 'Другое'
+        ), ['value' => $model->sex, 'class' => 'i-checks'])->label('Пол') ?>
     </div>
 
 

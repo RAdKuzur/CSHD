@@ -12,7 +12,7 @@ class CompanyTypeDictionary extends BaseDictionary
     {
         parent::__construct();
         $this->list = [
-            self::EDUCATIONAL => 'Образовательная учреждение',
+            self::EDUCATIONAL => 'Образовательное учреждение',
             self::GOVERNMENT => 'Государственное учреждение',
             self::INDIVIDUAL => 'Частная организация / ИП',
         ];

@@ -51,7 +51,7 @@ class SearchRegulation extends RegulationSearch implements SearchInterfaces
     {
         if (count($params) > 1) {
             $params['SearchRegulation']['status'] = StringFormatter::stringAsInt($params['SearchRegulation']['status']);
-            $params['SearchRegulation']['numberBoard'] = StringFormatter::stringAsInt($params['SearchRegulation']['numberBoard']);
+            $params['SearchRegulation']['numberBoard'] = $params['SearchRegulation']['numberBoard'] != '' ? StringFormatter::stringAsInt($params['SearchRegulation']['numberBoard']) : '';
         }
 
         $this->load($params);

@@ -22,6 +22,7 @@ use common\repositories\educational\TrainingGroupLessonRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\educational\TrainingProgramRepository;
+use common\repositories\educational\VisitRepository;
 use common\repositories\general\FilesRepository;
 use common\services\general\errors\ErrorService;
 use common\services\general\files\FileService;
@@ -74,6 +75,7 @@ class TrainingGroupController extends DocumentController
     private LockWizard $lockWizard;
     private GroupDocumentService $documentService;
     private ErrorService $errorService;
+    private VisitRepository $visitRepository;
 
     public function __construct(
         $id,
@@ -95,6 +97,7 @@ class TrainingGroupController extends DocumentController
         LockWizard $lockWizard,
         GroupDocumentService $documentService,
         ErrorService $errorService,
+        VisitRepository $visitRepository,
         $config = [])
     {
         parent::__construct($id, $module, $fileService, $filesRepository, $config);
@@ -113,6 +116,7 @@ class TrainingGroupController extends DocumentController
         $this->lockWizard = $lockWizard;
         $this->documentService = $documentService;
         $this->errorService = $errorService;
+        $this->visitRepository = $visitRepository;
     }
 
 
@@ -661,10 +665,16 @@ class TrainingGroupController extends DocumentController
         $errorString = '';
 
         $data = RequestHelper::getDataFromPost(Yii::$app->request->post(), 'check', RequestHelper::CHECKBOX);
+        $students = $this->trainingGroupRepository->getParticipants($id);
         foreach ($data as $item) {
+
             $result = $this->lessonService->delete($item);
             if (!$result) {
                 $errorString .= "Ошибка удаления занятия (ID: $item)<br>";
+            } else {
+                foreach ($students as $student) {
+                    $this->visitRepository->deleteLesson($item, $student->id);
+                }
             }
         }
         if ($errorString)

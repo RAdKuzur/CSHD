@@ -117,4 +117,16 @@ class VisitRepository
         $command->delete(VisitWork::tableName(), ['training_group_participant_id' => $groupParticipantId]);
         return $command->getRawSql();
     }
+    public function deleteLesson($lessonId, $participantId){
+        $visit = VisitWork::find()->where(['training_group_participant_id' => $participantId])->one();
+        $newLesson = [];
+        $lessons = json_decode($visit->lessons);
+        foreach ($lessons as $lesson) {
+            if ($lesson->lesson_id != $lessonId) {
+                $newLesson[] = $lesson;
+            }
+        }
+        $visit->lessons = json_encode($newLesson);
+        $visit->save();
+    }
 }

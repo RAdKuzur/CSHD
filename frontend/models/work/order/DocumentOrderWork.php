@@ -7,6 +7,7 @@ use common\events\EventTrait;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
 use common\models\scaffold\DocumentOrder;
+use common\models\work\ErrorsWork;
 use common\models\work\UserWork;
 use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\general\OrderPeopleWork;
@@ -278,4 +279,15 @@ class DocumentOrderWork extends DocumentOrder implements FileInterface
 
         return $addPath;
     }
+
+    public function getErrorState(): bool
+    {
+        return ErrorsWork::find()
+            ->where([
+                'table_name' => static::tableName(),
+                'table_row_id' => $this->id,
+            ])
+            ->exists();
+    }
+
 }

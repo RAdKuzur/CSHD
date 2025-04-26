@@ -5,6 +5,7 @@ namespace backend\services\report\form;
 use backend\builders\GroupParticipantReportBuilder;
 use backend\builders\ParticipantReportBuilder;
 use backend\builders\TrainingGroupReportBuilder;
+use backend\forms\report\ManHoursReportForm;
 use backend\services\report\ReportManHoursService;
 use common\components\dictionaries\base\AllowRemoteDictionary;
 use common\components\dictionaries\base\BranchDictionary;
@@ -30,7 +31,12 @@ class StateAssignmentReportService
     const PARAM_ACHIEVES_RATIO = 'achieves';
     const PARAM_PROJECTS_RATIO = 'projects';
     const PARAM_PARTICIPANTS_RATIO = 'participants';
-
+    const CALCULATE_TYPES = [
+        ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_IN,
+        ManHoursReportForm::PARTICIPANT_START_IN_FINISH_AFTER,
+        ManHoursReportForm::PARTICIPANT_START_IN_FINISH_IN,
+        ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_AFTER
+    ];
     private TrainingGroupReportBuilder $groupBuilder;
     private GroupParticipantReportBuilder $participantBuilder;
     private ParticipantReportBuilder $eventParticipantBuilder;
@@ -315,7 +321,7 @@ class StateAssignmentReportService
     public function calculateParamsSection31(string $startDate, string $endDate, int $branch, int $focus, int $allowRemote, array $params = [])
     {
         $groupsQuery = $this->groupBuilder->query();
-        $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate);
+        $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate, self::CALCULATE_TYPES);
         $groupsQuery = $this->groupBuilder->filterGroupsByBranches($groupsQuery, [$branch]);
         $groupsQuery = $this->groupBuilder->filterGroupsByFocuses($groupsQuery, [$focus]);
         $groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);

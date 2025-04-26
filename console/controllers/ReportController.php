@@ -68,7 +68,7 @@ class ReportController extends \yii\console\Controller
                     ['>=', 'finish_date', '2024-01-01'],
                     ['branch' => $branch],
                     ['budget' => TrainingGroupWork::IS_BUDGET],
-                    ['training_program.focus' => 4]
+                    ['training_program.focus' => 1]
 
                 ])
                 ->all();

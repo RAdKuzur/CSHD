@@ -185,7 +185,7 @@ class ReportController extends \yii\console\Controller
             //уникальные foreign_event_participant
             $acts = ActParticipantWork::find()
                 ->where(['IN', 'foreign_event_id', ArrayHelper::getColumn($allForeignEvents, 'id')])
-                ->andWhere(['focus' => 4])
+                ->andWhere(['focus' => 1])
                 ->all();
             //только акты из данного отдела:
             $acts = array_filter($acts, function (ActParticipantWork $item) use ($branch) {
@@ -205,7 +205,8 @@ class ReportController extends \yii\console\Controller
             $winnerParticipants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($actWinners, 'id')])->all(),'participant_id');
             $winnerParticipants = array_unique($winnerParticipants);
             if (count($acts) != 0){
-                 var_dump(Yii::$app->branches->get($branch), count($winnerParticipants)/count($participants) * 100);
+                var_dump(Yii::$app->branches->get($branch), count($winnerParticipants));
+                //var_dump(Yii::$app->branches->get($branch), count($winnerParticipants)/count($participants) * 100);
             }
         }
     }

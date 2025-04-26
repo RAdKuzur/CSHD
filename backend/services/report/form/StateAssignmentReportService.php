@@ -324,13 +324,13 @@ class StateAssignmentReportService
         $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate, self::CALCULATE_TYPES);
         $groupsQuery = $this->groupBuilder->filterGroupsByBranches($groupsQuery, [$branch]);
         $groupsQuery = $this->groupBuilder->filterGroupsByFocuses($groupsQuery, [$focus]);
-        $groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);
+        //$groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);
         $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, [TrainingGroupWork::IS_BUDGET]);
         $groupsAll = $this->groupRepository->findAll($groupsQuery);
 
         $eventsAll = $this->foreignEventRepository->getByDatesAndLevels(
             $startDate, $endDate,
-            [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL]
+            [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL, EventLevelDictionary::INTERREGIONAL]
         );
 
         return [
@@ -372,8 +372,8 @@ class StateAssignmentReportService
     {
         $participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
-        $participantsAll = $this->participantRepository->findAll($participants);
-
+        $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
+        $participantsAll = $this->participantRepository->findAll($participantsAllUnic);
         $eventParticipants = $this->eventParticipantBuilder->query();
         $eventParticipants = $this->eventParticipantBuilder->joinWith($eventParticipants, 'foreignEventWork');
         $eventParticipants = $this->eventParticipantBuilder->joinWith($eventParticipants, 'squadParticipantWork');
@@ -381,7 +381,7 @@ class StateAssignmentReportService
         $eventParticipants = $this->eventParticipantBuilder->filterByEvents($eventParticipants, ArrayHelper::getColumn($events, 'id'));
         $eventParticipants = $this->eventParticipantBuilder->filterByEventLevels(
             $eventParticipants,
-            [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL]
+            [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL , EventLevelDictionary::INTERREGIONAL]
         );
         $eventParticipants = $this->eventParticipantBuilder->filterByParticipantIds($eventParticipants, ArrayHelper::getColumn($participantsAll, 'participant_id'));
 
@@ -401,10 +401,10 @@ class StateAssignmentReportService
     {
         $participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
-
+        $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
         $participantsProject = $this->participantBuilder->filterByProjectThemes(clone $participants, 1);
-
-        return $this->percent($this->participantRepository->count($participantsProject), $this->participantRepository->count($participants));
+        $participantsUniqueProject = $this->participantBuilder->distinct(clone $participantsProject, ['participant_id']);
+        return $this->percent($this->participantRepository->count($participantsUniqueProject), $this->participantRepository->count($participantsAllUnic));
     }
 
     /**
@@ -419,7 +419,8 @@ class StateAssignmentReportService
     {
         $participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
-        $participantsAll = $this->participantRepository->findAll($participants);
+        $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
+        $participantsAll = $this->participantRepository->findAll($participantsAllUnic);
 
         $eventParticipants = $this->eventParticipantBuilder->query();
         $eventParticipants = $this->eventParticipantBuilder->joinWith($eventParticipants, 'squadParticipantWork');
@@ -427,7 +428,7 @@ class StateAssignmentReportService
         $eventParticipants = $this->eventParticipantBuilder->filterByEvents($eventParticipants, ArrayHelper::getColumn($events, 'id'));
         $eventParticipants = $this->eventParticipantBuilder->filterByEventLevels(
             $eventParticipants,
-            [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL]
+            [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL, EventLevelDictionary::INTERREGIONAL]
         );
         $eventParticipants = $this->eventParticipantBuilder->filterByParticipantIds($eventParticipants, ArrayHelper::getColumn($participantsAll, 'participant_id'));
 

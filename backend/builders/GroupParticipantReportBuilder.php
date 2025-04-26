@@ -61,8 +61,8 @@ class GroupParticipantReportBuilder
     public function filterByProjectThemes(ActiveQuery $query, int $type = 0)
     {
         return $type == 0 ?
-            $query->andWhere(['is not', 'group_project_themes_id', null]) :
-            $query->andWhere(['is', 'group_project_themes_id', null]);
+            $query->andWhere(['is', 'group_project_themes_id', null]) :
+            $query->andWhere(['is not', 'group_project_themes_id', null]);
 
     }
 

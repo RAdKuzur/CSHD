@@ -124,14 +124,33 @@ use yii\jui\DatePicker;
                                 'class' => 'form-control pos',
                                 'prompt' => '---',
                             ];
-                            echo $form
-                                ->field($expire, "[{$i}]expireOrderId")
-                                ->dropDownList(ArrayHelper::map($orders, 'id', 'fullOrderName'), $params)
-                                ->label('Приказ');
-                            echo $form
-                                ->field($expire, "[{$i}]expireRegulationId")
-                                ->dropDownList(ArrayHelper::map($regulations, 'id', 'name'), $params)
-                                ->label('Положение');
+                            ///////////////////////////////////////////////////////////////////////////////
+                            /// СТАРОЕ
+//                            echo $form
+//                                ->field($expire, "[{$i}]expireOrderId")
+//                                ->dropDownList(ArrayHelper::map($orders, 'id', 'fullOrderName'), $params)
+//                                ->label('Приказ');
+//                            echo $form
+//                                ->field($expire, "[{$i}]expireRegulationId")
+//                                ->dropDownList(ArrayHelper::map($regulations, 'id', 'name'), $params)
+//                                ->label('Положение');
+                            /// СТАРОЕ
+                            ///////////////////////////////////////////////////////////////////////////////
+                            echo $form->field($expire, "[{$i}]expireOrderId")->widget(\kartik\select2\Select2::class, [
+                                'data' => ArrayHelper::map($orders, 'id', 'fullOrderName'),
+                                'options' => array_merge($params, ['placeholder' => 'Поиск приказа...']),
+                                'pluginOptions' => [
+                                    'allowClear' => true,
+                                ],
+                            ])->label('Приказ');
+
+                            echo $form->field($expire, "[{$i}]expireRegulationId")->widget(\kartik\select2\Select2::class, [
+                                'data' => ArrayHelper::map($regulations, 'id', 'name'),
+                                'options' => array_merge($params, ['placeholder' => 'Поиск положения...']),
+                                'pluginOptions' => [
+                                    'allowClear' => true,
+                                ],
+                            ])->label('Положение');
                             echo $form
                                 ->field($expire, "[{$i}]expireType") // Используем обычный статус
                                 ->dropDownList([

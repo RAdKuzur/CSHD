@@ -324,7 +324,7 @@ class TrainingGroupController extends DocumentController
             $model = $this->trainingGroupRepository->get($id);
             if (!$model->isArchive()) {
                 $formBase = new TrainingGroupBaseForm($id);
-                $programs = $this->trainingProgramRepository->getAllActual();
+                $programs = $this->trainingProgramRepository->getAll();
                 $people = $this->peopleRepository->getPeopleFromMainCompany();
                 $tables = $this->service->getUploadedFilesTables($formBase);
 

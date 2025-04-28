@@ -27,6 +27,7 @@ use frontend\events\educational\training_group\DeleteTrainingGroupParticipantEve
 use frontend\events\general\FileCreateEvent;
 use frontend\models\work\educational\training_group\OrderTrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
+use frontend\services\educational\VisitService;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -45,6 +46,7 @@ class OrderTrainingService
     private TrainingGroupRepository $trainingGroupRepository;
     private OrderTrainingGroupParticipantRepository $orderTrainingGroupParticipantRepository;
     private ForeignEventParticipantsRepository $foreignEventParticipantsRepository;
+    private VisitService $visitService;
     public function __construct(
         FileService $fileService,
         OrderMainFileNameGenerator $filenameGenerator,
@@ -53,7 +55,8 @@ class OrderTrainingService
         VisitRepository $visitRepository,
         TrainingGroupRepository $trainingGroupRepository,
         OrderTrainingGroupParticipantRepository $orderTrainingGroupParticipantRepository,
-        ForeignEventParticipantsRepository $foreignEventParticipantsRepository
+        ForeignEventParticipantsRepository $foreignEventParticipantsRepository,
+        VisitService $visitService
 
     )
     {
@@ -65,6 +68,7 @@ class OrderTrainingService
         $this->trainingGroupRepository = $trainingGroupRepository;
         $this->orderTrainingGroupParticipantRepository = $orderTrainingGroupParticipantRepository;
         $this->foreignEventParticipantsRepository = $foreignEventParticipantsRepository;
+        $this->visitService = $visitService;
 
     }
     public function setBranch(OrderTrainingWork $model)
@@ -207,6 +211,7 @@ class OrderTrainingService
             if ($participantIds != NULL) {
                 foreach ($participantIds as $participantId) {
                     if ($this->compareDate($model, $status, $participantId)) {
+                        $this->visitService->clearPresence($participantId, $model);
                         $model->recordEvent(new CreateOrderTrainingGroupParticipantEvent($participantId, NULL, $model->id),
                             OrderTrainingWork::class);
                         $this->trainingGroupParticipantRepository->setStatus($participantId, $status);
@@ -234,7 +239,8 @@ class OrderTrainingService
                                 OrderTrainingWork::class);
                             //update old TrainingGroupParticipant
                             $this->trainingGroupParticipantRepository->setStatus($participantId, $status - 1);
-
+                            //очищаем явки
+                            $this->visitService->clearPresence($participantId, $model);
                             // Создаем новые записи в журнале (visits)
                             /** @var TrainingGroupLessonWork[] $lessons */
                             $lessons = $this->lessonRepository->getLessonsFromGroup($newTrainingGroupParticipant->training_group_id);
@@ -389,6 +395,7 @@ class OrderTrainingService
                     if ($this->compareDate($model, $status, $createParticipant)) {
                         $model->recordEvent(new CreateOrderTrainingGroupParticipantEvent($createParticipant, NULL, $model->id), OrderTrainingGroupParticipantWork::class);
                         $this->trainingGroupParticipantRepository->setStatus($createParticipant, NomenclatureDictionary::ORDER_DEDUCT);
+                        $this->visitService->clearPresence($createParticipant, $model);
                     }
                     else {
                         $error = DocumentOrderWork::ERROR_DATE_PARTICIPANT;
@@ -452,7 +459,9 @@ class OrderTrainingService
                             $newTrainingGroupParticipant->setStatus($status - 2);
                             $this->trainingGroupParticipantRepository->save($newTrainingGroupParticipant);
                             $model->recordEvent(new CreateOrderTrainingGroupParticipantEvent($createParticipant, $newTrainingGroupParticipant->id, $model->id), OrderTrainingGroupParticipantWork::class);
+                            //очищаем явки
                             $this->trainingGroupParticipantRepository->setStatus($createParticipant, $status - 1);
+                            $this->visitService->clearPresence($createParticipant, $model);
                             // Создаем новые записи в журнале (visits)
                             /** @var TrainingGroupLessonWork[] $lessons */
                             $lessons = $this->lessonRepository->getLessonsFromGroup($newTrainingGroupParticipant->training_group_id);

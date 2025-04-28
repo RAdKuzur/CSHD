@@ -127,6 +127,6 @@ class VisitRepository
             }
         }
         $visit->lessons = json_encode($newLesson);
-        $visit->save();
+        $this->save($visit);
     }
 }

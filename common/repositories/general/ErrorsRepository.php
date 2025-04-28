@@ -57,7 +57,10 @@ class ErrorsRepository
             ->andWhere(['was_amnesty' => 0])
             ->one();
     }
-
+    public function getErrorByTableName($tableName)
+    {
+        return ErrorsWork::find()->where(['table_name' => $tableName])->all();
+    }
     public function delete(ErrorsWork $model)
     {
         if (!$model->delete()) {

@@ -13,6 +13,7 @@ use common\repositories\dictionaries\ForeignEventParticipantsRepository;
 use common\repositories\dictionaries\PersonalDataParticipantRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\event\ParticipantAchievementRepository;
+use common\repositories\general\ErrorsRepository;
 use DomainException;
 use frontend\events\foreign_event_participants\PersonalDataParticipantAttachEvent;
 use frontend\forms\participants\MergeParticipantForm;
@@ -23,6 +24,7 @@ use frontend\models\work\dictionaries\PersonalDataParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\services\dictionaries\ForeignEventParticipantsService;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -41,6 +43,7 @@ class ForeignEventParticipantsController extends Controller
     private ParticipantAchievementRepository $achievementRepository;
     private PersonalDataParticipantRepository $personalDataRepository;
     private ForeignEventParticipantsService $service;
+    public ErrorsRepository $errorsRepository;
     private LockWizard $lockWizard;
 
     public function __construct(
@@ -52,6 +55,7 @@ class ForeignEventParticipantsController extends Controller
         ParticipantAchievementRepository   $achievementRepository,
         PersonalDataParticipantRepository  $personalDataRepository,
         ForeignEventParticipantsService    $service,
+        ErrorsRepository $errorsRepository,
         LockWizard                         $lockWizard,
         $config = [])
     {
@@ -62,6 +66,7 @@ class ForeignEventParticipantsController extends Controller
         $this->achievementRepository = $achievementRepository;
         $this->personalDataRepository = $personalDataRepository;
         $this->service = $service;
+        $this->errorsRepository = $errorsRepository;
         $this->lockWizard = $lockWizard;
     }
 
@@ -73,7 +78,7 @@ class ForeignEventParticipantsController extends Controller
         $links = array_merge(
             ButtonsFormatter::primaryCreateLink('участника'),
             ButtonsFormatter::anyOneLink('Загрузить участников из файла', Yii::$app->frontUrls::PARTICIPANT_FILE_LOAD, ButtonsFormatter::BTN_SUCCESS),
-        //    ButtonsFormatter::anyOneLink('Проверить участников на ошибки', Yii::$app->frontUrls::PARTICIPANT_ERROR_CHECK,ButtonsFormatter::BTN_DANGER)
+            ButtonsFormatter::anyOneLink('Проверить участников на ошибки', Yii::$app->frontUrls::PARTICIPANT_ERROR_CHECK,ButtonsFormatter::BTN_DANGER)
         );
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
@@ -261,11 +266,19 @@ class ForeignEventParticipantsController extends Controller
     }
     public function actionErrorCheck()
     {
+        set_time_limit(300);
+        Yii::$container->set('yii\web\Response', [
+            'timeout' => 300,
+        ]);
         /** @var $participant ForeignEventParticipantsWork **/
-        $participants = $this->repository->getAll();
-        foreach ($participants as $participant) {
+        $errors = $this->errorsRepository->getErrorByTableName(ForeignEventParticipantsWork::tableName());
+        $participants = ForeignEventParticipantsWork::find()->where(['NOT IN', 'id', ArrayHelper::getColumn($errors, 'table_row_id')])->all();
+        foreach ($participants as $participant)
+        {
             $participant->checkModel(ErrorAssociationHelper::getForeignEventParticipantErrorsList(), ForeignEventParticipantsWork::tableName(), $participant->id);
         }
+        set_time_limit(60);
+        Yii::$app->session->setFlash('success', 'Проверка на ошибки произведена успешно!');
         return $this->redirect(['index']);
     }
     public function beforeAction($action)

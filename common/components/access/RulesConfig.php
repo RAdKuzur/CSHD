@@ -493,6 +493,7 @@ class RulesConfig
             \frontend\controllers\dictionaries\ForeignEventParticipantsController::class => [
                 'index',
                 'view',
+
             ],
             \frontend\controllers\dictionaries\PeopleController::class => [
                 'index',
@@ -522,6 +523,7 @@ class RulesConfig
                 'delete',
                 'file-load',
                 'check-correct',
+                'error-check'
             ],
             \frontend\controllers\dictionaries\PeopleController::class => [
                 'create',

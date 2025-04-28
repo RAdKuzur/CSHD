@@ -72,7 +72,8 @@ class ForeignEventParticipantsController extends Controller
 
         $links = array_merge(
             ButtonsFormatter::primaryCreateLink('участника'),
-            ButtonsFormatter::anyOneLink('Загрузить участников из файла', Yii::$app->frontUrls::PARTICIPANT_FILE_LOAD, ButtonsFormatter::BTN_SUCCESS)
+            ButtonsFormatter::anyOneLink('Загрузить участников из файла', Yii::$app->frontUrls::PARTICIPANT_FILE_LOAD, ButtonsFormatter::BTN_SUCCESS),
+        //    ButtonsFormatter::anyOneLink('Проверить участников на ошибки', Yii::$app->frontUrls::PARTICIPANT_ERROR_CHECK,ButtonsFormatter::BTN_DANGER)
         );
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
@@ -258,7 +259,15 @@ class ForeignEventParticipantsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
+    public function actionErrorCheck()
+    {
+        /** @var $participant ForeignEventParticipantsWork **/
+        $participants = $this->repository->getAll();
+        foreach ($participants as $participant) {
+            $participant->checkModel(ErrorAssociationHelper::getForeignEventParticipantErrorsList(), ForeignEventParticipantsWork::tableName(), $participant->id);
+        }
+        return $this->redirect(['index']);
+    }
     public function beforeAction($action)
     {
         $result = $this->checkActionAccess($action);

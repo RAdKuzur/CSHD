@@ -7,12 +7,15 @@ use common\helpers\StringFormatter;
 use common\models\Error;
 use common\models\scaffold\Errors;
 use common\repositories\act_participant\ActParticipantRepository;
+use common\repositories\dictionaries\ForeignEventParticipantsRepository;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\educational\TrainingProgramRepository;
 use common\repositories\event\EventRepository;
 use common\repositories\event\ForeignEventRepository;
 use common\repositories\order\DocumentOrderRepository;
 use frontend\components\routes\Urls;
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
+use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\TrainingProgramWork;
 use frontend\models\work\event\EventWork;
@@ -21,6 +24,7 @@ use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\team\ActParticipantWork;
 use Yii;
 use yii\helpers\Url;
+use function PHPUnit\Framework\returnArgument;
 
 class ErrorsWork extends Errors
 {
@@ -96,6 +100,12 @@ class ErrorsWork extends Errors
             $act = (Yii::createObject(ActParticipantRepository::class))->get($this->table_row_id);
             $eventLink = StringFormatter::stringAsLink($act->foreignEventWork->name, Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $act->foreign_event_id]));
             return "Акт участия в мероприятии {$eventLink}";
+        }
+        if ($this->table_name == ForeignEventParticipantsWork::tableName()){
+            /** @var ForeignEventParticipantsWork $participant */
+            $participant = (Yii::createObject(ForeignEventParticipantsRepository::class))->get($this->table_row_id);
+            $link = StringFormatter::stringAsLink($participant->getFIO(PersonInterface::FIO_SURNAME_INITIALS), Url::to(['/' . Urls::PARTICIPANT_VIEW , 'id' => $participant->id]));
+            return "Участник деятельности {$link}";
         }
 
         if ($this->table_name == DocumentOrderWork::tableName()) {

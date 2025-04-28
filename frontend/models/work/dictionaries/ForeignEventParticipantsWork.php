@@ -2,6 +2,7 @@
 
 namespace frontend\models\work\dictionaries;
 
+use common\components\traits\ErrorTrait;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
 use common\helpers\files\FilePaths;
@@ -30,7 +31,7 @@ use yii\helpers\Url;
 class ForeignEventParticipantsWork extends ForeignEventParticipants implements PersonInterface
 {
     use EventTrait;
-
+    use ErrorTrait;
     /**
      * DROP_CORRECT_HARD - сброс флагов true и guaranteed_true
      * DROP_CORRECT_SOFT - сброс флага true

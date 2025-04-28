@@ -1,6 +1,7 @@
 <?php
 
 use common\helpers\DateFormatter;
+use common\helpers\html\HtmlBuilder;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\dictionaries\PersonInterface;
 use yii\helpers\Html;
@@ -16,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="foreign-event-participants-view">
-
+    <?= HtmlBuilder::createErrorsBlock(ForeignEventParticipantsWork::tableName(), $model->id) ?>
     <div class="substrate">
         <h1><?= Html::encode($this->title) ?></h1>
 

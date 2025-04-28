@@ -6,6 +6,7 @@ use common\models\Error;
 use common\services\general\errors\ErrorAchieveService;
 use common\services\general\errors\ErrorChangeableService;
 use common\services\general\errors\ErrorDocumentService;
+use common\services\general\errors\ErrorForeignEventParticipantService;
 use common\services\general\errors\ErrorJournalService;
 use common\services\general\errors\ErrorMaterialService;
 
@@ -77,6 +78,8 @@ class ErrorDictionary extends BaseDictionary
     const JOURNAL_025 = 42;
     const JOURNAL_026 = 44;
     const JOURNAL_027 = 45;
+    const FOREIGN_EVENT_PARTICIPANT_001 = 65;
+    const FOREIGN_EVENT_PARTICIPANT_002 = 66;
 
     const MATERIAL_ERRORS = [
         self::MATERIAL_001, self::MATERIAL_002, self::MATERIAL_003,
@@ -112,19 +115,24 @@ class ErrorDictionary extends BaseDictionary
         self::JOURNAL_023, self::JOURNAL_024, self::JOURNAL_025,
         self::JOURNAL_026, self::JOURNAL_027,
     ];
-
+    const FOREIGN_EVENT_PARTICIPANT_ERRORS = [
+        self::FOREIGN_EVENT_PARTICIPANT_001,
+        self::FOREIGN_EVENT_PARTICIPANT_002
+    ];
     private ErrorMaterialService $materialService;
     private ErrorAchieveService $achieveService;
     private ErrorDocumentService $documentService;
     private ErrorJournalService $journalService;
     private ErrorChangeableService $changeableService;
+    private ErrorForeignEventParticipantService $foreignEventParticipantService;
 
     public function __construct(
         ErrorMaterialService $materialService,
         ErrorAchieveService $achieveService,
         ErrorDocumentService $documentService,
         ErrorJournalService $journalService,
-        ErrorChangeableService $changeableService
+        ErrorChangeableService $changeableService,
+        ErrorForeignEventParticipantService $foreignEventParticipantService
     )
     {
         parent::__construct();
@@ -133,6 +141,7 @@ class ErrorDictionary extends BaseDictionary
         $this->documentService = $documentService;
         $this->journalService = $journalService;
         $this->changeableService = $changeableService;
+        $this->foreignEventParticipantService = $foreignEventParticipantService;
 
         $this->list = [
             self::MATERIAL_001 => new Error(
@@ -530,6 +539,18 @@ class ErrorDictionary extends BaseDictionary
                 [$this->journalService, 'makeJournal_027'],
                 [$this->journalService, 'fixJournal_027'],
             ),
+            self::FOREIGN_EVENT_PARTICIPANT_001 => new Error(
+                'УЧ001', 'Участник не зачислен в группу',
+                Error::TYPE_BASE,
+                [$this->foreignEventParticipantService, 'makeForeignEventParticipant001'],
+                [$this->foreignEventParticipantService, 'fixForeignEventParticipant001'],
+            ),
+            self::FOREIGN_EVENT_PARTICIPANT_002 => new Error(
+                'УЧ002', 'Участник не фигурирует в учебной деятельности',
+                Error::TYPE_BASE,
+                [$this->foreignEventParticipantService, 'makeForeignEventParticipant002'],
+                [$this->foreignEventParticipantService, 'fixForeignEventParticipant002'],
+            )
         ];
     }
 

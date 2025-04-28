@@ -5,6 +5,7 @@ namespace frontend\controllers\dictionaries;
 use common\components\traits\AccessControl;
 use common\components\wizards\LockWizard;
 use common\helpers\ButtonsFormatter;
+use common\helpers\ErrorAssociationHelper;
 use common\helpers\html\HtmlBuilder;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\act_participant\SquadParticipantRepository;
@@ -90,7 +91,7 @@ class ForeignEventParticipantsController extends Controller
 
         $links = ButtonsFormatter::updateDeleteLinks($id);
         $buttonHtml = HtmlBuilder::createGroupButton($links);
-
+        $model->checkModel(ErrorAssociationHelper::getForeignEventParticipantErrorsList(), ForeignEventParticipantsWork::tableName(), $model->id);
         return $this->render('view', [
             'model' => $model,
             'buttonsAct' => $buttonHtml
@@ -112,7 +113,7 @@ class ForeignEventParticipantsController extends Controller
             $model->releaseEvents();
 
             $this->service->checkCorrectOne($model);
-
+            $model->checkModel(ErrorAssociationHelper::getForeignEventParticipantErrorsList(), ForeignEventParticipantsWork::tableName(), $model->id);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -139,7 +140,7 @@ class ForeignEventParticipantsController extends Controller
                 $model->releaseEvents();
 
                 $this->service->checkCorrectOne($model);
-
+                $model->checkModel(ErrorAssociationHelper::getForeignEventParticipantErrorsList(), ForeignEventParticipantsWork::tableName(), $model->id);
                 return $this->redirect(['view', 'id' => $model->id]);
             }
 

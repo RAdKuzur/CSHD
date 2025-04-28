@@ -250,4 +250,8 @@ class TrainingGroupParticipantRepository
             ->andWhere(['status' => NomenclatureDictionary::ORDER_ENROLL])
             ->all();
     }
+    public function getByParticipantId($participantId)
+    {
+        return TrainingGroupParticipantWork::find()->where(['participant_id' => $participantId])->all();
+    }
 }

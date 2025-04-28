@@ -272,7 +272,7 @@ class OrderTrainingService
         /* @var TrainingGroupWork $group */
         $group = $this->trainingGroupRepository->get(($this->trainingGroupParticipantRepository->get($trainingGroupParticipantId))->training_group_id);
         if ($status == NomenclatureDictionary::ORDER_ENROLL) {
-            return $group->start_date >= $model->order_date;
+            return $group->finish_date >= $model->order_date;
         }
         if ($status == NomenclatureDictionary::ORDER_DEDUCT) {
             return $group->start_date <= $model->order_date;

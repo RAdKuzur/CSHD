@@ -10,6 +10,7 @@ use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use common\models\scaffold\ForeignEventParticipants;
 use common\models\scaffold\PersonalDataParticipant;
+use common\models\work\ErrorsWork;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\dictionaries\PersonalDataParticipantRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
@@ -317,5 +318,15 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
     public function getPersonalDataParticipantWork()
     {
         return $this->hasMany(PersonalDataParticipantWork::class, ['participant_id' => 'id']);
+    }
+
+    public function getErrorState(): bool
+    {
+        return ErrorsWork::find()
+            ->where([
+                'table_name' => static::tableName(),
+                'table_row_id' => $this->id,
+            ])
+            ->exists();
     }
 }

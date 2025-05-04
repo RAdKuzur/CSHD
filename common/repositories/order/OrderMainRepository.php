@@ -36,4 +36,8 @@ class OrderMainRepository
             ->orderBy(['order_date' => SORT_ASC])
             ->all();
     }
+    public function getOrdersByLastTime($lastDate)
+    {
+        return OrderMainWork::find()->where(['type' => OrderMainWork::ORDER_MAIN])->andWhere(['>=', 'order_date', $lastDate])->all();
+    }
 }

@@ -13,6 +13,7 @@ use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\general\FilesRepository;
 use common\repositories\order\OrderEventRepository;
+use common\repositories\order\OrderMainRepository;
 use common\services\general\files\FileService;
 use DomainException;
 use frontend\forms\event\EventParticipantForm;
@@ -34,6 +35,7 @@ class ForeignEventController extends DocumentController
     private OrderEventRepository $orderEventRepository;
     private PeopleRepository $peopleRepository;
     private ParticipantAchievementRepository $achievementRepository;
+    private OrderMainRepository $orderMainRepository;
     private LockWizard $lockWizard;
 
     public function __construct(
@@ -43,6 +45,7 @@ class ForeignEventController extends DocumentController
         OrderEventRepository $orderEventRepository,
         PeopleRepository $peopleRepository,
         ParticipantAchievementRepository $achievementRepository,
+        OrderMainRepository $orderMainRepository,
         LockWizard $lockWizard,
         $config = [])
     {
@@ -52,6 +55,7 @@ class ForeignEventController extends DocumentController
         $this->orderEventRepository = $orderEventRepository;
         $this->peopleRepository = $peopleRepository;
         $this->achievementRepository = $achievementRepository;
+        $this->orderMainRepository = $orderMainRepository;
     }
 
     public function actionIndex()
@@ -91,7 +95,8 @@ class ForeignEventController extends DocumentController
                 'model' => $form,
                 'peoples' => $this->peopleRepository->getAll(),
                 'orders6' => $this->orderEventRepository->getEventOrdersByLastTime(date('Y-m-d', strtotime($form->startDate . '-6 month'))),
-                'orders9' => $this->orderEventRepository->getEventOrdersByLastTime(date('Y-m-d', strtotime($form->startDate . '-9 month'))),
+                'orders9' => array_merge($this->orderEventRepository->getEventOrdersByLastTime(date('Y-m-d', strtotime($form->startDate . '-9 month'))),
+                    $this->orderMainRepository->getOrdersByLastTime(date('Y-m-d', strtotime($form->startDate . '-9 month')))),
                 'modelAchievements' => [new ParticipantAchievementWork],
             ]);
         }

@@ -7,6 +7,7 @@ use common\helpers\StringFormatter;
 use frontend\forms\event\ForeignEventForm;
 use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\event\ForeignEventWork;
+use frontend\models\work\order\DocumentOrderWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -156,12 +157,23 @@ $this->params['breadcrumbs'][] = $this->title;
                         Доп. приказ
                     </div>
                     <div class="field-date">
-                        <?=
-                        $model->event->addOrderParticipantWork ?
-                            StringFormatter::stringAsLink(
-                                $model->event->addOrderParticipantWork->getFullName(),
-                                Url::to([Yii::$app->frontUrls::ORDER_MAIN_VIEW, 'id' => $model->id])) :
-                            '---';
+                        <?php
+                        if($model->event->addOrderParticipantWork){
+                            if ($model->event->addOrderParticipantWork->type == DocumentOrderWork::ORDER_EVENT) {
+                               echo $model->event->addOrderParticipantWork ?
+                                    StringFormatter::stringAsLink(
+                                        $model->event->addOrderParticipantWork->getFullName(),
+                                        Url::to([Yii::$app->frontUrls::ORDER_EVENT_VIEW, 'id' => $model->event->addOrderParticipantWork->id])) :
+                                    '---';
+                            }
+                            else {
+                                echo $model->event->addOrderParticipantWork ?
+                                StringFormatter::stringAsLink(
+                                        $model->event->addOrderParticipantWork->getFullName(),
+                                        Url::to([Yii::$app->frontUrls::ORDER_MAIN_VIEW, 'id' => $model->event->addOrderParticipantWork->id])) :
+                                    '---';
+                            }
+                        }
                         ?>
                     </div>
                 </div>

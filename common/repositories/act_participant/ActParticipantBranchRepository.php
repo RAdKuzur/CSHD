@@ -38,4 +38,7 @@ class ActParticipantBranchRepository
         $command->delete(ActParticipantBranchWork::tableName(), ['act_participant_id' => $actParticipantId]);
         return $command->getRawSql();
     }
+    public function checkUnique($actParticipantId, $branch){
+        return ActParticipantBranchWork::find()->where(['act_participant_id' => $actParticipantId])->andWhere(['branch' => $branch])->exists();
+    }
 }

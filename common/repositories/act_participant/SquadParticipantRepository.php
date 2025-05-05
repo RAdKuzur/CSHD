@@ -8,6 +8,7 @@ use DomainException;
 use frontend\models\work\team\SquadParticipantWork;
 use common\models\scaffold\SquadParticipant;
 use Yii;
+use yii\helpers\ArrayHelper;
 use function PHPUnit\Framework\throwException;
 
 class SquadParticipantRepository
@@ -91,5 +92,9 @@ class SquadParticipantRepository
     public function checkUnique($participantIds, $actId)
     {
         return SquadParticipantWork::find()->andWhere(['act_participant_id' => $actId])->andWhere(['IN', 'participant_id',  $participantIds])->exists();
+    }
+    public function getByActIds($ids)
+    {
+        return SquadParticipantWork::find()->where(['IN','act_participant_id', $ids])->all();
     }
 }

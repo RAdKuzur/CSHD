@@ -205,8 +205,8 @@ class ReportController extends \yii\console\Controller
             $winnerParticipants = ArrayHelper::getColumn(SquadParticipantWork::find()->where(['IN','act_participant_id', ArrayHelper::getColumn($actWinners, 'id')])->all(),'participant_id');
             $winnerParticipants = array_unique($winnerParticipants);
             if (count($acts) != 0){
-                var_dump(Yii::$app->branches->get($branch), count($winnerParticipants));
-                //var_dump(Yii::$app->branches->get($branch), count($winnerParticipants)/count($participants) * 100);
+                //var_dump(Yii::$app->branches->get($branch), count($winnerParticipants));
+                var_dump(Yii::$app->branches->get($branch), count($winnerParticipants)/count($participants) * 100);
             }
         }
     }

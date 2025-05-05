@@ -155,7 +155,10 @@ class ActParticipantRepository
         LogFactory::createCrudLog(LogInterface::LVL_INFO, 'Выгрузка акта участия по ID', $query->createCommand()->getRawSql());
         return $query->one();
     }
-
+    public function getByIds($ids)
+    {
+        return ActParticipantWork::find()->where(['IN', 'id', $ids])->all();
+    }
     public function save(ActParticipantWork $model)
     {
         if ($model->isNewRecord) {

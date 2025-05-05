@@ -13,13 +13,16 @@ use common\components\dictionaries\base\EventLevelDictionary;
 use common\components\dictionaries\base\FocusDictionary;
 use common\components\traits\Math;
 use common\repositories\act_participant\ActParticipantRepository;
+use common\repositories\act_participant\SquadParticipantRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\event\ForeignEventRepository;
+use common\repositories\event\ParticipantAchievementRepository;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\event\ParticipantAchievementWork;
+use frontend\services\act_participant\ActParticipantService;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
@@ -44,6 +47,9 @@ class StateAssignmentReportService
     private TrainingGroupParticipantRepository $participantRepository;
     private ForeignEventRepository $foreignEventRepository;
     private ActParticipantRepository $actParticipantRepository;
+    private ActParticipantService $actParticipantService;
+    private SquadParticipantRepository $squadParticipantRepository;
+    private ParticipantAchievementRepository $participantAchievementRepository;
 
     private ReportManHoursService $manHoursService;
 
@@ -55,7 +61,10 @@ class StateAssignmentReportService
         TrainingGroupParticipantRepository $participantRepository,
         ForeignEventRepository $foreignEventRepository,
         ActParticipantRepository $actParticipantRepository,
-        ReportManHoursService $manHoursService
+        ActParticipantService $actParticipantService,
+        ReportManHoursService $manHoursService,
+        SquadParticipantRepository $squadParticipantRepository,
+        ParticipantAchievementRepository $participantAchievementRepository
     )
     {
         $this->groupBuilder = $groupBuilder;
@@ -65,7 +74,10 @@ class StateAssignmentReportService
         $this->participantRepository = $participantRepository;
         $this->foreignEventRepository = $foreignEventRepository;
         $this->actParticipantRepository = $actParticipantRepository;
+        $this->actParticipantService = $actParticipantService;
         $this->manHoursService = $manHoursService;
+        $this->squadParticipantRepository = $squadParticipantRepository;
+        $this->participantAchievementRepository = $participantAchievementRepository;
     }
 
     /**
@@ -324,7 +336,7 @@ class StateAssignmentReportService
         $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate, self::CALCULATE_TYPES);
         $groupsQuery = $this->groupBuilder->filterGroupsByBranches($groupsQuery, [$branch]);
         $groupsQuery = $this->groupBuilder->filterGroupsByFocuses($groupsQuery, [$focus]);
-        //$groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);
+        $groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);
         $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, [TrainingGroupWork::IS_BUDGET]);
         $groupsAll = $this->groupRepository->findAll($groupsQuery);
 
@@ -335,9 +347,9 @@ class StateAssignmentReportService
 
         return [
             self::PARAM_DUPLICATE => in_array(self::PARAM_DUPLICATE, $params) ? $this->calculateParamDuplicate($groupsAll) : -1,
-            self::PARAM_ACHIEVES_RATIO => in_array(self::PARAM_ACHIEVES_RATIO, $params) ? $this->calculateParamRatioAchieves($groupsAll, $eventsAll) : -1,
+            self::PARAM_ACHIEVES_RATIO => in_array(self::PARAM_ACHIEVES_RATIO, $params) ? $this->calculateParamRatioAchieves($groupsAll, $eventsAll, $focus, $branch) : -1,
             self::PARAM_PROJECTS_RATIO => in_array(self::PARAM_PROJECTS_RATIO, $params) ? $this->calculateParamRatioProjects($groupsAll) : -1,
-            self::PARAM_PARTICIPANTS_RATIO => in_array(self::PARAM_PARTICIPANTS_RATIO, $params) ? $this->calculateParamRatioParticipants($groupsAll, $eventsAll) : -1,
+            self::PARAM_PARTICIPANTS_RATIO => in_array(self::PARAM_PARTICIPANTS_RATIO, $params) ? $this->calculateParamRatioParticipants($groupsAll, $eventsAll, $focus, $branch) : -1,
         ];
     }
 
@@ -368,9 +380,10 @@ class StateAssignmentReportService
      * @param array $events
      * @return float
      */
-    public function calculateParamRatioAchieves(array $groups, array $events)
+    public function calculateParamRatioAchieves(array $groups, array $events, int $focus, int $branch)
     {
-        $participants = $this->participantBuilder->query();
+        //это предудыщая версия(метод) ведения отчёта
+        /*$participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
         $participantsAll = $this->participantRepository->findAll($participantsAllUnic);
@@ -386,8 +399,16 @@ class StateAssignmentReportService
         $eventParticipants = $this->eventParticipantBuilder->filterByParticipantIds($eventParticipants, ArrayHelper::getColumn($participantsAll, 'participant_id'));
 
         $eventParticipantsAchieves = $this->eventParticipantBuilder->filterByPrizes(clone $eventParticipants, [ParticipantAchievementWork::TYPE_PRIZE, ParticipantAchievementWork::TYPE_WINNER]);
-
-        return $this->percent($this->actParticipantRepository->count($eventParticipantsAchieves), $this->actParticipantRepository->count($eventParticipants));
+        return $this->percent($this->actParticipantRepository->count($eventParticipantsAchieves), $this->actParticipantRepository->count($eventParticipants));*/
+        $eventParticipants = $this->eventParticipantBuilder->query();
+        $eventParticipants = $this->eventParticipantBuilder->filterByEvents($eventParticipants, ArrayHelper::getColumn($events, 'id'));
+        $eventParticipants = $this->eventParticipantBuilder->filterByFocuses($eventParticipants, [$focus]);
+        $acts = $this->actParticipantService->filterByBranch($eventParticipants, $branch);
+        $allEventParticipants = $this->squadParticipantRepository->getByActIds(ArrayHelper::getColumn($acts, 'id'));
+        $achievementActs = $this->participantAchievementRepository->getByActIds(ArrayHelper::getColumn($acts, 'id'), [ParticipantAchievementWork::TYPE_PRIZE, ParticipantAchievementWork::TYPE_WINNER]);
+        $actWinners = $this->actParticipantRepository->getByIds(ArrayHelper::getColumn($achievementActs, 'act_participant_id'));
+        $winnerParticipants = $this->squadParticipantRepository->getByActIds(ArrayHelper::getColumn($actWinners, 'id'));
+        return $this->percent(count(array_unique(ArrayHelper::getColumn($winnerParticipants, 'participant_id'))), count(array_unique(ArrayHelper::getColumn($allEventParticipants, 'participant_id'))));
     }
 
     /**
@@ -415,9 +436,10 @@ class StateAssignmentReportService
      * @param array $events
      * @return float
      */
-    public function calculateParamRatioParticipants(array $groups, array $events)
+    public function calculateParamRatioParticipants(array $groups, array $events, int $focus, int $branch)
     {
-        $participants = $this->participantBuilder->query();
+        //это предудыщая версия(метод) ведения отчёта
+        /*$participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
         $participantsAll = $this->participantRepository->findAll($participantsAllUnic);
@@ -431,7 +453,18 @@ class StateAssignmentReportService
             [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL, EventLevelDictionary::INTERREGIONAL]
         );
         $eventParticipants = $this->eventParticipantBuilder->filterByParticipantIds($eventParticipants, ArrayHelper::getColumn($participantsAll, 'participant_id'));
+*/
+        $eventParticipants = $this->eventParticipantBuilder->query();
+        $eventParticipants = $this->eventParticipantBuilder->filterByEvents($eventParticipants, ArrayHelper::getColumn($events, 'id'));
+        $eventParticipants = $this->eventParticipantBuilder->filterByFocuses($eventParticipants, [$focus]);
+        $acts = $this->actParticipantService->filterByBranch($eventParticipants, $branch);
+        $allEventParticipants = $this->squadParticipantRepository->getByActIds(ArrayHelper::getColumn($acts, 'id'));
 
-        return $this->percent($this->actParticipantRepository->count($eventParticipants), count($participantsAll));
+        $participants = $this->participantBuilder->query();
+        $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
+        $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
+        $participantsAll = $this->participantRepository->findAll($participantsAllUnic);
+        $generalCount = count(array_unique(ArrayHelper::getColumn($allEventParticipants, 'participant_id'))) + count($participantsAll);
+        return $this->percent(count(array_unique(ArrayHelper::getColumn($allEventParticipants, 'participant_id'))), $generalCount);
     }
 }

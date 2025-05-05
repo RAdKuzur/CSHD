@@ -4,6 +4,7 @@ namespace frontend\services\act_participant;
 
 use common\helpers\ErrorAssociationHelper;
 use common\helpers\html\HtmlCreator;
+use common\repositories\act_participant\ActParticipantBranchRepository;
 use common\repositories\general\PeopleStampRepository;
 use common\services\general\PeopleStampService;
 use frontend\models\work\event\ForeignEventWork;
@@ -41,6 +42,7 @@ class ActParticipantService
     private SquadParticipantRepository $squadParticipantRepository;
     private ActParticipantBranchService $actParticipantBranchService;
     private PeopleStampService $peopleStampService;
+    private ActParticipantBranchRepository $actParticipantBranchRepository;
 
     public function __construct(
         TeamRepository $teamRepository,
@@ -51,7 +53,8 @@ class ActParticipantService
         SquadParticipantService $squadParticipantService,
         SquadParticipantRepository $squadParticipantRepository,
         ActParticipantBranchService $actParticipantBranchService,
-        PeopleStampService $peopleStampService
+        PeopleStampService $peopleStampService,
+        ActParticipantBranchRepository $actParticipantBranchRepository
     )
     {
         $this->teamRepository = $teamRepository;
@@ -63,6 +66,7 @@ class ActParticipantService
         $this->squadParticipantRepository = $squadParticipantRepository;
         $this->actParticipantBranchService = $actParticipantBranchService;
         $this->peopleStampService = $peopleStampService;
+        $this->actParticipantBranchRepository = $actParticipantBranchRepository;
     }
 
     public function getFilesInstance(ActParticipantForm $modelActParticipant, $index)
@@ -271,5 +275,16 @@ class ActParticipantService
         foreach ($acts as $act) {
             $act->checkModel(ErrorAssociationHelper::getActParticipantErrorsList(), ActParticipantWork::tableName(), $act->id);
         }
+    }
+    public function filterByBranch($actQuery, $branch)
+    {
+        return array_filter($actQuery->all(), function (ActParticipantWork $item) use ($branch) {
+            if($this->actParticipantBranchRepository->checkUnique($item->id, $branch)){
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
     }
 }

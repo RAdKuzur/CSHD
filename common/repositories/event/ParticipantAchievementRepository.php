@@ -55,6 +55,10 @@ class ParticipantAchievementRepository
         $command->insert($model::tableName(), $model->getAttributes());
         return $command->getRawSql();
     }
+    public function getByActIds($actIds, array $types)
+    {
+        return ParticipantAchievementWork::find()->where(['IN', 'act_participant_id', $actIds])->andWhere(['IN', 'type', $types])->all();
+    }
 
     public function save(ParticipantAchievementWork $achievement)
     {

@@ -525,7 +525,7 @@ class OrderEventController extends DocumentController
         $model = $this->documentOrderRepository->get($id);
         $loader = new OrderLoader(
             $this->documentOrderService->generateOrder($model),
-            "Приказ №" . $model->getFullNumber() . ' ' . $model->order_name
+        "Приказ №" . $model->getFullNumber() . ' ' . preg_replace('/[^\w\-]/u', '_', mb_substr($model->order_name, 0, 35))
         );
         $loader();
     }

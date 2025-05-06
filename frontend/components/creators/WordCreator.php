@@ -73,7 +73,7 @@ class WordCreator
         $table->addCell(2000);
         $section->addTextBreak(2);
 
-        switch (Yii::$app->branches->get($modelGroup->branch)) {
+        switch ($modelGroup->branch) {
             case BranchDictionary::QUANTORIUM:
                 $boss = 'Цырульников Евгений Сергеевич';
                 $bossShort = 'Цырульников Е.С.';
@@ -112,8 +112,10 @@ class WordCreator
         $numberStr = 3;
         foreach ($experts as $expert) {
             if ($expert->expert_id !== $expertExept) {
-                $section->addText('          '.$numberStr.'. ' . $expert->expertWork->positionWork->name . ' ' . $expert->expertWork->getFIO(PersonInterface::FIO_FULL) . '.',null, array('align' => 'both', 'spaceAfter' => 0));
-                $numberStr++;
+                if($expert->expert_type != TrainingGroupExpertWork::TYPE_EXTERNAL){
+                    $section->addText('          '.$numberStr.'. ' . $expert->expertWork->positionWork->name . ' ' . $expert->expertWork->getFIO(PersonInterface::FIO_FULL) . '.',null, array('align' => 'both', 'spaceAfter' => 0));
+                    $numberStr++;
+                }
             }
         }
         $section->addTextBreak(1);
@@ -130,7 +132,7 @@ class WordCreator
                         $expertFlag = true;
                         $section->addText('Приглашенные эксперты:', array('underline' => 'single'), array('spaceAfter' => 0));
                     }
-                    $section->addText('          '.$numberStr.'. ' . $expert->expertWork->companyWork->short_name . ' ' . $expert->expertWork->positionWork->name . ' ' . $expert->expertWork->getFIO(PersonInterface::FIO_FULL),null, array('align' => 'both', 'spaceAfter' => 0));
+                    $section->addText('          ' . $numberStr . '. ' . $expert->expertWork->companyWork->short_name . ' ' . $expert->expertWork->positionWork->name . ' ' . $expert->expertWork->getFIO(PersonInterface::FIO_FULL), null, array('align' => 'both', 'spaceAfter' => 0));
                     $numberStr++;
                 }
             }
@@ -193,7 +195,7 @@ class WordCreator
         $cell->addText('/ '. $bossShort . '/', null, array('align' => 'right'));
 
         foreach ($experts as $expert) {
-            if ($expert->expert_id !== $expertExept) {
+            if ($expert->expert_id !== $expertExept && $expert->expert_type != TrainingGroupExpertWork::TYPE_EXTERNAL) {
                 $table->addRow();
                 $cell = $table->addCell(8000);
                 $cell->addText($expert->expertWork->positionWork->name);

@@ -147,7 +147,7 @@ class ErrorJournalService
         $errFlag = false;
         $error = $this->errorsRepository->get($errorId);
         $group = $this->groupRepository->get($error->table_row_id);
-        if (!(date('Y-m-d') >= $group->start_date)) {
+        if (date('Y-m-d') >= $group->start_date) {
             $orderEnrollParticipants = $this->orderParticipantRepository->getEnrollByGroupId($error->table_row_id);
             $errFlag = count($orderEnrollParticipants) >= 1;
         }

@@ -15,7 +15,7 @@ use yii\helpers\ArrayHelper;
 class PbacLessonAccess implements PbacComponentInterface
 {
     const LESSON_OFFSET_DOWN = 5; // кол-во дней, раньше которого запрещено редактирование явок
-    const LESSON_OFFSET_UP = 1; // кол-во дней, позже которых запрещено редактирование явок
+    const LESSON_OFFSET_UP = 5; // кол-во дней, позже которых запрещено редактирование явок
 
     private PbacLessonData $data;
     private TrainingGroupLessonRepository $lessonRepository;

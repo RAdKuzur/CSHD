@@ -607,11 +607,13 @@ class TrainingGroupController extends DocumentController
 
     public function actionView($id)
     {
+        /* @var TrainingGroupWork $model */
         $form = new TrainingGroupCombinedForm($id);
 
         $links = ButtonsFormatter::updateDeleteLinks($id, Yii::$app->frontUrls::TRAINING_GROUP_UPDATE);
         $buttonHtml = HtmlBuilder::createGroupButton($links);
-
+        $model = $this->trainingGroupRepository->get($id);
+        $model->checkModel(ErrorAssociationHelper::getTrainingGroupErrorsList(), TrainingGroupWork::tableName(), $id);
         return $this->render('view', [
             'model' => $form,
             'journalState' => $this->journalService->checkJournalStatus($id),

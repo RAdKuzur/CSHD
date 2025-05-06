@@ -379,7 +379,7 @@ class ErrorDictionary extends BaseDictionary
                 [$this->changeableService, 'changeJournal_001'],
             ),
             self::JOURNAL_002 => new Error(
-                'ЭЖ002', 'Не заполнено поле «Приказы» в карточке группы',
+                'ЭЖ002', 'Нет соответствующего приказа о зачислении/отчислении для группы',
                 Error::TYPE_CHANGEABLE,
                 [$this->journalService, 'makeJournal_002'],
                 [$this->journalService, 'fixJournal_002'],
@@ -489,7 +489,7 @@ class ErrorDictionary extends BaseDictionary
                 [$this->journalService, 'fixJournal_019'],
             ),
             self::JOURNAL_020 => new Error(
-                'ЭЖ020', 'В учебной группе есть дети, которые не фигурируют в приказах о зачислении и/или отчислении',
+                'ЭЖ020', 'В учебной группе есть дети, которые не фигурируют в приказах о зачислении и/или отчислении или нет соответствущего приказа',
                 Error::TYPE_BASE,
                 [$this->journalService, 'makeJournal_020'],
                 [$this->journalService, 'fixJournal_020'],

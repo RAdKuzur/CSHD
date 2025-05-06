@@ -530,7 +530,8 @@ class WordCreator
                 $cell->addText($oneActPart->actParticipantWork->teacher2Work->getFIO(PersonInterface::FIO_SURNAME_INITIALS), array('size' => '12'), array('align' => 'center', 'spaceAfter' => 0));
 
         }
-        $text = 'Пр.' . date("Ymd", strtotime($order->order_date)) . '_' . $order->order_number . $order->order_copy_id . $order->order_postfix . '_' . substr($order->order_name, 0, 35);
+        //$text = 'Пр.' . date("Ymd", strtotime($order->order_date)) . '_' . $order->order_number . $order->order_copy_id . $order->order_postfix . '_' . substr($order->order_name, 0, 35);
+        $text = 'Пр.' . date("Ymd", strtotime($order->order_date)) . '_' . $order->order_number . $order->order_copy_id . $order->order_postfix . '_' . mb_substr($order->order_name, 0, 35, 'UTF-8');
         header("Content-Description: File Transfer");
         header('Content-Disposition: attachment; filename="' . $text . '.docx"');
         header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
@@ -1318,7 +1319,6 @@ class WordCreator
         $groupsIdOut = ArrayHelper::getColumn(TrainingGroupParticipantWork::find()->where(['IN', 'id',  $trGParticipantOut])->all(), 'training_group_id');
         $groups = TrainingGroupWork::find()->where(['IN', 'id', $groupsIdIn])->all();
         $groupsOUT = TrainingGroupWork::find()->where(['IN', 'id', $groupsIdOut])->all();
-        //var_dump(ArrayHelper::getColumn($groupsOUT, 'number'));
         $tempGID = [];
         foreach ($groups as $g)
             $tempGID[] = $g->id;
@@ -1328,7 +1328,6 @@ class WordCreator
         $teacher = TeacherGroupWork::find();
         $gPartIN = TrainingGroupParticipantWork::find()->where(['IN', 'id',  $trGParticipantId])->all();
         $countPart = count($gPartIN);
-        //var_dump($gPartIN->createCommand()->getRawSql());
 
         $groupsID = [];
         foreach ($gPartIN as $tempPart)

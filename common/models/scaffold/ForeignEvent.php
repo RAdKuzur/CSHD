@@ -51,7 +51,7 @@ class ForeignEvent extends \yii\db\ActiveRecord
             [['order_participant_id', 'name', 'begin_date', 'end_date'], 'required'],
             [['order_participant_id', 'organizer_id', 'format', 'level', 'minister', 'min_age', 'max_age', 'escort_id', 'add_order_participant_id', 'order_business_trip_id'], 'integer'],
             [['begin_date', 'end_date'], 'safe'],
-            [['name', 'city', 'key_words'], 'string', 'max' => 128],
+            [['name', 'city', 'key_words'], 'string', 'max' => 1000],
             [['order_participant_id'], 'exist', 'skipOnError' => true, 'targetClass' => DocumentOrder::class, 'targetAttribute' => ['order_participant_id' => 'id']],
             [['organizer_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::class, 'targetAttribute' => ['organizer_id' => 'id']],
             [['escort_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeopleStamp::class, 'targetAttribute' => ['escort_id' => 'id']],

@@ -130,8 +130,8 @@ class SearchForeignEvent extends Model implements SearchInterfaces
     public function sortAttributes(ActiveDataProvider $dataProvider)
     {
         $dataProvider->sort->attributes['name'] = [
-            'asc' => ['name' => SORT_ASC],
-            'desc' => ['name' => SORT_DESC],
+            'asc' => ['foreign_event.name' => SORT_ASC],
+            'desc' => ['foreign_event.name' => SORT_DESC],
         ];
 
         $dataProvider->sort->attributes['period'] = [
@@ -220,7 +220,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
      */
     private function filterName(ActiveQuery $query) {
         if (!empty($this->eventName)) {
-            $query->andWhere(['like', 'LOWER(name)', mb_strtolower($this->eventName)]);
+            $query->andWhere(['like', 'LOWER(foreign_event.name)', mb_strtolower($this->eventName)]);
         }
     }
 

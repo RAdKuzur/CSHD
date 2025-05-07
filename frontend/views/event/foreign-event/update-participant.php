@@ -70,6 +70,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Удалить', ['delete-participant','id' => $model->actParticipant->id, 'modelId' => $model->actParticipant->foreignEventWork->id], [
+            'class' => 'btn btn-danger',
+        ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

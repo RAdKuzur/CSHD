@@ -373,7 +373,8 @@ class RulesConfig
                 'delete-file',
                 'update-participant',
                 'update-achievement',
-                'delete-achievement'
+                'delete-achievement',
+                'delete-participant'
             ]
         ],
 

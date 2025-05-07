@@ -192,6 +192,14 @@ class ForeignEventForm extends Model
                         'modelId' => ArrayHelper::getColumn($squads, 'actParticipantWork.foreign_event_id')
                     ]
                 ),
+                HtmlBuilder::createButtonsArray(
+                    HtmlCreator::IconDelete(),
+                    Url::to('delete-participant'),
+                    [
+                        'id' => ArrayHelper::getColumn($squads, 'act_participant_id'),
+                        'modelId' => ArrayHelper::getColumn($squads, 'actParticipantWork.foreign_event_id')
+                    ]
+                ),
             ]
         );
     }

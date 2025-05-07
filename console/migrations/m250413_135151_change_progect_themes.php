@@ -18,7 +18,6 @@ class m250413_135151_change_progect_themes extends Migration
     public function safeDown()
     {
         $this->alterColumn('project_theme', 'description', $this->string(256));
-
         return true;
     }
 }

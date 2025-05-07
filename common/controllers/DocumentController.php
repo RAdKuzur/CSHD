@@ -27,8 +27,8 @@ use ZipArchive;
  */
 class DocumentController extends Controller
 {
-    private FileService $fileService;
-    private FilesRepository $filesRepository;
+    public FileService $fileService;
+    public FilesRepository $filesRepository;
 
     public function __construct(
         $id,

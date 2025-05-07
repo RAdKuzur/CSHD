@@ -4,6 +4,7 @@ use common\components\dictionaries\base\BranchDictionary;
 use frontend\forms\event\EventParticipantForm;
 use frontend\models\work\general\PeopleWork;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -70,6 +71,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Удалить', ['delete-participant','id' => $model->actParticipant->id, 'modelId' => $model->actParticipant->foreignEventWork->id], [
+            'class' => 'btn btn-danger',
+        ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

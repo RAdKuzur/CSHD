@@ -20,11 +20,13 @@ use common\helpers\SortHelper;
 use common\helpers\StringFormatter;
 use common\models\scaffold\OrderEventGenerate;
 use common\repositories\dictionaries\PeopleRepository;
+use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\order\DocumentOrderRepository;
 use common\repositories\order\OrderEventGenerateRepository;
 use frontend\events\general\FileDeleteEvent;
 use frontend\invokables\OrderLoader;
 use frontend\models\work\event\ForeignEventWork;
+use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\models\work\general\FilesWork;
 use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\order\OrderEventWork;
@@ -77,7 +79,7 @@ class OrderEventController extends DocumentController
     private OrderEventGenerateService $orderEventGenerateService;
     private TeamService $teamService;
     private DocumentOrderRepository $documentOrderRepository;
-    private FilesRepository $filesRepository;
+    private ParticipantAchievementRepository $participantAchievementRepository;
 
     public function __construct(
         $id, $module,
@@ -101,7 +103,7 @@ class OrderEventController extends DocumentController
         OrderEventGenerateRepository $orderEventGenerateRepository,
         OrderEventGenerateService $orderEventGenerateService,
         DocumentOrderRepository $documentOrderRepository,
-        FilesRepository $filesRepository,
+        ParticipantAchievementRepository $participantAchievementRepository,
         $config = []
     )
     {
@@ -124,6 +126,7 @@ class OrderEventController extends DocumentController
         $this->teamService = $teamService;
         $this->documentOrderRepository = $documentOrderRepository;
         $this->filesRepository = $fileRepository;
+        $this->participantAchievementRepository = $participantAchievementRepository;
         parent::__construct($id, $module, $fileService, $fileRepository, $config);
     }
     public function actionIndex() {
@@ -483,17 +486,23 @@ class OrderEventController extends DocumentController
         $model = $this->actParticipantRepository->get($id);
         $foreignEvent = $this->foreignEventRepository->get($model->foreign_event_id);
         $order = $this->orderEventRepository->get($foreignEvent->order_participant_id);
-        $files = $this->filesRepository->getByDocument(ActParticipantWork::tableName(), $model->id);
-        foreach ($files as $file) {
-            $model->recordEvent(new FileDeleteEvent($file->id), DocumentOrderWork::class);
+        if (!$this->participantAchievementRepository->getByActIds($id, [ParticipantAchievementWork::TYPE_PRIZE, ParticipantAchievementWork::TYPE_WINNER])){
+
+            $files = $this->filesRepository->getByDocument(ActParticipantWork::tableName(), $model->id);
+            foreach ($files as $file) {
+                $model->recordEvent(new FileDeleteEvent($file->id), DocumentOrderWork::class);
+            }
+            //act_participant_branch
+            $model->recordEvent(new ActParticipantBranchDeleteEvent($model->id), DocumentOrderWork::class);
+            //squad_participant
+            $model->recordEvent(new SquadParticipantDeleteByIdEvent($model->id), DocumentOrderWork::class);
+            //act_participant
+            $model->recordEvent(new ActParticipantDeleteEvent($model->id), DocumentOrderWork::class);
+            $model->releaseEvents();
         }
-        //act_participant_branch
-        $model->recordEvent(new ActParticipantBranchDeleteEvent($model->id), DocumentOrderWork::class);
-        //squad_participant
-        $model->recordEvent(new SquadParticipantDeleteByIdEvent($model->id), DocumentOrderWork::class);
-        //act_participant
-        $model->recordEvent(new ActParticipantDeleteEvent($model->id), DocumentOrderWork::class);
-        $model->releaseEvents();
+        else {
+            Yii::$app->session->setFlash('danger', 'Невозможно удалить акт участия без предварительного удаления достижения');
+        }
         return $this->redirect(['update', 'id' => $order->id]);
     }
     public function actionDelete($id){

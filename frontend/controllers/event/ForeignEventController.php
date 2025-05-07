@@ -2,6 +2,9 @@
 
 namespace frontend\controllers\event;
 
+use app\events\act_participant\ActParticipantBranchDeleteEvent;
+use app\events\act_participant\ActParticipantDeleteEvent;
+use app\events\act_participant\SquadParticipantDeleteByIdEvent;
 use common\components\traits\AccessControl;
 use common\components\wizards\LockWizard;
 use common\controllers\DocumentController;
@@ -9,13 +12,16 @@ use common\helpers\ButtonsFormatter;
 use common\helpers\ErrorAssociationHelper;
 use common\helpers\html\HtmlBuilder;
 use common\Model;
+use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\dictionaries\PeopleRepository;
+use common\repositories\event\ForeignEventRepository;
 use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\general\FilesRepository;
 use common\repositories\order\OrderEventRepository;
 use common\repositories\order\OrderMainRepository;
 use common\services\general\files\FileService;
 use DomainException;
+use frontend\events\general\FileDeleteEvent;
 use frontend\forms\event\EventParticipantForm;
 use frontend\forms\event\ForeignEventForm;
 use frontend\forms\event\ParticipantAchievementForm;
@@ -23,6 +29,8 @@ use frontend\models\search\SearchForeignEvent;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\models\work\general\PeopleWork;
+use frontend\models\work\order\DocumentOrderWork;
+use frontend\models\work\team\ActParticipantWork;
 use frontend\services\event\ForeignEventService;
 use Yii;
 use yii\web\Controller;
@@ -37,7 +45,9 @@ class ForeignEventController extends DocumentController
     private ParticipantAchievementRepository $achievementRepository;
     private OrderMainRepository $orderMainRepository;
     private LockWizard $lockWizard;
-
+    private ActParticipantRepository $actParticipantRepository;
+    private ForeignEventRepository $foreignEventRepository;
+    private ParticipantAchievementRepository $participantAchievementRepository;
     public function __construct(
         $id,
         $module,
@@ -47,6 +57,9 @@ class ForeignEventController extends DocumentController
         ParticipantAchievementRepository $achievementRepository,
         OrderMainRepository $orderMainRepository,
         LockWizard $lockWizard,
+        ActParticipantRepository $actParticipantRepository,
+        ForeignEventRepository $foreignEventRepository,
+        ParticipantAchievementRepository $participantAchievementRepository,
         $config = [])
     {
         parent::__construct($id, $module, Yii::createObject(FileService::class), Yii::createObject(FilesRepository::class), $config);
@@ -56,6 +69,9 @@ class ForeignEventController extends DocumentController
         $this->peopleRepository = $peopleRepository;
         $this->achievementRepository = $achievementRepository;
         $this->orderMainRepository = $orderMainRepository;
+        $this->actParticipantRepository = $actParticipantRepository;
+        $this->foreignEventRepository = $foreignEventRepository;
+        $this->participantAchievementRepository = $participantAchievementRepository;
     }
 
     public function actionIndex()
@@ -178,7 +194,29 @@ class ForeignEventController extends DocumentController
 
         return $this->redirect(['update', 'id' => $modelId]);
     }
-
+    public function actionDeleteParticipant($id, $modelId)
+    {
+        /* @var ActParticipantWork $model */
+        if (!$this->participantAchievementRepository->getByActIds($id, [ParticipantAchievementWork::TYPE_PRIZE, ParticipantAchievementWork::TYPE_WINNER])) {
+            $model = $this->actParticipantRepository->get($id);
+            $foreignEvent = $this->foreignEventRepository->get($model->foreign_event_id);
+            $files = $this->filesRepository->getByDocument(ActParticipantWork::tableName(), $model->id);
+            foreach ($files as $file) {
+                $model->recordEvent(new FileDeleteEvent($file->id), DocumentOrderWork::class);
+            }
+            //act_participant_branch
+            $model->recordEvent(new ActParticipantBranchDeleteEvent($model->id), DocumentOrderWork::class);
+            //squad_participant
+            $model->recordEvent(new SquadParticipantDeleteByIdEvent($model->id), DocumentOrderWork::class);
+            //act_participant
+            $model->recordEvent(new ActParticipantDeleteEvent($model->id), DocumentOrderWork::class);
+            $model->releaseEvents();
+        }
+        else {
+            Yii::$app->session->setFlash('danger', 'Невозможно удалить акт участия без предварительного удаления достижения');
+        }
+        return $this->redirect(['update', 'id' => $modelId]);
+    }
     public function beforeAction($action)
     {
         $result = $this->checkActionAccess($action);

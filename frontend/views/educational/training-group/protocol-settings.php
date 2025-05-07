@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?php echo $form->field($model, 'name')->textInput(['value' => 'Научно-техническая конференция SchoolTech Conference',
+    <?php echo $form->field($model, 'name')->textInput(['value' => 'Научно-техническая конференция',
         'placeholder' => 'Демонстрация результатов образовательной деятельности'])->label(false) ?>
 
     <br>

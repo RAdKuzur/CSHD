@@ -276,6 +276,7 @@ class WordCreator
         $section->addTextBreak(1);
         $numberStr = 1;
         $isAnnex3 = false;
+        $groupParticipants = TrainingGroupParticipantWork::find()->where(['training_group_id' => $modelGroup->id])->all();
         foreach ($groupParticipants as $part) {
             if ($part->certificateWork->certificate_number !== NULL) {
                 $section->addText($numberStr.' '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));

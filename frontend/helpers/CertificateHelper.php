@@ -23,7 +23,7 @@ class CertificateHelper
         if ($participant->trainingGroupWork->trainingProgramWork->isProjectCertificate()) {
             if ($participant->groupProjectThemesWork){
                 $typeText = ', ' . $genderVerbs[1] . ' '. mb_strtolower($participant->groupProjectThemesWork->projectThemeWork->getProjectTypeString()) .' проект "'
-                    . $participant->groupProjectThemesWork->projectThemeWork->name . '" и ' . $genderVerbs[2] . ' на научной конференции "SchoolTech Conference".';
+                    . $participant->groupProjectThemesWork->projectThemeWork->name . '" и ' . $genderVerbs[2] . ' на научной конференции.';
             }
         }
         if ($participant->trainingGroupWork->trainingProgramWork->isControlWorkCertificate()) {

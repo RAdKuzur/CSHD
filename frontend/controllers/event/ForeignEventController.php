@@ -179,7 +179,7 @@ class ForeignEventController extends DocumentController
         return $this->redirect(['update', 'id' => $modelId]);
     }
 
-    public function beforeAction($action)
+    /*public function beforeAction($action)
     {
         $result = $this->checkActionAccess($action);
         if ($result['url'] !== '') {
@@ -188,5 +188,5 @@ class ForeignEventController extends DocumentController
         }
 
         return parent::beforeAction($action);
-    }
+    }*/
 }

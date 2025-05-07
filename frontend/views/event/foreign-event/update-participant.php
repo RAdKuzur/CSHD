@@ -22,7 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'teacher')->textInput(['readonly' => true, 'value' => $model->actParticipant->teacherWork->getFIO(PeopleWork::FIO_FULL)])->label('ФИО педагогов'); ?>
-    <?= $form->field($model, 'teacher2')->textInput(['readonly' => true, 'value' => $model->actParticipant->teacher2Work ? $model->actParticipant->teacher2Work->getFIO(PeopleWork::FIO_FULL) : NULL])->label(false); ?>
+
+    <?php
+    if ($model->actParticipant->teacher2Work) {
+        echo $form->field($model, 'teacher2')->textInput(['readonly' => true, 'value' => $model->actParticipant->teacher2Work->getFIO(PeopleWork::FIO_FULL)])->label(false);
+    }
+    ?>
     <?= $form->field($model, 'focus')->textInput(['readonly' => true, 'value' => Yii::$app->focus->get($model->actParticipant->focus)])->label('Направленность'); ?>
     <?= $form->field($model, 'nomination')->textInput(['readonly' => true, 'value' => $model->actParticipant->nomination])->label('Номинация'); ?>
 

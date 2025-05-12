@@ -824,7 +824,7 @@ class WordCreator
             $section->addText($text);
 
             $programTrG = $program->where(['id' => $trGroup->training_program_id])->one();
-            $section->addText('Дополнительная общеразвивающая программа: «' . $programTrG->name . '»');
+            $section->addText('Дополнительная общеразвивающая программа: «' .  htmlspecialchars($programTrG->name, ENT_XML1 | ENT_QUOTES, 'UTF-8', false) . '»');
             $section->addText('Направленность: ' . mb_strtolower(Yii::$app->focus->get($programTrG->focus)));
 
             $section->addText('Форма обучения: очная (в случаях, установленных законодательными актами, возможно применение электронного обучения, дистанционных образовательных технологий).');

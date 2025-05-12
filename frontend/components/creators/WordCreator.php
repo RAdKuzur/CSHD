@@ -154,7 +154,7 @@ class WordCreator
         $section->addText('Постановили:', array('bold' => true), array('align' => 'both', 'spaceAfter' => 0));
         $section->addText('          1. Признать обучающихся согласно Приложению № 2 к настоящему протоколу успешно прошедшими итоговую аттестацию и выдать сертификаты об обучении.', null, array('align' => 'both', 'spaceAfter' => 0));
 
-        $refPart = 0;
+        /*$refPart = 0;
         foreach ($groupParticipants as $part) {
             if ($part->certificateWork) {
                 $refPart++;
@@ -169,8 +169,19 @@ class WordCreator
                 $section->addText('          1.1. Признать обучающихся согласно Приложению № 3 к настоящему протоколу непрошедшими итоговую аттестацию и выдать справки об обучении.', null, array('align' => 'both', 'spaceAfter' => 0));
             }
             else {
-                $section->addText('          1.1. Признать обучающегося согласно Приложению № 3 к настоящему протоколу непрошедшим итоговую аттестацию и выдать справку об обучении.', null, array('align' => 'both', 'spaceAfter' => 0));
+                $section->addText('          1.1. Признать обучающекся согласно Приложению № 3 к настоящему протоколу непрошедшим итоговую аттестацию и выдать справку об обучении.', null, array('align' => 'both', 'spaceAfter' => 0));
+                $section->addText('          2. Рекомендовать обучающимся согласно Приложению № 3 к настоящему протоколу повторно пройти итоговую аттестацию.', null, array('align' => 'both', 'spaceAfter' => 0));
             }
+        }*/
+        $refPart = false;
+        $parts = TrainingGroupParticipantWork::find()->where(['training_group_id' => $modelGroup->id])->all();
+        foreach ($parts as $part) {
+            if ($part->certificateWork->certificate_number == NULL) {
+                $refPart = true;
+            }
+        }
+        if($refPart){
+            $section->addText('          1.1. Признать обучающекся согласно Приложению № 3 к настоящему протоколу непрошедшим итоговую аттестацию и выдать справку об обучении.', null, array('align' => 'both', 'spaceAfter' => 0));
             $section->addText('          2. Рекомендовать обучающимся согласно Приложению № 3 к настоящему протоколу повторно пройти итоговую аттестацию.', null, array('align' => 'both', 'spaceAfter' => 0));
         }
 

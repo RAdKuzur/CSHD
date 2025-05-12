@@ -124,10 +124,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'table table-bordered', // УБИРАЕМ БАЗОВЫЙ STRIPE ИНАЧЕ ОШИБКИ НЕКОРРЕКТНО ОТОБРАЖАЮТСЯ
             ],
             'rowOptions' => function ($model) {
+                $hasError = $model->getErrorState(); // Проверяем ошибку и отсутствие амнистии
                 return [
-                        'data-href' => Url::to([Yii::$app->frontUrls::DOC_OUT_VIEW, 'id' => $model->id]),
-                        'class' => 'tr-link' . ($model->getErrorState() ? ' error-row' : ''),
-                    ];
+                    'data-href' => Url::to([Yii::$app->frontUrls::TRAINING_GROUP_VIEW, 'id' => $model->id]),
+                    'class' => 'tr-link' . ($hasError ? ' error-row' : ''),
+                ];
             },
         ]);
 

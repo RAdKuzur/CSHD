@@ -407,6 +407,7 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
             ->where([
                 'table_name' => static::tableName(),
                 'table_row_id' => $this->id,
+                'was_amnesty' => 0,  // Только непрощенные
             ])
             ->exists();
     }

@@ -126,7 +126,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'rowOptions' => function ($model) {
                 $hasError = $model->getErrorState(); // Проверяем ошибку и отсутствие амнистии
                 return [
-                    'data-href' => Url::to([Yii::$app->frontUrls::TRAINING_GROUP_VIEW, 'id' => $model->id]),
+                    'data-href' => Url::to([Yii::$app->frontUrls::DOC_OUT_VIEW, 'id' => $model->id]),
                     'class' => 'tr-link' . ($hasError ? ' error-row' : ''),
                 ];
             },

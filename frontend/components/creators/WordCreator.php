@@ -65,7 +65,7 @@ class WordCreator
         $table = $section->addTable();
         $table->addRow();
         $cell = $table->addCell(5000);
-        $cell->addText($modelGroup->trainingProgram->name, array('underline' => 'single'));
+        $cell->addText( htmlspecialchars($modelGroup->trainingProgram->name, ENT_XML1 | ENT_QUOTES, 'UTF-8', false), array('underline' => 'single'));
         $table->addCell(2000);
         $table->addRow();
         $cell = $table->addCell(5000);
@@ -1253,7 +1253,7 @@ class WordCreator
             $section->addText($text);
 
             $programTrG = $program->where(['id' => $trGroup->training_program_id])->one();
-            $section->addText('Дополнительная общеразвивающая программа: «' . $programTrG->name . '»');
+            $section->addText('Дополнительная общеразвивающая программа: «' . htmlspecialchars($programTrG->name, ENT_XML1 | ENT_QUOTES, 'UTF-8', false) . '»');
             $section->addText('Направленность: ' . Yii::$app->focus->get($programTrG->focus));
 
             $section->addText('Форма обучения: очная (в случаях, установленных законодательными актами, возможно применение электронного обучения с дистанционными образовательными технологиями).');
@@ -1426,8 +1426,8 @@ class WordCreator
 
             if ($order->preamble == 6)
             {
-                $text = '          1.	Перевести с обучения по дополнительной общеразвивающей программе «' . $programsOUT[0]->name . '» ('. mb_substr(mb_strtolower($programsOUT[0]->stringFocus), 0, mb_strlen($programsOUT[0]->stringFocus) - 2, "utf-8")
-                    . 'ой направленности) на обучение по дополнительной общеразвивающей программе «' . $programsIN[0]->name . '» ('. mb_substr(mb_strtolower($programsIN[0]->stringFocus), 0, mb_strlen($programsIN[0]->stringFocus) - 2, "utf-8") . 'ой направленности) ';
+                $text = '          1.	Перевести с обучения по дополнительной общеразвивающей программе «' . htmlspecialchars($programsOUT[0]->name, ENT_XML1 | ENT_QUOTES, 'UTF-8', false) . '» ('. mb_substr(mb_strtolower($programsOUT[0]->stringFocus), 0, mb_strlen($programsOUT[0]->stringFocus) - 2, "utf-8")
+                    . 'ой направленности) на обучение по дополнительной общеразвивающей программе «' . htmlspecialchars($programsIN[0]->name, ENT_XML1 | ENT_QUOTES, 'UTF-8', false) . '» ('. mb_substr(mb_strtolower($programsIN[0]->stringFocus), 0, mb_strlen($programsIN[0]->stringFocus) - 2, "utf-8") . 'ой направленности) ';
             }
             else if ($order->preamble == 7)
             {
@@ -1546,7 +1546,7 @@ class WordCreator
                 $section->addText($text);
 
                 $programTrG = TrainingProgramWork::find()->where(['id' => $trGroup->training_program_id])->one();
-                $section->addText('Дополнительная общеразвивающая программа: «' . $programTrG->name . '»');
+                $section->addText('Дополнительная общеразвивающая программа: «' .  htmlspecialchars($programTrG->name, ENT_XML1 | ENT_QUOTES, 'UTF-8', false) . '»');
                 $section->addText('Направленность: ' . Yii::$app->focus->get($programTrG->focus));
 
                 $section->addText('Форма обучения: очная (в случаях, установленных законодательными актами, возможно применение электронного обучения, дистанционных образовательных технологий).');

@@ -49,7 +49,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="float-container-report">
         <div class="col-xs-4 block-report float-block-report">
 
-            <?php $form = ActiveForm::begin(); ?>
+
+            <?php $form = ActiveForm::begin([
+                'id' => 'report-form',
+                'options' => ['onsubmit' => 'return validateFormSubmit();'],
+                'enableClientValidation' => false,
+            ]); ?>
 
             <?= $form->field($model, 'startDate', ['template' => '{label}&nbsp;{input}',
                 'options' => ['class' => 'form-group form-inline']])->widget(\yii\jui\DatePicker::class, [
@@ -259,4 +264,44 @@ $this->params['breadcrumbs'][] = $this->title;
         else { unic.style.display = "none"; }
     }
 
+    function isChecked(name) {
+        return $('input[name="'+name+'[]"]:checked').length > 0;
+    }
+
+    function validateFormSubmit() {
+        let msgs = [];
+
+        // даты
+        if (!$('#manhoursreportform-startdate').val()) {
+            msgs.push('Укажите дату "С".');
+        }
+        if (!$('#manhoursreportform-enddate').val()) {
+            msgs.push('Укажите дату "По".');
+        }
+        // группы чекбоксов
+        if (!isChecked('ManHoursReportForm[branch]'))      msgs.push('Выберите хотя бы один Отдел.');
+        if (!isChecked('ManHoursReportForm[focus]'))       msgs.push('Выберите хотя бы одну Направленность.');
+        if (!isChecked('ManHoursReportForm[allowRemote]')) msgs.push('Выберите хотя бы одну Форму реализации.');
+        if (!isChecked('ManHoursReportForm[budget]'))      msgs.push('Выберите хотя бы одну Основу.');
+        if (!isChecked('ManHoursReportForm[type]'))        msgs.push('Выберите хотя бы один Тип отчёта.');
+
+        // динамические обязательные
+        if ($('#unic').is(':visible') && !$('input[name="ManHoursReportForm[unic]"]:checked').length) {
+            msgs.push('Укажите метод подсчета обучающихся.');
+        }
+        if ($('#hours').is(':visible') && !$('input[name="ManHoursReportForm[method]"]:checked').length) {
+            msgs.push('Укажите метод подсчета человеко-часов.');
+        }
+
+        if (!$('input[name="ManHoursReportForm[mode]"]:checked').length) {
+            msgs.push('Укажите режим формирования отчета');
+        }
+
+
+        if (msgs.length) {
+            alert(msgs.join("\n"));
+            return false;
+        }
+        return true;
+    }
 </script>

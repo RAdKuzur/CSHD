@@ -6,6 +6,10 @@ use common\components\dictionaries\base\BranchDictionary;
 use common\components\dictionaries\base\EventLevelDictionary;
 use common\components\dictionaries\base\FocusDictionary;
 use common\models\scaffold\ForeignEvent;
+use common\repositories\educational\TrainingGroupLessonRepository;
+use common\repositories\educational\TrainingGroupParticipantRepository;
+use common\repositories\educational\VisitRepository;
+use frontend\invokables\CalculateAttendance;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\educational\training_group\GroupProjectThemesWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
@@ -30,6 +34,34 @@ class ReportRufatController extends \yii\console\Controller
         BranchDictionary::MOBILE_QUANTUM ,
         BranchDictionary::COD,
     ];
+    /**
+     * @var mixed
+     */
+    private TrainingGroupLessonRepository $lessonRepository;
+    /**
+     * @var mixed
+     */
+    private TrainingGroupParticipantRepository $participantRepository;
+    /**
+     * @var mixed
+     */
+    private VisitRepository $visitRepository;
+
+    public function __construct(
+        $id,
+        $module,
+        TrainingGroupParticipantRepository $participantRepository,
+        TrainingGroupLessonRepository $trainingGroupLessonRepository,
+        VisitRepository $visitRepository,
+        $config = []
+    )
+    {
+        $this->lessonRepository = $trainingGroupLessonRepository;
+        $this->participantRepository = $participantRepository;
+        $this->visitRepository = $visitRepository;
+        parent::__construct($id, $module, $config);
+    }
+
 
     public function actionFindPercent() {
         for ($i = 1; $i <= 5; $i++)
@@ -114,7 +146,6 @@ class ReportRufatController extends \yii\console\Controller
 
     }
 
-
     public function actionReportWinners()
     {
         for ($i = 1; $i <= 5; $i++) {
@@ -179,6 +210,56 @@ class ReportRufatController extends \yii\console\Controller
                 }
 
                 echo Yii::$app->branches->get($branch) . ": {$winnerPercentage}% победителей\n";
+            }
+        }
+    }
+
+    public function actionAttendancePercent() {
+        $branchGroups = TrainingGroupWork::find()
+            ->joinWith('trainingProgram')
+            ->andWhere(['and',
+                ['<=', 'start_date', '2025-01-01'],
+                ['>=', 'finish_date', '2024-01-01'],
+                ['branch' => 0],
+                ['budget' => TrainingGroupWork::IS_BUDGET],
+                ['training_program.focus' => 1]
+            ])->all();
+
+        echo count($branchGroups);
+
+
+        for ($i = 1; $i < 6; $i++)  {
+            foreach (self::BRANCHES as $branch) {
+                $branchGroups = TrainingGroupWork::find()
+                    ->joinWith('trainingProgram')
+                    ->andWhere(['and',
+                        ['<=', 'start_date', '2025-01-01'],
+                        ['>=', 'finish_date', '2024-01-01'],
+                        ['branch' => $branch],
+                        ['budget' => TrainingGroupWork::IS_BUDGET],
+                        ['training_program.focus' => $i]
+                    ])->all();
+
+
+
+                $sumMaxAttendance = 0;
+                $sumFactAttendance = 0;
+
+                foreach ($branchGroups as $group) {
+                    $max =
+                        count($this->lessonRepository->getLessonsFromGroup($group->id)) *
+                        count($this->participantRepository->getParticipantsFromGroups([$group->id]));
+
+                    $currentCalc = new CalculateAttendance(
+                        $this->visitRepository->getByTrainingGroup($group->id),
+                        $this->lessonRepository
+                    );
+
+                    $sumMaxAttendance += $max;
+                    $sumFactAttendance += $currentCalc();
+                }
+
+                echo("Кол-во групп:" . count($branchGroups) . " Отдел:" . Yii::$app->branches->get($branch) . " Фокус:" . Yii::$app->focus->get($i) . " Общее кол-во: " . $sumMaxAttendance . " Фактическое: " . $sumFactAttendance . "\n");
             }
         }
     }

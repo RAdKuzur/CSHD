@@ -138,7 +138,7 @@ class ReportManHoursService implements ManHoursServiceInterface
             'result' => $result,
             'debugData' => $mode == ReportFacade::MODE_DEBUG ?
                 $this->debugService->createManHoursDebugData($groups, $startDate, $endDate, $calculateType, $teacherIds) :
-                ''
+                []
         ];
     }
 
@@ -219,7 +219,7 @@ class ReportManHoursService implements ManHoursServiceInterface
             'result' => $result,
             'debugData' => $mode == ReportFacade::MODE_DEBUG ?
                 $this->debugService->createParticipantDebugData($participants) :
-                ''
+                []
         ];
     }
 }

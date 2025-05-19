@@ -49,13 +49,19 @@ class DocumentController extends Controller
             Yii::$app->response->sendFile($data['obj']->file);
         }
         else {
-            $fp = fopen('php://output', 'r');
             $filename = FilesHelper::getFilenameFromPath($data['obj']->filepath);
-            $file = YandexDiskContext::info(YandexDiskContext::BASE_FOLDER . $data['obj']->filepath);
-            YandexDiskContext::download($file['href'], $filename);
-            $data['obj']->file->download($fp);
-            fseek($fp, 0);
-            fclose($fp);
+            $yandexFilePath = YandexDiskContext::BASE_FOLDER . $data['obj']->filepath;
+            if (YandexDiskContext::CheckSameFile($yandexFilePath)) {
+                $fp = fopen('php://output', 'r');
+                $file = YandexDiskContext::info($yandexFilePath);
+                YandexDiskContext::download($file['href'], $filename);
+                $data['obj']->file->download($fp);
+                fseek($fp, 0);
+                fclose($fp);
+            } else {
+                Yii::$app->session->setFlash('danger', 'Ошибка. Файл не найден!');
+                return $this->redirect(Yii::$app->request->referrer);
+            }
         }
     }
     public function actionGetFiles(string $classname, string $filetype, int $id)
@@ -94,7 +100,7 @@ class DocumentController extends Controller
         }
 
         $filepaths = $model->getFilePaths($filetype);
-
+        $errorsList = "";
         foreach ($filepaths as $path) {
             $fileData = $this->fileService->downloadFile($path);
 
@@ -103,22 +109,32 @@ class DocumentController extends Controller
                 $zip->addFile($fileData['obj']->file, $filename);
             } else {
                 $filename = FilesHelper::getFilenameFromPath($fileData['obj']->filepath);
-                $file = YandexDiskContext::info(YandexDiskContext::BASE_FOLDER . $fileData['obj']->filepath);
-                if ($file['href']){
-                    $content = YandexDiskContext::downloadFileContent($file['href']);
-                    $zip->addFromString($filename, $content);
-                    //old file download system
-                    /*
-                    $content = file_get_contents($file['file']);
-                    $zip->addFromString($filename, $content);
-                    */
+                $yandexFilePath = YandexDiskContext::BASE_FOLDER . $fileData['obj']->filepath;
+                if (YandexDiskContext::CheckSameFile($yandexFilePath)) {
+                    $file = YandexDiskContext::info($yandexFilePath);
+                    if ($file['href']) {
+                        $content = YandexDiskContext::downloadFileContent($file['href']);
+                        $zip->addFromString($filename, $content);
+                        //old file download system
+                        /*
+                        $content = file_get_contents($file['file']);
+                        $zip->addFromString($filename, $content);
+                        */
+                    }
+                } else {
+                    $errorsList .= "file: " . $filename . " не найден!\n";
                 }
             }
         }
-
         $zip->close();
-        Yii::$app->response->sendFile($tempFile, $zipFileName);
-        unlink($tempFile);
+        if (!empty($errorsList)) {
+            Yii::$app->session->setFlash('danger', $errorsList);
+            return $this->redirect(Yii::$app->request->referrer);
+        } else {
+            Yii::$app->response->sendFile($tempFile, $zipFileName);
+            unlink($tempFile);
+        }
+
     }
 
     public function actionDeleteFile($modelId, $fileId)

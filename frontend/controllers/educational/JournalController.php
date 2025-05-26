@@ -76,13 +76,13 @@ class JournalController extends Controller
                 '',
                 ButtonsFormatter::createParameterLink($id)
             ),
-            ButtonsFormatter::anyOneLink(
-                'Удалить журнал',
-                Yii::$app->frontUrls::JOURNAL_DELETE,
-                ButtonsFormatter::BTN_DANGER,
-                '',
-                ButtonsFormatter::createParameterLink($id),
-            ),
+//            ButtonsFormatter::anyOneLink(
+//                'Удалить журнал',
+//                Yii::$app->frontUrls::JOURNAL_DELETE,
+//                ButtonsFormatter::BTN_DANGER,
+//                '',
+//                ButtonsFormatter::createParameterLink($id),
+//            ),
         );
         $otherButtonHtml = HtmlBuilder::createGroupButton($otherLinks);
 

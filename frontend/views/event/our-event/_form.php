@@ -10,6 +10,7 @@ use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\StringHelper;
 use yii\widgets\ActiveForm;
 
 
@@ -44,6 +45,30 @@ use yii\widgets\ActiveForm;
 
 <script src="/scripts/sisyphus/sisyphus.js"></script>
 <script src="/scripts/sisyphus/sisyphus.min.js"></script>
+
+<style>
+    .lift-button {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: opacity 0.3s;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+
+    .lift-button:hover {
+        background: #0056b3;
+    }
+</style>
 
 <div class="event-form field-backing">
 
@@ -199,9 +224,11 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'order_id')->dropDownList(ArrayHelper::map($orders, 'id', function (DocumentOrderWork $model) {
-        return $model->getFullName();
+        return StringHelper::truncate($model->getFullName(), 140,  '...');
     }), ['prompt' => 'Нет'])->label('Приказ по мероприятию'); ?>
-    <?= $form->field($model, 'regulation_id')->dropDownList(ArrayHelper::map($regulations, 'id', 'name'), ['prompt' => 'Нет'])->label('Положение по мероприятию'); ?>
+    <?= $form->field($model, 'regulation_id')->dropDownList(ArrayHelper::map($regulations, 'id', function($regulation) {
+        return StringHelper::truncate($regulation->name, 140, '...');}),
+        ['prompt' => 'Нет'])->label('Положение по мероприятию'); ?>
 
     <div class="checkList">
         <div class="checkHeader">
@@ -247,6 +274,12 @@ use yii\widgets\ActiveForm;
 
 </div>
 
+<button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 170px;
+        right: 100px;" >↑</button>
+
+<button id="scrollToBottom" title="Наверх" class="lift-button" style="bottom: 100px;
+        right: 100px;">↓</button>
+
 <script type="text/javascript">
     $('form').sisyphus();
     
@@ -259,4 +292,24 @@ use yii\widgets\ActiveForm;
         sessionStorage.setItem('loaded', true);
       }
     }
+
+
+</script>
+
+<script>
+    const scrollToTopButton = document.getElementById('scrollToTop');
+    scrollToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    const scrollToBottomButton = document.getElementById('scrollToBottom');
+    scrollToBottomButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
+    });
 </script>

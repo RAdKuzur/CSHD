@@ -29,29 +29,6 @@ $this->params['breadcrumbs'][] = 'Редактирование';
 $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 ?>
 
-<style>
-    .lift-button {
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        background: #007bff;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        transition: opacity 0.3s;
-        font-size: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        z-index: 1000;
-    }
-
-    .lift-button:hover {
-        background: #0056b3;
-    }
-</style>
 
 <div class="event-update">
 
@@ -74,15 +51,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         'modelGroups' => $modelGroups,
         'orders' => $orders
     ]) ?>
-
-    <button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 170px;
-        right: 100px;" >↑</button>
-
-    <button id="scrollToBottom" title="Наверх" class="lift-button" style="bottom: 100px;
-        right: 100px;">↓</button>
 </div>
-
-
 
 <script>
     window.onload = function() {
@@ -93,19 +62,4 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         refreshLock();
     }, 600000);
 
-    const scrollToTopButton = document.getElementById('scrollToTop');
-    scrollToTopButton.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
-    const scrollToBottomButton = document.getElementById('scrollToBottom');
-    scrollToBottomButton.addEventListener('click', () => {
-        window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: 'smooth'
-        });
-    });
 </script>

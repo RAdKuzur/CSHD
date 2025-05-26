@@ -5,6 +5,7 @@ use frontend\models\work\event\ParticipantAchievementWork;
 use wbraganca\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\StringHelper;
 use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 
@@ -108,6 +109,30 @@ use yii\jui\DatePicker;
 
      }
     }*/
+</style>
+
+<style>
+    .lift-button {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: opacity 0.3s;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+
+    .lift-button:hover {
+        background: #0056b3;
+    }
 </style>
 
 
@@ -328,11 +353,13 @@ use yii\jui\DatePicker;
         </select>
     </div>
 
+
     <?= $form->field($model, 'addOrderParticipant')
-        ->dropDownList(ArrayHelper::map($orders9,'id','fullName'), ['prompt' => '---'])
+        ->dropDownList(ArrayHelper::map($orders9,'id',function ($orders9) {
+            return StringHelper::truncate($orders9->fullName, 140, '...');
+        }), ['prompt' => '---'])
         ->label('Дополнительный приказ об участии');
     ?>
-
     <?= $form->field($model, 'keyWords')->textInput(['maxlength' => true])->label('Ключевые слова') ?>
 
     <?= $form->field($model, 'doc')->fileInput()->label('Документы о достижениях') ?>
@@ -356,6 +383,12 @@ use yii\jui\DatePicker;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 170px;
+        right: 100px;" >↑</button>
+
+<button id="scrollToBottom" title="Наверх" class="lift-button" style="bottom: 100px;
+        right: 100px;">↓</button>
 
 
 <script>
@@ -395,6 +428,22 @@ use yii\jui\DatePicker;
             $("#divOrderTrip").attr("hidden", "true");
         }
     }
+
+    const scrollToTopButton = document.getElementById('scrollToTop');
+    scrollToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    const scrollToBottomButton = document.getElementById('scrollToBottom');
+    scrollToBottomButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'smooth'
+        });
+    });
 </script>
 
 <?php

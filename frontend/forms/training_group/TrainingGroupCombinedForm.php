@@ -329,7 +329,13 @@ class TrainingGroupCombinedForm extends Model
         if (is_array($this->experts)) {
             foreach ($this->experts as $expert) {
                 /** @var TrainingGroupExpertWork $expert */
-                $result[] = "({$expert->getExpertTypeString()}) {$expert->expertWork->getFIO(PersonInterface::FIO_WITH_POSITION)}";
+                if( $expert->expert_type == TrainingGroupExpertWork::TYPE_INTERNAL){
+                    $result[] = "({$expert->getExpertTypeString()})" . ' ' . $expert->expertWork->positionWork->name . ' ' . $expert->expertWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+                }
+                else {
+                    $result[] = "({$expert->getExpertTypeString()})" . ' '.  $expert->expertWork->companyWork->short_name . ' ' . $expert->expertWork->positionWork->name . ' ' . $expert->expertWork->getFIO(PersonInterface::FIO_FULL);
+                }
+
             }
         }
         return $result;

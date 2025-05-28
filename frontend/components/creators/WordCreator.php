@@ -101,7 +101,17 @@ class WordCreator
         }
 
         $section->addText('Присутствовали ответственные лица:', null, array('align' => 'both', 'spaceAfter' => 0));
-        $section->addText('          1. Руководитель учебной группы – ' . $modelGroup->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_FULL) . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+        if (count($modelGroup->teachersWork) > 1) {
+            $teachers = [];
+            foreach ($modelGroup->teachersWork as $teacher) {
+                $teachers[] = $teacher->teacherWork->getFIO(PersonInterface::FIO_FULL);
+            }
+            $teacherString = implode(' , ', $teachers);
+            $section->addText('          1. Руководители учебной группы – ' .  $teacherString . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+        }
+        else {
+            $section->addText('          1. Руководитель учебной группы – ' . $modelGroup->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_FULL) . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+        }
         if (Yii::$app->branches->get($modelGroup->branch) === BranchDictionary::MOBILE_QUANTUM) {
             $section->addText('          2. Заместитель руководителя - заведующий по образовательной деятельности ' . $boss . '.', null, array('align' => 'both', 'spaceAfter' => 0));
         }
@@ -176,7 +186,7 @@ class WordCreator
         $refPart = false;
         $parts = TrainingGroupParticipantWork::find()->where(['training_group_id' => $modelGroup->id])->all();
         foreach ($parts as $part) {
-            if ($part->certificateWork->certificate_number == NULL) {
+            if ($part->success == false) {
                 $refPart = true;
             }
         }
@@ -289,7 +299,7 @@ class WordCreator
         $isAnnex3 = false;
         $groupParticipants = TrainingGroupParticipantWork::find()->where(['training_group_id' => $modelGroup->id])->all();
         foreach ($groupParticipants as $part) {
-            if ($part->certificateWork->certificate_number !== NULL) {
+            if ($part->success == true) {
                 $section->addText($numberStr.' '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
                 $numberStr++;
             }
@@ -332,7 +342,11 @@ class WordCreator
             $section->addTextBreak(1);
             $numberStr = 1;
             foreach ($groupParticipants as $part) {
-                if ($part->certificateWork->certificate_number === NULL) {
+                /*if ($part->certificateWork->certificate_number === NULL) {
+                    $section->addText($numberStr.' '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
+                    $numberStr++;
+                }*/
+                if ($part->success == false) {
                     $section->addText($numberStr.' '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
                     $numberStr++;
                 }

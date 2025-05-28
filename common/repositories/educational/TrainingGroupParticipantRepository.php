@@ -88,6 +88,7 @@ class TrainingGroupParticipantRepository
         return TrainingGroupParticipantWork::find()
             ->joinWith(['certificatesWork'])
             ->where(['IN', 'training_group_id', $groupIds])
+            ->andWhere(['success' => true])
             ->andWhere(['IS', 'certificate.certificate_number', null]);
     }
 

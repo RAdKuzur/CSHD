@@ -201,13 +201,17 @@ class WordCreator
 
         $table = $section->addTable();
         $table->addRow();
-        $cell = $table->addCell(8000);
-        $cell->addText('Руководитель учебной группы');
-        $cell = $table->addCell(6000);
-        $cell->addText('________________', null, array('align' => 'center'));
-        $cell = $table->addCell(6000);
-        $cell->addText('/ '.$modelGroup->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS) . '/', null, array('align' => 'right'));
-        $table->addRow();
+
+        foreach ($modelGroup->teachersWork as $teacherWork) {
+            $cell = $table->addCell(8000);
+            $cell->addText('Руководитель учебной группы');
+            $cell = $table->addCell(6000);
+            $cell->addText('________________', null, array('align' => 'center'));
+            $cell = $table->addCell(6000);
+            $cell->addText('/ '.$teacherWork->teacherWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS) . '/', null, array('align' => 'right'));
+            $table->addRow();
+        }
+
         $cell = $table->addCell(8000);
         $cell->addText('Руководитель отдела «'.Yii::$app->branches->get($modelGroup->branch).'»');
         $cell = $table->addCell(6000);

@@ -106,6 +106,19 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
                 $query->alias('responsiblePeople');
             },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.participantWork' => function ($query) {
+                $query->alias('participantOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.participantWork' => function ($query) {
+                $query->alias('participantIn');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantOutWork.trainingGroupWork' => function ($query) {
+                $query->alias('groupOut');
+            },
+            'orderTrainingGroupParticipantWork.trainingGroupParticipantInWork.trainingGroupWork' => function ($query) {
+                $query->alias('groupIn');
+            },
+
         ]);
         /*$query->joinWith([
             'orderTrainingGroupParticipantWork' => function ($query) {
@@ -157,6 +170,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $this->loadParams($params);
 
         $query = OrderTrainingWork::find()
+            ->distinct()
             ->where(['type' => DocumentOrderWork::ORDER_TRAINING]);
 
         $query = $this->specialOrders($query);
@@ -165,6 +179,7 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'=> ['defaultOrder' => ['order_date' => SORT_DESC, 'order_number' => SORT_DESC, 'order_copy_id' => SORT_DESC, 'order_postfix' => SORT_DESC]],
+            'pagination' => ['pageSize' => 10],
         ]);
 
         $this->sortAttributes($dataProvider);
@@ -202,8 +217,8 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
             $this->keyWords,
             $this->startDateSearch,
             $this->finishDateSearch);
-        //$this->filterForeignEventSurname($query);
-        //$this->filterGroupName($query);
+        $this->filterForeignEventSurname($query);
+        $this->filterGroupName($query);
         $this->filterBranch($query);
     }
 
@@ -235,8 +250,8 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         if (!empty($this->participantName)) {
             $query->andFilterWhere([
                 'or',
-                ['like', 'LOWER(foreignEventParticipantOut.surname)', mb_strtolower($this->participantName)],
-                ['like', 'LOWER(foreignEventParticipantIn.surname)', mb_strtolower($this->participantName)]
+                ['like', 'LOWER(participantOut.surname)', mb_strtolower($this->participantName)],
+                ['like', 'LOWER(participantIn.surname)', mb_strtolower($this->participantName)]
             ]);
         }
     }

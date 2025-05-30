@@ -157,6 +157,13 @@ class TrainingGroupProvider implements TrainingGroupProviderInterface
         return $model->id;
     }
 
+    public function getByBranchWithoutArchiveQuery($branch) {
+        return TrainingGroupWork::find()
+            ->where(['branch' => $branch])
+            ->andWhere(['archive' => 0])
+            ->orderBy(['start_date' => SORT_DESC]);
+    }
+
     public function getByBranchQuery($branch)
     {
         return TrainingGroupWork::find()->where(['branch' => $branch])->orderBy(['start_date' => SORT_DESC]);

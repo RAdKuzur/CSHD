@@ -47,7 +47,50 @@ class GroupParticipantWidget extends Widget
     {
         $this->groupParticipantScript($this->config['participantUrl']);
         $this->groupScript($this->config['groupUrl']);
+        $this->searchScripts();
     }
+
+    // Добавляем новые методы для обработки поиска
+    private function searchScripts()
+    {
+        $this->registerGroupSearchScript();
+        $this->registerParticipantSearchScript();
+    }
+
+    private function registerGroupSearchScript()
+    {
+        $js = <<<JS
+        // Обработка поиска по группам
+        $('#group-search').on('input', function() {
+            var searchTerm = $(this).val().toLowerCase();
+            
+            $('.training-group .grid-view table tbody tr').each(function() {
+                var rowText = $(this).text().toLowerCase();
+                $(this).toggle(rowText.indexOf(searchTerm) > -1);
+            });
+        });
+        JS;
+
+        $this->getView()->registerJs($js);
+    }
+
+    private function registerParticipantSearchScript()
+    {
+        $js = <<<JS
+        // Обработка поиска по участникам
+        $('#participant-search').on('input', function() {
+            var searchTerm = $(this).val().toLowerCase();
+            
+            $('.training-group-participant .grid-view table tbody tr').each(function() {
+                var rowText = $(this).text().toLowerCase();
+                $(this).toggle(rowText.indexOf(searchTerm) > -1);
+            });
+        });
+        JS;
+
+        $this->getView()->registerJs($js);
+    }
+
     public function groupScript($groupUrl){
         //группы 'order/order-training/get-group-by-branch'
         $this->getView()->registerJs("$('#branch-dropdown').on('change', function() {

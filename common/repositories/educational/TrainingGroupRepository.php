@@ -170,6 +170,15 @@ class TrainingGroupRepository
         return $this->provider->delete($model);
     }
 
+    public function getByBranchWithoutArchiveQuery($branch)
+    {
+        if (get_class($this->provider) == TrainingGroupProvider::class) {
+            return $this->provider->getByBranchWithoutArchiveQuery($branch);
+        } else {
+            throw new DomainException('Mock-провайдер не имеет реализации метода getByBranchQuery');
+        }
+    }
+
     public function getByBranchQuery($branch)
     {
         if (get_class($this->provider) == TrainingGroupProvider::class) {

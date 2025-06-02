@@ -167,16 +167,22 @@ table th a svg {
     --bs-table-bg-type: white;
 }
 
+.grid-view tbody tr {
+    /* box-shadow более легкие альтернативы */
+    box-shadow: none;
+    border-bottom: 1px solid #e0e0e0; /* Вместо тени */
+    content-visibility: auto; /* Современные браузеры */
+    contain-intrinsic-size: 40px; /* Примерная высота строки */
+    /* Оптимизация рендеринга */
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/*:hover эффекты */
 .grid-view tbody tr:hover {
-    border-radius: var(--border-radius);
-    transform: scale(1.025);
-    background-color: white;
-    box-shadow:
-            rgba(37, 42, 49, 0.12) 0px 4px 8px 0px,
-            rgba(37, 42, 49, 0.16) 0px 1px 4px 0px,
-            rgb(232, 237, 241) 0px 0px 0px 1px;
-            rgb(232, 237, 241) 0px 0px 0px 1px;
-    transition: transform 0.3s ease-in-out;
+    background-color: #f9f9f9;
+    transition: none; /* Уберите сложные переходы */
 }
 
 .breadcrumb a {

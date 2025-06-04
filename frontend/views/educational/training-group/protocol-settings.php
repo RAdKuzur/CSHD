@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php
     $peopleIds = [];
 
-    switch (1) {
+    switch ($model->group->branch) {
         case BranchDictionary::QUANTORIUM:
             $peopleIds = [29, 19];
             break;
@@ -82,7 +82,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <br>
-    <label><b>Выделите всех присутствовавших лиц на защите:</b></label><br>
+    <label><b>Выделите всех присутствовавших педагогов:</b></label><br>
     <div class="checkbox-list">
         <?= $form->field($model, 'teachers')->checkboxList(
             ArrayHelper::map($model->group->teachersWork, 'id', function (TeacherGroupWork  $groupWork) {

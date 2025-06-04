@@ -7,6 +7,7 @@ use frontend\models\work\educational\training_group\TeacherGroupWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\general\PeopleWork;
+use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -99,6 +100,26 @@ $this->params['breadcrumbs'][] = $this->title;
             ]
         )->label(false) ?>
     </div>
+    <br>
+    <?php
+        $AdditionalWork = PeopleWork::findAll(['id' => $model->ResponsiblePeople]);
+
+    ?>
+
+
+    <?= $form->field($model, "responsiblepeople")->widget(Select2::class, [
+        'data' => ArrayHelper::map($AdditionalWork, 'id', function ($person) {
+            return $person->getFIO(PersonInterface::FIO_FULL);
+        }),
+        'size' => Select2::LARGE,
+        'options' => [
+            'prompt' => 'Выберите ответственного' ,
+            'multiple' => true
+        ],
+        'pluginOptions' => [
+            'allowClear' => true
+        ],
+    ])->label('Выберите дополнительных людей, присутствовавших на защите'); ?>
 
     <br>
     <label><b>Выделите всех присутствовавших учеников на защите:</b></label><br>

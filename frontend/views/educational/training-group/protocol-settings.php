@@ -122,8 +122,8 @@ $this->params['breadcrumbs'][] = $this->title;
         Если выше отсутствуют нужные люди, выберите их вручную ниже:
     </div>
     <?= $form->field($model, "responsiblepeople")->widget(Select2::class, [
-        'data' => ArrayHelper::map($AdditionalWork, 'id', function ($person) {
-            return $person->getFIO(PersonInterface::FIO_FULL);
+        'data' => ArrayHelper::map($AdditionalWork, 'id', function ($person) use ($model) {
+            return $person->getFIOBranch($model->group->branch);
         }),
         'size' => Select2::LARGE,
         'options' => [

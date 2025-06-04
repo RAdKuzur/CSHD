@@ -81,6 +81,12 @@ class PeopleWork extends People implements PersonInterface
         }
     }
 
+    public function getFIOBranch(int $branchid)
+    {
+        $positions = implode(' ', $this->getPositionsBranch($branchid));
+        return "{$this->getFullFio()} ({$positions})";
+    }
+
     public function getFullFio()
     {
         return "$this->surname $this->firstname $this->patronymic";
@@ -158,6 +164,17 @@ class PeopleWork extends People implements PersonInterface
         $positions = $this->peoplePositionCompanyBranchWork;
         return array_map(function (PeoplePositionCompanyBranchWork $model) {
             return $model->positionWork->name;
+        }, $positions);
+    }
+
+    public function getPositionsBranch(int $Branch)
+    {
+        $positions = $this->peoplePositionCompanyBranchWork;
+        return array_map(function (PeoplePositionCompanyBranchWork $model) use ($Branch) {
+            if ($model->branch == $Branch)
+            {
+                return $model->positionWork->name ;
+            }
         }, $positions);
     }
 

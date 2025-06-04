@@ -39,12 +39,12 @@ class ProtocolForm extends Model
            $teacherPeopleIds[] = $teacher->getPeopleId();
         }
 
-        // Фильтруем ResponsiblePeople, удаляя ID учителей
-        $this->ResponsiblePeople = array_filter($this->ResponsiblePeople, function($peopleId) use ($teacherPeopleIds) {
-            return !in_array($peopleId, $teacherPeopleIds);
-        });
-        // Переиндексировать массив (убрать пропуски в ключах после array_filter)
-        $this->ResponsiblePeople = array_values($this->ResponsiblePeople);
+//        // Фильтруем ResponsiblePeople, удаляя ID учителей
+//        $this->ResponsiblePeople = array_filter($this->ResponsiblePeople, function($peopleId) use ($teacherPeopleIds) {
+//            return !in_array($peopleId, $teacherPeopleIds);
+//        });
+//        // Переиндексировать массив (убрать пропуски в ключах после array_filter)
+//        $this->ResponsiblePeople = array_values($this->ResponsiblePeople);
     }
 
     public function rules()

@@ -66,9 +66,17 @@ class PeoplePositionCompanyBranchRepository
         }
 
         // Выполняем запрос с фильтром WHERE IN
+//        return ArrayHelper::getColumn(
+//            PeoplePositionCompanyBranchWork::find()
+//                ->where(['position_id' => $positionIds])
+//                ->all(),
+//            'people_id'
+//        );
+        // Выполняем запрос с фильтром WHERE IN и условием по branch
         return ArrayHelper::getColumn(
             PeoplePositionCompanyBranchWork::find()
                 ->where(['position_id' => $positionIds])
+                ->andWhere(['branch' => $branch]) // Добавляем фильтр по branch
                 ->all(),
             'people_id'
         );

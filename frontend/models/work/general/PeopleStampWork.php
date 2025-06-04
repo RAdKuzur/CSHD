@@ -57,7 +57,8 @@ class PeopleStampWork extends PeopleStamp
 
     public function getFioPosition()
     {
-        return 'stub';
+        $positions =  $this->getPositionName();
+        return "{$this->getFullFio()} ({$positions})";
     }
 
     public function getPositionSurnameInitials()

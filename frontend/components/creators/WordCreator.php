@@ -110,6 +110,9 @@ class WordCreator
         foreach ($teachers as $teacher) {
             $teacherFio = $teacher->getFIO(PersonInterface::FIO_FULL);
             $teacherPosition = implode($teacher->getPositionsBranch($modelGroup->branch));
+            if ($teacherPosition === "") {
+                $teacherPosition = $teacher->peoplePositionCompanyBranchWork[0]->positionWork->name;
+            }
             $section->addText('          ' . $numCount. '. ' . $teacherPosition . ' - ' .  $teacherFio . '.', null, array('align' => 'both', 'spaceAfter' => 0));
             $numCount+=1;
         }
@@ -222,7 +225,11 @@ class WordCreator
 //        add
         foreach ($teachers as $teacher) {
             $cell = $table->addCell(8000);
-            $cell->addText(implode($teacher->getPositionsBranch($modelGroup->branch)));
+            $teacherPosition = implode($teacher->getPositionsBranch($modelGroup->branch));
+            if ($teacherPosition === "") {
+                $teacherPosition = $teacher->peoplePositionCompanyBranchWork[0]->positionWork->name;
+            }
+            $cell->addText($teacherPosition);
             $cell = $table->addCell(6000);
             $cell->addText('________________', null, array('align' => 'center'));
             $cell = $table->addCell(6000);

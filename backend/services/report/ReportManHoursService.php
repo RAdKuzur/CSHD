@@ -16,6 +16,7 @@ use common\repositories\educational\VisitRepository;
 use DateTime;
 use frontend\models\work\educational\journal\VisitLesson;
 use frontend\models\work\educational\journal\VisitWork;
+use Yii;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
@@ -69,7 +70,7 @@ class ReportManHoursService implements ManHoursServiceInterface
         $query = $this->builder->query();
         $query = $this->builder->filterGroupsByBranches($query, $branches);
         $query = $this->builder->filterGroupsByFocuses($query, $focuses);
-        $query = $this->builder->filterGroupsByAllowRemote($query, $allowRemotes);
+        //$query = $this->builder->filterGroupsByAllowRemote($query, $allowRemotes);
         return $this->builder->filterGroupsByBudget($query, $budgets);
     }
 
@@ -101,8 +102,9 @@ class ReportManHoursService implements ManHoursServiceInterface
         $query = $this->getTrainingGroupsQueryByFilters($branches, $focuses, $allowRemotes, $budgets);
 
         $query = $this->builder->filterGroupsBetweenDates($query, $startDate, $endDate);
+       // var_dump($query->createCommand()->getRawSql());
         $groups = $this->repository->findAll($query);
-
+        //var_dump(Yii::$app->branches->get($branches[0]) , Yii::$app->focus->get($focuses[0]) , count($groups));
         $participants = $this->participantRepository->getParticipantsFromGroups(
             ArrayHelper::getColumn($groups, 'id')
         );

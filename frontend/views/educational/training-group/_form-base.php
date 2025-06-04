@@ -97,7 +97,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                             <div class="panel-body">
                                 <div class="row">
                                     <?= $form->field($modelTeacher, "[{$i}]peopleId")->widget(Select2::classname(), [
-                                        'data' => ArrayHelper::map($people,'id','fullFio'),
+                                        'data' => ArrayHelper::map($people,'id','fioPosition'),
                                         'size' => Select2::LARGE,
                                         'options' => ['prompt' => 'Выберите преподавателя'],
                                         'pluginOptions' => [

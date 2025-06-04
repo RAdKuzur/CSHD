@@ -31,6 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="man-hours-report-form field-backing">
 
+    <?php if ($model->hasErrors('general')): ?>
+        <div class="alert alert-danger">
+            <?= Html::error($model, 'general') ?>
+        </div>
+    <?php endif; ?>
+
+
+
     <label><b>Выберите название публичного мероприятия или введите его вручную</b></label>
 
     <?php $form = ActiveForm::begin(); ?>
@@ -64,49 +72,55 @@ $this->params['breadcrumbs'][] = $this->title;
     $peopleWork = PeopleWork::findAll(['id' => $peopleIds]);
     ?>
     <br>
-    <label><b>Выделите присутствовавшее ответственное лицо:</b></label><br>
+    <label><b>Выберите присутствовавшее ответственное лицо:</b></label><br>
     <div class="checkbox-list">
         <?= $form->field($model, 'bosses')->checkboxList(
-            ArrayHelper::map($peopleWork, 'id', function ($person) {
-                return $person->getFIO(PersonInterface::FIO_FULL);
+            ArrayHelper::map($peopleWork, 'id', function (PeopleWork $person) {
+                return ($person->peoplePositionCompanyBranchWork[0]->positionWork->name ? $person->peoplePositionCompanyBranchWork[0]->positionWork->name. ' – ' : '') . $person->getFIO(PersonInterface::FIO_FULL);
             }),
             [
                 'item' => function ($index, $label, $name, $checked, $value) {
-                    return Html::checkbox($name, $checked, [
+                    return Html::tag('div', Html::checkbox($name, $checked, [
                         'value' => $value,
                         'label' => $label,
-                        'checked' => true,
-                    ]);
+                    ]));
                 },
             ]
         )->label(false) ?>
     </div>
 
+
     <br>
-    <label><b>Выделите всех присутствовавших педагогов:</b></label><br>
+    <label><b>Выберите присутствовавших педагогов:</b></label><br>
     <div class="checkbox-list">
         <?= $form->field($model, 'teachers')->checkboxList(
-            ArrayHelper::map($model->group->teachersWork, 'id', function (TeacherGroupWork  $groupWork) {
-                return $groupWork->teacherWork->getFIO(PersonInterface::FIO_FULL);
+            ArrayHelper::map($model->group->teachersWork, function (TeacherGroupWork $groupWork) {
+                return $groupWork->teacherWork->people_id;
+            }, function (TeacherGroupWork $groupWork) {
+                $post = $groupWork->teacherWork->positionWork->name;
+                $fio = $groupWork->teacherWork->getFIO(PersonInterface::FIO_FULL);
+                return ($post ? $post . ' – ' : '') . $fio;
             }),
             [
                 'item' => function ($index, $label, $name, $checked, $value) {
-                    return Html::checkbox($name, $checked, [
+                    return Html::tag('div', Html::checkbox($name, $checked, [
                         'value' => $value,
                         'label' => $label,
-                        'checked' => true,
-                    ]);
+                    ]));
                 },
             ]
         )->label(false) ?>
+
     </div>
     <br>
+
     <?php
         $AdditionalWork = PeopleWork::findAll(['id' => $model->ResponsiblePeople]);
-
     ?>
 
-
+    <div class="alert alert-warning" role="alert">
+        Если выше отсутствуют нужные люди, выберите их вручную ниже:
+    </div>
     <?= $form->field($model, "responsiblepeople")->widget(Select2::class, [
         'data' => ArrayHelper::map($AdditionalWork, 'id', function ($person) {
             return $person->getFIO(PersonInterface::FIO_FULL);

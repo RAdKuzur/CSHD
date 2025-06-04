@@ -42,22 +42,15 @@ class GroupDocumentService
         $experts = $this->expertRepository->getExpertsFromGroup($form->group->id, [TrainingGroupExpertWork::TYPE_EXTERNAL]);
         $participants = $this->participantRepository->getByIds($form->participants);
 
+        $formTeachers = (array)$form->teachers;
+        $formBosses = (array)$form->bosses;
+        $formResponsible = (array)$form->responsiblepeople;
 
+        $resultIds = array_merge($formTeachers, $formBosses, $formResponsible);
+        $resultIds = array_unique($resultIds);
 
-        $teachers =  $this->teacherRepository->getAllTeachersFromGroup($form->group->id);
-        $selectedTeachersId = [];
-        foreach ($teachers as $teacher) {
-            if (in_array($teacher->id, $form->teachers)) {
-                $selectedTeachersId[] = $teacher->getPeopleId();
-            }
-        }
-        $resultTeachers = $this->peopleRepository->getByIds($selectedTeachersId);
-
-
-
-
-          var_dump($resultTeachers);
-        return WordCreator::createProtocol($form->group, $participants, $experts, $form->name);
+        $resultTeachers = $this->peopleRepository->getByIds($resultIds);
+        return WordCreator::createProtocol($form->group, $resultTeachers, $participants, $experts, $form->name);
     }
 
     public function generateJournal(int $groupId) : Spreadsheet

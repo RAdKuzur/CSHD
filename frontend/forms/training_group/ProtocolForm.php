@@ -20,9 +20,9 @@ class ProtocolForm extends Model
 
     public $name;
     public $participants;
-    public $teachers;
-    public $responsiblepeople;
-    public $bosses;
+    public $teachers = [];
+    public $responsiblepeople = [];
+    public $bosses = [];
 
     public function __construct(
         TrainingGroupWork $group,
@@ -51,12 +51,27 @@ class ProtocolForm extends Model
     {
         return [
             [['name'], 'string'],
-            [['participants', 'teachers'], 'safe'],
+            [['participants', 'teachers', 'responsiblepeople', 'bosses'], 'safe'],
         ];
     }
+
 
     public function getNumberGroup()
     {
         return $this->group->number;
     }
+
+    public function beforeValidate()
+    {
+        if (!parent::beforeValidate()) {
+            return false;
+        }
+
+        if (empty($this->teachers) && empty($this->bosses) && empty($this->responsiblepeople)) {
+            $this->addError('general', 'Необходимо выбрать хотя бы одного ответственного, педагога или руководителя.');
+        }
+
+        return true;
+    }
+
 }

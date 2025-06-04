@@ -3,6 +3,7 @@
 namespace frontend\services\educational;
 
 use common\models\scaffold\TrainingGroup;
+use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\educational\TeacherGroupRepository;
 use common\repositories\educational\TrainingGroupExpertRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
@@ -21,34 +22,41 @@ class GroupDocumentService
     private TrainingGroupExpertRepository $expertRepository;
     private TrainingGroupParticipantRepository $participantRepository;
     private TeacherGroupRepository  $teacherRepository;
+    private PeopleRepository $peopleRepository;
 
     public function __construct(
         TrainingGroupExpertRepository $expertRepository,
         TrainingGroupParticipantRepository $participantRepository,
-        TeacherGroupRepository  $teacherRepository
+        TeacherGroupRepository  $teacherRepository,
+        PeopleRepository $peopleRepository
     )
     {
         $this->expertRepository = $expertRepository;
         $this->participantRepository = $participantRepository;
         $this->teacherRepository = $teacherRepository;
+        $this->peopleRepository = $peopleRepository;
     }
 
     public function generateProtocol(ProtocolForm $form) : PhpWord
     {
         $experts = $this->expertRepository->getExpertsFromGroup($form->group->id, [TrainingGroupExpertWork::TYPE_EXTERNAL]);
         $participants = $this->participantRepository->getByIds($form->participants);
+
+
+
         $teachers =  $this->teacherRepository->getAllTeachersFromGroup($form->group->id);
-        $selectedTeachers = [];
+        $selectedTeachersId = [];
         foreach ($teachers as $teacher) {
             if (in_array($teacher->id, $form->teachers)) {
-                $selectedTeachers[] = $teacher;
+                $selectedTeachersId[] = $teacher->getPeopleId();
             }
         }
+        $resultTeachers = $this->peopleRepository->getByIds($selectedTeachersId);
 
 
 
 
-        var_dump($selectedTeachers);
+          var_dump($resultTeachers);
         return WordCreator::createProtocol($form->group, $participants, $experts, $form->name);
     }
 

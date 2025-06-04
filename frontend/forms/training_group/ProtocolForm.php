@@ -17,6 +17,7 @@ class ProtocolForm extends Model
     public $name;
     public $participants;
     public $teachers;
+    public $bosses;
 
     public function __construct(
         TrainingGroupWork $group,

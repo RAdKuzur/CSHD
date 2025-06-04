@@ -1,10 +1,12 @@
 <?php
 
+use common\components\dictionaries\base\BranchDictionary;
 use frontend\forms\training_group\ProtocolForm;
 use frontend\models\work\dictionaries\PersonInterface;
 use frontend\models\work\educational\training_group\TeacherGroupWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
+use frontend\models\work\general\PeopleWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -37,14 +39,46 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
     <?php
+    $peopleIds = [];
 
+    switch (1) {
+        case BranchDictionary::QUANTORIUM:
+            $peopleIds = [29, 19];
+            break;
+        case BranchDictionary::TECHNOPARK:
+            $peopleIds = [29, 946];
+            break;
+        case BranchDictionary::CDNTT:
+            $peopleIds =[29, 21];
+            break;
+        case BranchDictionary::MOBILE_QUANTUM:
+            $peopleIds = [29];
+            break;
+        case BranchDictionary::COD:
+            $peopleIds = [29, 36];
+            break;
+    }
+
+    // Получаем объекты людей по этим ID. Предположим, есть метод для этого
+    $peopleWork = PeopleWork::findAll(['id' => $peopleIds]);
     ?>
-
     <br>
     <label><b>Выделите присутствовавшее ответственное лицо:</b></label><br>
     <div class="checkbox-list">
-
-
+        <?= $form->field($model, 'bosses')->checkboxList(
+            ArrayHelper::map($peopleWork, 'id', function ($person) {
+                return $person->getFIO(PersonInterface::FIO_FULL);
+            }),
+            [
+                'item' => function ($index, $label, $name, $checked, $value) {
+                    return Html::checkbox($name, $checked, [
+                        'value' => $value,
+                        'label' => $label,
+                        'checked' => true,
+                    ]);
+                },
+            ]
+        )->label(false) ?>
     </div>
 
     <br>

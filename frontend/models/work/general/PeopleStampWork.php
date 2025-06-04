@@ -43,6 +43,10 @@ class PeopleStampWork extends PeopleStamp
         }
     }
 
+    public function  getFioByBranch(int $branch) {
+        return $this->peopleWork->getFIOBranch($branch);
+    }
+
     public function getFullFio()
     {
         return "$this->surname {$this->peopleWork->firstname} {$this->peopleWork->patronymic}";

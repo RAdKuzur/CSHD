@@ -2,6 +2,7 @@
 
 namespace common\repositories\general;
 
+use common\components\dictionaries\base\BranchDictionary;
 use common\components\traits\CommonDatabaseFunctions;
 use frontend\models\work\dictionaries\PositionWork;
 use frontend\models\work\general\PeoplePositionCompanyBranchWork;
@@ -43,6 +44,36 @@ class PeoplePositionCompanyBranchRepository
         $peoplePositions = PeoplePositionCompanyBranchWork::find()->where(['people_id' => $peopleId])->all();
         return PositionWork::find()->where(['IN', 'id', ArrayHelper::getColumn($peoplePositions, 'position_id')])->all();
     }
+
+    public function getResponsiblePeopleByBranch($branch)
+    {
+        // Определяем массив position_id в зависимости от ветки
+        switch ($branch) {
+            case BranchDictionary::TECHNOPARK:
+                $positionIds = [25, 326, 16, 14];
+                break;
+            case BranchDictionary::CDNTT:
+                $positionIds = [25, 20, 15, 14, 106];
+                break;
+            case BranchDictionary::QUANTORIUM:
+                $positionIds = [25, 18, 21, 15, 105];
+                break;
+            case BranchDictionary::COD:
+                $positionIds = [25, 143, 15, 14];
+                break;
+            default: // Мобильный Кванториум
+                $positionIds = [25, 15];
+        }
+
+        // Выполняем запрос с фильтром WHERE IN
+        return ArrayHelper::getColumn(
+            PeoplePositionCompanyBranchWork::find()
+                ->where(['position_id' => $positionIds])
+                ->all(),
+            'people_id'
+        );
+    }
+
 
     public function getCompaniesByPeople($peopleId)
     {

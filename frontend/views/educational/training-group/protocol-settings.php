@@ -2,7 +2,9 @@
 
 use frontend\forms\training_group\ProtocolForm;
 use frontend\models\work\dictionaries\PersonInterface;
+use frontend\models\work\educational\training_group\TeacherGroupWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
+use frontend\models\work\educational\training_group\TrainingGroupWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -33,8 +35,39 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo $form->field($model, 'name')->textInput(['value' => 'Научно-техническая конференция',
         'placeholder' => 'Демонстрация результатов образовательной деятельности'])->label(false) ?>
 
+
+    <?php
+
+    ?>
+
     <br>
-    <label><b>Выделите всех присутствовавших на защите:</b></label><br>
+    <label><b>Выделите присутствовавшее ответственное лицо:</b></label><br>
+    <div class="checkbox-list">
+
+
+    </div>
+
+    <br>
+    <label><b>Выделите всех присутствовавших лиц на защите:</b></label><br>
+    <div class="checkbox-list">
+        <?= $form->field($model, 'teachers')->checkboxList(
+            ArrayHelper::map($model->group->teachersWork, 'id', function (TeacherGroupWork  $groupWork) {
+                return $groupWork->teacherWork->getFIO(PersonInterface::FIO_FULL);
+            }),
+            [
+                'item' => function ($index, $label, $name, $checked, $value) {
+                    return Html::checkbox($name, $checked, [
+                        'value' => $value,
+                        'label' => $label,
+                        'checked' => true,
+                    ]);
+                },
+            ]
+        )->label(false) ?>
+    </div>
+
+    <br>
+    <label><b>Выделите всех присутствовавших учеников на защите:</b></label><br>
     <div class="checkbox-list">
         <?= $form->field($model, 'participants')->checkboxList(
             ArrayHelper::map($model->possibleParticipants, 'id', function (TrainingGroupParticipantWork $participant) {

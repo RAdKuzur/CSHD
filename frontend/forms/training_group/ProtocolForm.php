@@ -16,6 +16,7 @@ class ProtocolForm extends Model
 
     public $name;
     public $participants;
+    public $teachers;
 
     public function __construct(
         TrainingGroupWork $group,
@@ -31,7 +32,7 @@ class ProtocolForm extends Model
     {
         return [
             [['name'], 'string'],
-            [['participants'], 'safe']
+            [['participants', 'teachers'], 'safe'],
         ];
     }
 

@@ -101,22 +101,26 @@ class WordCreator
         }
 
         $section->addText('Присутствовали ответственные лица:', null, array('align' => 'both', 'spaceAfter' => 0));
+        $numCount = 1;
         if (count($modelGroup->teachersWork) > 1) {
             $teachers = [];
+
             foreach ($modelGroup->teachersWork as $teacher) {
-                $teachers[] = $teacher->teacherWork->getFIO(PersonInterface::FIO_FULL);
+                $teachersTemp = $teacher->teacherWork->getFIO(PersonInterface::FIO_FULL);
+                $section->addText('          ' . $numCount. '. ' . $teacher->teacherWork->positionWork->name . ' - ' .  $teachersTemp . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+                $numCount+=1;
             }
-            $teacherString = implode(' , ', $teachers);
-            $section->addText('          1. Руководители учебной группы – ' .  $teacherString . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+//            $teacherString = implode(' , ', $teachers);
+//            $section->addText('          1. ' . $modelGroup->teachersWork[0]->teacherWork->positionWork->name . ' - ' .  $teacherString . '.', null, array('align' => 'both', 'spaceAfter' => 0));
         }
         else {
-            $section->addText('          1. Руководитель учебной группы – ' . $modelGroup->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_FULL) . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+            $section->addText('         1. ' . $modelGroup->teachersWork[0]->teacherWork->positionWork->name . ' - ' . $modelGroup->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_FULL) . '.', null, array('align' => 'both', 'spaceAfter' => 0));
         }
         if (Yii::$app->branches->get($modelGroup->branch) === BranchDictionary::MOBILE_QUANTUM) {
             $section->addText('          2. Заместитель руководителя - заведующий по образовательной деятельности ' . $boss . '.', null, array('align' => 'both', 'spaceAfter' => 0));
         }
         else {
-            $section->addText('          2. Руководитель отдела «'.Yii::$app->branches->get($modelGroup->branch).'» ' . $boss . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+            $section->addText('          ' . $numCount . '. Руководитель отдела «'.Yii::$app->branches->get($modelGroup->branch).'» ' . $boss . '.', null, array('align' => 'both', 'spaceAfter' => 0));
         }
 
         $numberStr = 3;
@@ -204,7 +208,7 @@ class WordCreator
 
         foreach ($modelGroup->teachersWork as $teacherWork) {
             $cell = $table->addCell(8000);
-            $cell->addText('Руководитель учебной группы');
+            $cell->addText($teacherWork->teacherWork->positionWork->name);
             $cell = $table->addCell(6000);
             $cell->addText('________________', null, array('align' => 'center'));
             $cell = $table->addCell(6000);

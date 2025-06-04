@@ -76,7 +76,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="checkbox-list">
         <?= $form->field($model, 'bosses')->checkboxList(
             ArrayHelper::map($peopleWork, 'id', function (PeopleWork $person) {
-                return ($person->peoplePositionCompanyBranchWork[0]->positionWork->name ? $person->peoplePositionCompanyBranchWork[0]->positionWork->name. ' – ' : '') . $person->getFIO(PersonInterface::FIO_FULL);
+
+
+                return $person->getFIO(PersonInterface::FIO_WITH_POSITION);
             }),
             [
                 'item' => function ($index, $label, $name, $checked, $value) {
@@ -97,9 +99,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ArrayHelper::map($model->group->teachersWork, function (TeacherGroupWork $groupWork) {
                 return $groupWork->teacherWork->people_id;
             }, function (TeacherGroupWork $groupWork) {
-                $post = $groupWork->teacherWork->positionWork->name;
-                $fio = $groupWork->teacherWork->getFIO(PersonInterface::FIO_FULL);
-                return ($post ? $post . ' – ' : '') . $fio;
+//                $post = $groupWork->teacherWork->positionWork->name;
+                $fio = $groupWork->teacherWork->getFIO(PersonInterface::FIO_WITH_POSITION);
+                return $fio;
             }),
             [
                 'item' => function ($index, $label, $name, $checked, $value) {

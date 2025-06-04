@@ -40,7 +40,9 @@ class GroupDocumentService
     public function generateProtocol(ProtocolForm $form) : PhpWord
     {
         $experts = $this->expertRepository->getExpertsFromGroup($form->group->id, [TrainingGroupExpertWork::TYPE_EXTERNAL]);
-        $participants = $this->participantRepository->getByIds($form->participants);
+
+        $formParticipants = (array)$form->participants;
+        $participants = $this->participantRepository->getByIds($formParticipants);
 
         $formTeachers = (array)$form->teachers;
         $formBosses = (array)$form->bosses;

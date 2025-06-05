@@ -29,16 +29,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php
 
                     $gridColumns = [
-                        'actualExport',
+                        'actual',
                         'name',
                         ['attribute' => 'level', 'label' => 'Ур. сложности','value' => function ($model) {return $model->level+1;}],
-                        ['attribute' => 'branchs', 'label' => 'Место реализации', 'format' => 'html'],
+                        ['attribute' => 'branchString', 'label' => 'Место реализации', 'format' => 'html'],
                         ['attribute' => 'ped_council_date', 'label' => 'Дата пед. сов.'],
                         ['attribute' => 'ped_council_number', 'label' => '№ пед. сов.'],
-                        ['attribute' => 'compilers', 'format' => 'html'],
-                        'capacity',
-                        'studentAge',
-                        'stringFocus',
+                        ['attribute' => 'authorString', 'format' => 'html', 'label' => 'Составители'],
+                        ['attribute' => 'capacity', 'label' => 'Вместимость'],
+                        ['attribute' => 'agePeriod', 'label' => 'Возраст обучающихся'],
+                        ['attribute' => 'focusString', 'label' => 'Направленность'],
                         ['attribute' => 'allowRemote', 'label' => 'Форма реализации'],
 
                     ];
@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'authorString', 'format' => 'html'],
             ['attribute' => 'capacity'],
             ['attribute' => 'agePeriod', 'encodeLabel' => false],
-            ['attribute' => 'focusString'],
+                ['attribute' => 'focusString'],
             ['attribute' => 'allowRemote', 'encodeLabel' => false, 'label' => 'Форма<br>реализации'],
 
             ['class' => VerticalActionColumn::class],

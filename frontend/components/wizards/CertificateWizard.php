@@ -133,6 +133,24 @@ class CertificateWizard
     public static function sendCertificateToEmail(CertificateWork $certificate)
     {
         $name = self::downloadCertificate($certificate, $certificate->trainingGroupParticipantWork, self::DESTINATION_SERVER, Yii::$app->basePath . '/download/' . Yii::$app->user->identity->getId() . '_temp_certificates/');
+
+        $email = $certificate->trainingGroupParticipantWork->participant->email;
+
+        // Проверка формата email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Yii::error("Некорректный email: $email");
+            $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::className());
+            return false;
+        }
+
+        // 2. Проверка MX-записи (существует ли домен)
+        $domain = explode('@', $email)[1] ?? '';
+        if (!checkdnsrr($domain, 'MX')) {
+            Yii::error("Домен почты не существует: $email");
+            $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::className());
+            return false;
+        }
+
         $result = Yii::$app->mailer->compose()
             ->setFrom('noreply@schooltech.ru')
             ->setTo($certificate->trainingGroupParticipantWork->participant->email)

@@ -138,7 +138,7 @@ class CertificateWizard
 
         // Проверка формата email
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Yii::error("Некорректный email: $email");
+            //Yii::error("Некорректный email: $email");
             $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::className());
             return false;
         }
@@ -146,7 +146,7 @@ class CertificateWizard
         // 2. Проверка MX-записи (существует ли домен)
         $domain = explode('@', $email)[1] ?? '';
         if (!checkdnsrr($domain, 'MX')) {
-            Yii::error("Домен почты не существует: $email");
+            //Yii::error("Домен почты не существует: $email");
             $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::className());
             return false;
         }

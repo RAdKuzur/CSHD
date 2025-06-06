@@ -31,6 +31,31 @@ use yii\widgets\DetailView;
 ?>
 
 <style>
+    .lift-button {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: opacity 0.3s;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+
+    .lift-button:hover {
+        background: #0056b3;
+    }
+
+</style>
+
+<style>
     div[role=radiogroup] > label {
         font-weight: normal;
     }
@@ -785,6 +810,13 @@ use yii\widgets\DetailView;
     </div>
 </div>
 
+
+<button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 170px;
+    right: 100px;" >↑</button>
+
+<button id="scrollToBottom" title="Наверх" class="lift-button" style="bottom: 100px;
+    right: 100px;">↓</button>
+
 <script>
     function checkType(chkBoxName) {
         var participantNumber = chkBoxName.split('-')[1]; // Разделяем строку и берем номер
@@ -920,6 +952,29 @@ use yii\widgets\DetailView;
     // Вызывает updateOptions каждые 2000 миллисекунд (2 секунды)
    // setInterval(updateOptions, 2000);
 </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnUp   = document.getElementById('scrollToTop');
+            const btnDown = document.getElementById('scrollToBottom');
+            const acts    = document.getElementById('toggle-button');
+
+            // Если элемент #acts не найден — сразу скрываем кнопки и выходим
+            if (!acts || !btnUp || !btnDown) {
+                return;
+            }
+
+            // Плавный скролл к началу блока #acts
+            btnUp.addEventListener('click', function () {
+                acts.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            // Плавный скролл к самому низу страницы
+            btnDown.addEventListener('click', function () {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            });
+        });
+    </script>
 <?php
     $js = <<<JS
     $(document).ready(function() {

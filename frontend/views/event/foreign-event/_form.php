@@ -231,7 +231,8 @@ use yii\jui\DatePicker;
             <?php endif; ?>
         </div>
     </div>
-    <div class="bordered-div">
+    <div  id="achieve" ></div>
+    <div class="bordered-div" >
         <?php
             DynamicFormWidget::begin([
                 'widgetContainer' => 'dynamicform_wrapper',
@@ -384,8 +385,12 @@ use yii\jui\DatePicker;
 
 </div>
 
-<button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 170px;
+
+<button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 240px;
         right: 100px;" >↑</button>
+
+<button id="scrollToAchieve" title="К достижениям" class="lift-button" style="bottom: 170px;
+        right: 100px;" >🥇</button>
 
 <button id="scrollToBottom" title="Наверх" class="lift-button" style="bottom: 100px;
         right: 100px;">↓</button>
@@ -436,6 +441,14 @@ use yii\jui\DatePicker;
             behavior: 'smooth'
         });
     });
+
+    const scrollToAchieveButton = document.getElementById('scrollToAchieve');
+    const achieve = document.getElementById('achieve');
+
+    scrollToAchieveButton.addEventListener('click', function () {
+        achieve.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
 
     const scrollToBottomButton = document.getElementById('scrollToBottom');
     scrollToBottomButton.addEventListener('click', () => {

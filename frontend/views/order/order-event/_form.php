@@ -810,9 +810,12 @@ use yii\widgets\DetailView;
     </div>
 </div>
 
-
-<button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 170px;
+<button id="scrollToTop" title="Наверх" class="lift-button" style="bottom: 240px;
     right: 100px;" >↑</button>
+
+
+<button id="scrollToAct" title="к акту участия" class="lift-button" style="bottom: 170px;
+    right: 100px;" >🖹</button>
 
 <button id="scrollToBottom" title="Наверх" class="lift-button" style="bottom: 100px;
     right: 100px;">↓</button>
@@ -956,7 +959,9 @@ use yii\widgets\DetailView;
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const btnUp   = document.getElementById('scrollToTop');
+            const btnAct = document.getElementById('scrollToAct');
             const btnDown = document.getElementById('scrollToBottom');
+
             const acts    = document.getElementById('toggle-button');
 
             // Если элемент #acts не найден — сразу скрываем кнопки и выходим
@@ -965,8 +970,12 @@ use yii\widgets\DetailView;
             }
 
             // Плавный скролл к началу блока #acts
+            btnAct.addEventListener('click', function () {
+                acts.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+
             btnUp.addEventListener('click', function () {
-                acts.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             });
 
             // Плавный скролл к самому низу страницы

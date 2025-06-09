@@ -270,7 +270,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слияние', 'url' => ['merge-
         main = document.getElementById('sub');
         main.style.display = 'block';
         //заполняем поля редактируемой формы
-        main = document.getElementById('foreigneventparticipantswork-secondname');
+        main = document.getElementById('foreigneventparticipantswork-surname');
         let temp = document.getElementById('td-secondname-1');
         main.value = temp.innerHTML;
 

@@ -120,7 +120,7 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
     {
         return array_merge(parent::rules(), [
             [['pd'], 'safe'],
-            [['firstname', 'surname', 'email', 'sex'], 'required']
+            [['firstname', 'surname', 'sex'], 'required']
         ]);
     }
 

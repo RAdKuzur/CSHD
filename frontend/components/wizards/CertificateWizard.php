@@ -130,35 +130,53 @@ class CertificateWizard
         FilesHelper::removeDirectory(Yii::$app->basePath . '/download/' . Yii::$app->user->identity->getId() . '_temp_certificates/');
     }
 
-    public static function sendCertificateToEmail(CertificateWork $certificate)
+    public static function sendCertificateToEmail(CertificateWork $certificate): bool
     {
-        $name = self::downloadCertificate($certificate, $certificate->trainingGroupParticipantWork, self::DESTINATION_SERVER, Yii::$app->basePath . '/download/' . Yii::$app->user->identity->getId() . '_temp_certificates/');
-        try {
-            $result = Yii::$app->mailer->compose()
-                ->setFrom('noreply@schooltech.ru')
-                ->setTo($certificate->trainingGroupParticipantWork->participant->email)
-                ->setSubject('Сертификат об успешном прохождении программы ДО')
-                ->setHtmlBody('Сертификат находится в прикрепленном файле.<br><br><br>Пожалуйста, обратите внимание, что это сообщение было сгенерировано и отправлено в автоматическом режиме. Не отвечайте на него. По всем вопросам обращайтесь по телефону 44-24-28 (единый номер).')
-                ->attach(Yii::$app->basePath . '/download/' . Yii::$app->user->identity->getId() . '_temp_certificates/' . $name . '.pdf')
-                ->send();
+        $userId = Yii::$app->user->identity->getId();
+        $downloadDir = Yii::$app->basePath . "/download/{$userId}_temp_certificates/";
+        $fileName = self::downloadCertificate($certificate, $certificate->trainingGroupParticipantWork, self::DESTINATION_SERVER, $downloadDir);
+        $filePath = "{$downloadDir}{$fileName}.pdf";
 
-            if ($result) {
-                $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_SEND), CertificateWork::className());
-            } else {
-                $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::className());
+        $email = trim($certificate->trainingGroupParticipantWork->participant->email);
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return self::logAndFail($certificate, "Некорректный email адрес: {$email}");
+        }
+
+        $swiftMailer = Yii::$app->mailer->getSwiftMailer();
+        $logger = new \Swift_Plugins_Loggers_ArrayLogger();
+        $swiftMailer->registerPlugin(new \Swift_Plugins_LoggerPlugin($logger));
+
+        try {
+            $message = Yii::$app->mailer->compose()
+                ->setFrom('noreply@schooltech.ru')
+                ->setTo($email)
+                ->setSubject('Сертификат об успешном прохождении программы ДО')
+                ->setHtmlBody(
+                    'Сертификат находится в прикрепленном файле.<br><br><br>' .
+                    'Пожалуйста, обратите внимание, что это сообщение было сгенерировано и отправлено в автоматическом режиме. ' .
+                    'Не отвечайте на него. По всем вопросам обращайтесь по телефону 44-24-28 (единый номер).'
+                )
+                ->attach($filePath);
+
+            if (!$message->send()) {
+                return self::logAndFail($certificate, "Не удалось отправить письмо на {$email}. SwiftMailer лог:\n" . $logger->dump());
             }
-        } catch (\Swift_RfcComplianceException $e) {
-            Yii::error('Ошибка RFC (почта не существует) при отправке письма: ' . $e->getMessage(), __METHOD__);
-            $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::className());
-        } catch (\Throwable $e) {
-            // Логируем любые другие возможные исключения
-            Yii::error('Ошибка при отправке письма: ' . $e->getMessage(), __METHOD__);
-            $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::className());
+
+            $certificate->recordEvent(new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_SEND), CertificateWork::class);
+
+        } catch (\Swift_RfcComplianceException | \Exception $e) {
+            return self::logAndFail($certificate, "Ошибка при отправке на {$email}: {$e->getMessage()}\nSwiftMailer лог:\n" . $logger->dump());
         }
 
         $certificate->releaseEvents();
+        return true;
+    }
 
-        return isset($result) ? $result : false;
-
+    private static function logAndFail(CertificateWork $certificate, string $message): bool
+    {
+        Yii::error($message, __METHOD__);
+        $certificate->recordEvent( new CertificateSetStatusEvent($certificate->id, CertificateWork::STATUS_ERR_SEND), CertificateWork::class);
+        return false;
     }
 }

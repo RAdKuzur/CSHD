@@ -140,7 +140,8 @@ class CertificateController extends Controller
         return $this->asJson([
             'gridHtml' => $this->renderPartial(GroupParticipantWidget::GROUP_PARTICIPANT_VIEW, [
                 'dataProvider' => new ActiveDataProvider([
-                    'query' => $this->participantRepository->getParticipantsWithoutCertificates($groupIds)
+                    'query' => $this->participantRepository->getParticipantsWithoutCertificates($groupIds),
+                    'pagination' => false,
                 ]),
             ]),
         ]);

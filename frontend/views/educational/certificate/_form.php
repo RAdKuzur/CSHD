@@ -45,7 +45,8 @@ use yii\widgets\ActiveForm;
             'query' => $model->groupQuery
         ]),
         'dataProviderParticipant' => new ActiveDataProvider([
-            'query' => $model->participantQuery
+            'query' => $model->participantQuery,
+            'pagination' => false,
         ]),
     ]);
     ?>

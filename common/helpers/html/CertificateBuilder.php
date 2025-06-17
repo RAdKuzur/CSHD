@@ -19,11 +19,8 @@ class CertificateBuilder
 
     public static function createStandardCertificate(CertificateWork $certificate, TrainingGroupParticipantWork $participant, int $textSize, string $text)
     {
-        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
         $date = $participant->trainingGroupWork->protection_date;
-        $content = '<body style="
-                                 background: url('. $path . ') no-repeat ;
-                                 background-size: 10%;">
+        $content = '<body>
             <div>
             <table>
                 <tr>
@@ -139,8 +136,7 @@ class CertificateBuilder
     public static function createTechnosummerCertificate(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
     {
         $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
-        return '<body style="font-family: sans-serif; 
-                                 background: url('. $path . ') no-repeat ;">
+        return '<body style="font-family: sans-serif;">
             <div>
                 <p style="height: 160px;"></p>
                 <p style="font-size: 28px; text-decoration: none; color: #164192; font-weight: bold; padding-left: -5px;">'.
@@ -206,9 +202,7 @@ class CertificateBuilder
     )
     {
         $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
-        $content = '<body style="font-family: sans-serif; background: url('.
-             $path.
-            ') no-repeat ;">
+        $content = '<body style="font-family: sans-serif;">
             <div>';
         if ($date >= "2023-07-21") {
             $content .= '<p style="'.$styleDistance.'"></p>
@@ -225,12 +219,13 @@ class CertificateBuilder
         return $content;
     }
 
-    public static function createPdfClass(string $content)
+    public static function createPdfClass(string $content, string $path)
     {
         $pdf = new Pdf([
             'mode' => Pdf::MODE_UTF8,
             'destination' => Pdf::DEST_BROWSER,
             'options' => [],
+            'format' => 'A4',
             'orientation' => Pdf::ORIENT_LANDSCAPE,
             'methods' => [
                 'SetTitle' => 'Privacy Policy - Krajee.com',
@@ -243,9 +238,39 @@ class CertificateBuilder
         ]);
 
         $mpdf = $pdf->getApi();
+        // Конвертируем подложку в PDF
+        $templatePdfPath = self::convertImageToPdf($path);
+
+        // Устанавливаем как шаблон
+        $mpdf->SetDocTemplate($templatePdfPath, true);
         $mpdf->WriteHtml($content);
         $mpdf->setProtection(array('print', 'print-highres'));
 
+        // Удаляем временный файл
+        register_shutdown_function(function() use ($templatePdfPath) {
+            if (file_exists($templatePdfPath)) {
+                unlink($templatePdfPath);
+            }
+        });
+
         return $mpdf;
     }
+
+    public static function convertImageToPdf(string $imagePath): string
+    {
+        $pdfPath = sys_get_temp_dir() . '/' . uniqid('background_', true) . '.pdf';
+
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'orientation' => Pdf::ORIENT_LANDSCAPE,
+        ]);
+
+        // Вставка изображения на всю страницу
+        $mpdf->AddPage();
+        $mpdf->Image($imagePath, 0, 0, 297, 210, '', '', true, false);
+        $mpdf->Output($pdfPath, \Mpdf\Output\Destination::FILE);
+
+        return $pdfPath;
+    }
+
 }

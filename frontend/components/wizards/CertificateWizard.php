@@ -75,7 +75,8 @@ class CertificateWizard
         $size = CertificateHelper::getTextSize(strlen($trainedText));
 
         $content = CertificateBuilder::createStandardCertificate($certificate, $participant, $size, $trainedText);
-        return CertificateBuilder::createPdfClass($content);
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
+        return CertificateBuilder::createPdfClass($content, $path);
     }
 
     private static function certificateSchool(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
@@ -83,13 +84,15 @@ class CertificateWizard
         $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
 
         $content = CertificateBuilder::createSchoolCertificate($certificate, $participant, $genderVerbs);
-        return CertificateBuilder::createPdfClass($content);
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
+        return CertificateBuilder::createPdfClass($content, $path);
     }
 
     private static function certificateTechnosummer(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
     {
         $content = CertificateBuilder::createTechnosummerCertificate($certificate, $participant);
-        return CertificateBuilder::createPdfClass($content);
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
+        return CertificateBuilder::createPdfClass($content, $path);
     }
 
     private static function certificateIntensive(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
@@ -97,7 +100,8 @@ class CertificateWizard
         $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
 
         $content = CertificateBuilder::createIntensiveCertificate($certificate, $participant, $genderVerbs);
-        return CertificateBuilder::createPdfClass($content);
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
+        return CertificateBuilder::createPdfClass($content, $path);
     }
 
     public static function archiveDownload()

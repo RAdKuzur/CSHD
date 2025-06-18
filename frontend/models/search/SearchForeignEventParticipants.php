@@ -21,9 +21,12 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
     public int $branch;
     public int $restrictions;   // ограничения ПД
     public int $incorrect;      // некорректные данные
+    public int $hasErrors;
 
-    public const RESTRICTIONS = [0 => '---', 1 => 'С ограничениями ПД', 2 => 'Без ограничения ПД'];
-    public const INCORRECT = [0 => '---', 1 => 'Некорректные данные', 2 => 'Корректные данные'];
+    public const RESTRICTIONS = [0 => 'Игнорировать', 1 => 'С ограничениями ПД', 2 => 'Без ограничения ПД'];
+    public const INCORRECT = [0 => 'Игнорировать', 1 => 'Некорректные данные', 2 => 'Корректные данные'];
+
+    public const HAS_ERRORS = [0 => 'Игнорировать', 1 => 'С ошибками', 2 => 'Без ошибок'];
 
     /**
      * {@inheritdoc}
@@ -33,7 +36,7 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
         return [
             [['id', 'branch', 'restrictions', 'incorrect'], 'integer'],
             [['firstname', 'surname', 'patronymic', 'participantName', 'participantSurname', 'participantPatronymic'], 'string'],
-            [['participantName', 'branch', 'restrictions', 'incorrect'], 'safe'],
+            [['participantName', 'branch', 'restrictions', 'incorrect', 'hasErrors'], 'safe'],
         ];
     }
 
@@ -43,7 +46,8 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
         string $participantPatronymic = '',
         int $branch = SearchFieldHelper::EMPTY_FIELD,
         int $restrictions = SearchFieldHelper::EMPTY_FIELD,
-        int $incorrect = SearchFieldHelper::EMPTY_FIELD
+        int $incorrect = SearchFieldHelper::EMPTY_FIELD,
+        int $hasErrors = SearchFieldHelper::EMPTY_FIELD
     ) {
         $this->participantName = $participantName;
         $this->participantSurname = $participantSurname;
@@ -51,6 +55,7 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
         $this->branch = $branch;
         $this->restrictions = $restrictions;
         $this->incorrect = $incorrect;
+        $this->hasErrors = $hasErrors;
     }
 
     public function scenarios()
@@ -71,6 +76,7 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
             $params['SearchForeignEventParticipants']['branch'] = StringFormatter::stringAsInt($params['SearchForeignEventParticipants']['branch']);
             $params['SearchForeignEventParticipants']['restrictions'] = StringFormatter::stringAsInt($params['SearchForeignEventParticipants']['restrictions']);
             $params['SearchForeignEventParticipants']['incorrect'] = StringFormatter::stringAsInt($params['SearchForeignEventParticipants']['incorrect']);
+            $params['SearchForeignEventParticipants']['hasErrors'] = StringFormatter::stringAsInt($params['SearchForeignEventParticipants']['hasErrors']);
         }
 
         $this->load($params);
@@ -150,6 +156,7 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
         $this->filterParticipantPatronymic($query);
         $this->filterIncorrect($query);
         $this->filterRestrictions($query);
+        $this->filterOnlyErrors($query);
     }
 
     /**
@@ -160,6 +167,31 @@ class SearchForeignEventParticipants extends Model implements SearchInterfaces
     public function filterParticipantName(ActiveQuery $query) {
         if (!empty($this->participantName)) {
             $query->andFilterWhere(['like', 'LOWER(firstname)', mb_strtolower($this->participantName)]);
+        }
+    }
+
+    /**
+     * Фильтрация по наличию ошибок
+     * @param ActiveQuery $query
+     * @return void
+     */
+    public function filterOnlyErrors(ActiveQuery $query) {
+        if (!StringFormatter::isEmpty($this->hasErrors) && $this->hasErrors !== SearchFieldHelper::EMPTY_FIELD) {
+            // Подзапрос для получения ID сущностей с ошибками
+            $errorQuery = (new Query())
+                ->select('table_row_id')
+                ->distinct()
+                ->from('errors')
+                ->where(['table_name' => ForeignEventParticipantsWork::tableName()]);
+
+            switch ($this->hasErrors) {
+                case 1: // Только с ошибками
+                    $query->andWhere(['id' => $errorQuery]);
+                    break;
+                case 2: // Только без ошибок
+                    $query->andWhere(['NOT IN', 'id', $errorQuery]);
+                    break;
+            }
         }
     }
 

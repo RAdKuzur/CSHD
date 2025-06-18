@@ -20,8 +20,10 @@ $searchFields = array_merge(
     SearchFieldHelper::textField('participantName' , 'Имя участника деятельности', 'Имя участника деятельности'),
     SearchFieldHelper::textField('participantPatronymic' , 'Отчество участника деятельности', 'Отчество участника деятельности'),
     SearchFieldHelper::dropdownField('branch', 'Отдел обучения', Yii::$app->branches->getOnlyEducational(), 'Все отделы'),
-    SearchFieldHelper::dropdownField('restrictions', 'Ограничения ПД', $searchModel::RESTRICTIONS),
-    SearchFieldHelper::dropdownField('incorrect', 'Некорректные данные', $searchModel::INCORRECT)
+    SearchFieldHelper::dropdownField('restrictions', 'Ограничения ПД', $searchModel::RESTRICTIONS, 'Ограничения ПД'),
+    SearchFieldHelper::dropdownField('incorrect', 'Некорректные данные', $searchModel::INCORRECT, 'Корректность данных'),
+    SearchFieldHelper::dropdownField('hasErrors', 'Наличие ошибок', $searchModel::HAS_ERRORS, "Наличие ошибок")
+
 );
 
 echo HtmlBuilder::createFilterPanel($searchModel, $searchFields, $form, 3, Yii::$app->frontUrls::PARTICIPANT_INDEX); ?>

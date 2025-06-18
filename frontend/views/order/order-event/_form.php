@@ -416,6 +416,7 @@ use yii\widgets\DetailView;
             <option selected>Об участии в мероприятии</option>
         </select>
     </div>
+    <?= Html::activeHiddenInput($model, 'order_name', ['value' => 'Об участии в мероприятии']) ?>
 
     <div id="bring_id">
         <?php

@@ -89,7 +89,7 @@ class OrderEventForm extends Model {
             [['order_copy_id', 'order_postfix', 'signed_id', 'bring_id', 'executor_id',  'creator_id', 'last_edit_id',
                 'nomenclature_id', 'type', 'state', 'organizer_id' , 'eventWay','eventLevel' ,'minister','minAge', 'maxAge' ,
                 'purpose' ,'docEvent', 'respPeopleInfo', 'timeProvisionDay', 'extraRespInsert', 'timeInsertDay', 'extraRespMethod', 'extraRespInfoStuff'], 'integer'],
-            [['order_date'], 'safe'],
+            [['order_date', 'order_name'], 'safe'],
             [['order_number', 'order_name'], 'string', 'max' => 256],
             [['key_words', 'keyEventWords', 'documentDetails'], 'string', 'max' => 512],
             [['eventName' ,'dateBegin', 'dateEnd', 'city'], 'string'],

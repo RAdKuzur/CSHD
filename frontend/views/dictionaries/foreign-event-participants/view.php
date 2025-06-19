@@ -64,6 +64,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         <?= $model->email ?>
                     </div>
                 </div>
+                <div class="card-field flexx">
+                    <div class="field-title">
+                        Льготы
+                    </div>
+                    <div class="field-date">
+                        <?= Yii::$app->benefits->get($model->benefits) ?>
+                    </div>
+                </div>
             </div>
             <div class="card-set">
                 <div class="card-head">Участие в образовательных программах</div>

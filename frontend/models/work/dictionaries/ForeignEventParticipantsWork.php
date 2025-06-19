@@ -76,7 +76,8 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
         $birthdate,
         $email,
         $sex,
-        $patronymic = ''
+        $patronymic = '',
+        $benefits = 0
     )
     {
         $entity = new static();
@@ -86,6 +87,7 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
         $entity->email = $email;
         $entity->sex = $sex;
         $entity->patronymic = $patronymic;
+        $entity->benefits = $benefits;
 
         return $entity;
     }
@@ -97,7 +99,9 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
         $email,
         $sex,
         $patronymic = '',
-        $guaranteedTrue = 0
+        $guaranteedTrue = 0,
+        $benefits = 0
+
     )
     {
         $this->firstname = $firstname;
@@ -107,6 +111,7 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
         $this->sex = $sex;
         $this->patronymic = $patronymic;
         $this->guaranteed_true = $guaranteedTrue;
+        $this->benefits = $benefits;
     }
 
     public function attributeLabels()

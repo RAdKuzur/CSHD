@@ -16,6 +16,8 @@ namespace common\models\scaffold;
  * @property string|null $email
  * @property int|null $creator_id
  * @property int|null $last_edit_id
+ * @property int|null $benefits
+ *
  */
 class ForeignEventParticipants extends \yii\db\ActiveRecord
 {
@@ -33,9 +35,10 @@ class ForeignEventParticipants extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sex', 'is_true', 'guaranteed_true', 'creator_id', 'last_edit_id'], 'integer'],
+            [['sex', 'is_true', 'guaranteed_true', 'creator_id', 'last_edit_id', 'benefits'], 'integer'],
             [['firstname', 'surname', 'patronymic'], 'string', 'max' => 64],
             [['birthdate', 'email'], 'string', 'max' => 256],
+            ['benefits', 'default', 'value' => 0],
         ];
     }
 
@@ -54,6 +57,7 @@ class ForeignEventParticipants extends \yii\db\ActiveRecord
             'is_true' => 'Is True',
             'guaranteed_true' => 'Guaranteed True',
             'email' => 'Email',
+            'benefits' => 'Льготы'
         ];
     }
 }

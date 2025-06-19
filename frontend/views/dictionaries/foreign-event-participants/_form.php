@@ -47,6 +47,11 @@ use yii\widgets\ActiveForm;
         ), ['value' => $model->sex, 'class' => 'i-checks']) ?>
     </div>
 
+    <div>
+        <?= $form->field($model, 'benefits')->radioList(Yii::$app->benefits->getList(), ['value' => $model->benefits, 'class' => 'i-checks']) ?>
+    </div>
+
+
     <!--if (\app\models\components\RoleBaseAccess::CheckRole(Yii::$app->user->identity->getId(), 6) || \app\models\components\RoleBaseAccess::CheckRole(Yii::$app->user->identity->getId(), 7))-->
 
     <div <?= $model->isTrueAnyway() ? 'hidden' : '' ?>>

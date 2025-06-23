@@ -94,7 +94,7 @@ class EventWork extends Event implements FileInterface
             'name' => 'Название мероприятия',
             'datePeriod' => 'Период проведения',
             'eventType' => 'Тип мероприятия',
-            'scopesSplitter' => 'Тематическая направленность',
+            'scopesString' => 'Тематическая направленность',
             'responsibleString' => 'Ответственный(-ые) работник(-и)',
             'eventBranches' => 'Мероприятие проводит',
             'regulationRaw' => 'Положение',

@@ -38,13 +38,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         ['attribute' => 'eventLevel'],
                         ['attribute' => 'eventWay'],
                         ['attribute' => 'ageRestrictions'],
-                        ['attribute' => 'scopesSplitter', 'label' => 'Тематическая направленность'],
+                        ['attribute' => 'scopesString', 'label' => 'Тематическая направленность'],
                         ['attribute' => 'childParticipantsCount'],
                         ['attribute' => 'childRSTParticipantsCount'],
                         ['attribute' => 'teacherParticipantsCount'],
                         ['attribute' => 'otherParticipantsCount'],
                         ['attribute' => 'participantCount'],
-                        ['attribute' => 'is_federal', 'value' => function(EventWork $model){
+                        ['attribute' => 'isFederal', 'value' => function(EventWork $model){
                             if ($model->is_federal == 1) {
                                 return 'Да';
                             }
@@ -52,10 +52,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return 'Нет';
                             }
                         }, 'filter' => [1 => "Да", 0 => "Нет"]],
-                        ['attribute' => 'responsibleString', 'label' => 'Ответственный(-ые) работник(-и)'],
+                        ['attribute' => 'responsibles', 'label' => 'Ответственный(-ые) работник(-и)'],
                         ['attribute' => 'eventBranches', 'label' => 'Мероприятие проводит', 'format' => 'raw'],
-                        ['attribute' => 'orderStringRaw', 'format' => 'raw', 'label' => 'Приказ'],
-                        'eventWayString',
+                        ['attribute' => 'orderNameRaw', 'format' => 'raw', 'label' => 'Приказ'],
                         ['attribute' => 'regulationRaw', 'label' => 'Положение', 'format' => 'raw'],
                         ['attribute' => 'eventGroupRaw', 'label' => 'Связанные группы', 'format' => 'raw'],
 

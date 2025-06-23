@@ -195,6 +195,28 @@ $this->params['breadcrumbs'][] = ['label' => 'Слияние', 'url' => ['merge-
                 ])->label('Пол') ?>
         </div>
 
+        <div>
+            <?= $form->field($model->editModel, 'benefits')->radioList(Yii::$app->benefits->getList(), ['value' => $model->sex, 'class' => 'i-checks',
+                'item' => function($index, $label, $name, $checked, $value) {
+                    if ($checked) {
+                        $checkedStr = 'checked=""';
+                    }
+                    else {
+                        $checkedStr = '';
+                    }
+                    $return = '<label class="modal-radio">';
+                    $return .= '<input id="rl'.$index.'" type="radio" name="' . $name . '" value="' . $value . '" tabindex="3" style="margin-right: 5px" '.$checkedStr.'>';
+                    $return .= '<i></i>';
+                    $return .= '<span>' . ucwords($label) . '</span>';
+                    $return .= '</label>';
+
+                    return $return;
+                }
+            ])->label('Льготы') ?>
+        </div>
+
+
+
         <?= $form->field($model->editModel, 'email')->textInput()->label('E-mail') ?>
 
         <?= $form->field($model->editModel, 'pd')->checkboxList(Yii::$app->personalData->getList(), ['item' => function ($index, $label, $name, $checked, $value) {

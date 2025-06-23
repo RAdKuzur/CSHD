@@ -135,7 +135,8 @@ class MergeParticipantForm extends \yii\base\Model
             $this->editModel->email,
             $this->editModel->sex,
             $this->editModel->patronymic,
-            1
+            1,
+            $this->editModel->benefits
         );
 
         $this->participantRepository->save($part);

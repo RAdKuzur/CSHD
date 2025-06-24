@@ -858,7 +858,7 @@ class ErrorJournalService
         $lowerBound = strtotime("-$daysCount days", $currentDate);
         $targetDate = strtotime("today");
 
-        if (!(count($projectThemes) == 0 && $targetDate >= $lowerBound)) {
+        if (!(count($projectThemes) == 0 && $targetDate >= $lowerBound)  || $group->trainingProgramWork->certificate_type !== CertificateTypeDictionary::PROJECT_PITCH) {
             $this->errorsRepository->delete($error);
         }
     }

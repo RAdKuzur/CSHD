@@ -158,7 +158,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_IN => 'Кол-ву обучающихся, начавших обучение до начала заданного периода и завершивших обучение в заданный период',
                     ManHoursReportForm::PARTICIPANT_START_IN_FINISH_AFTER => 'Кол-ву обучающихся, начавших обучение в заданный период и завершивших обучение после окончания заданного периода',
                     ManHoursReportForm::PARTICIPANT_START_IN_FINISH_IN => 'Кол-ву обучающихся, начавших обучение после начала заданного периода и завершивших обучение до окончания заданного периода',
-                    ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_AFTER => 'Кол-ву обучающихся, начавших обучение до начала заданного периода и завершивших обучение после окончания заданного периода'
+                    ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_AFTER => 'Кол-ву обучающихся, начавших обучение до начала заданного периода и завершивших обучение после окончания заданного периода',
+                    ManHoursReportForm::PARTICIPANT_WITH_BENEFITS_BY_SVO => 'Кол-во обучающихся, имеющих льготы по СВО',
                 ],
                 [
                     'item' => function($index, $label, $name, $checked, $value)
@@ -259,8 +260,9 @@ $this->params['breadcrumbs'][] = $this->title;
         var elem1 = document.getElementById('interview-1');
         var elem2 = document.getElementById('interview-2');
         var elem3 = document.getElementById('interview-3');
+        var elem5 = document.getElementById('interview-5');
         var unic = document.getElementById('unic');
-        if (elem1.checked || elem2.checked || elem3.checked) { unic.style.display = "block"; }
+        if (elem1.checked || elem2.checked || elem3.checked || elem5.checked) { unic.style.display = "block"; }
         else { unic.style.display = "none"; }
     }
 

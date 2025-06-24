@@ -6,6 +6,7 @@ use backend\builders\TrainingGroupReportBuilder;
 use backend\forms\report\ManHoursReportForm;
 use backend\helpers\ReportHelper;
 use backend\services\report\interfaces\ManHoursServiceInterface;
+use common\components\dictionaries\base\BenefitsDictionary;
 use common\components\logger\base\LogInterface;
 use common\components\logger\LogFactory;
 use common\repositories\educational\LessonThemeRepository;
@@ -182,6 +183,14 @@ class ReportManHoursService implements ManHoursServiceInterface
             $participants = $this->participantRepository->getParticipantsFromGroups(
                 ArrayHelper::getColumn($groups, 'id')
             );
+
+            if (in_array(ManHoursReportForm::PARTICIPANT_WITH_BENEFITS_BY_SVO, $calculateTypes)) {
+                $participants = array_filter($participants, function($participant) use ($calculateTypes) {
+                    return $participant->participantWork->benefits == BenefitsDictionary::SVO;
+                });
+            }
+
+
             $uniqueParticipants = array_reduce($participants, function ($carry, $item) {
                 $participantId = $item->participant_id;
                 if (!isset($carry[$participantId])) {
@@ -211,6 +220,13 @@ class ReportManHoursService implements ManHoursServiceInterface
                 $tempParticipants = $this->participantRepository->getParticipantsFromGroups(
                     ArrayHelper::getColumn($groups, 'id')
                 );
+
+                if (in_array(ManHoursReportForm::PARTICIPANT_WITH_BENEFITS_BY_SVO, $calculateTypes)) {
+                    $tempParticipants = array_filter($tempParticipants, function($tempParticipants) use ($calculateTypes) {
+                        return $tempParticipants->participantWork->benefits == BenefitsDictionary::SVO;
+                    });
+                }
+
 
                 $result[$calculateType] = count($tempParticipants);
                 $participants = array_merge($participants, $tempParticipants);

@@ -20,6 +20,7 @@ class ManHoursReportForm extends Model
     const PARTICIPANT_START_IN_FINISH_AFTER = 3;
     const PARTICIPANT_START_IN_FINISH_IN = 4;
     const PARTICIPANT_START_BEFORE_FINISH_AFTER = 5;
+    const PARTICIPANT_WITH_BENEFITS_BY_SVO = 6;
 
     // Подтип отчета по обучающимся
     const PARTICIPANTS_ALL = 1;
@@ -35,6 +36,7 @@ class ManHoursReportForm extends Model
         self::PARTICIPANT_START_IN_FINISH_AFTER => 'Кол-во обучающихся, начавших обучение в заданный период и завершивших обучение после окончания заданного периода',
         self::PARTICIPANT_START_IN_FINISH_IN => 'Кол-во обучающихся, начавших обучение после начала заданного периода и завершивших обучение до окончания заданного периода',
         self::PARTICIPANT_START_BEFORE_FINISH_AFTER => 'Кол-во обучающихся, начавших обучение до начала заданного периода и завершивших обучение после окончания заданного периода',
+        self::PARTICIPANT_WITH_BENEFITS_BY_SVO => 'Кол-во обучающихся, имеющих льготы по СВО',
     ];
 
     private TeacherGroupRepository $teacherGroupRepository;
@@ -133,7 +135,8 @@ class ManHoursReportForm extends Model
             in_array(self::PARTICIPANT_START_BEFORE_FINISH_IN, $this->type) ||
             in_array(self::PARTICIPANT_START_IN_FINISH_AFTER, $this->type) ||
             in_array(self::PARTICIPANT_START_IN_FINISH_IN, $this->type) ||
-            in_array(self::PARTICIPANT_START_BEFORE_FINISH_AFTER, $this->type);
+            in_array(self::PARTICIPANT_START_BEFORE_FINISH_AFTER, $this->type) ||
+            in_array( self::PARTICIPANT_WITH_BENEFITS_BY_SVO, $this->type);
     }
 
     public function save()

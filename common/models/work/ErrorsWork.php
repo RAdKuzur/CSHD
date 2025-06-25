@@ -74,7 +74,7 @@ class ErrorsWork extends Errors
         if ($this->table_name == TrainingGroupWork::tableName()) {
             /** @var TrainingGroupWork $group */
             $group = (Yii::createObject(TrainingGroupRepository::class))->get($this->table_row_id);
-            return StringFormatter::stringAsLink($group->number, Url::to(['/' . Urls::TRAINING_PROGRAM_VIEW, 'id' => $group->id]));
+            return StringFormatter::stringAsLink($group->number, Url::to(['/' . Urls::TRAINING_GROUP_VIEW, 'id' => $group->id]));
         }
 
         if ($this->table_name == TrainingProgramWork::tableName()) {

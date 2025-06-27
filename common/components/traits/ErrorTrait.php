@@ -44,8 +44,19 @@ trait ErrorTrait
             $errorEntity->fixError($currentError->id);
         }
 
-        // Затем проверяем весь список ошибок для модели - появились ли ошибки в результате действий пользователя
-        foreach ($allErrors as $error) {
+        // Получаем все прощёные ошибки
+        $amnestyErrors = $this->errorsTraitRepository->getAmnestyErrorsByTableRow($tableName, $rowId);
+        $numberAmnestyErrors = [];
+        // Записываем их номера
+        foreach ($amnestyErrors as $error) {
+            $numberAmnestyErrors[] = $error->error;
+        }
+        // Исключаем прощёные ошибки из повторной проверки
+        $checkErrors = array_diff($allErrors, $numberAmnestyErrors);
+
+        // Затем проверяем список ошибок для модели - появились ли ошибки в результате действий пользователя
+        foreach ($checkErrors as $error) {
+            /** @var ErrorsWork $amnestyErrors */
             /** @var Error $errorEntity */
             $errorEntity = Yii::$app->errors->get($error);
             $errorEntity->makeError($rowId);

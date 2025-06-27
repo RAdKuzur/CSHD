@@ -33,6 +33,15 @@ class ErrorsRepository
             ->all();
     }
 
+    public function getAmnestyErrorsByTableRow(string $tableName, int $rowId)
+    {
+        return ErrorsWork::find()
+            ->where(['table_name' => $tableName])
+            ->andWhere(['table_row_id' => $rowId])
+            ->andWhere(['was_amnesty' => 1])
+            ->all();
+    }
+
     public function getErrorsByTableRowsBranchTypes(string $tableName, array $rowIds, int $branch = null, array $types = [Error::TYPE_BASE, Error::TYPE_CRITICAL])
     {
         $query = ErrorsWork::find()

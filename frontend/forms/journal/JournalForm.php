@@ -215,7 +215,7 @@ class JournalForm extends Model
             if ($theme->confirm == 1) {
                 return [
                     'value' => $theme->id,
-                    'name' => HtmlBuilder::paintSVG(FilePaths::SVG_PROJECT) . ' ' . $theme->projectThemeWork->name
+                    'name' => HtmlBuilder::paintSVG(FilePaths::SVG_PROJECT) . ' ' . $theme->projectThemeWork->name . ' "' . Yii::$app->projectType->get($theme->projectThemeWork->project_type) . '"'
                 ];
             }
             return '';

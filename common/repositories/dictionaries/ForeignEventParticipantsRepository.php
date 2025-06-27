@@ -93,6 +93,55 @@ class ForeignEventParticipantsRepository
             ->one();
     }
 
+    public function getParticipantByUniqueDataSingle($participant)
+    {
+        return ForeignEventParticipantsWork::find()
+            ->where(['firstname' => $participant->firstname])
+            ->andWhere(['surname' => $participant->surname])
+            ->andWhere(['patronymic' => $participant->patronymic])
+            ->andWhere(['birthdate' => $participant->birthdate])
+            ->one();
+    }
+
+
+    public function participantExists(ForeignEventParticipantsWork $participant): bool
+    {
+        $query = ForeignEventParticipantsWork::find()
+            ->where(['firstname' => $participant->firstname])
+            ->andWhere(['surname' => $participant->surname])
+            ->andWhere(['birthdate' => $participant->birthdate]);
+
+        // Проверка отчества (NULL и пустая строка считаются одинаковыми)
+        if (empty($participant->patronymic)) {
+            $query->andWhere(['or', ['patronymic' => ''], ['patronymic' => null]]);
+        } else {
+            $query->andWhere(['patronymic' => $participant->patronymic]);
+        }
+
+        return $query->exists();
+    }
+    public function participantPossibleEmailChange(ForeignEventParticipantsWork $participant): bool
+    {
+        $query = ForeignEventParticipantsWork::find()
+            ->where([
+                'firstname' => $participant->firstname,
+                'surname' => $participant->surname,
+                'patronymic' => $participant->patronymic,
+                'birthdate' => $participant->birthdate
+            ]);
+
+        if (!empty($participant->email)) {
+            $query->andWhere(['or',
+                ['!=', 'email', $participant->email],
+                ['or', ['email' => ''], ['email' => null]]
+            ]);
+        } else {
+            $query->andWhere(['is not', 'email', null])
+                ->andWhere(['!=', 'email', '']);
+        }
+
+        return $query->exists();
+    }
     public function save(ForeignEventParticipantsWork $participant)
     {
         return $this->provider->save($participant);

@@ -5,6 +5,7 @@ namespace common\components\wizards;
 use common\repositories\dictionaries\ForeignEventParticipantsRepository;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Yii;
@@ -53,7 +54,15 @@ class ExcelWizard
     {
         ini_set('memory_limit', '512M');
 
-        $reader = new Xlsx();
+        // Получаем расширение файла в нижнем регистре
+        $extension = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
+
+        // Создаем reader в зависимости от расширения
+        if ($extension === 'xlsx') {
+            $reader = new Xlsx();
+        } else {
+            $reader = new Xls();
+        }
         $spreadsheet = $reader->load($filepath);
         $worksheet = $spreadsheet->setActiveSheetIndex(0);
         $highestRow = $worksheet->getHighestRow();

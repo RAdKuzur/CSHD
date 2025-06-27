@@ -61,6 +61,7 @@ class LoadParticipants extends Model
                 $this->participantRepository->getSexByName($data['Имя обучающегося'][$i]),
                 $data['Отчество обучающегося'][$i]
             );
+            //if ()
             $this->participantRepository->save($participant);
             $participant->recordEvent(new PersonalDataParticipantAttachEvent($participant->id), get_class($participant));
             $participant->releaseEvents();
@@ -68,4 +69,90 @@ class LoadParticipants extends Model
 
         $this->fileService->deleteFile(FilePaths::TEMP_FILEPATH . '/' . $newFilename);
     }
+
+    public function ProcessParticipants(): array
+    {
+        $newFilename = StringFormatter::createHash(date("Y-m-d H:i:s")) . '.' . $this->file->extension;
+        $this->fileService->uploadFile($this->file, $newFilename, ['filepath' => FilePaths::TEMP_FILEPATH . '/']);
+
+        $data = ExcelWizard::getDataFromColumns(
+            Yii::$app->basePath . FilePaths::TEMP_FILEPATH . '/' . $newFilename,
+            ['Фамилия обучающегося', 'Имя обучающегося', 'Отчество обучающегося', 'Дата рождения (л)', 'Контакт: Рабочий e-mail']
+        );
+
+        $duplicates = [];
+        $originals = []; // Новый массив для оригинальных участников
+        $fullDuplicatesCount = 0;
+        for ($i = 0; $i < count($data['Фамилия обучающегося']); $i++) {
+            $birthdate = $data['Дата рождения (л)'][$i]
+                ? DateFormatter::format($data['Дата рождения (л)'][$i], DateFormatter::mdY_slash, DateFormatter::Ymd_dash)
+                : PersonInterface::BASE_BIRTHDATE;
+
+            $email = CompareHelper::isEmail($data['Контакт: Рабочий e-mail'][$i]) == CompareHelper::RESULT_CORRECT
+                ? $data['Контакт: Рабочий e-mail'][$i]
+                : '';
+
+            $participant = ForeignEventParticipantsWork::fill(
+                $data['Имя обучающегося'][$i],
+                $data['Фамилия обучающегося'][$i],
+                $birthdate,
+                $email,
+                $this->participantRepository->getSexByName($data['Имя обучающегося'][$i]),
+                $data['Отчество обучающегося'][$i]
+            );
+
+            $exists = $this->participantRepository->participantExists($participant);
+            $emailChanged = $this->participantRepository->participantPossibleEmailChange($participant);
+
+            if ($exists && !$emailChanged) {
+                // Полный дубликат - все поля включая email совпадают
+                $fullDuplicatesCount++;
+                continue;
+            }
+
+            if (!$exists) {
+                // Новый участник - сохраняем
+                $this->participantRepository->save($participant);
+                $participant->recordEvent(
+                    new PersonalDataParticipantAttachEvent($participant->id),
+                    get_class($participant)
+                );
+                $participant->releaseEvents();
+            } elseif ($emailChanged) {
+                // Участник с измененным email
+                $original = $this->participantRepository->getParticipantByUniqueDataSingle($participant);
+                if ($original) {
+                    $originals[] = $original;
+                    $duplicates[] = $participant;
+                }
+            }
+        }
+
+        $this->fileService->deleteFile(FilePaths::TEMP_FILEPATH . '/' . $newFilename);
+
+        // Возвращаем оба массива
+        return [
+            'originals' => $originals,
+            'duplicates' => $duplicates,
+            'fullDuplicatesCount' => $fullDuplicatesCount
+        ];
+    }
+
+
+
+
+    //    public function save($participantlist)
+//    {
+//
+//        foreach ($participantlist as $participant)
+//            {
+//                $this->participantRepository->save($participant);
+//                $participant->recordEvent(new PersonalDataParticipantAttachEvent($participant->id), get_class($participant));
+//                $participant->releaseEvents();
+//            }
+//
+//
+//
+//    }
+
 }

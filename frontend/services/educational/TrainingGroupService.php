@@ -373,7 +373,6 @@ class TrainingGroupService implements DatabaseServiceInterface
             );
             if (!$participant)
             {
-                var_dump($data['Контакт: Рабочий e-mail'][$i]);
                 $participant = ForeignEventParticipantsWork::fill(
                     $data['Имя обучающегося'][$i],
                     $data['Фамилия обучающегося'][$i],

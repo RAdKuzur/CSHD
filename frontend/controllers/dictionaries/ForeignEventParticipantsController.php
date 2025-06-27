@@ -16,6 +16,7 @@ use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\general\ErrorsRepository;
 use DomainException;
 use frontend\events\foreign_event_participants\PersonalDataParticipantAttachEvent;
+use frontend\forms\participants\MergeNewParticipantForm;
 use frontend\forms\participants\MergeParticipantForm;
 use frontend\models\search\SearchForeignEventParticipants;
 use frontend\models\work\auxiliary\LoadParticipants;
@@ -37,7 +38,7 @@ class ForeignEventParticipantsController extends Controller
 {
     use AccessControl;
 
-    private ForeignEventParticipantsRepository $repository;
+    public ForeignEventParticipantsRepository $repository;
     private TrainingGroupParticipantRepository $groupParticipantRepository;
     private SquadParticipantRepository $squadParticipantRepository;
     private ParticipantAchievementRepository $achievementRepository;
@@ -188,16 +189,83 @@ class ForeignEventParticipantsController extends Controller
     public function actionFileLoad()
     {
         $model = new LoadParticipants();
-
         if ($model->load(Yii::$app->request->post())) {
             $model->file = UploadedFile::getInstance($model, 'file');
-            $model->save();
-            $this->service->checkCorrectAll();
+            $result = $model->ProcessParticipants();
+            if (!empty($result['duplicates'])) {
+                Yii::$app->session->set('emailChangeData', [
+                    'originals' =>  ArrayHelper::toArray($result['originals']),
+                    'duplicates' =>  ArrayHelper::toArray($result['duplicates'])
+                ]);
+                if ($result['fullDuplicatesCount'] > 0) {
+                    Yii::$app->session->addFlash('info', "Найдено {$result['fullDuplicatesCount']} полных дубликатов, которые были пропущены.");
+                }
+                return $this->redirect(['confirm-email-changes']);
+
+            }
+            if ($result['fullDuplicatesCount'] > 0) {
+                Yii::$app->session->addFlash('info', "Найдено {$result['fullDuplicatesCount']} полных дубликатов, которые были пропущены.");
+            }
+            //$this->service->checkCorrectAll();
             return $this->redirect(['index']);
         }
 
         return $this->render('file-load', [
             'model' => $model,
+        ]);
+    }
+
+    protected function restoreParticipantsFromArray(array $data): array
+    {
+        $participants = [];
+        foreach ($data as $item) {
+            $participant = new ForeignEventParticipantsWork();
+            Yii::configure($participant, $item);
+            $participants[] = $participant;
+        }
+        return $participants;
+    }
+
+    protected function restoreExistingParticipantsFromArray(array $data): array
+    {
+        $participants = [];
+        foreach ($data as $item) {
+            $participant = $this->repository->get($item['id']);
+            Yii::configure($participant, $item);
+            $participants[] = $participant;
+        }
+        return $participants;
+    }
+
+    public function actionConfirmEmailChanges()
+    {
+        $sessionData = Yii::$app->session->get('emailChangeData', []);
+
+        if (empty($sessionData['originals']) || empty($sessionData['duplicates'])) {
+            Yii::$app->session->setFlash('error', 'Данные для подтверждения не найдены');
+            return $this->redirect(['index']);
+        }
+
+        // Восстанавливаем объекты из массива
+        $originals = $this->restoreExistingParticipantsFromArray($sessionData['originals']);
+        $duplicates = $this->restoreParticipantsFromArray($sessionData['duplicates']);
+
+        $model = new MergeNewParticipantForm(
+            $this->repository,
+            $originals,
+            $duplicates
+        );
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->changeSelectedEmails();
+            Yii::$app->session->remove('emailChangeData');
+            Yii::$app->session->setFlash('success', 'Изменения успешно применены');
+            return $this->redirect(['index']);
+        }
+
+        return $this->render('merge-newparticipant', [
+            'model' => $model,
+
         ]);
     }
 

@@ -229,6 +229,12 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
         }
     }
 
+    public function setEmail($Email)
+    {
+        $this->email = $Email;
+
+    }
+
     public function getFullFioWithBirthdate()
     {
         $birthdate = DateFormatter::format($this->birthdate, DateFormatter::Ymd_dash, DateFormatter::dmy_dot);

@@ -493,6 +493,7 @@ class RulesConfig
             ],
             \frontend\controllers\dictionaries\ForeignEventParticipantsController::class => [
                 'index',
+                'confirm-email-changes',
                 'view',
 
             ],

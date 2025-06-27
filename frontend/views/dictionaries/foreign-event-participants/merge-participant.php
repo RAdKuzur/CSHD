@@ -60,6 +60,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слияние', 'url' => ['merge-
 <div class="man-hours-report-form">
 
     <h5><b>Выберите двух участников деятельности</b></h5>
+    <div class="row">
     <div class="col-xs-6 block-report">
 
         <?php $form = ActiveForm::begin(); ?>
@@ -149,7 +150,7 @@ $this->params['breadcrumbs'][] = ['label' => 'Слияние', 'url' => ['merge-
         ])->label('ФИО участника деятельности №2'); ?>
 
         <?= $form->field($model, 'id2')->hiddenInput(['class' => 'part', 'id' => 'participant_id2', 'name' => 'MergeParticipantForm[id2]'])->label(false); ?>
-
+    </div>
     </div>
     <div class="panel-body" style="padding: 0; margin: 0"></div>
 

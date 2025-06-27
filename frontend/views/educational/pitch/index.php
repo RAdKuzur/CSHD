@@ -42,6 +42,7 @@ use yii\helpers\Url;
             <th>Номер группы</th>
             <th>Дата защиты</th>
             <th>Тема проекта</th>
+            <th>Тип проекта</th>
             <th>Описание проекта</th>
         </tr>
         <?php foreach ($progress as $group): ?>
@@ -55,6 +56,9 @@ use yii\helpers\Url;
                     </td>
                     <td>
                         <?= $groupProjectThemesWork->projectThemeWork->name ?>
+                    </td>
+                    <td>
+                        <?= Yii::$app->projectType->get($groupProjectThemesWork->projectThemeWork->project_type) ?>
                     </td>
                     <td>
                         <?= $groupProjectThemesWork->projectThemeWork->description ?>

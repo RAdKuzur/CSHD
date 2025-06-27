@@ -51,7 +51,7 @@ class TrainingProgram extends \yii\db\ActiveRecord
             [['thematic_direction', 'level', 'author_id', 'capacity', 'hour_capacity', 'student_right_age', 'focus', 'allow_remote', 'actual', 'certificate_type', 'is_network', 'creator_id', 'last_edit_id'], 'integer'],
             [['ped_council_date', 'created_at', 'updated_at'], 'safe'],
             [['student_left_age'], 'number'],
-            [['name', 'description', 'key_words'], 'string', 'max' => 1024],
+            [['name', 'description', 'key_words'], 'string', 'max' => 4096],
             [['ped_council_number'], 'string', 'max' => 128],
             [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => PeopleStamp::class, 'targetAttribute' => ['author_id' => 'id']],
             [['creator_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['creator_id' => 'id']],

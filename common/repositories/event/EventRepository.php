@@ -51,8 +51,8 @@ class EventRepository
     public function getEventsByBranches(array $branches)
     {
         return EventWork::find()
-            ->joinWith(['eventBranchWork eventBranchWork'])
-            ->where(['IN', 'eventBranchWork.branch', $branches])
+            ->joinWith(['eventBranchWorks eventBranchWorks'])
+            ->where(['IN', 'eventBranchWorks.branch', $branches])
             ->all();
     }
 

@@ -8,6 +8,7 @@ use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
 use common\models\work\ErrorsWork;
 use common\models\work\UserWork;
+use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\general\PeopleStampRepository;
 use frontend\models\work\dictionaries\PersonInterface;
@@ -331,6 +332,28 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
     public function getBranchString()
     {
         return Yii::$app->branches->get($this->branch);
+    }
+
+    public function getFocus()
+    {
+        return yii::$app->focus->get($this->trainingProgramWork->focus);
+    }
+
+    public function getAllowRemote()
+    {
+        return yii::$app->allowRemote->get($this->trainingProgramWork->allow_remote);
+    }
+
+    public function getParticipantsCount()
+    {
+        $participantRepository = Yii::createObject(TrainingGroupParticipantRepository::class);
+        $participants = $participantRepository->getParticipantsFromGroups([$this->id]);
+        return count($participants);
+    }
+
+    public function  getCapacity()
+    {
+        return $this->trainingProgramWork->capacity;
     }
 
     public function setProtectionDate(string $protectionDate)

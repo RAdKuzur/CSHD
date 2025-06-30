@@ -32,14 +32,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?php
                         $gridColumns = [
-                            ['attribute' => 'numberView', 'format' => 'html'],
+                            ['attribute' => 'numberPretty', 'format' => 'html'],
                             ['attribute' => 'programName', 'format' => 'html'],
-                            ['attribute' => 'branchName', 'label' => 'Отдел', 'format' => 'raw'],
-                            ['attribute' => 'pureCountParticipants', 'label' => 'Кол-во детей'],
+                            ['attribute' => 'capacity', 'label' => 'Часы программы'],
+                            ['attribute' => 'focus' , 'label' => 'Направленность'],
+                            ['attribute' => 'allowRemote' , 'label' => 'Формат'],
+                            ['attribute' => 'branchString', 'label' => 'Отдел', 'format' => 'raw'],
+                            ['attribute' => 'participantsCount', 'label' => 'Кол-во детей'],
                             ['attribute' => 'teachersList', 'format' => 'html'],
                             'start_date',
                             'finish_date',
-                            ['attribute' => 'budgetText', 'label' => 'Бюджет', 'filter' => [ 1 => "Бюджет", 0 => "Внебюджет"]],
+                            ['attribute' => 'budgetString', 'label' => 'Бюджет', 'filter' => [ 1 => "Бюджет", 0 => "Внебюджет"]],
                         ];
 
                         echo ExportMenu::widget([

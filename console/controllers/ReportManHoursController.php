@@ -13,8 +13,8 @@ use yii\console\Controller;
 
 class ReportManHoursController extends Controller
 {
-    const START_DATE = '2024-01-01';
-    const END_DATE = '2024-12-31';
+    const START_DATE = '2025-01-01';
+    const END_DATE = '2025-12-31';
     private VisitRepository $visitRepository;
     private TrainingGroupParticipantRepository $participantRepository;
     private TrainingGroupLessonRepository $lessonRepository;

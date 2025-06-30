@@ -336,7 +336,7 @@ class StateAssignmentReportService
         $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate, self::CALCULATE_TYPES);
         $groupsQuery = $this->groupBuilder->filterGroupsByBranches($groupsQuery, [$branch]);
         $groupsQuery = $this->groupBuilder->filterGroupsByFocuses($groupsQuery, [$focus]);
-        //$groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);
+        $groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);
         $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, [TrainingGroupWork::IS_BUDGET]);
         $groupsAll = $this->groupRepository->findAll($groupsQuery);
 

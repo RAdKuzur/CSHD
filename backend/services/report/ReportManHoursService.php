@@ -71,7 +71,7 @@ class ReportManHoursService implements ManHoursServiceInterface
         $query = $this->builder->query();
         $query = $this->builder->filterGroupsByBranches($query, $branches);
         $query = $this->builder->filterGroupsByFocuses($query, $focuses);
-        //$query = $this->builder->filterGroupsByAllowRemote($query, $allowRemotes);
+        $query = $this->builder->filterGroupsByAllowRemote($query, $allowRemotes);
         return $this->builder->filterGroupsByBudget($query, $budgets);
     }
 

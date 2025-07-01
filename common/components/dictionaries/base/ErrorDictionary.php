@@ -435,8 +435,8 @@ class ErrorDictionary extends BaseDictionary
             self::JOURNAL_011 => new Error(
                 'ЭЖ011', 'В учебно-тематическом плане образовательной программе не указана форма контроля',
                 Error::TYPE_BASE,
-                [$this->journalService, 'makeJournal_001'],
-                [$this->journalService, 'fixJournal_001'],
+                [$this->journalService, 'makeJournal_011'],
+                [$this->journalService, 'fixJournal_011'],
             ),
             self::JOURNAL_012 => new Error(
                 'ЭЖ012', 'В образовательной программе количество академических часов не совпадает с учебно-тематическим планом',

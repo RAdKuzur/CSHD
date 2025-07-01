@@ -79,6 +79,23 @@ class LoadParticipants extends Model
             Yii::$app->basePath . FilePaths::TEMP_FILEPATH . '/' . $newFilename,
             ['Фамилия обучающегося', 'Имя обучающегося', 'Отчество обучающегося', 'Дата рождения (л)', 'Контакт: Рабочий e-mail']
         );
+        // 1. Собираем индексы, которые нужно удалить
+        $indexesToRemove = [];
+        foreach ($data['Фамилия обучающегося'] as $i => $lastName) {
+            $firstName = $data['Имя обучающегося'][$i] ?? '';
+            if (empty($lastName) || empty($firstName)) {
+                $indexesToRemove[] = $i;
+            }
+        }
+        // 2. Удаляем эти индексы из всех колонок
+        foreach ($data as $columnName => &$columnData) {
+            foreach ($indexesToRemove as $index) {
+                unset($columnData[$index]);
+            }
+            // 3. (Опционально) Переиндексируем массив, если нужны последовательные ключи
+            $columnData = array_values($columnData);
+        }
+        unset($columnData); // Разрываем ссылку
 
         $duplicates = [];
         $originals = []; // Новый массив для оригинальных участников
@@ -92,13 +109,17 @@ class LoadParticipants extends Model
                 ? $data['Контакт: Рабочий e-mail'][$i]
                 : '';
 
+            $name =  $data['Имя обучающегося'][$i];
+            $surname=  $data['Фамилия обучающегося'][$i];
+            $patronymic = $data['Отчество обучающегося'][$i];
+            $sex = $this->participantRepository->getSexByName($data['Имя обучающегося'][$i]);
             $participant = ForeignEventParticipantsWork::fill(
-                $data['Имя обучающегося'][$i],
-                $data['Фамилия обучающегося'][$i],
+                $name,
+                $surname,
                 $birthdate,
                 $email,
-                $this->participantRepository->getSexByName($data['Имя обучающегося'][$i]),
-                $data['Отчество обучающегося'][$i]
+                $sex,
+                $patronymic
             );
 
             $exists = $this->participantRepository->participantExists($participant);

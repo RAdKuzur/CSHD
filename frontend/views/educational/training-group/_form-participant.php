@@ -67,48 +67,55 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                     ],
                 ]); ?>
 
+                <div class="panel-title">
+                    <h5 class="panel-title pull-left">Учащиеся</h5>
 
+                </div>
                 <div class="container-items"><!-- widgetContainer -->
-                    <div class="panel-title">
-                        <h5 class="panel-title pull-left">Учащиеся</h5><!-- widgetBody -->
-                        <div class="pull-right">
-                            <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
-                        </div>
-                    </div>
-                    <?php foreach ($modelChilds as $i => $modelChild): ?>
-                        <div class="item panel panel-default"><!-- widgetBody -->
-                            <div class="panel-heading">
-                                <div class="pull-right">
-                                    <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
+                    <div class="items-wrapper">
+
+                        <?php foreach ($modelChilds as $i => $modelChild): ?>
+                            <div class="item panel panel-default"><!-- widgetBody -->
+                                <div class="panel-heading">
+                                    <div class="pull-right">
+                                        <button type="button" class="remove-item btn btn-warning btn-xs"><span class="glyphicon glyphicon-minus">-</span></button>
+                                    </div>
+                                    <div class="clearfix"></div>
                                 </div>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="panel-body">
-                                <div class="row">
-                                    <?= $form->field($modelChild, "[{$i}]id")->hiddenInput()->label(false) ?>
-                                    <div class="flexx">
-                                        <div class="flx1">
-                                            <?= $form->field($modelChild, "[{$i}]participant_id")->widget(Select2::classname(), [
-                                                'data' => ArrayHelper::map($childs, 'id', function (ForeignEventParticipantsWork $model) {
-                                                    return $model->getFullFioWithBirthdate();
-                                                }),
-                                                'size' => Select2::LARGE,
-                                                'options' => ['prompt' => 'Выберите ученика'],
-                                                'pluginOptions' => [
-                                                    'allowClear' => true
-                                                ],
-                                            ])->label('ФИО учащегося'); ?>
-                                        </div>
-                                        <div class="flx1">
-                                            <?= $form->field($modelChild, "[{$i}]send_method")->dropDownList(
-                                                Yii::$app->sendMethods->getList(), ['prompt' => '---']
-                                            )->label('Способ доставки сертификата'); ?>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <?= $form->field($modelChild, "[{$i}]id")->hiddenInput()->label(false) ?>
+                                        <div class="flexx">
+                                            <div class="flx1">
+                                                <?= $form->field($modelChild, "[{$i}]participant_id")->widget(Select2::classname(), [
+                                                    'data' => ArrayHelper::map($childs, 'id', function (ForeignEventParticipantsWork $model) {
+                                                        return $model->getFullFioWithBirthdate();
+                                                    }),
+                                                    'size' => Select2::LARGE,
+                                                    'options' => ['prompt' => 'Выберите ученика'],
+                                                    'pluginOptions' => [
+                                                        'allowClear' => true
+                                                    ],
+                                                ])->label('ФИО учащегося'); ?>
+                                            </div>
+                                            <div class="flx1">
+                                                <?= $form->field($modelChild, "[{$i}]send_method")->dropDownList(
+                                                    Yii::$app->sendMethods->getList(), ['prompt' => '---']
+                                                )->label('Способ доставки сертификата'); ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+
+                    </div>
+                </div>
+                <div class="panel-title">
+                    <h5 class="panel-title pull-left">Добавить учащегося</h5>
+                    <div class="pull-right">
+                        <button type="button" class="add-item btn btn-success btn-xs"><span class="glyphicon glyphicon-plus">+</span></button>
+                    </div>
                 </div>
                 <?php DynamicFormWidget::end(); ?>
             </div>

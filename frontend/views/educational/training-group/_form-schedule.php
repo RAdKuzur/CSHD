@@ -173,12 +173,14 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
                                     ]
                                 )->label('Начало занятия') ?>
 
-                                <?= $form->field($modelLesson, "[{$i}]branch")->dropDownList(Yii::$app->branches->getList())->label('Отдел'); ?>
+                                <?= $form->field($modelLesson, "[{$i}]branch")->dropDownList(Yii::$app->branches->getList(), ['class' => 'form-control branch-select'])->label('Отдел'); ?>
 
                                 <?= $form->field($modelLesson, "[{$i}]auditorium_id")->widget(Select2::classname(), [
-                                    'data' => ArrayHelper::map($auditoriums, 'id', 'name'),
+                                    'data' => ArrayHelper::map($auditoriums, 'id', function ($auditorium) {
+                                        return $auditorium->name . ' (' . $auditorium->text . ')';
+                                    }),
                                     'size' => Select2::LARGE,
-                                    'options' => ['prompt' => '---'],
+                                    'options' => ['prompt' => '---', 'class' => 'auditorium-select'],
                                     'pluginOptions' => [
                                         'allowClear' => true
                                     ],
@@ -204,7 +206,85 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 </div>
 
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Все аудитории из PHP
+            const allAuditoriums = <?= json_encode(array_values(array_map(function($a) {
+                return [
+                    'id' => $a->id,
+                    'name' => $a->name,
+                    'text' => $a->text,
+                    'branch' => $a->branch,
+                ];
+            }, $auditoriums))) ?>;
+
+            // Функция для фильтрации помещений по отделу
+            function filterAuditoriums(branchId, auditoriumSelect) {
+                // Фильтруем помещения по выбранному отделу
+                const filtered = allAuditoriums.filter(function(auditorium) {
+                    return auditorium.branch == branchId;
+                });
+
+                // Очищаем текущие опции
+                auditoriumSelect.innerHTML = '';
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '---';
+                auditoriumSelect.appendChild(defaultOption);
+
+                // Добавляем отфильтрованные помещения
+                filtered.forEach(function(auditorium) {
+                    const option = document.createElement('option');
+                    option.value = auditorium.id;
+                    option.textContent = `${auditorium.name} (${auditorium.text})`;
+                    auditoriumSelect.appendChild(option);
+                });
+            }
+
+            // Обработчик изменения отдела
+            document.addEventListener('change', function (event) {
+                const target = event.target;
+                if (target.classList.contains('branch-select')) {
+                    const branchId = target.value;
+                    const item = target.closest('.item');
+                    const auditoriumSelect = item.querySelector('.auditorium-select');
+
+                    if (branchId) {
+                        filterAuditoriums(branchId, auditoriumSelect);
+                    } else {
+                        // Если отдел не выбран, показываем все помещения
+                        auditoriumSelect.innerHTML = '';
+                        const defaultOption = document.createElement('option');
+                        defaultOption.value = '';
+                        defaultOption.textContent = '---';
+                        auditoriumSelect.appendChild(defaultOption);
+
+                        <?php foreach ($auditoriums as $auditorium): ?>
+                        const opt<?= $auditorium->id ?> = document.createElement('option');
+                        opt<?= $auditorium->id ?>.value = '<?= $auditorium->id ?>';
+                        opt<?= $auditorium->id ?>.textContent = '<?= $auditorium->name ?> (<?= $auditorium->text ?>)';
+                        auditoriumSelect.appendChild(opt<?= $auditorium->id ?>);
+                        <?php endforeach; ?>
+                    }
+                }
+            });
+
+            // Инициализация при загрузке для каждого существующего элемента
+            document.querySelectorAll('.item').forEach(function (item) {
+                const branchInput = item.querySelector('[id*="-branch"]');
+                const auditoriumSelect = item.querySelector('.auditorium-select');
+
+                if (branchInput && branchInput.value) {
+                    filterAuditoriums(branchInput.value, auditoriumSelect);
+                }
+            });
+        });
+    </script>
+
 <script>
+
+
+
     window.onload = function() {
         initObjectData(<?= $model->id ?>, '<?= TrainingGroup::tableName() ?>', 'index.php?r=educational/training-group/view&id=<?= $model->id ?>');
     }
@@ -255,3 +335,4 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
 
 
 </script>
+

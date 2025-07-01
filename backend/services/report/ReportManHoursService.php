@@ -7,6 +7,7 @@ use backend\forms\report\ManHoursReportForm;
 use backend\helpers\ReportHelper;
 use backend\services\report\interfaces\ManHoursServiceInterface;
 use common\components\dictionaries\base\BenefitsDictionary;
+use common\components\dictionaries\base\BranchDictionary;
 use common\components\logger\base\LogInterface;
 use common\components\logger\LogFactory;
 use common\repositories\educational\LessonThemeRepository;
@@ -105,6 +106,7 @@ class ReportManHoursService implements ManHoursServiceInterface
         $query = $this->builder->filterGroupsBetweenDates($query, $startDate, $endDate);
        // var_dump($query->createCommand()->getRawSql());
         $groups = $this->repository->findAll($query);
+
         //var_dump(Yii::$app->branches->get($branches[0]) , Yii::$app->focus->get($focuses[0]) , count($groups));
         $participants = $this->participantRepository->getParticipantsFromGroups(
             ArrayHelper::getColumn($groups, 'id')
@@ -130,7 +132,7 @@ class ReportManHoursService implements ManHoursServiceInterface
                 }
             }
             else {
-                $result += ReportHelper::calculateAttendanceOptimized($visit->lessons, $calculateType);
+                $result += ReportHelper::calculateAttendanceOptimized($visit->lessons, $calculateType, $startDate, $endDate);
             }
         }
         $endTime = new DateTime();

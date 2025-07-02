@@ -93,10 +93,10 @@ class ReportHelper
 
             $lessonDate = $lessonDateMap[$lessonId];
             if ($lessonDate >= $startDate && $lessonDate <= $endDate) {
-                if (in_array($lesson['status'], [VisitWork::ATTENDANCE, VisitWork::DISTANCE])) {
+                if (in_array($lesson['status'], [VisitWork::ATTENDANCE, VisitWork::DISTANCE]) && $calculateType == ManHoursReportForm::MAN_HOURS_FAIR) {
                     $count++;
                 } elseif (
-                    $calculateType == ManHoursReportForm::MAN_HOURS_ALL
+                    $calculateType == ManHoursReportForm::MAN_HOURS_ALL && !in_array($lesson['status'], [VisitWork::NONE])
                 ) {
                     $count++;
                 }

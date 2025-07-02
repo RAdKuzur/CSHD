@@ -96,8 +96,7 @@ class ReportHelper
                 if (in_array($lesson['status'], [VisitWork::ATTENDANCE, VisitWork::DISTANCE])) {
                     $count++;
                 } elseif (
-                    $calculateType == ManHoursReportForm::MAN_HOURS_ALL &&
-                    $lesson['status'] == VisitWork::NO_ATTENDANCE
+                    $calculateType == ManHoursReportForm::MAN_HOURS_ALL
                 ) {
                     $count++;
                 }

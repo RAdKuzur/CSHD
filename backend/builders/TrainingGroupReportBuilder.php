@@ -142,7 +142,10 @@ class TrainingGroupReportBuilder
             $conditions[] = QueryHelper::getGroupsStartBeforeFinishAfterDates($date1, $date2);
         }
         if (in_array(ManHoursReportForm::PARTICIPANT_WITH_BENEFITS_BY_SVO, $types)) {
+            $conditions[] = QueryHelper::getGroupsStartBeforeFinishInDates($date1, $date2);
             $conditions[] = QueryHelper::getGroupsStartInFinishInDates($date1, $date2);
+            $conditions[] = QueryHelper::getGroupsStartInFinishAfterDates($date1, $date2);
+            $conditions[] = QueryHelper::getGroupsStartBeforeFinishAfterDates($date1, $date2);
         }
 
         return $query->andWhere($conditions);

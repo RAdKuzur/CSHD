@@ -88,6 +88,7 @@ class ErrorAssociationHelper
             ErrorDictionary::JOURNAL_005,
             ErrorDictionary::JOURNAL_006,
             ErrorDictionary::JOURNAL_008,
+            ErrorDictionary::JOURNAL_009,
             ErrorDictionary::JOURNAL_014,
             ErrorDictionary::JOURNAL_016,
             ErrorDictionary::JOURNAL_017,

@@ -325,55 +325,108 @@ class ErrorJournalService
     }
 
     // Проверка на отсутствие явок
-    public function makeJournal_009($rowId)
-    {
-        /** @var VisitWork[] $visits */
-        /** @var TrainingGroupLessonWork[] $lessonsToCheck */
-        $visits = $this->visitRepository->getByTrainingGroup($rowId);
+//    public function makeJournal_009($rowId)
+//    {
+//        /** @var VisitWork[] $visits */
+//        /** @var TrainingGroupLessonWork[] $lessonsToCheck */
+//        $visits = $this->visitRepository->getByTrainingGroup($rowId);
+//
+//        // Получаем все ID занятий, которые подлежат проверке на ошибки
+//        $lessonIdsToCheck = ArrayHelper::getColumn(
+//            array_filter(
+//                $this->lessonRepository->getLessonsFromGroup($rowId),
+//                function (TrainingGroupLessonWork $lesson) {
+//                    $currentDate = strtotime("today");
+//                    $lowerBound = strtotime("-" . PbacLessonAccess::LESSON_OFFSET_DOWN . " days", $currentDate);
+//                    $targetDate = strtotime($lesson->lesson_date);
+//                    return $targetDate < $lowerBound;
+//                }
+//            ),
+//            'id'
+//        );
+//
+//        /*
+//         * Создаем массив для отслеживания состояния каждого занятия
+//         * 0 - для занятия нет ни одной отметки
+//         * 1 - есть хотя бы одна отметка
+//         */
+//        $lessonChecker = array_fill_keys($lessonIdsToCheck, 0);
+//        foreach ($visits as $visit) {
+//            $lessonsFromVisit = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
+//            foreach ($lessonsFromVisit as $lesson) {
+//                if (in_array($lesson->lessonId, $lessonIdsToCheck) && $lesson->status != VisitWork::NONE) {
+//                    $lessonChecker[$lesson->lessonId] = 1;
+//                }
+//            }
+//
+//            // Если остался 0 хотя бы у одного занятия
+//            if (array_sum($lessonChecker) != count($lessonChecker)) {
+//                $this->errorsRepository->save(
+//                    ErrorsWork::fill(
+//                        ErrorDictionary::JOURNAL_009,
+//                        TrainingGroupWork::tableName(),
+//                        $rowId,
+//                        Yii::$app->errors->get(ErrorDictionary::JOURNAL_009)->getErrorState(),
+//                        $visits[0]->trainingGroupParticipantWork->trainingGroupWork->branch
+//                    )
+//                );
+//            }
+//        }
+//    }
 
-        // Получаем все ID занятий, которые подлежат проверке на ошибки
-        $lessonIdsToCheck = ArrayHelper::getColumn(
-            array_filter(
-                $this->lessonRepository->getLessonsFromGroup($rowId),
-                function (TrainingGroupLessonWork $lesson) {
-                    $currentDate = strtotime("today");
-                    $lowerBound = strtotime("-" . PbacLessonAccess::LESSON_OFFSET_DOWN . " days", $currentDate);
-                    $targetDate = strtotime($lesson->lesson_date);
-                    return $targetDate < $lowerBound;
-                }
-            ),
-            'id'
+    public function makeJournal_009(int $groupId)
+    {
+        // 1) Получаем все занятия группы, которым уже пора были состояться
+        $allLessons = $this->lessonRepository->getLessonsFromGroup($groupId);
+        $currentTs    = strtotime('today');
+        $lowerBound   = strtotime('-' . PbacLessonAccess::LESSON_OFFSET_DOWN . ' days', $currentTs);
+
+        // Фильтруем только те уроки, что «старше» offset-дней
+        $lessonIdsToCheck = array_map(
+            fn(TrainingGroupLessonWork $l) => $l->id,
+            array_filter($allLessons, fn(TrainingGroupLessonWork $l) => strtotime($l->lesson_date) < $lowerBound)
         );
 
-        /*
-         * Создаем массив для отслеживания состояния каждого занятия
-         * 0 - для занятия нет ни одной отметки
-         * 1 - есть хотя бы одна отметка
-         */
+        if (empty($lessonIdsToCheck)) {
+            // Нечего проверять — выходим
+            return;
+        }
+
+        // 2) Заводим массив-флагов: 0 — не было ни одной отметки, 1 — есть хоть одна
         $lessonChecker = array_fill_keys($lessonIdsToCheck, 0);
 
+        // 3) Собираем все визиты по группе и отмечаем флаги
+        $visits = $this->visitRepository->getByTrainingGroup($groupId);
         foreach ($visits as $visit) {
             $lessonsFromVisit = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
             foreach ($lessonsFromVisit as $lesson) {
-                if (in_array($lesson->lessonId, $lessonIdsToCheck) && $lesson->status != VisitWork::NONE) {
+                // если этот урок входит в список и статус не NONE — ставим флаг 1
+                if (
+                    isset($lessonChecker[$lesson->lessonId]) &&
+                    $lesson->status != VisitWork::NONE
+                ) {
                     $lessonChecker[$lesson->lessonId] = 1;
                 }
             }
+        }
 
-            // Если остался 0 хотя бы у одного занятия
-            if (array_sum($lessonChecker) != count($lessonChecker)) {
-                $this->errorsRepository->save(
-                    ErrorsWork::fill(
-                        ErrorDictionary::JOURNAL_009,
-                        TrainingGroupWork::tableName(),
-                        $rowId,
-                        Yii::$app->errors->get(ErrorDictionary::JOURNAL_009)->getErrorState(),
-                        $visits[0]->trainingGroupParticipantWork->trainingGroupWork->branch
-                    )
-                );
-            }
+        // 4) После того как прошли по всем визитам — проверяем, остался ли хоть один 0
+        $totalToCheck = count($lessonChecker);
+        $sumFlags     = array_sum($lessonChecker);
+        if ($sumFlags < $totalToCheck) {
+            // Нашли урок(и) без отметок — сохраняем ошибку один раз
+            $this->errorsRepository->save(
+                ErrorsWork::fill(
+                    ErrorDictionary::JOURNAL_009,
+                    TrainingGroupWork::tableName(),
+                    $groupId,
+                    Yii::$app->errors->get(ErrorDictionary::JOURNAL_009)->getErrorState(),
+                    $visits[0]->trainingGroupParticipantWork->trainingGroupWork->branch
+                )
+            );
         }
     }
+
 
     public function fixJournal_009($errorId)
     {

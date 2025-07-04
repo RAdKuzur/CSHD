@@ -3,6 +3,7 @@
 use backend\forms\report\ManHoursReportForm;
 use backend\services\report\ReportFacade;
 use common\helpers\DateFormatter;
+use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\general\PeopleWork;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -211,7 +212,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="col-xs-8 block-report" id="teachers" style="display: none">
         <?= $form->field($model, 'teacher')->dropDownList(
-                ArrayHelper::map($model->teachers, 'id', function (PeopleWork $people) {
+                ArrayHelper::map($model->teachers, 'id', function (PeopleStampWork $people) {
                     return $people->getFullFio();
                 }),
                 ['prompt' => 'Все педагоги']

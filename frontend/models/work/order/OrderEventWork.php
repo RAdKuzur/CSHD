@@ -3,6 +3,7 @@
 namespace frontend\models\work\order;
 
 use common\components\dictionaries\base\NomenclatureDictionary;
+use common\components\traits\ErrorTrait;
 use frontend\services\order\OrderMainService;
 use common\events\EventTrait;
 use common\helpers\DateFormatter;
@@ -13,6 +14,7 @@ use Yii;
 class OrderEventWork extends DocumentOrderWork
 {
     use EventTrait;
+    use ErrorTrait;
     public $actFiles;
     public $scanFile;
     public $docFiles;

@@ -2,6 +2,7 @@
 
 namespace frontend\models\work\order;
 
+use common\components\traits\ErrorTrait;
 use common\models\work\UserWork;
 use frontend\models\work\educational\training_group\OrderTrainingGroupParticipantWork;
 use frontend\models\work\general\PeopleStampWork;
@@ -21,6 +22,7 @@ use Yii;
 class OrderTrainingWork extends DocumentOrderWork
 {
     use EventTrait;
+    use ErrorTrait;
     public $responsible_id;
     public $branch;
 

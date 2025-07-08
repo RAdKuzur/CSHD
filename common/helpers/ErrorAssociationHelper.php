@@ -34,6 +34,26 @@ class ErrorAssociationHelper
         ];
     }
 
+    public static  function getOrderEventErrorsList()
+    {
+        return [
+            ErrorDictionary::DOCUMENT_001,
+            ErrorDictionary::DOCUMENT_002,
+            ErrorDictionary::DOCUMENT_003,
+        ];
+    }
+
+    public static function getOrderTrainingGroupErrorsList()
+    {
+        return [
+            ErrorDictionary::DOCUMENT_001,
+            ErrorDictionary::DOCUMENT_002,
+            ErrorDictionary::DOCUMENT_003,
+            ErrorDictionary::DOCUMENT_004,
+            ErrorDictionary::DOCUMENT_005,
+        ];
+    }
+
     public static function getOrderStudyErrorsList()
     {
 

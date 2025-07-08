@@ -221,7 +221,7 @@ class OrderEventController extends DocumentController
                 );
                 $this->foreignEventRepository->save($modelForeignEvent);
                 $modelForeignEvent->checkModel(ErrorAssociationHelper::getForeignEventErrorsList(), ForeignEventWork::tableName(), $modelForeignEvent->id);
-
+                $modelOrderEvent->checkModel(ErrorAssociationHelper::getOrderEventErrorsList(), OrderEventWork::tableName(), $modelOrderEvent->id);
                 $this->orderPeopleService->addOrderPeopleEvent($respPeopleId, $modelOrderEvent);
                 $this->foreignEventService->saveActFilesFromModel($modelForeignEvent, $form->orderEventForm->actFiles, $number);
                 $form->orderEventForm->releaseEvents();
@@ -262,6 +262,7 @@ class OrderEventController extends DocumentController
         $modelOrderEvent->checkFilesExist();
         $foreignEvent = $this->foreignEventRepository->getByDocOrderId($modelOrderEvent->id);
         $actTable = $this->actParticipantService->createActTable($foreignEvent->id);
+        $modelOrderEvent->checkModel(ErrorAssociationHelper::getOrderEventErrorsList(), OrderEventWork::tableName(), $id);
         return $this->render('view',
             [
                 'model' => $modelOrderEvent,
@@ -398,6 +399,7 @@ class OrderEventController extends DocumentController
 
                 $this->foreignEventRepository->save($modelForeignEvent);
                 $modelForeignEvent->checkModel(ErrorAssociationHelper::getForeignEventErrorsList(), ForeignEventWork::tableName(), $modelForeignEvent->id);
+                $modelOrderEvent->checkModel(ErrorAssociationHelper::getOrderEventErrorsList(), OrderEventWork::tableName(), $modelOrderEvent->id);
                 $this->actParticipantService->addActParticipant($acts, $modelForeignEvent->id);
                 $modelOrderEvent->releaseEvents();
                 return $this->redirect(['view', 'id' => $modelOrderEvent->id]);

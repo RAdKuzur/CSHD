@@ -88,7 +88,7 @@ $tempArchive = $session->get("archiveIn");
                 'class' => 'table table-bordered', // УБИРАЕМ БАЗОВЫЙ STRIPE ИНАЧЕ ОШИБКИ НЕКОРРЕКТНО ОТОБРАЖАЮТСЯ
             ],
             'rowOptions' => function ($model) {
-                $hasError = $model->getErrorState() && !$model->wasAmnesty; // Проверяем ошибку и отсутствие амнистии
+                $hasError = $model->getErrorState(); // Проверяем ошибку и отсутствие амнистии
                 return [
                     'data-href' => Url::to([Yii::$app->frontUrls::ORDER_TRAINING_VIEW, 'id' => $model->id]),
                     'class' => 'tr-link' . ($hasError ? ' error-row' : ''),

@@ -7,6 +7,7 @@ use app\events\document_order\DocumentOrderDeleteEvent;
 use app\models\forms\OrderTrainingForm;
 use common\components\traits\AccessControl;
 use common\helpers\ButtonsFormatter;
+use common\helpers\ErrorAssociationHelper;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use common\repositories\dictionaries\PeopleRepository;
@@ -115,6 +116,7 @@ class OrderTrainingController extends DocumentController
         $participants = $this->orderTrainingService->getGroupParticipantTable($model, $status);
 
         $model->checkFilesExist();
+        $model->checkModel(ErrorAssociationHelper::getOrderTrainingGroupErrorsList(), OrderTrainingWork::tableName(), $model->id);
 
         return $this->render('view', [
             'model' => $model,
@@ -155,6 +157,8 @@ class OrderTrainingController extends DocumentController
                 $this->documentOrderService->saveFilesFromModel($model);
                 $this->orderPeopleService->addOrderPeopleEvent($respPeopleId, $model);
                 $model->releaseEvents();
+                $model->checkModel(ErrorAssociationHelper::getOrderTrainingGroupErrorsList(), OrderTrainingWork::tableName(), $model->id);
+
                 return $this->redirect(['view', 'id' => $model->id, 'error' => $error]);
             }
             else {
@@ -213,6 +217,8 @@ class OrderTrainingController extends DocumentController
                     ArrayHelper::getColumn($this->orderPeopleRepository->getResponsiblePeople($id), 'people_id'),
                     $post["OrderTrainingWork"]["responsible_id"], $model);
                 $model->releaseEvents();
+                $model->checkModel(ErrorAssociationHelper::getOrderTrainingGroupErrorsList(), OrderTrainingWork::tableName(), $model->id);
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
             return $this->render('update', [

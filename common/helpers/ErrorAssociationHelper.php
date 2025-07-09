@@ -50,7 +50,6 @@ class ErrorAssociationHelper
             ErrorDictionary::DOCUMENT_002,
             ErrorDictionary::DOCUMENT_003,
             ErrorDictionary::DOCUMENT_004,
-            ErrorDictionary::DOCUMENT_005,
         ];
     }
 

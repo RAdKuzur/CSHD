@@ -62,12 +62,6 @@ $tempArchive = $session->get("archiveIn");
 
     <?= $this->render('_search', ['searchModel' => $searchModel]) ?>
 
-    <?= Html::a('Скрытая кнопка', ['/order/order-event/errors'], [
-        'id' => 'secret-trigger',
-        'style' => 'display:none',
-    ]) ?>
-
-
     <?=
         GridView::widget([
             'dataProvider' => $dataProvider,

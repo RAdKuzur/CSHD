@@ -200,8 +200,7 @@ class RulesConfig
                 'delete-people',
                 'act-delete',
                 'generate-order',
-                'delete',
-                'errors'
+                'delete'
             ]
         ],
 
@@ -225,8 +224,7 @@ class RulesConfig
                 'get-group-by-branch',
                 'get-group-participants-by-branch',
                 'set-preamble',
-                'generate-order',
-                'errors'
+                'generate-order'
             ]
         ],
 

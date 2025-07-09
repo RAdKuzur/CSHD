@@ -273,6 +273,18 @@ class OrderEventController extends DocumentController
             ]
         );
     }
+
+    public function actionErrors() {
+
+        $allOrderEvent = OrderEventWork::find()->all();
+        foreach ($allOrderEvent as $orderEvent) {
+            /** @var OrderEventWork $orderEvent */
+            $orderEvent->checkModel(ErrorAssociationHelper::getOrderEventErrorsList(), OrderEventWork::tableName(), $orderEvent->id);
+        }
+
+        return $this->renderContent('Обработка завершена');
+    }
+
     public function actionUpdate($id)
     {
         /* @var $modelOrderEvent OrderEventWork */

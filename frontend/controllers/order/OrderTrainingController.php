@@ -128,6 +128,17 @@ class OrderTrainingController extends DocumentController
         ]);
     }
 
+    public function actionErrors() {
+
+        $allOrderTraining = OrderTrainingWork::find()->all();
+        foreach ($allOrderTraining as $orderTraining) {
+            /** @var OrderTrainingWork $orderTraining */
+            $orderTraining->checkModel(ErrorAssociationHelper::getOrderTrainingGroupErrorsList(), OrderTrainingWork::tableName(), $orderTraining->id);
+        }
+
+        return $this->renderContent('Обработка завершена');
+    }
+
     public function actionCreate()
     {
         $model = new OrderTrainingWork();

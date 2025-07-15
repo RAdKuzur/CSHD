@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 $searchFields = array_merge(
     SearchFieldHelper::textField('surname', 'Фамилия', 'Фамилия'),
     SearchFieldHelper::textField('name' , 'Имя', 'Имя'),
-    SearchFieldHelper::textField('patronymic', 'Отчетство', 'Отчетство'),
+    SearchFieldHelper::textField('patronymic', 'Отчество', 'Отчество'),
     SearchFieldHelper::textField('position', 'Должность', 'Должность'),
     SearchFieldHelper::textField('organized', 'Организация', 'Организация'),
 );

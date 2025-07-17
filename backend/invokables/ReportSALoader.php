@@ -78,7 +78,7 @@ class ReportSALoader
         $inputData->getSheet(1)->setCellValue('K52', $data['cod']['science']['personal'][StateAssignmentReportService::PARAM_ACHIEVES_RATIO]);
 
         $inputData->getSheet(1)->setCellValue('K54', $data['cod']['art']['personal'][StateAssignmentReportService::PARAM_DUPLICATE]);
-        $inputData->getSheet(1)->setCellValue('K56', $data['cod']['art']['personal'][StateAssignmentReportService::PARAM_PROJECTS_RATIO]);
+        $inputData->getSheet(1)->setCellValue('K56', $data['cod']['art']['personal'][StateAssignmentReportService::PARAM_ACHIEVES_RATIO]);
 
         $inputData->getSheet(1)->setCellValue('K58', $data['cod']['sport']['personal'][StateAssignmentReportService::PARAM_DUPLICATE]);
         $inputData->getSheet(1)->setCellValue('K60', $data['cod']['sport']['personal'][StateAssignmentReportService::PARAM_ACHIEVES_RATIO]);

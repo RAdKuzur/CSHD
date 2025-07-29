@@ -276,9 +276,17 @@ class HtmlBuilder
      */
     public static function createFilterPanel(object $searchModel, array $searchFields, ActiveForm $form, int $valueInRow, string $resetUrl)
     {
+        // Добавляем JavaScript для обработки пробелов
+        $js = <<<JS
+        $(document).on('blur', 'input[type="text"]', function() {
+            $(this).val($(this).val().trim());
+        });
+        JS;
+        \Yii::$app->view->registerJs($js);
+
         $result = '<div class="filter-panel" id="filterPanel">
-                        '.HtmlCreator::filterHeaderForm().'
-                        <div class="filter-date">';
+                    '.HtmlCreator::filterHeaderForm().'
+                    <div class="filter-date">';
 
         $counter = 0;
         $count = count($searchFields);
@@ -307,6 +315,8 @@ class HtmlBuilder
                     $result .= $form->field($searchModel, $attribute)->widget(DatePicker::class, $widgetOptions)->label(false);
                     break;
                 case self::TEXT_FIELD_TYPE:
+                    // Добавляем trim() на стороне сервера через атрибут
+                    $options['onblur'] = 'this.value=this.value.trim()';
                     $result .= $form->field($searchModel, $attribute)->textInput($options)->label(false);
                     break;
                 case self::DROPDOWN_FIELD_TYPE:
@@ -325,7 +335,7 @@ class HtmlBuilder
             }
         }
         $result .= self::filterButton($resetUrl) . '</div>
-            </div>';
+        </div>';
         return $result;
     }
 

@@ -11,7 +11,7 @@ $this->title = 'Отчеты по готовым формам';
 
 <h3>Отчеты по готовым формам</h3>
 
-<?= Html::a("Эффективный контракт", Url::to(['report-form/effective-contract']), ['class'=>'btn btn-success']); ?>
+<?= Html::a("Эффективный контракт", Url::to(['effective-contract']), ['class'=>'btn btn-success']); ?>
 
 <?= Html::a("Отчет 1-ДОП", Url::to(['report-form/do-dop-1']), ['class'=>'btn btn-success']); ?>
 

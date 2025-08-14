@@ -3,10 +3,12 @@
 namespace backend\services\report;
 
 use backend\forms\report\DodForm;
+use backend\forms\report\ECForm;
 use backend\forms\report\ForeignEventReportForm;
 use backend\forms\report\ManHoursReportForm;
 use backend\forms\report\SAForm;
 use backend\services\report\form\DodReportService;
+use backend\services\report\form\EffectiveContractReportService;
 use backend\services\report\form\StateAssignmentReportService;
 use backend\services\report\interfaces\ForeignEventServiceInterface;
 use backend\services\report\interfaces\ManHoursServiceInterface;
@@ -110,7 +112,15 @@ class ReportFacade
     {
         $result = [];
         $result['section31'] = $service->fillSection31($form->startDate, $form->endDate);
-        $result['section32'] = $service->fillSection32($form->startDate, $form->endDate, $form->type);
+        $result['section32'] = $service->fillSection32($form->startDate, $form->endDate, $form->budget);
+
+        return $result;
+    }
+    public static function generateEC(ECForm $form, EffectiveContractReportService $service)
+    {
+        $result = [];
+        $result['sectionDod'] = $service->fillDodSection($form->startDate, $form->endDate, $form->budget);
+        $result['sectionParticipant'] = $service->fillParticipantSection($form->startDate, $form->endDate, $form->budget);
 
         return $result;
     }

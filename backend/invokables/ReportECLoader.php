@@ -53,7 +53,14 @@ class ReportECLoader
     {
         $counter = 0;
         foreach ($data['participants'] as $item) {
-            $inputData->getSheet(2)->setCellValue('B' . (5 + $counter++), $item->participantWork->getFullFio());
+            $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $item->participantWork->getFullFio());
+            $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($item->actParticipantWork->foreignEventWork->level));
+            $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $item->actParticipantWork->foreignEventWork->name);
+            $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $item->actParticipantWork->nomination);
+            $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $item->actParticipantWork->getTypeParticipant());
+            $inputData->getSheet(2)->setCellValue('G' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->getPrettyType());
+            $inputData->getSheet(2)->setCellValue('H' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->achievement);
+            $counter++;
         }
     }
 }

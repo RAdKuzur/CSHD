@@ -86,7 +86,7 @@ class FormReportController extends Controller
         if($model->load(Yii::$app->request->post()) && $model->validate()){
             $loader = new ReportECLoader(
                 'report_EC.xlsx',
-                'SA_report_' .
+                'EC_report_' .
                 DateFormatter::format(date('Y-m-d'), DateFormatter::Ymd_dash, DateFormatter::Ymd_without_separator)
                 . '.xlsx',
                 ReportFacade::generateEC($model, $this->effectiveContractReportService)

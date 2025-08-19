@@ -60,6 +60,9 @@ class ReportECLoader
             $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $item->actParticipantWork->getTypeParticipant());
             $inputData->getSheet(2)->setCellValue('G' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->getPrettyType());
             $inputData->getSheet(2)->setCellValue('H' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->achievement);
+            $inputData->getSheet(2)->setCellValue('I' . (5 + $counter), '');
+            $inputData->getSheet(2)->setCellValue('J' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->cert_number);
+            $inputData->getSheet(2)->setCellValue('K' . (5 + $counter), $item->actParticipantWork->foreignEventWork->end_date);
             $counter++;
         }
     }

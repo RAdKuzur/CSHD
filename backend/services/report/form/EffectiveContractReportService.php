@@ -67,7 +67,7 @@ class EffectiveContractReportService
     {
         $groupsQuery = $this->groupBuilder->query();
         $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate, self::CALCULATE_TYPES);
-        $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, [$type]);
+        $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, $type);
         $groups = $this->groupRepository->findAll($groupsQuery);
 
         $participants = $this->participantBuilder->query();
@@ -105,7 +105,7 @@ class EffectiveContractReportService
     public function fillParticipantSection($startDate, $endDate, $type){
         $groupsQuery = $this->groupBuilder->query();
         $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate, self::CALCULATE_TYPES);
-        $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, [$type]);
+        $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, $type);
         $groups = $this->groupRepository->findAll($groupsQuery);
 
         $participants = $this->participantBuilder->query();

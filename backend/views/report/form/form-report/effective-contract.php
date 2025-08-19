@@ -37,9 +37,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'changeYear' => true,
             'yearRange' => '2000:2100',
         ]])->label('По') ?>
-    <?= $form->field($model, 'budget')->dropDownList([
-        0 => 'Внебюджетная',
-        1 => 'Бюджетная'
-    ])->label('Основа');?>
+        <?= $form->field($model, 'budget')->checkboxList([
+            0 => 'Внебюджетная',
+            1 => 'Бюджетная'
+        ])->label('Основа'); ?>
 <?= Html::submitButton('Составить отчёт', ['class' => 'btn btn-primary']) ?>
 <?php ActiveForm::end();?>

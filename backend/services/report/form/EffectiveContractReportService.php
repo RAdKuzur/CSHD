@@ -30,7 +30,7 @@ class EffectiveContractReportService
 {
     const CALCULATE_TYPES = [
         ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_IN,
-        ManHoursReportForm::PARTICIPANT_START_IN_FINISH_AFTER,
+        //ManHoursReportForm::PARTICIPANT_START_IN_FINISH_AFTER,
         ManHoursReportForm::PARTICIPANT_START_IN_FINISH_IN,
         ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_AFTER
     ];
@@ -72,8 +72,8 @@ class EffectiveContractReportService
 
         $participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
-        $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
-
+        //$participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
+        $participantsAllUnic = $participants;
 
         $events = $this->repository->getByDatesAndLevels($startDate, $endDate, self::EVENT_LEVELS);
 

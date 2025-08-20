@@ -9,7 +9,10 @@ use backend\forms\report\ManHoursReportForm;
 use backend\services\report\DebugReportService;
 use backend\services\report\ReportFacade;
 use backend\services\report\ReportForeignEventService;
+use common\components\dictionaries\base\AllowRemoteDictionary;
+use common\components\dictionaries\base\BranchDictionary;
 use common\components\dictionaries\base\EventLevelDictionary;
+use common\components\dictionaries\base\FocusDictionary;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\act_participant\SquadParticipantRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
@@ -19,6 +22,7 @@ use common\repositories\event\ParticipantAchievementRepository;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\services\act_participant\ActParticipantService;
+use Mpdf\Tag\A;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -78,6 +82,18 @@ class EffectiveContractReportService
         $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
+
+        $actsQuery = $this->builder->filterByBranches($actsQuery, [
+            BranchDictionary::TECHNOPARK, BranchDictionary::COD, BranchDictionary::MOBILE_QUANTUM, BranchDictionary::QUANTORIUM, BranchDictionary::CDNTT
+        ]);
+        $actsQuery = $this->builder->filterByFocuses($actsQuery,
+        [
+            FocusDictionary::TECHNICAL, FocusDictionary::ART, FocusDictionary::SOCIAL, FocusDictionary::SCIENCE, FocusDictionary::SPORT
+        ]);
+        $actsQuery = $this->builder->filterByAllowRemote($actsQuery, [
+            AllowRemoteDictionary::ONLY_PERSONAL, AllowRemoteDictionary::PERSONAL_WITH_REMOTE
+        ]);
+
         $result = [];
         $tempSumPart = 0;
         $tempSumAchieve = 0;

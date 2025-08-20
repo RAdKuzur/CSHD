@@ -78,7 +78,6 @@ class EffectiveContractReportService
         $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
-        $actsQuery = $this->builder->joinWith($actsQuery, 'squadParticipantWork');
         $result = [];
         $tempSumPart = 0;
         $tempSumAchieve = 0;

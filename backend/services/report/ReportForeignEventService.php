@@ -47,6 +47,7 @@ class ReportForeignEventService implements ForeignEventServiceInterface
         $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
+        $actsQuery = $this->builder->joinWith($actsQuery, 'squadParticipantWork');
         $actsQuery = $this->builder->filterByBranches($actsQuery, $branches);
         $actsQuery = $this->builder->filterByFocuses($actsQuery, $focuses);
         $actsQuery = $this->builder->filterByAllowRemote($actsQuery, $allowRemotes);

@@ -272,7 +272,7 @@ class ForeignEventForm extends Model
             return
                 $item->getPrettyType() . ': ' .
                 $item->actParticipantWork->getFormattedLinkedParticipants() . ' [' .
-                $item->actParticipantWork->getBranches() . '] — ' .
+                implode(', ', $item->actParticipantWork->getBranches()) . '] — ' .
                 $item->achievement;
         }, $this->oldAchievementsModel);
 

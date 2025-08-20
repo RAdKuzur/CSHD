@@ -176,7 +176,7 @@ class ForeignEventForm extends Model
         return HtmlBuilder::createTableWithActionButtons(
             [
                 array_merge(['Участник'], ArrayHelper::getColumn($squads, 'participantWork.surnameInitials')),
-                array_merge(['Отдел(-ы)'], ArrayHelper::getColumn($squads, 'participantWork.surnameInitials')),
+                array_merge(['Отдел(-ы)'], ArrayHelper::getColumn($squads, 'participantWork.branchName')),
                 array_merge(['Педагог'], ArrayHelper::getColumn($squads, 'actParticipantWork.teachers')),
                 array_merge(['Направленность'], ArrayHelper::getColumn($squads, 'actParticipantWork.focusName')),
                 array_merge(['Номинация'], ArrayHelper::getColumn($squads, 'actParticipantWork.nomination')),

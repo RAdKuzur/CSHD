@@ -125,8 +125,10 @@ class EffectiveContractReportService
             $data = array_merge($data, $winnerParticipants);
         }
         array_filter($data);
-        $participants = array_filter($data, function($participant) use ($participantsAllUnic){
-            return in_array($participant->participant_id, ArrayHelper::getColumn($participantsAllUnic->all(), 'participant_id'));
+        $unicIds = ArrayHelper::getColumn($participantsAllUnic->all(), 'participant_id');
+        $unicIdsMap = array_flip($unicIds);
+        $participants = array_filter($data, function($participant) use ($unicIdsMap) {
+            return isset($unicIdsMap[$participant->participant_id]);
         });
         return [
             'participants' =>  $participants

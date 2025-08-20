@@ -18,14 +18,21 @@ class ReportECLoader
     private string $templatePath;
     private string $filename;
     private array $data;
+    private string $endDate; // новое свойство
+
     public function __construct(
-        $templatePath, $filename, $data
+        $templatePath,
+        $filename,
+        $data,
+        string $endDate // добавляем параметр
     )
     {
         $this->templatePath = $templatePath;
         $this->filename = $filename;
         $this->data = $data;
+        $this->endDate = $endDate;
     }
+
     public function __invoke()
     {
         $inputData = IOFactory::load(Yii::$app->basePath . FilePaths::REPORT_TEMPLATES . $this->templatePath);
@@ -37,9 +44,15 @@ class ReportECLoader
         $writer->save('php://output');
         exit;
     }
+
     public function setDodSection(Spreadsheet $inputData, array $data)
     {
-        $inputData->getSheet(1)->setCellValue('D4', 'на ' . DateFormatter::format(date('Y-m-d'), DateFormatter::Ymd_dash, DateFormatter::dmY_dot) . ' г.');
+        // заменяем date('Y-m-d') на $this->endDate
+        $inputData->getSheet(1)->setCellValue(
+            'D4',
+            'на ' . DateFormatter::format($this->endDate, DateFormatter::Ymd_dash, DateFormatter::dmY_dot) . ' г.'
+        );
+
         $inputData->getSheet(1)->setCellValue('D5', $data['totalCount']);
         $inputData->getSheet(1)->setCellValue('D6', $data['result'][EventLevelDictionary::INTERNATIONAL]['prizes']);
         $inputData->getSheet(1)->setCellValue('D7', $data['result'][EventLevelDictionary::INTERNATIONAL]['winners']);

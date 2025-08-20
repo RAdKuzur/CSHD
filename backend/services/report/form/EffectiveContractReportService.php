@@ -30,9 +30,9 @@ class EffectiveContractReportService
 {
     const CALCULATE_TYPES = [
         ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_IN,
-        //ManHoursReportForm::PARTICIPANT_START_IN_FINISH_AFTER,
-        ManHoursReportForm::PARTICIPANT_START_IN_FINISH_IN
-        //ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_AFTER
+        ManHoursReportForm::PARTICIPANT_START_IN_FINISH_AFTER,
+        ManHoursReportForm::PARTICIPANT_START_IN_FINISH_IN,
+        ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_AFTER
     ];
     const EVENT_LEVELS = [
         EventLevelDictionary::REGIONAL,
@@ -72,8 +72,8 @@ class EffectiveContractReportService
 
         $participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
-        //$participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
-        $participantsAllUnic = $participants;
+        $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
+
 
         $events = $this->repository->getByDatesAndLevels($startDate, $endDate, self::EVENT_LEVELS);
 
@@ -130,7 +130,7 @@ class EffectiveContractReportService
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
 
-        $events = $this->repository->getByDatesAndLevels($startDate, $endDate, self::EVENT_LEVELS);
+        $events = $this->repository->getByDatesAndLevelsEndDate($startDate, $endDate, self::EVENT_LEVELS);
         $actsQuery = $this->builder->query();
         $actsQuery = $this->builder->filterByEvents($actsQuery, ArrayHelper::getColumn($events, 'id'));
         $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');

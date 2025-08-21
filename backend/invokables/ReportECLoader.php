@@ -68,7 +68,7 @@ class ReportECLoader
         foreach ($data as $participants) {
             foreach ($participants['participantsWinner'] as $participant) {
                 foreach ($participant->squadParticipantWork as $person) {
-                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getFullFio());
+                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
                     $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($person->actParticipantWork->foreignEventWork->level));
                     $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
                     $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);
@@ -83,7 +83,7 @@ class ReportECLoader
             }
             foreach ($participants['participantsPrize'] as $participant) {
                 foreach ($participant->squadParticipantWork as $person) {
-                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getFullFio());
+                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
                     $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($person->actParticipantWork->foreignEventWork->level));
                     $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
                     $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);

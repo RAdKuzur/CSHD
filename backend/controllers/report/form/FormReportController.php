@@ -84,13 +84,15 @@ class FormReportController extends Controller
     public function actionEffectiveContract(){
         $model = new ECForm();
         if($model->load(Yii::$app->request->post()) && $model->validate()){
+
             $loader = new ReportECLoader(
                 'report_EC.xlsx',
-                'EC_report_' .
-                DateFormatter::format(date('Y-m-d'), DateFormatter::Ymd_dash, DateFormatter::Ymd_without_separator)
-                . '.xlsx',
-                ReportFacade::generateEC($model, $this->effectiveContractReportService)
+                'Эффективный_контракт_отчет_на_' . $model->endDate . '.xlsx', // можно вставить в имя файла
+                ReportFacade::generateEC($model, $this->effectiveContractReportService),
+                $model->endDate // передаём дату в класс
             );
+
+
             $loader();
         }
         return $this->render('effective-contract', [

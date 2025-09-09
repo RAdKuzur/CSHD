@@ -35,7 +35,6 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="man-hours-report-form" style="margin-top: 0.5em">
     <div style="display:flex; align-items: center">
         <h1 style="margin-right: 0.5em">Отчет по УЧЕТУ ДОСТИЖЕНИЙ в мероприятиях</h1>
-        <?= HtmlBuilder::createTooltipIcon('Отчет генерируется не по мероприятиям РШТ, а по внешним мероприятиям (те, в которых участвуют наши обучающиеся)') ?>
     </div>
     <h5><b>Введите период для генерации отчета</b></h5>
     <div class="col-xs-6 block-report">

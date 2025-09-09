@@ -47,6 +47,21 @@ class ForeignEventRepository
         return $query->all();
     }
 
+    public function getByDatesAndLevelsEndDate(string $startDate, string $endDate, array $levels = [])
+    {
+        $query = ForeignEventWork::find()
+            ->where(['>=', 'end_date', $startDate])
+            ->andWhere(['<=', 'end_date', $endDate]);
+
+        if (!empty($levels)) {
+            $query = $query->andWhere(['IN', 'level', $levels]);
+        }
+
+        return $query->all();
+    }
+
+
+
     public function delete($id)
     {
         return ForeignEventWork::deleteAll(['id' => $id]);

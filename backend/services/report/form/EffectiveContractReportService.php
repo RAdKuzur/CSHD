@@ -6,7 +6,13 @@ use backend\builders\GroupParticipantReportBuilder;
 use backend\builders\ParticipantReportBuilder;
 use backend\builders\TrainingGroupReportBuilder;
 use backend\forms\report\ManHoursReportForm;
+use backend\services\report\DebugReportService;
+use backend\services\report\ReportFacade;
+use backend\services\report\ReportForeignEventService;
+use common\components\dictionaries\base\AllowRemoteDictionary;
+use common\components\dictionaries\base\BranchDictionary;
 use common\components\dictionaries\base\EventLevelDictionary;
+use common\components\dictionaries\base\FocusDictionary;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\act_participant\SquadParticipantRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
@@ -16,6 +22,8 @@ use common\repositories\event\ParticipantAchievementRepository;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\services\act_participant\ActParticipantService;
+use Mpdf\Tag\A;
+use Yii;
 use yii\helpers\ArrayHelper;
 
 class EffectiveContractReportService
@@ -31,38 +39,30 @@ class EffectiveContractReportService
         EventLevelDictionary::FEDERAL,
         EventLevelDictionary::INTERNATIONAL,
     ];
+
+    private ForeignEventRepository $repository;
+    private ParticipantReportBuilder $builder;
+    private ActParticipantRepository $actRepository;
     private TrainingGroupReportBuilder $groupBuilder;
     private TrainingGroupRepository $groupRepository;
     private GroupParticipantReportBuilder $participantBuilder;
-    private ForeignEventRepository $foreignEventRepository;
-    private ActParticipantRepository $actParticipantRepository;
-    private SquadParticipantRepository $squadParticipantRepository;
-    private ParticipantReportBuilder $eventParticipantBuilder;
-    private ParticipantAchievementRepository $participantAchievementRepository;
-    private TrainingGroupParticipantRepository $trainingGroupParticipantRepository;
+
     public function __construct(
+        ForeignEventRepository   $repository,
+        ParticipantReportBuilder $builder,
+        ActParticipantRepository $actRepository,
         TrainingGroupReportBuilder $groupBuilder,
         TrainingGroupRepository $groupRepository,
-        GroupParticipantReportBuilder $participantBuilder,
-        ForeignEventRepository $foreignEventRepository,
-        ActParticipantRepository $actParticipantRepository,
-        SquadParticipantRepository $squadParticipantRepository,
-        ParticipantReportBuilder $eventParticipantBuilder,
-        ParticipantAchievementRepository $participantAchievementRepository,
-        TrainingGroupParticipantRepository $trainingGroupParticipantRepository
+        GroupParticipantReportBuilder $participantBuilder
     )
     {
+        $this->repository = $repository;
+        $this->builder = $builder;
+        $this->actRepository = $actRepository;
         $this->groupBuilder = $groupBuilder;
         $this->groupRepository = $groupRepository;
         $this->participantBuilder = $participantBuilder;
-        $this->foreignEventRepository = $foreignEventRepository;
-        $this->actParticipantRepository = $actParticipantRepository;
-        $this->squadParticipantRepository = $squadParticipantRepository;
-        $this->eventParticipantBuilder = $eventParticipantBuilder;
-        $this->participantAchievementRepository = $participantAchievementRepository;
-        $this->trainingGroupParticipantRepository = $trainingGroupParticipantRepository;
     }
-
     public function fillDodSection($startDate, $endDate, $type)
     {
         $groupsQuery = $this->groupBuilder->query();
@@ -73,33 +73,51 @@ class EffectiveContractReportService
         $participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
-        $data = [];
-        foreach (self::EVENT_LEVELS as $level) {
-            $events = $this->foreignEventRepository->getByDatesAndLevels(
-                $startDate, $endDate,
-                [$level]
-            );
-            $eventParticipants = $this->eventParticipantBuilder->query();
-            $eventParticipants = $this->eventParticipantBuilder->filterByEvents($eventParticipants, ArrayHelper::getColumn($events, 'id'));
-            $achievementActs = $this->participantAchievementRepository->getByActIds(ArrayHelper::getColumn($eventParticipants->all(), 'id'), [ParticipantAchievementWork::TYPE_WINNER]);
-            $actWinners = $this->actParticipantRepository->getByIds(ArrayHelper::getColumn($achievementActs, 'act_participant_id'));
-            $winnerParticipants = $this->squadParticipantRepository->getByActIds(ArrayHelper::getColumn($actWinners, 'id'));
 
-            $achievementActs = $this->participantAchievementRepository->getByActIds(ArrayHelper::getColumn($eventParticipants->all(), 'id'), [ParticipantAchievementWork::TYPE_PRIZE]);
-            $actPrize = $this->actParticipantRepository->getByIds(ArrayHelper::getColumn($achievementActs, 'act_participant_id'));
-            $prizeParticipants = $this->squadParticipantRepository->getByActIds(ArrayHelper::getColumn($actPrize , 'id'));
-            $data[$level] = [
-                ParticipantAchievementWork::TYPE_PRIZE => count(array_intersect(array_unique(ArrayHelper::getColumn($prizeParticipants, 'participant_id')), ArrayHelper::getColumn($participantsAllUnic->all(), 'participant_id'))),
-                ParticipantAchievementWork::TYPE_WINNER => count(array_intersect(array_unique(ArrayHelper::getColumn($winnerParticipants, 'participant_id')),ArrayHelper::getColumn($participantsAllUnic->all(), 'participant_id'))),
+
+        $events = $this->repository->getByDatesAndLevels($startDate, $endDate, self::EVENT_LEVELS);
+
+        $actsQuery = $this->builder->query();
+        $actsQuery = $this->builder->filterByEvents($actsQuery, ArrayHelper::getColumn($events, 'id'));
+        $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');
+        $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
+        $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
+
+        $actsQuery = $this->builder->filterByBranches($actsQuery, [
+            BranchDictionary::TECHNOPARK, BranchDictionary::COD, BranchDictionary::MOBILE_QUANTUM, BranchDictionary::QUANTORIUM, BranchDictionary::CDNTT
+        ]);
+        $actsQuery = $this->builder->filterByFocuses($actsQuery,
+        [
+            FocusDictionary::TECHNICAL, FocusDictionary::ART, FocusDictionary::SOCIAL, FocusDictionary::SCIENCE, FocusDictionary::SPORT
+        ]);
+        $actsQuery = $this->builder->filterByAllowRemote($actsQuery, [
+            AllowRemoteDictionary::ONLY_PERSONAL, AllowRemoteDictionary::PERSONAL_WITH_REMOTE
+        ]);
+
+        $result = [];
+        $tempSumPart = 0;
+        $tempSumAchieve = 0;
+        foreach (self::EVENT_LEVELS as $level) {
+            $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, [$level]);
+            $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
+            $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
+            $result[$level] = [
+                'participant' => count($this->actRepository->findAll($participantQuery)),
+                'winners' => count($this->actRepository->findAll($winQuery)),
+                'prizes' => count($this->actRepository->findAll($prizeQuery)),
             ];
+
+            if (in_array($level, Yii::$app->eventLevel->getReportLevels())) {
+                $tempSumPart += count($this->actRepository->findAll($participantQuery));
+                $tempSumAchieve +=
+                    count($this->actRepository->findAll($winQuery)) +
+                    count($this->actRepository->findAll($prizeQuery));
+            }
         }
+        $result['percent'] = $tempSumPart != 0 ? round($tempSumAchieve / $tempSumPart, 2) : 0;
         return [
-            'reportData' => [
-                'totalCount' => $participantsAllUnic->count(),
-                EventLevelDictionary::REGIONAL => $data[EventLevelDictionary::REGIONAL],
-                EventLevelDictionary::FEDERAL => $data[EventLevelDictionary::FEDERAL],
-                EventLevelDictionary::INTERNATIONAL => $data[EventLevelDictionary::INTERNATIONAL],
-            ]
+            'result' => $result,
+            'totalCount' => count($participantsAllUnic->all()),
         ];
     }
     public function fillParticipantSection($startDate, $endDate, $type){
@@ -111,26 +129,35 @@ class EffectiveContractReportService
         $participants = $this->participantBuilder->query();
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
-        $data = [];
-        foreach (self::EVENT_LEVELS as $level) {
-            $events = $this->foreignEventRepository->getByDatesAndLevels(
-                $startDate, $endDate,
-                [$level]
-            );
-            $eventParticipants = $this->eventParticipantBuilder->query();
-            $eventParticipants = $this->eventParticipantBuilder->filterByEvents($eventParticipants, ArrayHelper::getColumn($events, 'id'));
-            $achievementActs = $this->participantAchievementRepository->getByActIds(ArrayHelper::getColumn($eventParticipants->all(), 'id'), [ParticipantAchievementWork::TYPE_WINNER, ParticipantAchievementWork::TYPE_PRIZE]);
-            $actWinners = $this->actParticipantRepository->getByIds(ArrayHelper::getColumn($achievementActs, 'act_participant_id'));
-            $winnerParticipants = $this->squadParticipantRepository->getByActIds(ArrayHelper::getColumn($actWinners, 'id'));
-            $data = array_merge($data, $winnerParticipants);
-        }
-        array_filter($data);
-        $participants = array_filter($data, function($participant) use ($participantsAllUnic){
-            return in_array($participant->participant_id, ArrayHelper::getColumn($participantsAllUnic->all(), 'participant_id'));
-        });
-        return [
-            'participants' =>  $participants
-        ];
 
+        $events = $this->repository->getByDatesAndLevelsEndDate($startDate, $endDate, self::EVENT_LEVELS);
+        $actsQuery = $this->builder->query();
+        $actsQuery = $this->builder->filterByEvents($actsQuery, ArrayHelper::getColumn($events, 'id'));
+        $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');
+        $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
+        $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
+        $result = [];
+        $tempSumPart = 0;
+        $tempSumAchieve = 0;
+        foreach (self::EVENT_LEVELS as $level) {
+            $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, [$level]);
+            $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
+            $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
+            $result['levels'][$level] = [
+                'participantsWinner' => $this->actRepository->findAll($winQuery),
+                'participantsPrize' => $this->actRepository->findAll($prizeQuery),
+            ];
+
+            if (in_array($level, Yii::$app->eventLevel->getReportLevels())) {
+                $tempSumPart += count($this->actRepository->findAll($participantQuery));
+                $tempSumAchieve +=
+                    count($this->actRepository->findAll($winQuery)) +
+                    count($this->actRepository->findAll($prizeQuery));
+            }
+        }
+        $result['percent'] = $tempSumPart != 0 ? round($tempSumAchieve / $tempSumPart, 2) : 0;
+        return [
+            'result' => $result,
+        ];
     }
 }

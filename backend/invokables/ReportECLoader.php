@@ -18,14 +18,21 @@ class ReportECLoader
     private string $templatePath;
     private string $filename;
     private array $data;
+    private string $endDate; // новое свойство
+
     public function __construct(
-        $templatePath, $filename, $data
+        $templatePath,
+        $filename,
+        $data,
+        string $endDate // добавляем параметр
     )
     {
         $this->templatePath = $templatePath;
         $this->filename = $filename;
         $this->data = $data;
+        $this->endDate = $endDate;
     }
+
     public function __invoke()
     {
         $inputData = IOFactory::load(Yii::$app->basePath . FilePaths::REPORT_TEMPLATES . $this->templatePath);
@@ -37,33 +44,58 @@ class ReportECLoader
         $writer->save('php://output');
         exit;
     }
+
     public function setDodSection(Spreadsheet $inputData, array $data)
     {
-        //var_dump($data);
-        $inputData->getSheet(1)->setCellValue('D4', 'на ' . DateFormatter::format(date('Y-m-d'), DateFormatter::Ymd_dash, DateFormatter::dmY_dot) . ' г.');
-        $inputData->getSheet(1)->setCellValue('D5', $data['reportData']['totalCount']);
-        $inputData->getSheet(1)->setCellValue('D6', $data['reportData'][EventLevelDictionary::INTERNATIONAL][ParticipantAchievementWork::TYPE_PRIZE]);
-        $inputData->getSheet(1)->setCellValue('D7', $data['reportData'][EventLevelDictionary::INTERNATIONAL][ParticipantAchievementWork::TYPE_WINNER]);
-        $inputData->getSheet(1)->setCellValue('D8', $data['reportData'][EventLevelDictionary::FEDERAL][ParticipantAchievementWork::TYPE_PRIZE]);
-        $inputData->getSheet(1)->setCellValue('D9', $data['reportData'][EventLevelDictionary::FEDERAL][ParticipantAchievementWork::TYPE_WINNER]);
-        $inputData->getSheet(1)->setCellValue('D10', $data['reportData'][EventLevelDictionary::REGIONAL][ParticipantAchievementWork::TYPE_PRIZE]);
-        $inputData->getSheet(1)->setCellValue('D11', $data['reportData'][EventLevelDictionary::REGIONAL][ParticipantAchievementWork::TYPE_WINNER]);
+        // заменяем date('Y-m-d') на $this->endDate
+        $inputData->getSheet(1)->setCellValue(
+            'D4',
+            'на ' . DateFormatter::format($this->endDate, DateFormatter::Ymd_dash, DateFormatter::dmY_dot) . ' г.'
+        );
+
+        $inputData->getSheet(1)->setCellValue('D5', $data['totalCount']);
+        $inputData->getSheet(1)->setCellValue('D6', $data['result'][EventLevelDictionary::INTERNATIONAL]['prizes']);
+        $inputData->getSheet(1)->setCellValue('D7', $data['result'][EventLevelDictionary::INTERNATIONAL]['winners']);
+        $inputData->getSheet(1)->setCellValue('D8', $data['result'][EventLevelDictionary::FEDERAL]['prizes']);
+        $inputData->getSheet(1)->setCellValue('D9', $data['result'][EventLevelDictionary::FEDERAL]['winners']);
+        $inputData->getSheet(1)->setCellValue('D10', $data['result'][EventLevelDictionary::REGIONAL]['prizes']);
+        $inputData->getSheet(1)->setCellValue('D11', $data['result'][EventLevelDictionary::REGIONAL]['winners']);
     }
     public function setParticipantSection(Spreadsheet $inputData, array $data)
     {
         $counter = 0;
-        foreach ($data['participants'] as $item) {
-            $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $item->participantWork->getFullFio());
-            $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($item->actParticipantWork->foreignEventWork->level));
-            $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $item->actParticipantWork->foreignEventWork->name);
-            $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $item->actParticipantWork->nomination);
-            $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $item->actParticipantWork->getTypeParticipant());
-            $inputData->getSheet(2)->setCellValue('G' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->getPrettyType());
-            $inputData->getSheet(2)->setCellValue('H' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->achievement);
-            $inputData->getSheet(2)->setCellValue('I' . (5 + $counter), '');
-            $inputData->getSheet(2)->setCellValue('J' . (5 + $counter), $item->actParticipantWork->participantAchievementWork[0]->cert_number);
-            $inputData->getSheet(2)->setCellValue('K' . (5 + $counter), $item->actParticipantWork->foreignEventWork->end_date);
-            $counter++;
+        $data = $data['result']['levels'];
+        foreach ($data as $participants) {
+            foreach ($participants['participantsWinner'] as $participant) {
+                foreach ($participant->squadParticipantWork as $person) {
+                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
+                    $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($person->actParticipantWork->foreignEventWork->level));
+                    $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
+                    $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);
+                    $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $person->actParticipantWork->getTypeParticipant());
+                    $inputData->getSheet(2)->setCellValue('G' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->getPrettyType());
+                    $inputData->getSheet(2)->setCellValue('H' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->achievement);
+                    $inputData->getSheet(2)->setCellValue('I' . (5 + $counter), '');
+                    $inputData->getSheet(2)->setCellValue('J' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->cert_number);
+                    $inputData->getSheet(2)->setCellValue('K' . (5 + $counter), $person->actParticipantWork->foreignEventWork->end_date);
+                    $counter++;
+                }
+            }
+            foreach ($participants['participantsPrize'] as $participant) {
+                foreach ($participant->squadParticipantWork as $person) {
+                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
+                    $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($person->actParticipantWork->foreignEventWork->level));
+                    $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
+                    $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);
+                    $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $person->actParticipantWork->getTypeParticipant());
+                    $inputData->getSheet(2)->setCellValue('G' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->getPrettyType());
+                    $inputData->getSheet(2)->setCellValue('H' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->achievement);
+                    $inputData->getSheet(2)->setCellValue('I' . (5 + $counter), '');
+                    $inputData->getSheet(2)->setCellValue('J' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->cert_number);
+                    $inputData->getSheet(2)->setCellValue('K' . (5 + $counter), $person->actParticipantWork->foreignEventWork->end_date);
+                    $counter++;
+                }
+            }
         }
     }
 }

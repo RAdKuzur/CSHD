@@ -200,7 +200,8 @@ class RulesConfig
                 'delete-people',
                 'act-delete',
                 'generate-order',
-                'delete'
+                'delete',
+                'participants-list'
             ]
         ],
 

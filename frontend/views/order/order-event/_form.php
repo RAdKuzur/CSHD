@@ -6,6 +6,7 @@ use kartik\select2\Select2;
 use kidzen\dynamicform\DynamicFormWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\jui\DatePicker;
 use yii\widgets\DetailView;
@@ -702,14 +703,37 @@ use yii\widgets\DetailView;
 
                                     <div class=" team-dropdown-list">
                                         <?= $form->field($modelAct, "[{$i}]participant")->widget(Select2::class, [
-                                            'data' => ArrayHelper::map($participants,'id','fullFio'),
                                             'size' => Select2::LARGE,
                                             'options' => [
-                                                'prompt' => 'Выберите участника' ,
+                                                'prompt' => 'Выберите участника',
                                                 'multiple' => true
                                             ],
                                             'pluginOptions' => [
-                                                'allowClear' => true
+                                                'allowClear' => true,
+                                                'minimumInputLength' => 2, // Минимум 2 символа для начала поиска
+                                                'ajax' => [
+                                                    'url' => Url::to(['order/order-event/participants-list']), // URL для AJAX-запросов
+                                                    'dataType' => 'json',
+                                                    'data' => new \yii\web\JsExpression('function(params) { 
+                                                        return { q: params.term, page: params.page || 1 }; 
+                                                    }'),
+                                                                                            'processResults' => new \yii\web\JsExpression('function(data, params) {
+                                                        params.page = params.page || 1;
+                                                        return {
+                                                            results: data.items,
+                                                            pagination: {
+                                                                more: (params.page * 30) < data.total_count
+                                                            }
+                                                        };
+                                                    }'),
+                                                                                        ],
+                                                                                        'escapeMarkup' => new \yii\web\JsExpression('function (markup) { return markup; }'),
+                                                                                        'templateResult' => new \yii\web\JsExpression('function(participant) { 
+                                                    return participant.text; 
+                                                }'),
+                                                                                        'templateSelection' => new \yii\web\JsExpression('function(participant) { 
+                                                    return participant.text; 
+                                                }'),
                                             ],
                                         ])->label('ФИО участников'); ?>
                                         <?php

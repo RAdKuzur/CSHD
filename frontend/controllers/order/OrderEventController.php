@@ -25,6 +25,7 @@ use common\repositories\order\DocumentOrderRepository;
 use common\repositories\order\OrderEventGenerateRepository;
 use frontend\events\general\FileDeleteEvent;
 use frontend\invokables\OrderLoader;
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\models\work\general\FilesWork;
@@ -549,6 +550,43 @@ class OrderEventController extends DocumentController
         "Приказ №" . $model->getFullNumber() . ' ' . preg_replace('/[^\w\-]/u', '_', mb_substr($model->order_name, 0, 35))
         );
         $loader();
+    }
+    public function actionParticipantsList($q = null, $page = 1)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $perPage = 30;
+        $offset = ($page - 1) * $perPage;
+
+        $query = ForeignEventParticipantsWork::find()
+            ->select(['id', 'CONCAT(surname, " ", firstname, " ", patronymic) AS fullFio'])
+            ->where(['or',
+                ['like', 'surname', $q],
+                ['like', 'firstname', $q],
+                ['like', 'patronymic', $q]
+            ])
+            ->orderBy('surname, firstname');
+
+        $totalCount = $query->count();
+
+        $participants = $query
+            ->offset($offset)
+            ->limit($perPage)
+            ->asArray()
+            ->all();
+
+        $results = [];
+        foreach ($participants as $participant) {
+            $results[] = [
+                'id' => $participant['id'],
+                'text' => $participant['fullFio']
+            ];
+        }
+
+        return [
+            'items' => $results,
+            'total_count' => $totalCount
+        ];
     }
     public function beforeAction($action)
     {

@@ -570,16 +570,20 @@ class TrainingGroupController extends DocumentController
     public function actionDeleteLesson($groupId, $entityId)
     {
         /** @var TrainingGroupLessonWork $result */
+
+        $students = $this->trainingGroupRepository->getParticipants($groupId);
         $result = $this->lessonService->delete($entityId);
 
-        if ($result) {
+        if (!$result) {
+            Yii::$app->session->setFlash('danger', 'Ошибка удаления занятия');
+        } else {
+            foreach ($students as $student) {
+                $this->visitRepository->deleteLesson($entityId, $student->id);
+            }
             Yii::$app->session->setFlash('success', 'Занятие успешно удалено');
         }
-        else {
-            Yii::$app->session->setFlash('danger', 'Ошибка удаления занятия');
-        }
 
-        $result->releaseEvents();
+//        $result->releaseEvents();
         return $this->redirect(['schedule-form', 'id' => $groupId]);
     }
 

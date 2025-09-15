@@ -87,6 +87,8 @@ class UserWork extends User implements IdentityInterface
     }
     public function beforeSave($insert)
     {
+        $this->email = $this->username;
+
         if(!(Yii::$app instanceof yii\console\Application)) {
             if (Yii::$app->user->identity) {
                 if ($this->creator_id == null) {

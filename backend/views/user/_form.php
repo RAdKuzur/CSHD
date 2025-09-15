@@ -12,90 +12,115 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<style>
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-bottom: 25px;
-    }
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 25px;
+        }
 
-    .grid-item {
-        display: flex;
-        justify-content: left;
-        align-items: center;
-    }
+        .grid-item {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        }
 
-    .btn-template {
-        width: 420px;
-        height: 40px;
-    }
-</style>
+        .btn-template {
+            width: 420px;
+            height: 40px;
+        }
+    </style>
 
-<div class="user-form">
+    <div class="user-form">
 
-    <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
+        <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
 
-    <?= $form->field($model->entity, 'firstname')->textInput()->label('Имя') ?>
-    <?= $form->field($model->entity, 'surname')->textInput()->label('Фамилия') ?>
-    <?= $form->field($model->entity, 'patronymic')->textInput()->label('Отчество') ?>
-    <?= $form->field($model->entity, 'username')->textInput()->label('Логин') ?>
+        <?= $form->field($model->entity, 'firstname')->textInput()->label('Имя') ?>
+        <?= $form->field($model->entity, 'surname')->textInput()->label('Фамилия') ?>
+        <?= $form->field($model->entity, 'patronymic')->textInput()->label('Отчество') ?>
+        <?= $form->field($model->entity, 'username')->textInput()->label('Логин') ?>
 
-    <?php if (is_null($model->entity->password_hash)): ?>
-        <?= $form->field($model->entity, 'password_hash')->textInput()->label('Пароль'); ?>
-    <?php endif; ?>
+        <?php if (is_null($model->entity->password_hash)): ?>
+            <?= $form->field($model, 'password')->passwordInput()->label('Пароль'); ?>
+            <!--        --><?php //= $form->field($model->entity, 'password_hash')->textInput()->label('Пароль'); ?>
+        <?php endif; ?>
 
-    <?= $form->field($model->entity, 'aka')->widget(Select2::classname(), [
-        'data' => ArrayHelper::map($model->peoples, 'id', 'fullFio'),
-        'size' => Select2::LARGE,
-        'options' => ['prompt' => '---'],
-        'pluginOptions' => [
-            'allowClear' => true
-        ],
-    ])->label('Также является'); ?>
 
-    <hr>
-    <h5>Правила доступа</h5>
-    <div class="grid-container">
-        <div class="grid-item"><button id="button-teacher" class="btn btn-secondary btn-template">Шаблон <b>"Педагог"</b></button></div>
-        <div class="grid-item"><button class="btn btn-secondary btn-template" hidden></button></div>
-        <div class="grid-item"><button class="btn btn-secondary btn-template" hidden></button></div>
-        <div class="grid-item"><button id="button-study" class="btn btn-secondary btn-template">Шаблон <b>"Информатор по учебной деятельности"</b></button></div>
-        <div class="grid-item"><button id="button-event" class="btn btn-secondary btn-template">Шаблон <b>"Информатор по мероприятиям"</b></button></div>
-        <div class="grid-item"><button id="button-document" class="btn btn-secondary btn-template">Шаблон <b>"Информатор по документообороту"</b></button></div>
-        <div class="grid-item"><button id="button-branch-controller" class="btn btn-secondary btn-template">Шаблон <b>"Контролер в отделе"</b></button></div>
-        <div class="grid-item"><button id="button-super-controller" class="btn btn-secondary btn-template">Шаблон <b>"Суперконтролер"</b></button></div>
-        <div class="grid-item"><button id="button-admin" class="btn btn-secondary btn-template">Шаблон <b>"Администратор"</b></button></div>
-    </div>
+        <?= $form->field($model->entity, 'aka')->widget(Select2::classname(), [
+            'data' => ArrayHelper::map($model->peoples, 'id', 'fullFio'),
+            'size' => Select2::LARGE,
+            'options' => ['prompt' => '---'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ])->label('Также является'); ?>
 
-    <?= $form->field($model, 'userPermissions')->checkboxList(
-        ArrayHelper::map($model->permissions, 'id', 'name'),
-        [
-            'class' => 'base',
-            'item' => function ($index, $label, $name, $checked, $value) use ($model) {
-                if ($checked == 1) {
-                    $checked = 'checked';
-                }
-                return
-                    '<div class="checkbox" class="form-control">
-                            <label style="margin-bottom: 0px" for="permission-' . $model->permissions[$index]->short_code .'">
-                                <input id="permission-'. $model->permissions[$index]->short_code .'" name="'. $name .'" type="checkbox" '. $checked .' value="'. $value .'">
-                                '. $label .'
+        <hr>
+        <h5>Правила доступа</h5>
+        <div class="grid-container">
+            <div class="grid-item">
+                <button id="button-teacher" class="btn btn-secondary btn-template">Шаблон <b>"Педагог"</b></button>
+            </div>
+            <div class="grid-item">
+                <button class="btn btn-secondary btn-template" hidden></button>
+            </div>
+            <div class="grid-item">
+                <button class="btn btn-secondary btn-template" hidden></button>
+            </div>
+            <div class="grid-item">
+                <button id="button-study" class="btn btn-secondary btn-template">Шаблон <b>"Информатор по учебной
+                        деятельности"</b></button>
+            </div>
+            <div class="grid-item">
+                <button id="button-event" class="btn btn-secondary btn-template">Шаблон <b>"Информатор по
+                        мероприятиям"</b></button>
+            </div>
+            <div class="grid-item">
+                <button id="button-document" class="btn btn-secondary btn-template">Шаблон <b>"Информатор по
+                        документообороту"</b></button>
+            </div>
+            <div class="grid-item">
+                <button id="button-branch-controller" class="btn btn-secondary btn-template">Шаблон <b>"Контролер в
+                        отделе"</b></button>
+            </div>
+            <div class="grid-item">
+                <button id="button-super-controller" class="btn btn-secondary btn-template">Шаблон
+                    <b>"Суперконтролер"</b></button>
+            </div>
+            <div class="grid-item">
+                <button id="button-admin" class="btn btn-secondary btn-template">Шаблон <b>"Администратор"</b></button>
+            </div>
+        </div>
+
+        <?= $form->field($model, 'userPermissions')->checkboxList(
+            ArrayHelper::map($model->permissions, 'id', 'name'),
+            [
+                'class' => 'base',
+                'item' => function ($index, $label, $name, $checked, $value) use ($model) {
+                    if ($checked == 1) {
+                        $checked = 'checked';
+                    }
+                    return
+                        '<div class="checkbox" class="form-control">
+                            <label style="margin-bottom: 0px" for="permission-' . $model->permissions[$index]->short_code . '">
+                                <input id="permission-' . $model->permissions[$index]->short_code . '" name="' . $name . '" type="checkbox" ' . $checked . ' value="' . $value . '">
+                                ' . $label . '
                             </label>
                         </div>';
-            }
-        ]
-    )->label(false)
-    ?>
+                }
+            ]
+        )->label(false)
+        ?>
 
     </div>
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 
-    <?php ActiveForm::end(); ?>
+<?php ActiveForm::end(); ?>
 
-</div>
+    </div>
 
 
 <?php

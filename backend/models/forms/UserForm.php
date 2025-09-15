@@ -38,6 +38,8 @@ class UserForm extends Model
     public array $prevUserPermissions;
     public array $permissions;
 
+    public ?string $password = null;
+
     /**
      * @param UserWork $entity
      * @param PeopleWork[] $peoples
@@ -66,10 +68,10 @@ class UserForm extends Model
         $mainDataLoad = parent::load($data, $formName);
         if ($mainDataLoad) {
             $this->entity->load($data);
-            if (!$this->entity->hasPassword()) {
+            if (!empty($this->password)) {
                 $this->entity->setPassword(
                     Yii::$app->security->generatePasswordHash(
-                        $this->entity->password_hash
+                        $this->password
                     )
                 );
             }
@@ -82,7 +84,8 @@ class UserForm extends Model
     public function rules()
     {
         return [
-            [['userPermissions'], 'safe']
+            [['userPermissions'], 'safe'],
+            [['password'], 'string'],
         ];
     }
 

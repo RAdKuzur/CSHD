@@ -228,7 +228,7 @@ class TrainingGroupParticipantWork extends TrainingGroupParticipant
      */
     public function getFullGroupString()
     {
-        $result = '<span class="badge badge-secondary">' . Yii::$app->branches->get($this->trainingGroupWork->branch) . '</span>';
+        $result = '<span class="badge badge-secondary text-dark">' . Yii::$app->branches->get($this->trainingGroupWork->branch) . '</span>';
         $startDate = DateFormatter::format($this->trainingGroupWork->start_date, DateFormatter::Ymd_dash, DateFormatter::dmy_dot);
         $endDate = DateFormatter::format($this->trainingGroupWork->finish_date, DateFormatter::Ymd_dash, DateFormatter::dmy_dot);
         $result .= " $startDate - $endDate | ";

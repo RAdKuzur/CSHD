@@ -44,6 +44,6 @@ class PersonalDataParticipantWork extends PersonalDataParticipant
     {
         $class = $this->isRestrict() ? 'error' : 'success';
         $text = $this->isRestrict() ? 'Запрещено' : 'Разрешено';
-        return "<span class=\"badge badge-$class\">$text</span>";
+        return "<span class=\"badge badge-$class text-dark\">$text</span>";
     }
 }

@@ -112,7 +112,7 @@ class ReportFacade
     {
         $result = [];
         $result['section31'] = $service->fillSection31($form->startDate, $form->endDate);
-        $result['section32'] = $service->fillSection32($form->startDate, $form->endDate, $form->budget);
+        $result['section32'] = $service->fillSection32($form->startDate, $form->endDate, $form->type);
 
         return $result;
     }

@@ -14,54 +14,152 @@ class DebugReportHelper
      * @param TrainingGroupParticipantWork $participant
      * @return array
      */
+    // В классе DebugReportHelper
+
     public static function createParticipantsDataCsv(TrainingGroupParticipantWork $participant)
     {
-        $branch = Yii::$app->branches->get($participant->trainingGroupWork->branch);
-        $focus = Yii::$app->focus->get($participant->trainingGroupWork->trainingProgramWork->focus);
-        $thematicDirection = Yii::$app->thematicDirection->get($participant->trainingGroupWork->trainingProgramWork->thematic_direction);
-        $allowRemote = Yii::$app->allowRemote->get($participant->trainingGroupWork->trainingProgramWork->allow_remote);
-        $projectType = Yii::$app->projectType->get($participant->groupProjectThemesWork->projectThemeWork->project_type);
-        $teacher = count($participant->trainingGroupWork->teachersWork) > 0 ?
-            $participant->trainingGroupWork->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS):
-            '';
+        // Для обратной совместимости оставляем старый метод, но используем оптимизированный внутри
+        $services = self::getServices();
+        return self::processParticipantData($participant, $services);
+    }
 
-        $expertsList = $participant->trainingGroupWork->expertsWork;
-        $expert = count($expertsList) > 0 ?
-            $expertsList[0]->expertWork->getFIO(PersonInterface::FIO_FULL) :
-            '';
-        $expertType = count($expertsList) > 0 ?
-            $expertsList[0]->getExpertTypeString() :
-            '';
-        $expertCompany = count($expertsList) > 0 && count($expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork) > 0?
-            $expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork[0]->companyWork->name :
-            '';
-        $expertPosition = count($expertsList) > 0 && count($expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork) > 0?
-            $expertsList[0]->expertWork->peopleWork->peoplePositionCompanyBranchWork[0]->positionWork->name :
-            '';
+    /**
+     * Создание отладочных данных участников с батчевой оптимизацией
+     */
+    public static function createParticipantDebugData(array $participants): array
+    {
+        $data = [];
+        $batchSize = 100;
+        $batches = array_chunk($participants, $batchSize);
+
+        $services = self::getServices();
+
+        foreach ($batches as $batch) {
+            // Предзагружаем все связи для всего батча
+            $preloadedParticipants = self::preloadBatchData($batch);
+
+            foreach ($preloadedParticipants as $participant) {
+                $data[] = self::processParticipantData($participant, $services);
+            }
+
+            unset($batch, $preloadedParticipants);
+            gc_collect_cycles();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Предзагрузка данных для всего батча участников
+     */
+    private static function preloadBatchData(array $participants): array
+    {
+        $participantIds = array_map(fn($p) => $p->id, $participants);
+
+        return TrainingGroupParticipantWork::find()
+            ->where(['id' => $participantIds])
+            ->with([
+                'trainingGroupWork.trainingProgramWork',
+                'trainingGroupWork.teachersWork.teacherWork' => function($query) {
+                    $query->orderBy(['id' => SORT_ASC])->limit(1);
+                },
+                'trainingGroupWork.expertsWork.expertWork.peopleWork.peoplePositionCompanyBranchWork.companyWork' => function($query) {
+                    $query->orderBy(['id' => SORT_ASC])->limit(1);
+                },
+                'trainingGroupWork.expertsWork.expertWork.peopleWork.peoplePositionCompanyBranchWork.positionWork' => function($query) {
+                    $query->orderBy(['id' => SORT_ASC])->limit(1);
+                },
+                'groupProjectThemesWork.projectThemeWork',
+                'participantWork'
+            ])
+            ->indexBy('id')
+            ->all();
+    }
+
+    /**
+     * Обработка данных одного участника (оптимизированная версия)
+     */
+    /**
+     * Обработка данных одного участника (оптимизированная версия)
+     */
+    private static function processParticipantData(TrainingGroupParticipantWork $participant, array $services): array
+    {
+        $trainingGroup = $participant->trainingGroupWork;
+        $trainingProgram = $trainingGroup->trainingProgramWork;
+        $groupProjectTheme = $participant->groupProjectThemesWork;
+
+        // Быстрое получение связанных данных
+        $branch = $services['branches']->get($trainingGroup->branch);
+        $focus = $services['focus']->get($trainingProgram->focus);
+        $thematicDirection = $services['thematicDirection']->get($trainingProgram->thematic_direction);
+        $allowRemote = $services['allowRemote']->get($trainingProgram->allow_remote);
+        $projectType = $services['projectType']->get($groupProjectTheme->projectThemeWork->project_type);
+
+        // Учитель - безопасные проверки с учетом возможных null
+        $teacher = '';
+        if (isset($trainingGroup->teachersWork[0]) &&
+            $trainingGroup->teachersWork[0]->teacherWork !== null) {
+            $teacher = $trainingGroup->teachersWork[0]->teacherWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+        }
+
+        // Эксперт - безопасные проверки с учетом возможных null
+        $expert = '';
+        $expertType = '';
+        $expertCompany = '';
+        $expertPosition = '';
+
+        if (isset($trainingGroup->expertsWork[0]) &&
+            $trainingGroup->expertsWork[0]->expertWork !== null) {
+
+            $expertWork = $trainingGroup->expertsWork[0];
+            $expert = $expertWork->expertWork->getFIO(PersonInterface::FIO_FULL);
+            $expertType = $expertWork->getExpertTypeString();
+
+            // Данные компании и должности эксперта
+            if (isset($expertWork->expertWork->peopleWork->peoplePositionCompanyBranchWork[0])) {
+                $positionData = $expertWork->expertWork->peopleWork->peoplePositionCompanyBranchWork[0];
+                $expertCompany = $positionData->companyWork->name ?? '';
+                $expertPosition = $positionData->positionWork->name ?? '';
+            }
+        }
 
         return [
             $participant->participantWork->getFIO(PersonInterface::FIO_FULL),
-            $participant->trainingGroupWork->number,
-            $participant->trainingGroupWork->start_date,
-            $participant->trainingGroupWork->finish_date,
+            $trainingGroup->number,
+            $trainingGroup->start_date,
+            $trainingGroup->finish_date,
             $branch,
             $participant->participantWork->getSexString(),
             $participant->participantWork->birthdate,
-            yii::$app->benefits->get($participant->participantWork->benefits),
+            $services['benefits']->get($participant->participantWork->benefits),
             $focus,
             $teacher,
-            $participant->trainingGroupWork->getBudgetString(),
+            $trainingGroup->getBudgetString(),
             $thematicDirection,
-            $participant->trainingGroupWork->trainingProgramWork->name,
+            $trainingProgram->name,
             $allowRemote,
             $participant->success,
-            $participant->groupProjectThemesWork->projectThemeWork->name,
-            $participant->trainingGroupWork->protection_date,
+            $groupProjectTheme->projectThemeWork->name,
+            $trainingGroup->protection_date,
             $projectType,
             $expert,
             $expertType,
             $expertCompany,
             $expertPosition,
+        ];
+    }
+    /**
+     * Получение сервисов для оптимизации
+     */
+    private static function getServices(): array
+    {
+        return [
+            'branches' => Yii::$app->branches,
+            'focus' => Yii::$app->focus,
+            'thematicDirection' => Yii::$app->thematicDirection,
+            'allowRemote' => Yii::$app->allowRemote,
+            'projectType' => Yii::$app->projectType,
+            'benefits' => Yii::$app->benefits,
         ];
     }
 

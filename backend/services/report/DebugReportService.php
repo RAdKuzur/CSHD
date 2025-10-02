@@ -57,20 +57,8 @@ class DebugReportService
      */
     public function createParticipantDebugData(array $participants): array
     {
-        $data = [];
-        $batchSize = 100; // Размер батча
-        $batches = array_chunk($participants, $batchSize);
-        foreach ($batches as $batch) {
-            foreach ($batch as $participant) {
-                $data[] = DebugReportHelper::createParticipantsDataCsv($participant);
-            }
-            // Освобождаем память
-            unset($batch);
-            gc_collect_cycles(); // Принудительный сборщик мусора
-        }
-        return $data;
+        return DebugReportHelper::createParticipantDebugData($participants);
     }
-
     /**
      * @param TrainingGroupWork[] $groups
      * @param string $startDate

@@ -231,7 +231,7 @@ class ReportManHoursService implements ManHoursServiceInterface
 
 
                 $result[$calculateType] = count($tempParticipants);
-                $participants = array_merge($participants, $tempParticipants);
+                array_push($participants, ...$tempParticipants);
             }
         }
 

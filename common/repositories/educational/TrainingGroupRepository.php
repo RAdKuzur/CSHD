@@ -234,10 +234,21 @@ class TrainingGroupRepository
             ->all();
     }
 
-    public function getSameGroups(int $id, string $number)
+//    public function getSameGroups(int $id, string $number)
+//    {
+//        return TrainingGroupWork::find()->where(['like', 'number', $number.'%', false])->andWhere(['!=', 'id', $id])->all();
+//    }
+
+    public function getSameGroupsByPrefix(string $prefix, int $excludeId = null)
     {
-        return TrainingGroupWork::find()->where(['like', 'number', $number.'%', false])->andWhere(['!=', 'id', $id])->all();
+        $query = TrainingGroupWork::find()->where(['like', 'number', $prefix . '%', false]);
+        if ($excludeId !== null) {
+            $query->andWhere(['!=', 'id', $excludeId]);
+        }
+        // orderBy не обязателен для логики, но удобно для отладки
+        return $query->orderBy(['number' => SORT_ASC])->all();
     }
+
 
     public function getAttachedGroupsByOrder($orderId, $status){
         if ($status == NomenclatureDictionary::ORDER_ENROLL){

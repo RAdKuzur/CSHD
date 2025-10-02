@@ -159,40 +159,84 @@ class TrainingGroupWork extends TrainingGroup implements FileInterface
         return '<div class=flexx>' . $this->number . ' ' . $this->getRawArchive() . '</div>';
     }
 
+//    public function generateNumber(?PeopleWork $teacher)
+//    {
+//        $level = $this->trainingProgramWork->level;
+//        $level++;
+//        $thematicDirection = $this->trainingProgramWork->thematic_direction ? Yii::$app->thematicDirection->getAbbreviation($this->trainingProgramWork->thematic_direction) : '';
+//        $date = DateFormatter::format($this->start_date, DateFormatter::Ymd_dash, DateFormatter::Ymd_without_separator);
+//        $teacherCode = $teacher ? $teacher->short : '';
+//        $addCode = 1;
+//
+//        if ($this->id) {
+//            /** @var TrainingGroupWork[] $sameNameGroups */
+//            $sameNameGroups = (Yii::createObject(TrainingGroupRepository::class))->getSameGroups($this->id, $this->number);
+//            $pattern = '/\.(\d+)$/';
+//            if (count($sameNameGroups) == 1) {
+//                preg_match($pattern, $sameNameGroups[0]->number, $matches);
+//                $number1 = $matches[1];
+//                $addCode = (string)((int)$number1 + 1);
+//            } else {
+//                for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
+//                    preg_match($pattern, $sameNameGroups[$i]->number, $matches);
+//                    $number1 = $matches[1];
+//                    preg_match($pattern, $sameNameGroups[$i + 1]->number, $matches);
+//                    $number2 = $matches[1];
+//                    if ($number2 - $number1 > 1) {
+//                        $addCode = (string)((int)$number1 + 1);
+//                        break;
+//                    }
+//                    $addCode = (string)((int)$number2 + 1);
+//                }
+//            }
+//        }
+//
+//        $this->number = "$thematicDirection.$level.$teacherCode.$date.$addCode";
+//
+//        return $this->number;
+//    }
+
     public function generateNumber(?PeopleWork $teacher)
     {
-        $level = $this->trainingProgramWork->level;
-        $level++;
-        $thematicDirection = $this->trainingProgramWork->thematic_direction ? Yii::$app->thematicDirection->getAbbreviation($this->trainingProgramWork->thematic_direction) : '';
+        // Собираем части префикса
+        $level = $this->trainingProgramWork->level + 1;
+        $thematicDirection = $this->trainingProgramWork->thematic_direction
+            ? Yii::$app->thematicDirection->getAbbreviation($this->trainingProgramWork->thematic_direction)
+            : '';
         $date = DateFormatter::format($this->start_date, DateFormatter::Ymd_dash, DateFormatter::Ymd_without_separator);
         $teacherCode = $teacher ? $teacher->short : '';
-        $addCode = 1;
 
+        // Формируем префикс без лишних точек (убираем пустые части)
+        $parts = array_filter([$thematicDirection, $level, $teacherCode, $date], fn($p) => $p !== '' && $p !== null);
+        $prefix = implode('.', $parts);
+
+        // Получаем все группы с таким префиксом (исключаем себя при редактировании)
+        $repo = Yii::createObject(TrainingGroupRepository::class);
         if ($this->id) {
-            /** @var TrainingGroupWork[] $sameNameGroups */
-            $sameNameGroups = (Yii::createObject(TrainingGroupRepository::class))->getSameGroups($this->id, $this->number);
-            $pattern = '/\.(\d+)$/';
-            if (count($sameNameGroups) == 1) {
-                preg_match($pattern, $sameNameGroups[0]->number, $matches);
-                $number1 = $matches[1];
-                $addCode = (string)((int)$number1 + 1);
-            } else {
-                for ($i = 0; $i < count($sameNameGroups) - 1; $i++) {
-                    preg_match($pattern, $sameNameGroups[$i]->number, $matches);
-                    $number1 = $matches[1];
-                    preg_match($pattern, $sameNameGroups[$i + 1]->number, $matches);
-                    $number2 = $matches[1];
-                    if ($number2 - $number1 > 1) {
-                        $addCode = (string)((int)$number1 + 1);
-                        break;
-                    }
-                    $addCode = (string)((int)$number2 + 1);
-                }
+            $sameNameGroups = $repo->getSameGroupsByPrefix($prefix, $this->id);
+        } else {
+            $sameNameGroups = $repo->getSameGroupsByPrefix($prefix);
+        }
+        // Собираем занятые суффиксы
+        $occupied = [];
+        $pattern = '/\.(\d+)$/';
+        foreach ($sameNameGroups as $g) {
+            // если точно совпадает префикс (без суффикса) — пометим 1 как занятое (устранение старых записей без .N)
+            if ($g->number === $prefix) {
+                $occupied[1] = true;
+                continue;
+            }
+            if (preg_match($pattern, $g->number, $m)) {
+                $occupied[(int)$m[1]] = true;
             }
         }
 
-        $this->number = "$thematicDirection.$level.$teacherCode.$date.$addCode";
-
+        // Находим минимальный свободный положительный целый
+        $addCode = 1;
+        while (isset($occupied[$addCode])) {
+            $addCode++;
+        }
+        $this->number = $prefix . '.' . $addCode;
         return $this->number;
     }
 

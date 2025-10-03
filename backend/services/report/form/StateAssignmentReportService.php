@@ -178,7 +178,7 @@ class StateAssignmentReportService
                 BranchDictionary::COD,
                 FocusDictionary::ART,
                 AllowRemoteDictionary::ONLY_PERSONAL,
-                [self::PARAM_DUPLICATE, self::PARAM_PROJECTS_RATIO]
+                [self::PARAM_DUPLICATE, self::PARAM_ACHIEVES_RATIO]
             );
 
         $result['cod']['sport']['personal'] =

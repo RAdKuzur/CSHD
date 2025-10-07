@@ -28,36 +28,36 @@ class ErrorForeignEventParticipantService
         $this->errorsRepository = $errorsRepository;
     }
     //не зачислен в к-л. группу
-    public function makeForeignEventParticipant001($rowId)
-    {
-        $participants = $this->trainingGroupParticipantRepository->getByParticipantId($rowId);
-        if (count($participants) > 0) {
-            if (count(array_filter($participants,function (TrainingGroupParticipantWork $item){
-                    return $item->status == 0;
-                })) > 0)
-            {
-                $this->errorsRepository->save(
-                    ErrorsWork::fill(
-                        ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_001,
-                        ForeignEventParticipantsWork::tableName(),
-                        $rowId,
-                        Yii::$app->errors->get(ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_001)->getErrorState()
-                    )
-                );
-
-            }
-        }
-    }
-    public function fixForeignEventParticipant001($errorId){
-        /* @var $error ErrorsWork */
-        $error = $this->errorsRepository->get($errorId);
-        $participants = $this->trainingGroupParticipantRepository->getByParticipantId($error->table_row_id);
-        if (count($participants) == 0 || count(array_filter($participants,function (TrainingGroupParticipantWork $item){
-                return $item->status == 0;
-            })) > 0) {
-            $this->errorsRepository->delete($error);
-        }
-    }
+//    public function makeForeignEventParticipant001($rowId)
+//    {
+//        $participants = $this->trainingGroupParticipantRepository->getByParticipantId($rowId);
+//        if (count($participants) > 0) {
+//            if (count(array_filter($participants,function (TrainingGroupParticipantWork $item){
+//                    return $item->status == 0;
+//                })) > 0)
+//            {
+//                $this->errorsRepository->save(
+//                    ErrorsWork::fill(
+//                        ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_001,
+//                        ForeignEventParticipantsWork::tableName(),
+//                        $rowId,
+//                        Yii::$app->errors->get(ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_001)->getErrorState()
+//                    )
+//                );
+//
+//            }
+//        }
+//    }
+//    public function fixForeignEventParticipant001($errorId){
+//        /* @var $error ErrorsWork */
+//        $error = $this->errorsRepository->get($errorId);
+//        $participants = $this->trainingGroupParticipantRepository->getByParticipantId($error->table_row_id);
+//        if (count($participants) == 0 || count(array_filter($participants,function (TrainingGroupParticipantWork $item){
+//                return $item->status == 0;
+//            })) > 0) {
+//            $this->errorsRepository->delete($error);
+//        }
+//    }
     //не фигурирует в обр.деятельности
     public function makeForeignEventParticipant002($rowId)
     {

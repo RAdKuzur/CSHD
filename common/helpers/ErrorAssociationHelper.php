@@ -150,7 +150,7 @@ class ErrorAssociationHelper
     public static function getForeignEventParticipantErrorsList()
     {
         return [
-            ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_001,
+            //ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_001,
             ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_002,
         ];
 

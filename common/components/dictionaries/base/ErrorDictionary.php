@@ -78,7 +78,7 @@ class ErrorDictionary extends BaseDictionary
     const JOURNAL_025 = 42;
     const JOURNAL_026 = 44;
     const JOURNAL_027 = 45;
-    const FOREIGN_EVENT_PARTICIPANT_001 = 65;
+    //const FOREIGN_EVENT_PARTICIPANT_001 = 65;
     const FOREIGN_EVENT_PARTICIPANT_002 = 66;
 
     const MATERIAL_ERRORS = [
@@ -116,7 +116,7 @@ class ErrorDictionary extends BaseDictionary
         self::JOURNAL_026, self::JOURNAL_027,
     ];
     const FOREIGN_EVENT_PARTICIPANT_ERRORS = [
-        self::FOREIGN_EVENT_PARTICIPANT_001,
+        //self::FOREIGN_EVENT_PARTICIPANT_001,
         self::FOREIGN_EVENT_PARTICIPANT_002
     ];
     private ErrorMaterialService $materialService;
@@ -539,12 +539,12 @@ class ErrorDictionary extends BaseDictionary
                 [$this->journalService, 'makeJournal_027'],
                 [$this->journalService, 'fixJournal_027'],
             ),
-            self::FOREIGN_EVENT_PARTICIPANT_001 => new Error(
-                'УЧ001', 'Участник не зачислен в группу',
-                Error::TYPE_BASE,
-                [$this->foreignEventParticipantService, 'makeForeignEventParticipant001'],
-                [$this->foreignEventParticipantService, 'fixForeignEventParticipant001'],
-            ),
+//            self::FOREIGN_EVENT_PARTICIPANT_001 => new Error(
+//                'УЧ001', 'Участник не зачислен в группу',
+//                Error::TYPE_BASE,
+//                [$this->foreignEventParticipantService, 'makeForeignEventParticipant001'],
+//                [$this->foreignEventParticipantService, 'fixForeignEventParticipant001'],
+//            ),
             self::FOREIGN_EVENT_PARTICIPANT_002 => new Error(
                 'УЧ002', 'Участник не фигурирует в учебной деятельности',
                 Error::TYPE_BASE,

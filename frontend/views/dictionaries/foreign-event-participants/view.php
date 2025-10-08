@@ -74,6 +74,25 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <div class="card-set">
+                <div class="card-head">Системные</div>
+                <div class="card-field flexx">
+                    <div class="field-title">
+                        ID
+                    </div>
+                    <div class="field-date">
+                        <?= $model->id ?>
+                    </div>
+                </div>
+                <div class="card-field flexx">
+                    <div class="field-title">
+                        Дата добавления
+                    </div>
+                    <div class="field-date">
+                        <?= DateFormatter::format($model->created_at, DateFormatter::Ymd_dash, DateFormatter::dmY_dot) ?>
+                    </div>
+                </div>
+            </div>
+            <div class="card-set">
                 <div class="card-head">Участие в образовательных программах</div>
                 <div class="card-field flexx">
                     <div class="field-title">

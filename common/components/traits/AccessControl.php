@@ -15,6 +15,13 @@ trait AccessControl
      */
     public function checkActionAccess(Action $action)
     {
+        if (Yii::$app->user->id == null) {
+            return [
+                'url' => ['/auth/login'],
+                'status' => false
+            ];
+        }
+
         Yii::$app->session->set('previous_url', Yii::$app->request->url);
 
         if (Yii::$app->rubac->isGuest()) {

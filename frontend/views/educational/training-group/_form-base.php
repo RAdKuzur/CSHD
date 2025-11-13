@@ -51,7 +51,7 @@ $this->registerJsFile('@web/js/activity-locker.js', ['depends' => [\yii\web\Jque
         <?php $form = ActiveForm::begin(['id' => 'dynamic-form']); ?>
         <?= $form->field($model, 'branch')->dropDownList(Yii::$app->branches->getList()) ?>
         <?= $form->field($model, 'trainingProgramId')->widget(Select2::classname(), [
-            'data' => ArrayHelper::map($trainingPrograms,'id','name'),
+            'data' => ArrayHelper::map($trainingPrograms,'id','fullName'),
             'size' => Select2::LARGE,
             'options' => ['prompt' => 'Выберите образовательную программу'],
             'pluginOptions' => [

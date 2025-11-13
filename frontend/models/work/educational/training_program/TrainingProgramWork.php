@@ -176,6 +176,10 @@ class TrainingProgramWork extends TrainingProgram implements FileInterface
         return '<div class=flexx>' . $this->name . ' ' . $this->getRawActual() . '</div>';
     }
 
+    public function getFullName() {
+        return  $this->name . ' (Дата: ' . $this->ped_council_date . ' Номер: ' . $this->ped_council_number . ')';
+    }
+
     public function getLevelNumber()
     {
         return $this->level+1;

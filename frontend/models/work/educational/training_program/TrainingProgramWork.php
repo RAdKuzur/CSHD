@@ -147,7 +147,7 @@ class TrainingProgramWork extends TrainingProgram implements FileInterface
 
     public function getActual()
     {
-        return $this->isActual() ? 'Да' : 'Нет';
+        return $this->isActual() ? 'Актуальна' : 'Не актуальна';
     }
 
     public function isActual()
@@ -177,7 +177,7 @@ class TrainingProgramWork extends TrainingProgram implements FileInterface
     }
 
     public function getFullName() {
-        return  $this->name . ' (Дата: ' . $this->ped_council_date . ' Номер: ' . $this->ped_council_number . ')';
+        return  $this->name . ' (Дата: ' . $this->ped_council_date . ' Номер: ' . $this->ped_council_number . ') - ' . ($this->getActual());
     }
 
     public function getLevelNumber()

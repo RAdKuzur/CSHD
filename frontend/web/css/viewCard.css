@@ -269,6 +269,8 @@ a:has(.tooltip-span) {
     left: 0;
     z-index: 99;
     background: white;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 td.status-block {

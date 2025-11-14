@@ -87,6 +87,9 @@ class OrderTrainingGroupParticipantRepository
 
     public function getExceptById($id)
     {
-        return OrderTrainingGroupParticipantWork::find()->where(['<>', 'order_id' , $id])->all();
+        return OrderTrainingGroupParticipantWork::find()
+            ->where(['<>', 'order_id', $id])
+            ->andWhere(['IS NOT', 'order_id', null])
+            ->all();
     }
 }

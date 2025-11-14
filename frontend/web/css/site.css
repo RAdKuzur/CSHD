@@ -101,3 +101,8 @@ a.desc:after {
 {
     text-decoration: none;
 }
+
+.cell-selected {
+    outline: 2px solid #007bff;
+    background: rgba(0, 123, 255, 0.15);
+}

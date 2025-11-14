@@ -17,6 +17,46 @@ document.addEventListener('DOMContentLoaded', function () {
     if (document.querySelector('.journal-edit')) {
         applyStatusBlockToRowCells();
         init();
+
+        document.addEventListener('mousedown', (e) => {
+            const cell = e.target.closest('td.status-participant.attendance, td.project-participant.attendance');
+            if (cell && !cell.classList.contains('status-block')) {
+                isSelecting = true;
+                clearSelection();
+                selectedCells.add(cell);
+                cell.classList.add('cell-selected');
+            }
+        });
+
+        document.addEventListener('mouseover', (e) => {
+            if (!isSelecting) return;
+
+            const cell = e.target.closest('td.status-participant.attendance, td.project-participant.attendance');
+            if (cell && !cell.classList.contains('status-block')) {
+                selectedCells.add(cell);
+                cell.classList.add('cell-selected');
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isSelecting) {
+                isSelecting = false;
+                if (currentIcon) {
+                    applyStatusToSelection();
+                } else {
+                    clearSelection();
+                }
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                clearSelection();
+                isSelecting = false;
+            }
+        });
+
+
     }
 });
 
@@ -25,6 +65,24 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 let currentIcon, IconTurnoutLink, IconNonAppearanceLink, IconDistantLink, IconDroppedLink, IconProjectLink, elements, elementsProject, svgData = '';
 let IconTurnout, IconNonAppearance, IconDistant, IconDropped, IconProject, valueProject = '';
+
+/**
+ * Выборка ячеек
+ */
+
+let isSelecting = false;
+let selectedCells = new Set();
+
+function clearSelection() {
+    selectedCells.forEach(cell => cell.classList.remove('cell-selected'));
+    selectedCells.clear();
+}
+
+function applyStatusToSelection() {
+    selectedCells.forEach(cell => clickOneCell(cell));
+    clearSelection();
+}
+
 
 /**
  * Функция обновления данных по столбцам

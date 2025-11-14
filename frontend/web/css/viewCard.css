@@ -200,6 +200,8 @@ a:has(.tooltip-span) {
 
 .status-participant {
     text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .status-participant svg{

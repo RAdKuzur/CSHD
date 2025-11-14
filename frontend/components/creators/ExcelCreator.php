@@ -278,7 +278,13 @@ class ExcelCreator
         $inputData = $reader->load(Yii::$app->basePath . $fileName);
         $group = TrainingGroupWork::findOne($groupId);
         $defences = GroupProjectThemesWork::find()->where(['training_group_id' => $group->id])->all();
-        $lessons = TrainingGroupLessonWork::find()->where(['training_group_id' => $group->id])->orderBy('lesson_date ASC')->all();
+        $lessons = TrainingGroupLessonWork::find()
+            ->where(['training_group_id' => $group->id])
+            ->orderBy([
+                'lesson_date' => SORT_ASC,
+                'lesson_start_time' => SORT_ASC,
+            ])
+            ->all();
         $participants = TrainingGroupParticipantWork::find()->where(['training_group_id' => $group->id])->all();
         $visits = VisitWork::find()->where(['IN','training_group_participant_id', ArrayHelper::getColumn($participants, 'id')])->all();
         $amountSheets = ExcelCreator::countList($lessons, $participants);

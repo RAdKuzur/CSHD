@@ -619,7 +619,7 @@ class ErrorJournalService
         $error = $this->errorsRepository->get($errorId);
         $lessons = $this->lessonRepository->getLessonsFromGroup($error->table_row_id);
         foreach ($lessons as $lesson) {
-            if (!$lesson->auditoriumWork->isEducation()) {
+            if ($lesson->auditoriumWork != null && !$lesson->auditoriumWork->isEducation()) {
                 return;
             }
         }

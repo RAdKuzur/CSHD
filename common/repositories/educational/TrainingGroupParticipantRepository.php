@@ -220,7 +220,7 @@ class TrainingGroupParticipantRepository
         return TrainingGroupParticipantWork::find()
             ->andWhere(['participant_id' => $participantId])
             ->andWhere(['training_group_id' => $groupId])
-            ->andWhere(['status' => NomenclatureDictionary::ORDER_ENROLL])
+            //->andWhere(['status' => NomenclatureDictionary::ORDER_ENROLL])
             ->exists();
     }
 

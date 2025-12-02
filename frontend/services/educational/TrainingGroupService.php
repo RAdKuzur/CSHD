@@ -359,7 +359,15 @@ class TrainingGroupService implements DatabaseServiceInterface
             Yii::$app->basePath . FilePaths::TEMP_FILEPATH . '/' . $newFilename,
             ['Фамилия обучающегося', 'Имя обучающегося', 'Отчество обучающегося', 'Дата рождения (л)', 'Контакт: Рабочий e-mail']
         );
-
+        foreach($data['Фамилия обучающегося'] as $index => $item) {
+            if (strlen($item) < 1) {
+                unset($data['Фамилия обучающегося'][$index]);
+                unset($data['Имя обучающегося'][$index]);
+                unset($data['Отчество обучающегося'][$index]);
+                unset($data['Дата рождения (л)'][$index]);
+                unset($data['Контакт: Рабочий e-mail'][$index]);
+            }
+        }
         for ($i = 0; $i < count($data['Фамилия обучающегося']); $i++) {
             $birthdate = $data['Дата рождения (л)'][$i] ?
                 DateFormatter::format($data['Дата рождения (л)'][$i], DateFormatter::mdY_slash, DateFormatter::Ymd_dash) :

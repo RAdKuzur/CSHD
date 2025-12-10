@@ -72,4 +72,11 @@ return [
         */
     ],
     'params' => $params,
+    
+    'container' => [
+        'definitions' => [
+            common\repositories\dictionaries\PeopleRepository::class => common\repositories\dictionaries\PeopleRepository::class,
+            \common\repositories\dictionaries\ForeignEventParticipantsRepository::class => \common\repositories\dictionaries\ForeignEventParticipantsRepository::class,
+        ],
+    ],
 ];

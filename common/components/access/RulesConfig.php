@@ -201,7 +201,9 @@ class RulesConfig
                 'act-delete',
                 'generate-order',
                 'delete',
-                'participants-list'
+                'participants-list',
+                'load-participants-from-excel', //ДОБАВЛЕНо
+                'process-participants-excel'//Добавлено
             ]
         ],
 

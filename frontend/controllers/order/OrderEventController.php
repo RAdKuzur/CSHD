@@ -57,6 +57,7 @@ use frontend\models\search\SearchOrderEvent;
 use frontend\services\event\ForeignEventService;
 use Yii;
 use yii\helpers\ArrayHelper;
+use frontend\models\work\auxiliary\OrderEventParticipantLoader; //добавлено
 
 class OrderEventController extends DocumentController
 {
@@ -474,7 +475,7 @@ class OrderEventController extends DocumentController
             $this->actParticipantService->getFilesInstance($modelAct[0], 0);
             $act[0]->actFiles = $modelAct[0]->actFiles;
             $this->actParticipantService->saveFilesFromModel($act[0], 0);
-            //при замене select в act-update заменить в следующей строчке $post[0]["participant"] на что-то другое
+
             $this->actParticipantService->updateSquadParticipant($act[0], $post[0]["participant"]);
             return $this->redirect(['view', 'id' => $orderId]);
         }
@@ -505,11 +506,11 @@ class OrderEventController extends DocumentController
             foreach ($files as $file) {
                 $model->recordEvent(new FileDeleteEvent($file->id), DocumentOrderWork::class);
             }
-            //act_participant_branch
+
             $model->recordEvent(new ActParticipantBranchDeleteEvent($model->id), DocumentOrderWork::class);
-            //squad_participant
+
             $model->recordEvent(new SquadParticipantDeleteByIdEvent($model->id), DocumentOrderWork::class);
-            //act_participant
+            
             $model->recordEvent(new ActParticipantDeleteEvent($model->id), DocumentOrderWork::class);
             $model->releaseEvents();
         }
@@ -587,6 +588,101 @@ class OrderEventController extends DocumentController
             'items' => $results,
             'total_count' => $totalCount
         ];
+    }
+    //----------------------------------Добавлено---------------------------------------------
+    public function actionLoadParticipantsFromExcel($id)
+    {
+        $orderEvent = $this->orderEventRepository->get($id);  // ID приказа
+        $foreignEvent = $this->foreignEventRepository->getByDocOrderId($orderEvent->id);
+
+        $loader = Yii::createObject(OrderEventParticipantLoader::class, [
+            $orderEvent->id,       // ID приказа
+            $foreignEvent->id,     // ID мероприятия
+            Yii::$container->get(\common\repositories\dictionaries\PeopleRepository::class),
+            Yii::$container->get(\common\repositories\dictionaries\ForeignEventParticipantsRepository::class),
+            Yii::$container->get(\frontend\services\act_participant\ActParticipantService::class)
+        ]);
+        
+        return $this->render('participants-load', [
+            'model' => $loader,
+            'orderId' => $orderEvent->id,        // ID приказа для формы
+            'orderName' => $orderEvent->getFullNumber(), 
+        ]);
+    }
+   public function actionProcessParticipantsExcel($id)
+    {
+        $orderEvent = $this->orderEventRepository->get($id);
+        $foreignEvent = $this->foreignEventRepository->getByDocOrderId($orderEvent->id);
+
+        $model = Yii::createObject(OrderEventParticipantLoader::class, [
+            $orderEvent->id,
+            $foreignEvent->id,
+            Yii::$container->get(\common\repositories\dictionaries\PeopleRepository::class),
+            Yii::$container->get(\common\repositories\dictionaries\ForeignEventParticipantsRepository::class),
+            Yii::$container->get(\frontend\services\act_participant\ActParticipantService::class)
+        ]);
+
+        if (Yii::$app->request->isPost) {
+            $model->nomination = Yii::$app->request->post('nomination');
+            $model->file = \yii\web\UploadedFile::getInstance($model, 'file');
+
+            if ($model->validate() && $model->file) {
+                try {
+                    $result = $model->processFile();
+                    
+                    $hasDuplicates = false;
+                    foreach ($result['errors'] as $error) {
+                        if (strpos($error, 'уже есть') !== false) {
+                            $hasDuplicates = true;
+                            break;
+                        }
+                    }
+                    
+                    if ($result['success']) {
+                        if ($hasDuplicates) {
+                            Yii::$app->session->setFlash('warning', 
+                                'Было записано ' . $result['processed'] . ' строк, из ' . $result['total'] .
+                                ' (некоторые участники уже были добавлены ранее)'
+                            );
+                        } else {
+                            Yii::$app->session->setFlash('success', 
+                                'Было записано ' . $result['processed'] . ' строк, из ' . $result['total']
+                            );
+                        }
+                    } else if ($result['processed'] > 0) {
+                        Yii::$app->session->setFlash('warning', 
+                            'Было записано ' . $result['processed'] . ' строк, из ' . $result['total']
+                        );
+                    } else {
+                        if ($hasDuplicates && count($result['errors']) == $result['total']) {
+                            Yii::$app->session->setFlash('warning', 
+                                'Все участники уже были добавлены в этот приказ ранее. ' .
+                                'Повторно не добавлено: ' . $result['total'] . ' строк.'
+                            );
+                        } else {
+                            Yii::$app->session->setFlash('error', 
+                                'Было записано ' . $result['processed'] . ' строк, из ' . $result['total']
+                            );
+                        }
+                    }
+                    
+                    if (!empty($result['errors'])) {
+                        Yii::$app->session->setFlash('importErrors', $result['errors']);
+                    }
+                    
+                    return $this->redirect(['view', 'id' => $id]);
+                    
+                } catch (\Exception $e) {
+                    Yii::$app->session->setFlash('error', 'Ошибка: ' . $e->getMessage());
+                    return $this->redirect(['view', 'id' => $id]);
+                }
+            } else {
+                Yii::$app->session->setFlash('error', 'Ошибка валидации файла');
+                return $this->redirect(['load-participants-from-excel', 'id' => $id]);
+            }
+        }
+        
+        return $this->redirect(['load-participants-from-excel', 'id' => $id]);
     }
     public function beforeAction($action)
     {

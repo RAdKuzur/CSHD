@@ -32,4 +32,27 @@ class FocusDictionary extends BaseDictionary
             $this->list[self::SPORT],
         ];
     }
+    //----------------------Добавлено------------------
+    public static function getByName($name){
+        switch ($name){
+            case "Техническая":
+                $id = 1;
+                break;
+            case "Художественная":
+                $id = 2;
+                break;
+            case "Социально-педагогическая":
+                $id = 3;
+                break;
+            case "Естественнонаучная":
+                $id = 4;
+                break;
+            case "Физкультурно-спортивная":
+                $id = 5;
+                break;
+            default:
+                $id = 0;
+        }
+        return $id;
+    }
 }

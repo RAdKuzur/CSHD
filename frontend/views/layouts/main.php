@@ -17,38 +17,40 @@ $this->title = 'ЦСХД';
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>" class="h-100">
+
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <?php //$this->registerCssFile('@web/vendor/fortawesome/font-awesome/css/all.min.css'); ?>
+    <?php //$this->registerCssFile('@web/vendor/fortawesome/font-awesome/css/all.min.css'); 
+    ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
+
 <body class="d-flex flex-column h-100">
-<?php $this->beginBody() ?>
+    <?php $this->beginBody() ?>
 
-<header>
-    <?php
-    if (Yii::$app->rubac->isGuest()) {
-        $menuItems[] = ['label' => 'Войти', 'url' => ['/auth/login']];
-    }
-    else {
-        $menuItems[] = ['label' => 'Личный кабинет', 'url' => ['/user/lk/info', 'id' => Yii::$app->user->identity->getId()]];
-        $menuItems[] = ['label' => 'Аналитика', 'url' => ['/analytics/errors', 'id' => Yii::$app->user->identity->getId()]];
-        $menuItems[] = ['label' => 'Выйти', 'url' => ['/auth/logout']];
-    }
+    <header>
+        <?php
+        if (Yii::$app->rubac->isGuest()) {
+            $menuItems[] = ['label' => 'Войти', 'url' => ['/auth/login']];
+        } else {
+            $menuItems[] = ['label' => 'Личный кабинет', 'url' => ['/user/lk/info', 'id' => Yii::$app->user->identity->getId()]];
+            $menuItems[] = ['label' => 'Аналитика', 'url' => ['/analytics/errors', 'id' => Yii::$app->user->identity->getId()]];
+            $menuItems[] = ['label' => 'Выйти', 'url' => ['/auth/logout']];
+        }
 
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        /*[
+        NavBar::begin([
+            'brandLabel' => Yii::$app->name,
+            'brandUrl' => Yii::$app->homeUrl,
+            'options' => [
+                'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
+            ],
+        ]);
+        $menuItems = [
+            /*[
             'label' => 'Документооборот',
             'items' => [
                 ['label' => 'Входящая документация', 'url' => ['/document/document-in/index']],
@@ -82,20 +84,23 @@ $this->title = 'ЦСХД';
                 ['label' => 'Помещения', 'url' => ['/dictionaries/auditorium/index']],
             ],
         ],*/
-        [
-            'label' => 'Админ-панель', 'url' => Yii::$app->params['backUrl'] . '/index.php?r=site/index'
-        ],
-        [
-            'label' => Yii::$app->user->isGuest ? 'Профиль' : 'Профиль (' . Yii::$app->user->identity->username . ')',
-            'items' => $menuItems,
-        ]
-    ];
+             [
+                  'label' => 'Админ-панель', 'url' => Yii::$app->params['backUrl'] . '/index.php?r=site/index'
+             ],
+            // [
+            //      'label' => 'Админ-панель',  'url' => "https://cshd.local/nooc.php?r=site/index"
+            // ],
+            [
+                'label' => Yii::$app->user->isGuest ? 'Профиль' : 'Профиль (' . Yii::$app->user->identity->username . ')',
+                'items' => $menuItems,
+            ]
+        ];
 
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
-        'items' => $menuItems,
-    ]);
-    /*if (Yii::$app->rubac->isGuest()) {
+        echo Nav::widget([
+            'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
+            'items' => $menuItems,
+        ]);
+        /*if (Yii::$app->rubac->isGuest()) {
         echo Html::tag('div',Html::a('Войти',['/auth/login'],['class' => ['btn btn-link login text-decoration-none']]),['class' => ['d-flex']]);
     } else {
         echo Html::beginForm(['/auth/logout'], 'post', ['class' => 'd-flex'])
@@ -105,30 +110,31 @@ $this->title = 'ЦСХД';
             )
             . Html::endForm();
     }*/
-    NavBar::end();
-    ?>
-</header>
+        NavBar::end();
+        ?>
+    </header>
 
-<main role="main" class="flex-shrink-0">
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
-    </div>
-</main>
+    <main role="main" class="flex-shrink-0">
+        <div class="container">
+            <?= Breadcrumbs::widget([
+                'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+            ]) ?>
+            <?= Alert::widget() ?>
+            <?= $content ?>
+        </div>
+    </main>
 
-<footer class="footer mt-auto py-3 navbar-dark bg-dark">
-    <div class="container">
-        <p class="float-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-        <p class="float-end"><?= Yii::powered() ?></p>
-    </div>
-</footer>
+    <footer class="footer mt-auto py-3 navbar-dark bg-dark">
+        <div class="container">
+            <p class="float-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
+            <p class="float-end"><?= Yii::powered() ?></p>
+        </div>
+    </footer>
 
-<?php $this->endBody() ?>
+    <?php $this->endBody() ?>
 </body>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"  defer></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
+
 </html>
 <?php $this->endPage();

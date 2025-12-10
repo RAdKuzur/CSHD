@@ -30,6 +30,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\UploadedFile;
+use Yii;
 
 class ActParticipantService
 {
@@ -99,75 +100,95 @@ class ActParticipantService
         }
     }
 
-    public function addActParticipant($acts, $foreignEventId){
-        $index = 0;
+   public function addActParticipant($acts, $foreignEventId){
+         $index = 0;
+            $created = false; 
 
-        foreach ($acts as $act){
-            if(
-                ($act["participant"] != NULL || $act['personalParticipants']) != NULL &&
-                $act["nomination"] != NULL &&
-                $act["focus"] != NULL &&
-                $act["form"] != NULL &&
-                ($act["firstTeacher"] != NULL || $act["secondTeacher"] != NULL) &&
-                $act["type"] != NULL
-            ) {
+            foreach ($acts as $act){
+                if(
+                    (!empty($act["participant"]) || !empty($act['personalParticipants'])) &&
+                    !empty($act["nomination"]) &&
+                    !empty($act["focus"]) &&
+                    !empty($act["form"]) &&
+                    (!empty($act["firstTeacher"]) || !empty($act["secondTeacher"])) &&
+                    $act["type"] !== null
+                ) {
 
-                if($act["type"] == 0) {
-                    $participants = $act['personalParticipants'];
-                }
-                if($act["type"] == 1) {
-                    $participants = $act["participant"];
-                }
-                $modelActParticipantForm = ActParticipantForm::fill(
-                    $participants,
-                    $act["firstTeacher"],
-                    $act["secondTeacher"],
-                    $act["branch"],
-                    $act["focus"],
-                    $act["type"],
-                    NULL,
-                    $act["nomination"],
-                    $act["form"],
-                    $act["team"]
-                );
-                $modelActParticipantForm->foreignEventId = $foreignEventId;
-                $this->getFilesInstance($modelActParticipantForm, $index);
-                if ($modelActParticipantForm->type == 1) {
-                    $teamNameId = $this->teamService->teamNameCreateEvent($foreignEventId, $act["team"]);
-                }
-                else {
-                    $teamNameId = NULL;
-                }
-                $modelAct = ActParticipantWork::fill(
-                    $modelActParticipantForm->firstTeacher,
-                    $modelActParticipantForm->secondTeacher,
-                    $teamNameId,
-                    $foreignEventId,
-                    $modelActParticipantForm->focus,
-                    $modelActParticipantForm->type,
-                    $modelActParticipantForm->allowRemote,
-                    $modelActParticipantForm->nomination,
-                    $modelActParticipantForm->form,
-                );
-                $this->setPeopleStamp($modelAct);
-                $modelAct->actFiles = $modelActParticipantForm->actFiles;
-                if ($this->actParticipantRepository->checkUniqueAct($foreignEventId, $teamNameId, $modelAct->focus, $modelAct->form, $modelAct->nomination, $participants)) {
-                    $this->actParticipantRepository->save($modelAct);
-                }
-                if (!is_null($modelAct->id)) {
-                    $this->saveFilesFromModel($modelAct, $index);
-                    $modelAct->releaseEvents();
-                    $this->squadParticipantService->addSquadParticipantEvent($modelAct, $participants, $modelAct->id);
-                    foreach($act["branch"] as $branch){
-                        $this->actParticipantBranchService->addActParticipantBranchEvent($modelAct->id, $branch);
+                    if($act["type"] == 0) {
+                        $participants = $act['personalParticipants'];
                     }
-                }
-                $index++;
-            }
-        }
+                    if($act["type"] == 1) {
+                        $participants = $act["participant"];
+                    }
+                    
+                    $modelActParticipantForm = ActParticipantForm::fill(
+                        $participants,
+                        $act["firstTeacher"],
+                        $act["secondTeacher"],
+                        $act["branch"],
+                        $act["focus"],
+                        $act["type"],
+                        NULL,
+                        $act["nomination"],
+                        $act["form"],
+                        $act["team"]
+                    );
+                    $modelActParticipantForm->foreignEventId = $foreignEventId;
+                    $this->getFilesInstance($modelActParticipantForm, $index);
+                    
+                    if ($modelActParticipantForm->type == 1) {
+                        $teamNameId = $this->teamService->teamNameCreateEvent($foreignEventId, $act["team"]);
+                    } else {
+                        $teamNameId = NULL;
+                    }
+                    
+                    $modelAct = ActParticipantWork::fill(
+                        $modelActParticipantForm->firstTeacher,
+                        $modelActParticipantForm->secondTeacher,
+                        $teamNameId,
+                        $foreignEventId,
+                        $modelActParticipantForm->focus,
+                        $modelActParticipantForm->type,
+                        $modelActParticipantForm->allowRemote,
+                        $modelActParticipantForm->nomination,
+                        $modelActParticipantForm->form,
+                    );
+                    
+                    $this->setPeopleStamp($modelAct);
+                    $modelAct->actFiles = $modelActParticipantForm->actFiles;
 
-        $this->checkAllActsOnErrors($foreignEventId);
-    }
+                     $isUnique = $this->actParticipantRepository->checkUniqueAct(
+                        $foreignEventId, 
+                        $teamNameId, 
+                        $modelAct->focus, 
+                        $modelAct->form, 
+                        $modelAct->nomination, 
+                        $participants
+                    );
+                    
+                    if ($isUnique) {
+
+                        $this->actParticipantRepository->save($modelAct);
+                        $created = true;
+                        
+                        if (!is_null($modelAct->id)) {
+                            $this->saveFilesFromModel($modelAct, $index);
+                            $modelAct->releaseEvents();
+                            $this->squadParticipantService->addSquadParticipantEvent($modelAct, $participants, $modelAct->id);
+                            foreach($act["branch"] as $branch){
+                                $this->actParticipantBranchService->addActParticipantBranchEvent($modelAct->id, $branch);
+                            }
+                        }
+                    }
+                    
+                    $index++;
+                }
+            }
+
+            $this->checkAllActsOnErrors($foreignEventId);
+            
+            return $created;
+        }
 
     public function setPeopleStamp(ActParticipantWork $model)
     {

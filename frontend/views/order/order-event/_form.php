@@ -136,6 +136,8 @@ use yii\widgets\DetailView;
         {
             nominations.push(elem.value);
 
+            sessionStorage.setItem('nominations', JSON.stringify(nominations));//Добавлено
+
             let item = document.getElementsByClassName('nomination-list-row')[0];
             let itemCopy = item.cloneNode(true)
             itemCopy.getElementsByClassName('nomination-list-item')[0].innerHTML = '<span>' + elem.value + '</span>'
@@ -149,6 +151,19 @@ use yii\widgets\DetailView;
         else
             alert('Вы ввели пустые или повторные данные!');
         FinishNom();
+    }
+   
+    //------------------------------------------Добавлено----------------------------------------------
+    function saveDataBeforeRedirect(orderId) {
+        // Сохраняем orderId в sessionStorage
+        sessionStorage.setItem('orderId', orderId);
+        
+        // Также сохраняем номинации, если они есть
+        if (window.nominations && window.nominations.length > 0) {
+            sessionStorage.setItem('nominations', JSON.stringify(window.nominations));
+        }
+        
+        window.location.href = '/index.php?r=order/order-event/load-participants-from-excel&id=' + orderId;
     }
 
     function AddTeam()
@@ -659,13 +674,13 @@ use yii\widgets\DetailView;
                 'model' => $modelActs[0],
                 'formId' => 'dynamic-form',
                 'formFields' => [
-                    'full_name',
+                'full_name',
                 ],
             ]); ?>
             <div class="container-items-act"><!-- widgetContainer -->
                 <div class="panel-title">
                     <h5 class="panel-title pull-left">Акты участия</h5><!-- widgetBody -->
-                    <div class="pull-right">
+                    <div class="pull-right" style="display: flex; align-items: center; gap: 5px;">
                         <button type="button" class="add-item-act btn btn-success btn-xs" onclick="updateOptions()"><span class="glyphicon glyphicon-plus">+</span></button>
                     </div>
                 </div>
@@ -691,6 +706,13 @@ use yii\widgets\DetailView;
                                 <div class="row">
                                 <div id = "form-<?=$i?>" hidden>
                                     <div class=" personal-dropdown-list">
+                                        <div style="margin: 10px 0;">
+                                            <?= Html::a(
+                                                '<span class="glyphicon glyphicon-upload"></span> Загрузить участников из файла',
+                                                ['load-participants-from-excel', 'id' => $id],
+                                                ['class' => 'btn btn-success btn-xs', 'onclick' => 'saveDataBeforeRedirect(' . $id . '); return false;']
+                                            ) ?>
+                                        </div>
                                         <?php
                                         $params = [
                                             'id' => 'personalParticipantDropdown',

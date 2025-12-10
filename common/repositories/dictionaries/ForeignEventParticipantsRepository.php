@@ -142,6 +142,27 @@ class ForeignEventParticipantsRepository
 
         return $query->exists();
     }
+    //--------------------------------Добавлено---------------------------------
+     public function findByFullName($firstname, $surname, $patronymic = null)
+    {
+        $query = ForeignEventParticipantsWork::find()
+            ->where([
+                'firstname' => trim($firstname),
+                'surname' => trim($surname)
+            ]);
+        
+        if (empty($patronymic)) {
+            // Если отчество пустое, ищем записи с пустым или NULL отчеством
+            $query->andWhere(['or', 
+                ['patronymic' => ''], 
+                ['patronymic' => null]
+            ]);
+        } else {
+            $query->andWhere(['patronymic' => trim($patronymic)]);
+        }
+        
+        return $query->one();
+    }
     public function save(ForeignEventParticipantsWork $participant)
     {
         return $this->provider->save($participant);

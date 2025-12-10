@@ -114,6 +114,19 @@ class PeopleRepository
     {
         return PeopleWork::find()->where(['id' => $ids])->orderBy(['surname' => SORT_ASC, 'firstname' => SORT_ASC, 'patronymic' => SORT_ASC])->all();
     }
+    
+    //----------------------Добавлено------------------
+    public function findByFio($firstname, $surname, $patronymic = null)
+    {
+        $query = PeopleWork::find()
+            ->where(['firstname' => $firstname, 'surname' => $surname]);
+        
+        if ($patronymic !== null) {
+            $query->andWhere(['patronymic' => $patronymic]);
+        }
+        
+        return $query->one();
+    }
 
     public function save(PeopleWork $people)
     {

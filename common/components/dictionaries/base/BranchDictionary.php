@@ -50,32 +50,5 @@ class BranchDictionary extends BaseDictionary
         ];
     }
 
-    public static function getByName($name){
-        switch ($name){
-            case "Технопарк":
-                $id = 1;
-                break;
-            case "Кванториум":
-                $id = 2;
-                break;
-            case "ЦДНТТ":
-                $id = 3;
-                break;
-            case "Центр одаренных детей":
-                $id = 4;
-                break;
-            case "Мобильный Кванториум":
-                $id = 5;
-                break;
-            case "Планетарий":
-                $id = 6;
-                break;
-            case "Администрация":
-                $id = 7;
-                break;
-            default:
-                $id = 0;
-        }
-        return $id;
-    }
+    
 }

@@ -26,21 +26,6 @@ class EventWayDictionary extends BaseDictionary
             $this->list[self::ABSENTEE],
         ];
     }
-    //----------------------Добавлено------------------
-    public static function getByName($name){
-        switch ($name){
-            case "Очный (явка)":
-                $id = 1;
-                break;
-            case "Очный (дистанционно)":
-                $id = 2;
-                break;
-            case "Заочный":
-                $id = 3;
-                break;
-            default:
-                $id = 0;
-        }
-        return $id;
-    }
+   
+    
 }

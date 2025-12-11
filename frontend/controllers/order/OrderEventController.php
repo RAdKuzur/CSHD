@@ -498,26 +498,41 @@ class OrderEventController extends DocumentController
     }
     public function actionActDelete($id)
     {
-        $model = $this->actParticipantRepository->get($id);
-        $foreignEvent = $this->foreignEventRepository->get($model->foreign_event_id);
-        $order = $this->orderEventRepository->get($foreignEvent->order_participant_id);
-        if (!$this->participantAchievementRepository->getByActIds($id, [ParticipantAchievementWork::TYPE_PRIZE, ParticipantAchievementWork::TYPE_WINNER])){
-            $files = $this->filesRepository->getByDocument(ActParticipantWork::tableName(), $model->id);
-            foreach ($files as $file) {
-                $model->recordEvent(new FileDeleteEvent($file->id), DocumentOrderWork::class);
-            }
-
-            $model->recordEvent(new ActParticipantBranchDeleteEvent($model->id), DocumentOrderWork::class);
-
-            $model->recordEvent(new SquadParticipantDeleteByIdEvent($model->id), DocumentOrderWork::class);
+        try {
+            $model = $this->actParticipantRepository->get($id);
+            $foreignEvent = $this->foreignEventRepository->get($model->foreign_event_id);
+            $order = $this->orderEventRepository->get($foreignEvent->order_participant_id);
             
-            $model->recordEvent(new ActParticipantDeleteEvent($model->id), DocumentOrderWork::class);
-            $model->releaseEvents();
+            $achievements = $this->participantAchievementRepository->getByActIds(
+                $id, 
+                [ParticipantAchievementWork::TYPE_PRIZE, ParticipantAchievementWork::TYPE_WINNER]
+            );
+            
+            if (empty($achievements)) {
+                \frontend\models\work\team\SquadParticipantWork::deleteAll(['act_participant_id' => $id]);
+                \frontend\models\work\team\ActParticipantBranchWork::deleteAll(['act_participant_id' => $id]);
+                
+                $files = $this->filesRepository->getByDocument(
+                    \frontend\models\work\team\ActParticipantWork::tableName(), 
+                    $model->id
+                );
+                foreach ($files as $file) {
+                    if (method_exists($file, 'recordEvent')) {
+                        $file->recordEvent(new \frontend\events\general\FileDeleteEvent($file->id), get_class($file));
+                        $file->releaseEvents();
+                    }
+                    $file->delete();
+                }
+                
+                $model->delete();
+            }
+            
+            return $this->redirect(['update', 'id' => $order->id]);
+            
+        } catch (\Exception $e) {
+            Yii::error('Ошибка удаления: ' . $e->getMessage(), __METHOD__);
+            return $this->redirect(['update', 'id' => $order->id ?? 0]);
         }
-        else {
-            Yii::$app->session->setFlash('danger', 'Невозможно удалить акт участия без предварительного удаления достижения');
-        }
-        return $this->redirect(['update', 'id' => $order->id]);
     }
     public function actionDelete($id){
         $model = $this->documentOrderRepository->get($id);
@@ -590,7 +605,7 @@ class OrderEventController extends DocumentController
         ];
     }
     //----------------------------------Добавлено---------------------------------------------
-    public function actionLoadParticipantsFromExcel($id)
+   public function actionLoadParticipantsFromExcel($id)
     {
         $orderEvent = $this->orderEventRepository->get($id);  // ID приказа
         $foreignEvent = $this->foreignEventRepository->getByDocOrderId($orderEvent->id);
@@ -609,7 +624,8 @@ class OrderEventController extends DocumentController
             'orderName' => $orderEvent->getFullNumber(), 
         ]);
     }
-   public function actionProcessParticipantsExcel($id)
+
+    public function actionProcessParticipantsExcel($id)
     {
         $orderEvent = $this->orderEventRepository->get($id);
         $foreignEvent = $this->foreignEventRepository->getByDocOrderId($orderEvent->id);
@@ -623,7 +639,7 @@ class OrderEventController extends DocumentController
         ]);
 
         if (Yii::$app->request->isPost) {
-            $model->nomination = Yii::$app->request->post('nomination');
+            
             $model->file = \yii\web\UploadedFile::getInstance($model, 'file');
 
             if ($model->validate() && $model->file) {

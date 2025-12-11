@@ -107,12 +107,13 @@ class ActParticipantService
             foreach ($acts as $act){
                 if(
                     (!empty($act["participant"]) || !empty($act['personalParticipants'])) &&
-                    !empty($act["nomination"]) &&
-                    !empty($act["focus"]) &&
-                    !empty($act["form"]) &&
+                    
                     (!empty($act["firstTeacher"]) || !empty($act["secondTeacher"])) &&
                     $act["type"] !== null
                 ) {
+                    $act["nomination"] = $act["nomination"] ?? null;
+                    $act["focus"] = $act["focus"] ?? null;
+                    $act["form"] = $act["form"] ?? null;
 
                     if($act["type"] == 0) {
                         $participants = $act['personalParticipants'];

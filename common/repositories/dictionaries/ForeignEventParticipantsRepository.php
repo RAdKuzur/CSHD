@@ -143,7 +143,7 @@ class ForeignEventParticipantsRepository
         return $query->exists();
     }
     //--------------------------------Добавлено---------------------------------
-     public function findByFullName($firstname, $surname, $patronymic = null)
+    public function findByFullName($firstname, $surname, $patronymic = null)
     {
         $query = ForeignEventParticipantsWork::find()
             ->where([
@@ -152,7 +152,7 @@ class ForeignEventParticipantsRepository
             ]);
         
         if (empty($patronymic)) {
-            // Если отчество пустое, ищем записи с пустым или NULL отчеством
+            
             $query->andWhere(['or', 
                 ['patronymic' => ''], 
                 ['patronymic' => null]

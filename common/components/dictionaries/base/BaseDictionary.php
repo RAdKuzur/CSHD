@@ -30,6 +30,16 @@ abstract class BaseDictionary
         throw new InvalidArgumentException('Неизвестный индекс');
     }
 
+      public function getIdByName($name)
+    {
+        if (empty($name)) {
+            return null;
+        }
+        
+        $flipped = array_flip($this->list);
+        return $flipped[$name] ?? null;
+    }
+
     /**
      * Кастомная сортировка объектов в $list
      * @return mixed

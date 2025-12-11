@@ -154,16 +154,8 @@ use yii\widgets\DetailView;
     }
    
     //------------------------------------------Добавлено----------------------------------------------
-    function saveDataBeforeRedirect(orderId) {
-        // Сохраняем orderId в sessionStorage
-        sessionStorage.setItem('orderId', orderId);
-        
-        // Также сохраняем номинации, если они есть
-        if (window.nominations && window.nominations.length > 0) {
-            sessionStorage.setItem('nominations', JSON.stringify(window.nominations));
-        }
-        
-        window.location.href = '/index.php?r=order/order-event/load-participants-from-excel&id=' + orderId;
+    function saveDataBeforeRedirect(orderParticipantId) {
+        window.location.href = '/index.php?r=order/order-event/load-participants-from-excel&id=' + orderParticipantId;
     }
 
     function AddTeam()
@@ -706,13 +698,11 @@ use yii\widgets\DetailView;
                                 <div class="row">
                                 <div id = "form-<?=$i?>" hidden>
                                     <div class=" personal-dropdown-list">
-                                        <div style="margin: 10px 0;">
-                                            <?= Html::a(
-                                                '<span class="glyphicon glyphicon-upload"></span> Загрузить участников из файла',
-                                                ['load-participants-from-excel', 'id' => $id],
-                                                ['class' => 'btn btn-success btn-xs', 'onclick' => 'saveDataBeforeRedirect(' . $id . '); return false;']
-                                            ) ?>
-                                        </div>
+                                        <?= Html::a(
+                                            '<span class="glyphicon glyphicon-upload"></span> Загрузить участников из файла',
+                                            ['load-participants-from-excel', 'id' => $id],
+                                            ['class' => 'btn btn-success btn-xs', 'onclick' => 'saveDataBeforeRedirect(' . $id . '); return false;']
+                                        ) ?>
                                         <?php
                                         $params = [
                                             'id' => 'personalParticipantDropdown',

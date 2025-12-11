@@ -16,7 +16,7 @@ class OrderEventParticipantLoader extends Model
     public $foreignEventId;
     public $file;
     public $errors = [];
-    public $nomination;
+
 
     private $peopleRepository;
     private $foreignEventParticipantsRepository;
@@ -48,7 +48,7 @@ class OrderEventParticipantLoader extends Model
     {
         return [
             [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'xls, xlsx'],
-            [['nomination'], 'string'],
+
         ];
     }
 
@@ -56,7 +56,7 @@ class OrderEventParticipantLoader extends Model
     {
         return [
             'file' => 'Excel-файл',
-            'nomination' => 'Номинация',
+
         ];
     }
 
@@ -147,9 +147,10 @@ class OrderEventParticipantLoader extends Model
             'Отчество', 
             'Отделы',
             'ФИО первого педагога',
-            'Фио второго педагога (при необходимости)',
+            'ФИО второго педагога (при необходимости)',
             'Направленность',
-            'Форма реализации'
+            'Форма реализации',
+            'Номинация'
         ];
         
         return ExcelWizard::getDataFromColumns($filePath, $columns);
@@ -178,16 +179,17 @@ class OrderEventParticipantLoader extends Model
         }
         
         try {
-            // 1. Поиск участника
+
             $participantId = $this->findParticipant(
                 $data['Имя'][$index],
                 $data['Фамилия'][$index],
-                $data['Отчество'][$index]
+                $data['Отчество'][$index] ?? ''
             );
             
             if (!$participantId) {
                 $this->logError($index, 
-                    "Участник не найден: {$data['Фамилия'][$index]} {$data['Имя'][$index]} {$data['Отчество'][$index]}"
+                    "Участник не найден: {$data['Фамилия'][$index]} {$data['Имя'][$index]} " . 
+                    ($data['Отчество'][$index] ?? '')
                 );
                 return;
             }
@@ -201,52 +203,62 @@ class OrderEventParticipantLoader extends Model
                 );
                 return;
             }
-            
+
             $teacher2Id = null;
-            $teacher2FullName = trim($data['Фио второго педагога (при необходимости)'][$index] ?? '');
+            $teacher2FullName = trim($data['ФИО второго педагога (при необходимости)'][$index] ?? '');
             
             if (!empty($teacher2FullName)) {
                 $teacher2Id = $this->findTeacher($teacher2FullName);
 
                 if (!$teacher2Id) {
-                    $this->logError($index, 
-                        "Второй педагог не найден: {$teacher2FullName}"
-                    );
-                    return;
+                    Yii::info("Второй педагог не найден, но это не критично: {$teacher2FullName}", __METHOD__);
                 }
             }
-            
+        
             $branchIds = $this->parseBranches($data['Отделы'][$index] ?? '');
-            $focusId = \common\components\dictionaries\base\FocusDictionary::getByName($data['Направленность'][$index] ?? '');
-            $formId = \common\components\dictionaries\base\EventWayDictionary::getByName($data['Форма реализации'][$index] ?? '');
+
             
             if (empty($branchIds)) {
                 $this->logError($index, "Не указаны или неверно указаны отделы: " . ($data['Отделы'][$index] ?? 'пусто'));
                 return;
             }
-            
-            if (!$focusId) {
-                $this->logError($index, "Неверно указана направленность: " . ($data['Направленность'][$index] ?? 'пусто'));
-                return;
-            }
-            
-            if (!$formId) {
-                $this->logError($index, "Неверно указана форма реализации: " . ($data['Форма реализации'][$index] ?? 'пусто'));
-                return;
-            }
 
+            $focusId = null; 
+            $focusName = trim($data['Направленность'][$index] ?? '');
+            if (!empty($focusName)) {
+                $focusDict = new \common\components\dictionaries\base\FocusDictionary();
+                $focusId = $focusDict->getIdByName($focusName);
+                if (!$focusId) {
+                    Yii::info("Направленность не найдена в словаре: {$focusName}", __METHOD__);
+                }
+            }
+            
+            $formId = null; 
+            $formName = trim($data['Форма реализации'][$index] ?? '');
+            if (!empty($formName)) {
+                $formDict = new \common\components\dictionaries\base\EventWayDictionary();
+                $formId = $formDict->getIdByName($formName);
+                if (!$formId) {
+                    Yii::info("Форма реализации не найдена в словаре: {$formName}", __METHOD__);
+                }
+            }
+            
+            $nomination = trim($data['Номинация'][$index] ?? '');
+            $nomination = $nomination === '' ? null : $nomination;
+            
             $actData = $this->prepareActData(
                 $participantId,
                 $teacher1Id,
                 $teacher2Id,
                 $focusId,
                 $formId,
-                $branchIds
+                $branchIds,
+                $nomination 
             );
 
             $this->createActParticipant($actData);
         
-            $this->processed++; // Успешно создан
+            $this->processed++;
             
         } catch (\Exception $e) {
             if (strpos($e->getMessage(), 'уже есть') !== false) {
@@ -265,15 +277,15 @@ class OrderEventParticipantLoader extends Model
 
     private function validateRowData($index, $data)
     {
+
         $requiredFields = [
             'Фамилия' => $data['Фамилия'][$index] ?? '',
             'Имя' => $data['Имя'][$index] ?? '',
             'Отделы' => $data['Отделы'][$index] ?? '',
             'ФИО первого педагога' => $data['ФИО первого педагога'][$index] ?? '',
-            'Направленность' => $data['Направленность'][$index] ?? '',
-            'Форма реализации' => $data['Форма реализации'][$index] ?? ''
+
         ];
-        
+
         foreach ($requiredFields as $fieldName => $value) {
             if (empty(trim($value))) {
                 $this->logError($index, "Не заполнено обязательное поле: {$fieldName}");
@@ -284,14 +296,25 @@ class OrderEventParticipantLoader extends Model
         return true;
     }
     
-     private function findParticipant($firstname, $surname, $patronymic)
+     private function findParticipant($firstname, $surname, $patronymic = '')
     {
+        if (empty(trim($patronymic))) {
+            $participant = $this->foreignEventParticipantsRepository->findByFullName(
+                $firstname,
+                $surname,
+                ''
+            );
 
-        $participant = $this->foreignEventParticipantsRepository->findByFullName(
-            $firstname,
-            $surname,
-            $patronymic
-        );
+            if (!$participant) {
+
+            }
+        } else {
+            $participant = $this->foreignEventParticipantsRepository->findByFullName(
+                $firstname,
+                $surname,
+                $patronymic
+            );
+        }
         
         return $participant ? $participant->id : null;
     }
@@ -337,37 +360,63 @@ class OrderEventParticipantLoader extends Model
         if (empty($branchesString)) {
             return [];
         }
-
-        $branchNames = preg_split('/\s+/', $branchesString);
+        
+        $allPossibleBranches = [
+            "Мобильный Кванториум",
+            "Центр одаренных детей",
+            "Технопарк",
+            "Кванториум", 
+            "ЦДНТТ",
+            "Планетарий",
+            "Администрация"
+        ];
         
         $branchIds = [];
-        foreach ($branchNames as $branchName) {
-
-            $branchId = \common\components\dictionaries\base\BranchDictionary::getByName($branchName);
+        
+        $positions = [];
+        
+        foreach ($allPossibleBranches as $branchName) {
+            $lastPos = 0;
             
-            if ($branchId > 0) {
-                $branchIds[] = $branchId;
-            } else {
-                Yii::warning("Неизвестный отдел: {$branchName}", __METHOD__);
+            $branchDict = new \common\components\dictionaries\base\BranchDictionary();
+            
+            while (($pos = strpos($branchesString, $branchName, $lastPos)) !== false) {
+                $positions[] = [
+                    'position' => $pos,
+                    'length' => strlen($branchName),
+                    'name' => $branchName,
+                    'id' => $branchDict->getIdByName($branchName)
+                ];
+                $lastPos = $pos + strlen($branchName);
             }
         }
-
-        $branchIds = array_unique($branchIds);
         
-        return $branchIds;
+        usort($positions, function($a, $b) {
+            return $a['position'] - $b['position'];
+        });
+        
+        $lastEnd = -1;
+        foreach ($positions as $pos) {
+            if ($pos['position'] > $lastEnd && $pos['id'] > 0) {
+                $branchIds[] = $pos['id'];
+                $lastEnd = $pos['position'] + $pos['length'] - 1;
+            }
+        }
+        
+        return array_unique($branchIds);
     }
 
-   private function prepareActData($participantId, $teacher1Id, $teacher2Id, $focusId, $formId, $branchIds)
+    private function prepareActData($participantId, $teacher1Id, $teacher2Id, $focusId, $formId, $branchIds, $nomination)
     {
         $actData = [
-            "type" => 0, // Личное участие
+            "type" => 0, 
             "personalParticipants" => [$participantId],
             "participant" => null,
-            "nomination" => $this->nomination,
+            "nomination" => $nomination,
             "focus" => $focusId,
             "form" => $formId,
             "firstTeacher" => $teacher1Id,
-            "secondTeacher" => $teacher2Id, // Может быть null
+            "secondTeacher" => $teacher2Id,
             "branch" => $branchIds,
             "team" => null,
             "allowRemote" => null,
@@ -380,7 +429,7 @@ class OrderEventParticipantLoader extends Model
             'focusId' => $focusId,
             'formId' => $formId,
             'branchIds' => $branchIds,
-            'nomination' => $this->nomination,
+            'nomination' => $nomination,
             'allData' => $actData
         ]), __METHOD__);
         
@@ -391,9 +440,7 @@ class OrderEventParticipantLoader extends Model
     {
         try {
             if (empty($actData['personalParticipants']) || 
-                empty($actData['nomination']) || 
-                empty($actData['focus']) || 
-                empty($actData['form']) || 
+
                 empty($actData['firstTeacher']) || 
                 $actData['type'] === null) {
                 
@@ -411,8 +458,8 @@ class OrderEventParticipantLoader extends Model
             if ($wasCreated) {
                 return true;
             } else {
-
-                throw new \Exception("Участник уже есть в этом приказе с данной номинацией");
+                throw new \Exception("Участник уже есть в этом приказе" . 
+                    ($actData['nomination'] ? " с номинацией '{$actData['nomination']}'" : ""));
             }
             
         } catch (\Exception $e) {

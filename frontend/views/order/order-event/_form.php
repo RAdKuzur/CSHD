@@ -154,8 +154,10 @@ use yii\widgets\DetailView;
     }
    
     //------------------------------------------Добавлено----------------------------------------------
+    var baseUrl = "<?= Yii::getAlias('@web') ?>";
+
     function saveDataBeforeRedirect(orderParticipantId) {
-        window.location.href = '/index.php?r=order/order-event/load-participants-from-excel&id=' + orderParticipantId;
+        window.location.href = baseUrl + '/index.php?r=order/order-event/load-participants-from-excel&id=' + orderParticipantId;
     }
 
     function AddTeam()

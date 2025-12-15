@@ -80,8 +80,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
             ['class' => VerticalActionColumn::class],
         ],
+        'tableOptions' => [
+            'class' => 'table table-bordered', // УБИРАЕМ БАЗОВЫЙ STRIPE ИНАЧЕ ОШИБКИ НЕКОРРЕКТНО ОТОБРАЖАЮТСЯ
+        ],
         'rowOptions' => function ($model) {
-            return ['data-href' => Url::to([Yii::$app->frontUrls::PROGRAM_VIEW, 'id' => $model->id])];
+            $hasError = $model->getErrorState();
+            return [
+                'data-href' => Url::to([Yii::$app->frontUrls::PROGRAM_VIEW, 'id' => $model->id]),
+                'class' => 'tr-link' . ($hasError ? ' error-row' : ''),
+            ];
         },
     ]); ?>
     </div>

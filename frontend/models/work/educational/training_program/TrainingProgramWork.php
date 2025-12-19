@@ -455,4 +455,14 @@ class TrainingProgramWork extends TrainingProgram implements FileInterface
     {
         return FilesHelper::createFilePaths($this, $filetype, $this->createAddPaths($filetype));
     }
+    public function getErrorState(): bool
+    {
+        return \common\models\work\ErrorsWork::find()
+            ->where([
+                'table_name' => static::tableName(),
+                'table_row_id' => $this->id,
+                'was_amnesty' => 0,  // Только непрощенные
+            ])
+            ->exists();
+    }
 }

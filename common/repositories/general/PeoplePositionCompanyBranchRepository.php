@@ -59,7 +59,7 @@ class PeoplePositionCompanyBranchRepository
                 $positionIds = [25, 18, 21, 15, 105];
                 break;
             case BranchDictionary::COD:
-                $positionIds = [25, 143, 15, 14];
+                $positionIds = [25, 143, 15, 14, 34];
                 break;
             default: // Мобильный Кванториум
                 $positionIds = [25, 15];

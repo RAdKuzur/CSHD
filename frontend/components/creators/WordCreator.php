@@ -109,7 +109,7 @@ class WordCreator
 //        add
         foreach ($teachers as $teacher) {
             $teacherFio = $teacher->getFIO(PersonInterface::FIO_FULL);
-            $teacherPosition = implode($teacher->getPositionsBranch($modelGroup->branch));
+            $teacherPosition = implode(', ', $teacher->getPositionsBranch($modelGroup->branch));
             if ($teacherPosition === "") {
                 $teacherPosition = $teacher->peoplePositionCompanyBranchWork[0]->positionWork->name;
             }
@@ -225,7 +225,7 @@ class WordCreator
 //        add
         foreach ($teachers as $teacher) {
             $cell = $table->addCell(8000);
-            $teacherPosition = implode($teacher->getPositionsBranch($modelGroup->branch));
+            $teacherPosition = implode(', ', $teacher->getPositionsBranch($modelGroup->branch));
             if ($teacherPosition === "") {
                 $teacherPosition = $teacher->peoplePositionCompanyBranchWork[0]->positionWork->name;
             }
@@ -302,7 +302,7 @@ class WordCreator
         $section->addTextBreak(1);
         $numberStr = 1;
         foreach ($groupParticipants as $part) {
-            $section->addText($numberStr.' '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
+            $section->addText($numberStr.'. '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
             $numberStr++;
         }
 
@@ -342,7 +342,7 @@ class WordCreator
         $groupParticipants = TrainingGroupParticipantWork::find()->where(['training_group_id' => $modelGroup->id])->all();
         foreach ($groupParticipants as $part) {
             if ($part->success == true) {
-                $section->addText($numberStr.' '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
+                $section->addText($numberStr.'. '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
                 $numberStr++;
             }
             else {
@@ -389,7 +389,7 @@ class WordCreator
                     $numberStr++;
                 }*/
                 if ($part->success == false) {
-                    $section->addText($numberStr.' '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
+                    $section->addText($numberStr.'. '.$part->participantWork->getFIO(PersonInterface::FIO_FULL), null, array('spaceAfter' => 0, 'indentation' => array('hanging' => -700)));
                     $numberStr++;
                 }
             }

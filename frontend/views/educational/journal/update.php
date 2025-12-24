@@ -45,6 +45,27 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
             }
         });
     }
+
+    function enableEditMode() {
+        // Убираем блокировку
+        const blockedCells = document.querySelectorAll('.status-block');
+        blockedCells.forEach(cell => {
+            cell.classList.remove('status-block');
+        });
+
+        // Переинициализируем обработчики
+        let cell = document.getElementsByClassName('attendance');
+        Array.from(cell).forEach(oneCell => {
+            if (!oneCell._handler) {
+                const handler = eventHandler(oneCell);
+                oneCell.addEventListener('click', handler);
+                oneCell._handler = handler;
+            }
+        });
+
+        alert('Режим редактирования включен! Все ячейки теперь можно редактировать.');
+    }
+
 </script>
 
 <div class="journal-edit">
@@ -60,6 +81,19 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
         <div class="flexx space">
             <div class="flexx">
                 <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
+                <button type="button" class="btn btn-warning d-none" id="hidden-edit-btn" onclick="enableEditMode()" style="margin-left: 10px;">
+                    Включить режим редактирования
+                </button>
+
+                <script>
+                    // Активация по сочетанию клавиш Ctrl+Shift+E
+                    document.addEventListener('keydown', function(e) {
+                        if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+                            e.preventDefault();
+                            enableEditMode();
+                        }
+                    });
+                </script>
             </div>
         </div>
     </div>
@@ -87,6 +121,7 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
             }
             ?>
         </div>
+
     </div>
 
     <div class="journal-form">

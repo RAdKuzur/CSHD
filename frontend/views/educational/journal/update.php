@@ -47,10 +47,28 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
     }
 
     function enableEditMode() {
-        // Убираем блокировку
+        // Убираем блокировку с ячеек посещаемости
         const blockedCells = document.querySelectorAll('.status-block');
         blockedCells.forEach(cell => {
             cell.classList.remove('status-block');
+        });
+
+        // Разблокируем все select элементы (темы проектов)
+        const disabledSelects = document.querySelectorAll('select[disabled]');
+        disabledSelects.forEach(select => {
+            select.removeAttribute('disabled');
+        });
+
+        // Разблокируем все input элементы (оценки)
+        const disabledInputs = document.querySelectorAll('input[disabled]');
+        disabledInputs.forEach(input => {
+            input.removeAttribute('disabled');
+        });
+
+        // Разблокируем все checkbox элементы
+        const disabledCheckboxes = document.querySelectorAll('input[type="checkbox"][disabled]');
+        disabledCheckboxes.forEach(checkbox => {
+            checkbox.removeAttribute('disabled');
         });
 
         // Переинициализируем обработчики
@@ -81,7 +99,7 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
         <div class="flexx space">
             <div class="flexx">
                 <?= Html::submitButton('Сохранить', ['class' => 'btn btn-primary']) ?>
-                <button type="button" class="btn btn-warning d-none" id="hidden-edit-btn" onclick="enableEditMode()" style="margin-left: 10px;">
+                <button type="button" class="btn btn-warning" id="hidden-edit-btn" onclick="enableEditMode()" style="margin-left: 10px;">
                     Включить режим редактирования
                 </button>
 
@@ -182,16 +200,25 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
                                     <?= $lesson->getPrettyStatus() ?>
                                 </td>
                             <?php endforeach; ?>
-                            <td class="project-participant attendance" style="display: <?= $model->isProjectCertificate() ? 'block' : 'none';?>">
+                            <!-- display: none на CSS-классы -->
+                            <td class="project-participant attendance <?= $model->isProjectCertificate() ? '' : 'hidden-field' ?>">
                                 <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]groupProjectThemeId")->dropDownList(
-                                    ArrayHelper::map(
-                                            array_filter($model->availableThemes, function ($theme) {
-                                                return $theme['confirm'] === 1;
-                                            }),
-                                            'id',
-                                            'projectThemeWork.name'),
-                                    ['prompt' => '']
+                                        ArrayHelper::map(
+                                                array_filter($model->availableThemes, function ($theme) {
+                                                    return $theme['confirm'] === 1;
+                                                }),
+                                                'id',
+                                                'projectThemeWork.name'),
+                                        ['prompt' => '']
                                 )->label(false) ?>
+                            </td>
+
+                            <td class="status-participant <?= $model->isControlWorkCertificate() ? '' : 'hidden-field' ?>">
+                                <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]points")->textInput(['type' => 'number'])->label(false) ?>
+                            </td>
+
+                            <td class="status-participant success-checkbox">
+                                <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]successFinishing")->checkbox()->label(false) ?>
                             </td>
                             <td class="status-participant" style="display: <?= $model->isControlWorkCertificate() ? 'flex' : 'none';?>">
                                 <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]points")->textInput(['type' => 'number'])->label(false) ?>

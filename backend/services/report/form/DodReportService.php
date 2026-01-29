@@ -56,11 +56,11 @@ class DodReportService
         // Предварительная подготовка общей части запроса для получения списка групп
         $groupQueries = $this->createGroupQuery($startDate, $endDate);
 
-        $result['tech'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::TECHNICAL);
-        $result['science'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::SCIENCE);
-        $result['social'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::SOCIAL);
-        $result['art'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::ART);
-        $result['sport'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::SPORT);
+        $result['tech'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::TECHNICAL,$endDate);
+        $result['science'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::SCIENCE,$endDate);
+        $result['social'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::SOCIAL,$endDate);
+        $result['art'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::ART,$endDate);
+        $result['sport'] = $this->calculateParticipantsSection3($groupQueries, FocusDictionary::SPORT,$endDate);
 
         return $result;
     }
@@ -75,16 +75,17 @@ class DodReportService
     public function fillSection4(string $startDate, string $endDate) : array
     {
         $result = [];
-        // Предварительная подготовка общей части запроса для получения списка групп
         $groupQueries = $this->createGroupQuery($startDate, $endDate);
 
-        $result['tech'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::TECHNICAL);
-        $result['science'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::SCIENCE);
-        $result['social'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::SOCIAL);
-        $result['art'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::ART);
-        $result['sport'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::SPORT);
+        // Передаем endDate в каждый вызов
+        $result['tech'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::TECHNICAL, $endDate);
+        $result['science'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::SCIENCE, $endDate);
+        $result['social'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::SOCIAL, $endDate);
+        $result['art'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::ART, $endDate);
+        $result['sport'] = $this->calculateParticipantsSection4($groupQueries, FocusDictionary::SPORT, $endDate);
 
-        $result['summary'] = $this->calculateParticipantsSection4($groupQueries);
+        $groupQueries = $this->createGroupQuery($startDate, $endDate);
+        $result['summary'] = $this->calculateParticipantsSection4($groupQueries, -1, $endDate);
 
         return $result;
     }
@@ -102,11 +103,11 @@ class DodReportService
         // Предварительная подготовка общей части запроса для получения списка групп
         $groupQueries = $this->createGroupQuery($startDate, $endDate);
 
-        $result['tech'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::TECHNICAL);
-        $result['science'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::SCIENCE);
-        $result['social'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::SOCIAL);
-        $result['art'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::ART);
-        $result['sport'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::SPORT);
+        $result['tech'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::TECHNICAL,$endDate);
+        $result['science'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::SCIENCE,$endDate);
+        $result['social'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::SOCIAL,$endDate);
+        $result['art'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::ART,$endDate);
+        $result['sport'] = $this->calculateParticipantsSection5($groupQueries, FocusDictionary::SPORT,$endDate);
 
         return $result;
     }
@@ -243,9 +244,10 @@ class DodReportService
      * @param int $focus
      * @return array
      */
-    public function calculateParticipantsSection3(array $groupQuery, int $focus) : array
+    public function calculateParticipantsSection3(array $groupQuery, int $focus,string $endDate) : array
     {
         $queryAll = $this->groupBuilder->filterGroupsByFocuses(clone $groupQuery['all'], [$focus]); // все группы
+        $temp = $queryAll->createCommand()->getRawSql();
         $queryRemote = $this->groupBuilder->filterGroupsByFocuses(clone $groupQuery['remote'], [$focus]); // только с дистантом
         $queryNetwork = $this->groupBuilder->filterGroupsByFocuses(clone $groupQuery['network'], [$focus]); // только сетевые
 
@@ -253,11 +255,10 @@ class DodReportService
         $groupsRemote = $this->groupRepository->findAll($queryRemote);
         $groupsNetwork = $this->groupRepository->findAll($queryNetwork);
 
-        $participantsQueries = $this->createParticipantQuery($groupsAll); // готовые запросы по полу обучающихся (все группы)
-        $participantsRemoteQueries = $this->createParticipantQuery($groupsRemote); // готовые запросы по полу обучающихся (дистант группы)
-        $participantsNetworkQueries = $this->createParticipantQuery($groupsNetwork); // готовые запросы по полу обучающихся (сетевые группы)
-
-        $participantsAll = $this->participantRepository->findAll($participantsQueries['all']); // все обучающиеся со всех групп
+        $participantsQueries = $this->createParticipantQuery($groupsAll, $endDate); // готовые запросы по полу обучающихся (все группы)
+        $participantsRemoteQueries = $this->createParticipantQuery($groupsRemote, $endDate); // готовые запросы по полу обучающихся (дистант группы)
+        $participantsNetworkQueries = $this->createParticipantQuery($groupsNetwork, $endDate); // готовые запросы по полу обучающихся (сетевые группы)
+        $participantsAll = $this->participantRepository->findAll($participantsQueries['all']);// все обучающиеся со всех групп
         $participantsFemale = $this->participantRepository->findAll($participantsQueries['female']); // только девочки со всех групп
         $participantsNetworkAll = $this->participantRepository->findAll($participantsNetworkQueries['all']); // все обучающиеся из сетевых групп
         $participantsRemoteAll = $this->participantRepository->findAll($participantsRemoteQueries['all']); // все обучающиеся с дистант групп
@@ -277,7 +278,7 @@ class DodReportService
      * @param int $focus
      * @return array
      */
-    public function calculateParticipantsSection4(array $groupQuery, int $focus = -1) : array
+    public function calculateParticipantsSection4(array $groupQuery, int $focus = -1, string $endDate = null) : array
     {
         $focusArr = [$focus];
         if ($focus == -1) {
@@ -285,11 +286,10 @@ class DodReportService
         }
 
         $queryFocus = $this->groupBuilder->filterGroupsByFocuses(clone $groupQuery['all'], $focusArr);
-        $groupsFocus = $this->groupRepository->findAll($queryFocus); // получаем все группы по направленности
+        $groupsFocus = $this->groupRepository->findAll($queryFocus);
 
-        $participantsQueriesAll = $this->createParticipantQuery($groupsFocus); // запрос на получение всех обучающихся по направлению
-        $participantsQueriesAges = $this->createParticipantQueryByAges($groupsFocus); // массив запросов на получение обучающихся с разбивкой по возрастам
-
+        $participantsQueriesAll = $this->createParticipantQuery($groupsFocus, $endDate);
+        $participantsQueriesAges = $this->createParticipantQueryByAges($groupsFocus, $endDate);
         $participantsAll = $this->participantRepository->findAll($participantsQueriesAll['all']);
         $participantsAges = [];
         foreach ($participantsQueriesAges as $index => $query) {
@@ -309,6 +309,10 @@ class DodReportService
         ];
     }
 
+
+
+
+
     /**
      * Основной метод расчета количества обучающихся в Разделе 5
      *
@@ -316,7 +320,7 @@ class DodReportService
      * @param int $focus
      * @return array
      */
-    public function calculateParticipantsSection5(array $groupQuery, int $focus) : array
+    public function calculateParticipantsSection5(array $groupQuery, int $focus, string $endDate) : array
     {
         $queryFocus = $this->groupBuilder->filterGroupsByFocuses(clone $groupQuery['all'], [$focus]);
 
@@ -326,8 +330,8 @@ class DodReportService
         $budgetGroupAll = $this->groupRepository->findAll($budgetGroupQuery);
         $commerceGroupAll = $this->groupRepository->findAll($commerceGroupQuery);
 
-        $participantsBudgetQuery = $this->createParticipantQuery($budgetGroupAll);
-        $participantsCommerceQuery = $this->createParticipantQuery($commerceGroupAll);
+        $participantsBudgetQuery = $this->createParticipantQuery($budgetGroupAll, $endDate);
+        $participantsCommerceQuery = $this->createParticipantQuery($commerceGroupAll,$endDate);
 
         $participantsBudgetAll = $this->participantRepository->findAll($participantsBudgetQuery['all']);
         $participantsCommerceAll = $this->participantRepository->findAll($participantsCommerceQuery['all']);
@@ -367,12 +371,12 @@ class DodReportService
      * @param TrainingGroupWork[] $groups
      * @return array
      */
-    private function createParticipantQuery(array $groups) : array
+    private function createParticipantQuery(array $groups, string $endDate) : array
     {
         $query = $this->participantBuilder->query();
         $query = $this->participantBuilder->joinWith($query, 'participantWork');
         $query = $this->participantBuilder->filterByGroups($query, ArrayHelper::getColumn($groups, 'id'));
-        $query = $this->participantBuilder->filterByAge($query, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]);
+        $query = $this->participantBuilder->filterByAge($query, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],$endDate );
         $queryAll = $this->participantBuilder->filterBySex(clone $query);
         $queryMale = $this->participantBuilder->filterBySex(clone $query, [PersonInterface::SEX_MALE]);
         $queryFemale = $this->participantBuilder->filterBySex(clone $query, [PersonInterface::SEX_FEMALE]);
@@ -390,29 +394,36 @@ class DodReportService
      * @param array $groups
      * @return array
      */
-    private function createParticipantQueryByAges(array $groups) : array
+    private function createParticipantQueryByAges(array $groups, string $endDate = null) : array
     {
         $query = $this->participantBuilder->query();
         $query = $this->participantBuilder->joinWith($query, 'participantWork');
         $query = $this->participantBuilder->filterByGroups($query, ArrayHelper::getColumn($groups, 'id'));
 
-        return [
-            '<3' => $this->participantBuilder->filterByAge(clone $query, [0, 1, 2]),
-            '3' => $this->participantBuilder->filterByAge(clone $query, [3]),
-            '4' => $this->participantBuilder->filterByAge(clone $query, [4]),
-            '5' => $this->participantBuilder->filterByAge(clone $query, [5]),
-            '6' => $this->participantBuilder->filterByAge(clone $query, [6]),
-            '7' => $this->participantBuilder->filterByAge(clone $query, [7]),
-            '8' => $this->participantBuilder->filterByAge(clone $query, [8]),
-            '9' => $this->participantBuilder->filterByAge(clone $query, [9]),
-            '10' => $this->participantBuilder->filterByAge(clone $query, [10]),
-            '11' => $this->participantBuilder->filterByAge(clone $query, [11]),
-            '12' => $this->participantBuilder->filterByAge(clone $query, [12]),
-            '13' => $this->participantBuilder->filterByAge(clone $query, [13]),
-            '14' => $this->participantBuilder->filterByAge(clone $query, [14]),
-            '15' => $this->participantBuilder->filterByAge(clone $query, [15]),
-            '16' => $this->participantBuilder->filterByAge(clone $query, [16]),
-            '17' => $this->participantBuilder->filterByAge(clone $query, [17]),
+        $queries = [
+            '<3' => $this->participantBuilder->filterByAge(clone $query, [0, 1, 2], $endDate),
+            '3' => $this->participantBuilder->filterByAge(clone $query, [3], $endDate),
+            '4' => $this->participantBuilder->filterByAge(clone $query, [4], $endDate),
+            '5' => $this->participantBuilder->filterByAge(clone $query, [5], $endDate),
+            '6' => $this->participantBuilder->filterByAge(clone $query, [6], $endDate),
+            '7' => $this->participantBuilder->filterByAge(clone $query, [7], $endDate),
+            '8' => $this->participantBuilder->filterByAge(clone $query, [8], $endDate),
+            '9' => $this->participantBuilder->filterByAge(clone $query, [9], $endDate),
+            '10' => $this->participantBuilder->filterByAge(clone $query, [10], $endDate),
+            '11' => $this->participantBuilder->filterByAge(clone $query, [11], $endDate),
+            '12' => $this->participantBuilder->filterByAge(clone $query, [12], $endDate),
+            '13' => $this->participantBuilder->filterByAge(clone $query, [13], $endDate),
+            '14' => $this->participantBuilder->filterByAge(clone $query, [14], $endDate),
+            '15' => $this->participantBuilder->filterByAge(clone $query, [15], $endDate),
+            '16' => $this->participantBuilder->filterByAge(clone $query, [16], $endDate),
+            '17' => $this->participantBuilder->filterByAge(clone $query, [17], $endDate),
         ];
+
+        // Добавляем filterBySex к каждому запросу
+        foreach ($queries as $key => $ageQuery) {
+            $queries[$key] = $this->participantBuilder->filterBySex($ageQuery);
+        }
+
+        return $queries;
     }
 }

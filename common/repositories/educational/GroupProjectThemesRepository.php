@@ -43,6 +43,16 @@ class GroupProjectThemesRepository
         return $this->provider->prepareCreate($groupId, $themeId, $confirm);
     }
 
+    public function exists(int $groupId, int $themeId): bool
+    {
+        return GroupProjectThemesWork::find()
+            ->andWhere([
+                'training_group_id' => $groupId,
+                'project_theme_id' => $themeId,
+            ])
+            ->exists();
+    }
+
     public function prepareDelete($id)
     {
         return $this->provider->prepareDelete($id);

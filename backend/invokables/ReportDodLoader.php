@@ -53,25 +53,25 @@ class ReportDodLoader
         $inputData->getSheet(0)->setCellValue('C8', $data['tech']['all']);
         $inputData->getSheet(0)->setCellValue('C9', $data['science']['all']);
         $inputData->getSheet(0)->setCellValue('C11', $data['social']['all']);
-        $inputData->getSheet(0)->setCellValue('C13', $data['art']['all']);
+        $inputData->getSheet(0)->setCellValue('C12', $data['art']['all']);
         $inputData->getSheet(0)->setCellValue('C14', $data['sport']['all']);
 
         $inputData->getSheet(0)->setCellValue('D8', $data['tech']['female']);
         $inputData->getSheet(0)->setCellValue('D9', $data['science']['female']);
         $inputData->getSheet(0)->setCellValue('D11', $data['social']['female']);
-        $inputData->getSheet(0)->setCellValue('D13', $data['art']['female']);
+        $inputData->getSheet(0)->setCellValue('D12', $data['art']['female']);
         $inputData->getSheet(0)->setCellValue('D14', $data['sport']['female']);
 
         $inputData->getSheet(0)->setCellValue('E8', $data['tech']['network']);
         $inputData->getSheet(0)->setCellValue('E9', $data['science']['network']);
         $inputData->getSheet(0)->setCellValue('E11', $data['social']['network']);
-        $inputData->getSheet(0)->setCellValue('E13', $data['art']['network']);
+        $inputData->getSheet(0)->setCellValue('E12', $data['art']['network']);
         $inputData->getSheet(0)->setCellValue('E14', $data['sport']['network']);
 
         $inputData->getSheet(0)->setCellValue('F8', $data['tech']['remote']);
         $inputData->getSheet(0)->setCellValue('F9', $data['science']['remote']);
         $inputData->getSheet(0)->setCellValue('F11', $data['social']['remote']);
-        $inputData->getSheet(0)->setCellValue('F13', $data['art']['remote']);
+        $inputData->getSheet(0)->setCellValue('F12', $data['art']['remote']);
         $inputData->getSheet(0)->setCellValue('F14', $data['sport']['remote']);
     }
 
@@ -80,7 +80,7 @@ class ReportDodLoader
         $techAlphaIndex = 6;
         $scienceAlphaIndex = 7;
         $socialAlphaIndex = 9;
-        $artAlphaIndex = 11;
+        $artAlphaIndex = 10;
         $sportAlphaIndex = 12;
         $summaryAlphaIndex = 16;
 
@@ -104,13 +104,13 @@ class ReportDodLoader
         $inputData->getSheet(2)->setCellValue('D6', $data['tech']['budget']);
         $inputData->getSheet(2)->setCellValue('D7', $data['science']['budget']);
         $inputData->getSheet(2)->setCellValue('D9', $data['social']['budget']);
-        $inputData->getSheet(2)->setCellValue('D11', $data['art']['budget']);
+        $inputData->getSheet(2)->setCellValue('D10', $data['art']['budget']);
         $inputData->getSheet(2)->setCellValue('D12', $data['sport']['budget']);
 
         $inputData->getSheet(2)->setCellValue('F6', $data['tech']['commerce']);
         $inputData->getSheet(2)->setCellValue('F7', $data['science']['commerce']);
         $inputData->getSheet(2)->setCellValue('F9', $data['social']['commerce']);
-        $inputData->getSheet(2)->setCellValue('F11', $data['art']['commerce']);
+        $inputData->getSheet(2)->setCellValue('F10', $data['art']['commerce']);
         $inputData->getSheet(2)->setCellValue('F12', $data['sport']['commerce']);
     }
 

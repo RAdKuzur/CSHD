@@ -28,14 +28,37 @@ class GroupParticipantReportBuilder
         return $query->andWhere(['IN', 'foreign_event_participants.sex', $sex]);
     }
 
-    public function filterByAge(ActiveQuery $query, array $ages = [])
+    public function filterByAge(ActiveQuery $query, array $ages = [], string $endDate = null)
     {
         if (!empty($ages)) {
             $conditions = ['or'];
 
+            // Если передана endDate, вычисляем дату для подсчета возраста
+            // (1 января следующего года)
+            if ($endDate !== null) {
+                $endDateTime = new \DateTime($endDate);
+                $endDateYear = (int) $endDateTime->format('Y');
+                $currentYear = (int) date('Y');
+                if ($endDateYear = $currentYear) {
+                    // endDate уже следующий год - используем саму дату endDate если нужен отчет за промежуток
+                    $ageCalculationDate = $endDate; // используем оригинальную дату
+                } else {
+                    // endDate текущий год - переходим к 1 января следующего года
+                    $endDateTime->modify('+1 year');
+                    $ageCalculationDate = $endDateTime->format('Y-01-01');
+                }
+                $endDateTime->modify('+1 year'); // Переходим к следующему году
+                $ageCalculationDate = $endDateTime->format('Y-01-01'); // 1 января следующего года
+            } else {
+                // Старая логика для обратной совместимости
+                $ageCalculationDate = date('Y-m-d');
+            }
+
             foreach ($ages as $age) {
-                $minBirthDate = date('Y-m-d', strtotime("-$age years"));
-                $maxBirthDate = date('Y-m-d', strtotime("-". ($age + 1) ." year +1 day"));
+                // Вычисляем диапазон дат рождения для заданного возраста
+                // на ageCalculationDate (1 января следующего года)
+                $minBirthDate = date('Y-m-d', strtotime("-$age years", strtotime($ageCalculationDate)));
+                $maxBirthDate = date('Y-m-d', strtotime("-". ($age + 1) ." year +1 day", strtotime($ageCalculationDate)));
 
                 $conditions[] = ['BETWEEN', 'foreign_event_participants.birthdate', $maxBirthDate, $minBirthDate];
             }

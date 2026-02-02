@@ -27,6 +27,7 @@ use yii\widgets\ActiveForm;
 /* @var $modelGroups array */
 /* @var $orders DocumentOrderWork[] */
 /* @var $form yii\widgets\ActiveForm */
+$isCreate = $model->isNewRecord;
 ?>
 
 <script type="text/javascript">
@@ -108,7 +109,16 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'event_form')->dropDownList(Yii::$app->eventForm->getList(), [])->label('Форма мероприятия'); ?>
     <?= $form->field($model, 'event_way')->dropDownList(Yii::$app->eventWay->getList(), [])->label('Формат проведения'); ?>
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'event_level')->dropDownList(Yii::$app->eventLevel->getList(), [])->label('Уровень мероприятия'); ?>
+    <?= $form->field($model, 'event_level')->dropDownList(
+            Yii::$app->eventLevel->getList(),
+            [
+                    'options' => $isCreate ? [
+                            3 => ['disabled' => true, 'style' => 'color: #888;'],
+                            4 => ['disabled' => true, 'style' => 'color: #888;']
+                    ] : [],
+                    'prompt' => 'Выберите уровень мероприятия'
+            ]
+    )->label('Уровень мероприятия'); ?>
 
     <div class="checkList">
         <div class="checkHeader">

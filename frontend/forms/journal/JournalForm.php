@@ -81,6 +81,7 @@ class JournalForm extends Model
 
     public function load($data, $formName = null)
     {
+
         // Дозагружаем VisitLesson и доп данные для ParticipantLessons вручную, ActiveRecord не справляется сам
         $newParticipantLessons = [];
         $visitLessons = $data["VisitLesson"];
@@ -142,9 +143,12 @@ class JournalForm extends Model
     public function getDateLessons()
     {
         if (count($this->participantLessons) > 0) {
-            return $this->participantLessons[0]->getLessonsDate();
+            // Проверяем, что у первого участника есть занятия
+            if (!empty($this->participantLessons[0]->lessonIds)) {
+                return $this->participantLessons[0]->getLessonsDate();
+            }
         }
-        return 1;
+        return []; // Всегда возвращаем массив, даже если пустой
     }
 
     /**

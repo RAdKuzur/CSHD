@@ -22,6 +22,7 @@ use common\models\scaffold\PeopleStamp;
 use common\models\scaffold\ThematicPlan;
 use common\repositories\dictionaries\AuditoriumRepository;
 use common\repositories\dictionaries\ForeignEventParticipantsRepository;
+use common\repositories\educational\GroupProjectThemesRepository;
 use common\repositories\educational\LessonThemeRepository;
 use common\repositories\educational\ProjectThemeRepository;
 use common\repositories\educational\TeacherGroupRepository;
@@ -82,6 +83,8 @@ class TrainingGroupService implements DatabaseServiceInterface
     use CommonDatabaseFunctions, Math;
 
     private TrainingGroupRepository $trainingGroupRepository;
+
+    private GroupProjectThemesRepository $groupProjectThemesRepository;
     private TeacherGroupRepository $teacherGroupRepository;
     private TrainingGroupLessonRepository $trainingGroupLessonRepository;
     private TrainingGroupParticipantRepository $trainingGroupParticipantRepository;
@@ -98,6 +101,7 @@ class TrainingGroupService implements DatabaseServiceInterface
 
     public function __construct(
         TrainingGroupRepository $trainingGroupRepository,
+        GroupProjectThemesRepository $groupProjectThemesRepository,
         TeacherGroupRepository $teacherGroupRepository,
         TrainingGroupLessonRepository $trainingGroupLessonRepository,
         TrainingGroupParticipantRepository $trainingGroupParticipantRepository,
@@ -113,7 +117,9 @@ class TrainingGroupService implements DatabaseServiceInterface
         ErrorService $errorService
     )
     {
+
         $this->trainingGroupRepository = $trainingGroupRepository;
+        $this->groupProjectThemesRepository = $groupProjectThemesRepository;
         $this->teacherGroupRepository = $teacherGroupRepository;
         $this->trainingGroupLessonRepository = $trainingGroupLessonRepository;
         $this->trainingGroupParticipantRepository = $trainingGroupParticipantRepository;
@@ -453,14 +459,16 @@ class TrainingGroupService implements DatabaseServiceInterface
     public function attachThemes(PitchGroupForm $form)
     {
         foreach ($form->themeIds as $themeId) {
-            $form->recordEvent(
-                new AddGroupThemeEvent(
-                    $form->id,
-                    $themeId,
-                    GroupProjectThemesWork::NO_CONFIRM
-                ),
-                GroupProjectThemesWork::class
-            );
+            if (!$this->groupProjectThemesRepository->exists($form->id, $themeId)) {
+                $form->recordEvent(
+                    new AddGroupThemeEvent(
+                        $form->id,
+                        $themeId,
+                        GroupProjectThemesWork::NO_CONFIRM
+                    ),
+                    GroupProjectThemesWork::class
+                );
+            };
         }
         $form->releaseEvents();
     }

@@ -167,15 +167,15 @@ class PeopleWork extends People implements PersonInterface
         }, $positions);
     }
 
-    public function getPositionsBranch(int $Branch)
+    public function getPositionsBranch(int $branch): array
     {
-        $positions = $this->peoplePositionCompanyBranchWork;
-        return array_map(function (PeoplePositionCompanyBranchWork $model) use ($Branch) {
-            if ($model->branch == $Branch)
-            {
-                return $model->positionWork->name ;
-            }
-        }, $positions);
+        return array_values(array_filter(
+            array_map(function (PeoplePositionCompanyBranchWork $model) use ($branch) {
+                return $model->branch == $branch
+                    ? $model->positionWork->name
+                    : null;
+            }, $this->peoplePositionCompanyBranchWork)
+        ));
     }
 
     public function inMainCompany()

@@ -105,6 +105,11 @@ class PeopleController extends Controller
             $postPositions = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'positions', $post);
             $postCompanies = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'companies', $post);
             $postBranches = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'branches', $post);
+
+            if (!empty($postCompanies[0])) {
+                $model->company_id = $postCompanies[0];
+            }
+
             $peopleId = $this->repository->save($model);
             $this->service->attachPositionCompanyBranch($model, $postPositions, $postCompanies, $postBranches, $peopleId);
 
@@ -138,6 +143,11 @@ class PeopleController extends Controller
             $postPositions = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'positions', $post);
             $postCompanies = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'companies', $post);
             $postBranches = DynamicWidget::getData(StringFormatter::getLastSegmentByBackslash(basename(PeopleWork::class)), 'branches', $post);
+
+            if (!empty($postCompanies[0])) {
+                $model->company_id = $postCompanies[0];
+            }
+
             $this->repository->save($model);
             $this->service->attachPositionCompanyBranch($model, $postPositions, $postCompanies, $postBranches);
 
@@ -178,7 +188,30 @@ class PeopleController extends Controller
 
     public function actionDeletePosition($id, $modelId)
     {
+        $relation = PeoplePositionCompanyBranchWork::findOne($id);
+        $isMainCompany = $relation && $relation->company_id == Yii::$app->params["mainCompanyId"];
+        
         $this->repository->deletePosition($id);
+
+        if ($isMainCompany) {
+            $person = PeopleWork::findOne($modelId);
+            if ($person) {
+
+                $hasOtherMainCompanyLinks = PeoplePositionCompanyBranchWork::find()
+                    ->where([
+                        'people_id' => $modelId,
+                        'company_id' => Yii::$app->params["mainCompanyId"]
+                    ])
+                    ->exists();
+
+                if (!$hasOtherMainCompanyLinks) {
+                    $person->company_id = null;
+                }
+
+                $person->save();
+            }
+        }
+        
         return $this->redirect(['update', 'id' => $modelId]);
     }
 

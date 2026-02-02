@@ -183,8 +183,72 @@ class PeopleWork extends People implements PersonInterface
         return $this->company_id == Yii::$app->params["mainCompanyId"];
     }
 
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert)) {
+            return false;
+        }
+        
+        $inMainCompany = $this->inMainCompany();
+        $fioChanged = $this->isAttributeChanged('surname') || 
+                    $this->isAttributeChanged('firstname') || 
+                    $this->isAttributeChanged('patronymic');
+        
+
+        if (!$inMainCompany) {
+            $this->short = null;
+            return true;
+        }
+        
+
+        if (empty($this->short) || $fioChanged) {
+            $this->short = $this->generateShortCode();
+        }
+        
+        return true;
+    }
+
+    private function generateShortCode()
+    {
+
+        $code = mb_substr($this->surname, 0, 1, 'UTF-8');
+        
+        if (!empty($this->firstname)) {
+            $code .= mb_substr($this->firstname, 0, 1, 'UTF-8');
+        }
+        
+        if (!empty($this->patronymic)) {
+            $code .= mb_substr($this->patronymic, 0, 1, 'UTF-8');
+        }
+        
+        $code = mb_strtoupper($code, 'UTF-8');
+        
+        return $this->getUniqueShortCode($code);
+    }
+
+    private function getUniqueShortCode($baseCode)
+    {
+        $counter = 1;
+
+        $existingCodes = self::find()
+            ->select('short')
+            ->where(['like', 'short', $baseCode . '%', false])
+            ->andWhere(['company_id' => Yii::$app->params["mainCompanyId"]])
+            ->andWhere(['!=', 'id', $this->id ?: 0])
+            ->andWhere(['IS NOT', 'short', null])
+            ->column();
+
+        do {
+            $testCode = $baseCode . $counter;
+            $counter++;
+        } while (in_array($testCode, $existingCodes) && $counter <= 100);
+        
+        return $testCode;
+    }
+
     public function getPeoplePositionCompanyBranchWork()
     {
         return $this->hasMany(PeoplePositionCompanyBranchWork::className(), ['people_id' => 'id']);
     }
+
 }

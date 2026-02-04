@@ -320,25 +320,29 @@ class DodReportService
      * @param int $focus
      * @return array
      */
-    public function calculateParticipantsSection5(array $groupQuery, int $focus, string $endDate) : array
+    public function calculateParticipantsSection5(array $groupQuery, int $focus, string $endDate): array
     {
         $queryFocus = $this->groupBuilder->filterGroupsByFocuses(clone $groupQuery['all'], [$focus]);
 
-        $budgetGroupQuery = $this->groupBuilder->filterGroupsByBudget(clone $queryFocus, [TrainingGroupWork::IS_BUDGET]); // получаем запросы по бюджетным группам
-        $commerceGroupQuery = $this->groupBuilder->filterGroupsByBudget(clone $queryFocus, [TrainingGroupWork::NO_BUDGET]); // получаем запросы по коммерческим группам
+        $budgetGroupQuery = $this->groupBuilder->filterGroupsByBudget(clone $queryFocus, [TrainingGroupWork::IS_BUDGET]);
+        $commerceGroupQuery = $this->groupBuilder->filterGroupsByBudget(clone $queryFocus, [TrainingGroupWork::NO_BUDGET]);
 
         $budgetGroupAll = $this->groupRepository->findAll($budgetGroupQuery);
         $commerceGroupAll = $this->groupRepository->findAll($commerceGroupQuery);
 
         $participantsBudgetQuery = $this->createParticipantQuery($budgetGroupAll, $endDate);
-        $participantsCommerceQuery = $this->createParticipantQuery($commerceGroupAll,$endDate);
+        $participantsCommerceQuery = $this->createParticipantQuery($commerceGroupAll, $endDate);
 
         $participantsBudgetAll = $this->participantRepository->findAll($participantsBudgetQuery['all']);
         $participantsCommerceAll = $this->participantRepository->findAll($participantsCommerceQuery['all']);
 
+        $budgetIds = array_unique(ArrayHelper::getColumn($participantsBudgetAll, 'participant_id'));
+        $commerceIds = array_unique(ArrayHelper::getColumn($participantsCommerceAll, 'participant_id'));
+
         return [
-            'budget' => count(array_unique(ArrayHelper::getColumn($participantsBudgetAll, 'participant_id'))),
-            'commerce' => count(array_unique(ArrayHelper::getColumn($participantsCommerceAll, 'participant_id'))),
+            'budget' => count(array_diff($budgetIds, $commerceIds)),
+            'commerce' => count(array_diff($commerceIds, $budgetIds)),
+            'budget_and_commerce' => count(array_intersect($budgetIds, $commerceIds)),
         ];
     }
 

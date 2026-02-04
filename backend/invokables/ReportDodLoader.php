@@ -112,6 +112,13 @@ class ReportDodLoader
         $inputData->getSheet(2)->setCellValue('F9', $data['social']['commerce']);
         $inputData->getSheet(2)->setCellValue('F10', $data['art']['commerce']);
         $inputData->getSheet(2)->setCellValue('F12', $data['sport']['commerce']);
+
+        $inputData->getSheet(2)->setCellValue('G6', $data['tech']['budget_and_commerce']);
+        $inputData->getSheet(2)->setCellValue('G7', $data['science']['budget_and_commerce']);
+        $inputData->getSheet(2)->setCellValue('G9', $data['social']['budget_and_commerce']);
+        $inputData->getSheet(2)->setCellValue('G10', $data['art']['budget_and_commerce']);
+        $inputData->getSheet(2)->setCellValue('G12', $data['sport']['budget_and_commerce']);
+
     }
 
     public function setSection10(Spreadsheet $inputData, array $data)

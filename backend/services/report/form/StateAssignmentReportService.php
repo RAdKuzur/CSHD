@@ -10,6 +10,7 @@ use backend\services\report\ReportManHoursService;
 use common\components\dictionaries\base\AllowRemoteDictionary;
 use common\components\dictionaries\base\BranchDictionary;
 use common\components\dictionaries\base\EventLevelDictionary;
+use common\components\dictionaries\base\EventTypeDictionary;
 use common\components\dictionaries\base\FocusDictionary;
 use common\components\traits\Math;
 use common\repositories\act_participant\ActParticipantRepository;
@@ -20,6 +21,7 @@ use common\repositories\event\ForeignEventRepository;
 use common\repositories\event\ParticipantAchievementRepository;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
+use frontend\models\work\event\EventWork;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\services\act_participant\ActParticipantService;
@@ -155,7 +157,7 @@ class StateAssignmentReportService
             );
 
         $result['cod']['tech']['remote'] =
-            $this->calculateParamsSection31(
+            $this->calculateSpesialForCODParamsSection31(
                 $startDate, $endDate,
                 BranchDictionary::COD,
                 FocusDictionary::TECHNICAL,
@@ -353,6 +355,56 @@ class StateAssignmentReportService
         ];
     }
 
+
+
+    /**
+     * Специально для ЦОД. Техническая
+     * 3. Доля обучающихся, принявших участие в мероприятиях не ниже регионального уровня, в общем числе обучающихся
+     * */
+    public function calculateSpesialForCODParamsSection31(string $startDate, string $endDate, int $branch, int $focus, int $allowRemote, array $params = [])
+    {
+        $groupsQuery = $this->groupBuilder->query();
+        $groupsQuery = $this->groupBuilder->filterGroupsByDates($groupsQuery, $startDate, $endDate, self::CALCULATE_TYPES);
+        $groupsQuery = $this->groupBuilder->filterGroupsByBranches($groupsQuery, [$branch]);
+        $groupsQuery = $this->groupBuilder->filterGroupsByFocuses($groupsQuery, [$focus]);
+        $groupsQuery = $this->groupBuilder->filterGroupsByAllowRemote($groupsQuery, [$allowRemote]);
+        $groupsQuery = $this->groupBuilder->filterGroupsByBudget($groupsQuery, [TrainingGroupWork::IS_BUDGET]);
+        $groupsAll = $this->groupRepository->findAll($groupsQuery);
+
+        $eventsAll = $this->foreignEventRepository->getByDatesAndLevels(
+            $startDate, $endDate,
+            [EventLevelDictionary::REGIONAL, EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERNATIONAL, EventLevelDictionary::INTERREGIONAL]
+        );
+
+        //специально для ЦОД
+        $codEvents = [];
+        $extraEvents = EventWork::find()->where([
+            'and',
+            ['<=', 'start_date', $endDate],
+            ['>=', 'finish_date', $startDate]
+        ])->all();
+        foreach ($extraEvents as $event) {
+            foreach ($event->getBranches()->all() as $eventBranch) {
+                if($eventBranch->branch == BranchDictionary::COD &&
+                    $event->event_level >= EventLevelDictionary::REGIONAL &&
+                    $event->event_type == EventTypeDictionary::NON_COMPETITIVE
+                ){
+                    $codEvents[] = $event;
+                    break;
+                }
+            }
+        }
+        //
+        return [
+            self::PARAM_DUPLICATE => in_array(self::PARAM_DUPLICATE, $params) ? $this->calculateParamDuplicate($groupsAll) : -1,
+            self::PARAM_ACHIEVES_RATIO => in_array(self::PARAM_ACHIEVES_RATIO, $params) ? $this->calculateParamRatioAchieves($groupsAll, $eventsAll, $focus, $branch) : -1,
+            self::PARAM_PROJECTS_RATIO => in_array(self::PARAM_PROJECTS_RATIO, $params) ? $this->calculateParamRatioProjects($groupsAll) : -1,
+            self::PARAM_PARTICIPANTS_RATIO => in_array(self::PARAM_PARTICIPANTS_RATIO, $params) ? $this->calculateParamRatioParticipants($groupsAll, $eventsAll, $focus, $branch, $codEvents) : -1,
+        ];
+    }
+
+
+
     /**
      * Метод подсчета доли лиц, подавших более одного заявление на обучение от общего числа
      * Считаем количество людей, которые занимаются более чем в одной группе по соответствующим параметрам и делим на все уникальные акты обучения
@@ -436,7 +488,7 @@ class StateAssignmentReportService
      * @param array $events
      * @return float
      */
-    public function calculateParamRatioParticipants(array $groups, array $events, int $focus, int $branch)
+    public function calculateParamRatioParticipants(array $groups, array $events, int $focus, int $branch, array $extraEvents = [])
     {
         //это предудыщая версия(метод) ведения отчёта
         /*$participants = $this->participantBuilder->query();
@@ -454,6 +506,14 @@ class StateAssignmentReportService
         );
         $eventParticipants = $this->eventParticipantBuilder->filterByParticipantIds($eventParticipants, ArrayHelper::getColumn($participantsAll, 'participant_id'));
 */
+
+        $extraParticipants = 0;
+        $rstExtraParticipants = 0;
+        foreach ($extraEvents as $event) {
+            $extraParticipants = $extraParticipants + $event->child_participants_count;
+            $rstExtraParticipants = $rstExtraParticipants + $event->child_rst_participants_count;
+        }
+
         $eventParticipants = $this->eventParticipantBuilder->query();
         $eventParticipants = $this->eventParticipantBuilder->filterByEvents($eventParticipants, ArrayHelper::getColumn($events, 'id'));
         $eventParticipants = $this->eventParticipantBuilder->filterByFocuses($eventParticipants, [$focus]);
@@ -464,7 +524,11 @@ class StateAssignmentReportService
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
         $participantsAll = $this->participantRepository->findAll($participantsAllUnic);
+
+        //var_dump($extraParticipants, $rstExtraParticipants, $participantsAllUnic->count());
+
         $generalCount = count(array_unique(ArrayHelper::getColumn($allEventParticipants, 'participant_id'))) + count($participantsAll);
-        return $this->percent(count(array_unique(ArrayHelper::getColumn($allEventParticipants, 'participant_id'))), $generalCount);
+        return $this->percent($rstExtraParticipants, $participantsAllUnic->count());
+        //return $this->percent(count(array_unique(ArrayHelper::getColumn($allEventParticipants, 'participant_id'))) + $extraParticipants, $generalCount + $extraParticipants);
     }
 }

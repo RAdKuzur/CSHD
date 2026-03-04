@@ -83,16 +83,16 @@ class EffectiveContractReportService
         $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
 
-        $actsQuery = $this->builder->filterByBranches($actsQuery, [
-            BranchDictionary::TECHNOPARK, BranchDictionary::COD, BranchDictionary::MOBILE_QUANTUM, BranchDictionary::QUANTORIUM, BranchDictionary::CDNTT
-        ]);
-        $actsQuery = $this->builder->filterByFocuses($actsQuery,
-        [
-            FocusDictionary::TECHNICAL, FocusDictionary::ART, FocusDictionary::SOCIAL, FocusDictionary::SCIENCE, FocusDictionary::SPORT
-        ]);
-        $actsQuery = $this->builder->filterByAllowRemote($actsQuery, [
-            AllowRemoteDictionary::ONLY_PERSONAL, AllowRemoteDictionary::PERSONAL_WITH_REMOTE
-        ]);
+//        $actsQuery = $this->builder->filterByBranches($actsQuery, [
+//            BranchDictionary::TECHNOPARK, BranchDictionary::COD, BranchDictionary::MOBILE_QUANTUM, BranchDictionary::QUANTORIUM, BranchDictionary::CDNTT
+//        ]);
+//        $actsQuery = $this->builder->filterByFocuses($actsQuery,
+//        [
+//            FocusDictionary::TECHNICAL, FocusDictionary::ART, FocusDictionary::SOCIAL, FocusDictionary::SCIENCE, FocusDictionary::SPORT
+//        ]);
+//        $actsQuery = $this->builder->filterByAllowRemote($actsQuery, [
+//            AllowRemoteDictionary::ONLY_PERSONAL, AllowRemoteDictionary::PERSONAL_WITH_REMOTE
+//        ]);
 
         $result = [];
         $tempSumPart = 0;
@@ -101,10 +101,18 @@ class EffectiveContractReportService
             $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, [$level]);
             $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
             $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
+            $winners = [];
+            $prizers = [];
+            foreach ($this->actRepository->findAll($winQuery) as $participant) {
+                $winners[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
+            }
+            foreach ($this->actRepository->findAll($prizeQuery) as $participant) {
+                $prizers[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
+            }
             $result[$level] = [
                 'participant' => count($this->actRepository->findAll($participantQuery)),
-                'winners' => count($this->actRepository->findAll($winQuery)),
-                'prizes' => count($this->actRepository->findAll($prizeQuery)),
+                'winners' => count(array_unique(array_merge(...$winners))),
+                'prizes' => count(array_unique(array_merge(...$prizers))),
             ];
 
             if (in_array($level, Yii::$app->eventLevel->getReportLevels())) {

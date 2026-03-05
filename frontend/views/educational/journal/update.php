@@ -201,7 +201,7 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
                                 </td>
                             <?php endforeach; ?>
                             <!-- display: none на CSS-классы -->
-                            <td class="project-participant attendance <?= $model->isProjectCertificate() ? '' : 'hidden-field' ?>">
+                            <td class="project-participant attendance"  style="display: <?= $model->isProjectCertificate() ? 'block' : 'none';?>">
                                 <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]groupProjectThemeId")->dropDownList(
                                         ArrayHelper::map(
                                                 array_filter($model->availableThemes, function ($theme) {
@@ -213,19 +213,15 @@ $this->registerJsFile('@web/js/journal.js', ['position' => $this::POS_HEAD]);
                                 )->label(false) ?>
                             </td>
 
-                            <td class="status-participant <?= $model->isControlWorkCertificate() ? '' : 'hidden-field' ?>">
+
+                            <td class="status-participant" style="display: <?= $model->isControlWorkCertificate() ? 'flex' : 'none';?>">
                                 <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]points")->textInput(['type' => 'number'])->label(false) ?>
                             </td>
 
                             <td class="status-participant success-checkbox">
                                 <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]successFinishing")->checkbox()->label(false) ?>
                             </td>
-                            <td class="status-participant" style="display: <?= $model->isControlWorkCertificate() ? 'flex' : 'none';?>">
-                                <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]points")->textInput(['type' => 'number'])->label(false) ?>
-                            </td>
-                            <td class="status-participant success-checkbox">
-                                <?= $form->field($participantLesson, "[$participantLesson->trainingGroupParticipantId]successFinishing")->checkbox()->label(false) ?>
-                            </td>
+
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

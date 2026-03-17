@@ -19,8 +19,16 @@ $this->title = 'Результат отчета по обучающимся';
 
 
 <p>Человеко-часы: <?= $manHoursResult['result'] ?></p>
-<?php if (!empty($participantsResult)): ?>
-    <p>Обучающиеся:</p>
+<?php if (!empty($participantsResult)):
+    $total = 0;
+
+    if (is_array($participantsResult['result'])) {
+        $total = array_sum($participantsResult['result']);
+    }
+    ?>
+    <p>
+        Обучающиеся: <strong><?= $total ?></strong>
+    </p>
     <table class="table table-striped">
         <?php if (is_array($participantsResult['result'])): ?>
             <?php foreach($participantsResult['result'] as $index => $participantChapter): ?>

@@ -1,5 +1,6 @@
 <?php
 
+
 namespace frontend\forms\analytics;
 
 use common\models\work\ErrorsWork;
@@ -31,6 +32,8 @@ class AnalyticErrorForm extends BaseObject
     private array $_orderErrors;
     private array $_eventErrors;
     private array $_foreignEventErrors;
+
+    
 
     public function __construct(
         array $errors,

@@ -257,12 +257,17 @@ class HtmlBuilder
      * @param string $resetUrl     // url куда возвращаться по кнопке очистки параметров
      * @return string
      */
-    public static function filterButton(string $resetUrl) {
-        return '<div class="form-group-button">
-                    <button type="submit" class="btn btn-primary">Поиск</button>
-                    <a href="'.Url::to([$resetUrl]).'" type="reset" class="btn btn-secondary" style="font-weight: 500;">Очистить</a>
-                </div>';
-    }
+public static function filterButton($resetUrl)
+{
+    $url = is_array($resetUrl)
+        ? Url::to($resetUrl)
+        : Url::to([$resetUrl]);
+
+    return '<div class="form-group-button">
+        <button type="submit" class="btn btn-primary">Поиск</button>
+        <a href="'.$url.'" class="btn btn-secondary" style="font-weight: 500;">Очистить</a>
+    </div>';
+}
 
     /**
      * Создает панель фильтров на _search страницах. Обязательно наличие HtmlCreator::filterToggle() на странице отображения (index)
@@ -274,7 +279,7 @@ class HtmlBuilder
      * @return string
      * @throws \Exception
      */
-    public static function createFilterPanel(object $searchModel, array $searchFields, ActiveForm $form, int $valueInRow, string $resetUrl)
+    public static function createFilterPanel(object $searchModel, array $searchFields, ActiveForm $form, int $valueInRow, $resetUrl)
     {
         // Добавляем JavaScript для обработки пробелов
         $js = <<<JS

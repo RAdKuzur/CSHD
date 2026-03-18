@@ -748,3 +748,27 @@ input[type="checkbox"] {
     color: var(--primary-subtle-text);
     font-weight: 500;
 }
+
+.nav-tabs {
+    margin-bottom: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-tabs .nav-link {
+    color: #555;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #fff;
+    border-bottom-color: transparent;
+    font-weight: bold;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 3px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    margin-left: 5px;
+}

@@ -95,8 +95,8 @@ class ErrorService
             }
 
             // Ищем только те ошибки, которые связаны с найденными мероприятиями
-            $errorsEvent = $this->errorsRepository->getErrorsByTableRowsBranchTypes(EventWork::tableName(), $eventIds, null, [Error::TYPE_CRITICAL]);
-            $errorsForeignEvent = $this->errorsRepository->getErrorsByTableRowsBranchTypes(ForeignEventWork::tableName(), $foreignEventIds, null, [Error::TYPE_CRITICAL]);
+            $errorsEvent = $this->errorsRepository->getErrorsByTableRowsBranchTypes(EventWork::tableName(),$eventIds,null,$types);
+            $errorsForeignEvent = $this->errorsRepository->getErrorsByTableRowsBranchTypes(ForeignEventWork::tableName(),$foreignEventIds,null,$types);
         }
 
         // Поиск ошибок по журналу (учебной деятельности)
@@ -117,8 +117,8 @@ class ErrorService
                 $programIds = [];
             }
 
-            $errorsJournal = $this->errorsRepository->getErrorsByTableRowsBranchTypes(TrainingGroupWork::tableName(), $groupIds, null, [Error::TYPE_CRITICAL]);
-            $errorsProgram = $this->errorsRepository->getErrorsByTableRowsBranchTypes(TrainingProgramWork::tableName(), $programIds, null, [Error::TYPE_CRITICAL]);
+            $errorsJournal = $this->errorsRepository->getErrorsByTableRowsBranchTypes(TrainingGroupWork::tableName(),$groupIds,null,$types);
+            $errorsProgram = $this->errorsRepository->getErrorsByTableRowsBranchTypes(TrainingProgramWork::tableName(), $programIds, null, $types);
         }
 
         // Поиск ошибок по документообороту
@@ -132,7 +132,7 @@ class ErrorService
                 $orderIds = $this->orderService->getOrdersByBranch($user->akaWork->branch);
             }
 
-            $errorsOrder = $this->errorsRepository->getErrorsByTableRowsBranchTypes(DocumentOrderWork::tableName(), $orderIds, null, [Error::TYPE_CRITICAL]);
+            $errorsOrder = $this->errorsRepository->getErrorsByTableRowsBranchTypes(DocumentOrderWork::tableName(), $orderIds, null, $types);
         }
 
         // Поиск ошибок по мат. ценностям

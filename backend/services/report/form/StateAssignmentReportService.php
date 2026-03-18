@@ -387,7 +387,7 @@ class StateAssignmentReportService
             foreach ($event->getBranches()->all() as $eventBranch) {
                 if($eventBranch->branch == BranchDictionary::COD &&
                     $event->event_level >= EventLevelDictionary::REGIONAL &&
-                    $event->event_type == EventTypeDictionary::NON_COMPETITIVE
+                    $event->event_type == EventTypeDictionary::NON_COMPETITIVE || $event->event_type == EventTypeDictionary::COMPETITIVE
                 ){
                     $codEvents[] = $event;
                     break;

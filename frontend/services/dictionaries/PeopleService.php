@@ -7,6 +7,7 @@ use common\helpers\html\HtmlCreator;
 use common\helpers\StringFormatter;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\event\ParticipantAchievementRepository;
+use common\repositories\general\PeopleStampRepository;
 use common\repositories\responsibility\LocalResponsibilityRepository;
 use frontend\events\dictionaries\PeoplePositionCompanyBranchEventCreate;
 use common\helpers\files\FilesHelper;
@@ -37,6 +38,8 @@ use yii\helpers\Url;
 class PeopleService implements DatabaseServiceInterface
 {
     private TrainingGroupRepository $groupRepository;
+
+    private PeopleStampRepository  $peopleStampRepository;
     private ParticipantAchievementRepository $achievementRepository;
     private LocalResponsibilityRepository $responsibilityRepository;
     private DocumentInRepository $documentInRepository;
@@ -51,7 +54,8 @@ class PeopleService implements DatabaseServiceInterface
         DocumentInRepository $documentInRepository,
         DocumentOutRepository $documentOutRepository,
         RegulationRepository $regulationRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        PeopleStampRepository $peopleStampRepository
     )
     {
         $this->groupRepository = $groupRepository;
@@ -61,6 +65,7 @@ class PeopleService implements DatabaseServiceInterface
         $this->documentOutRepository = $documentOutRepository;
         $this->regulationRepository = $regulationRepository;
         $this->userRepository = $userRepository;
+        $this->peopleStampRepository = $peopleStampRepository;
     }
 
     public function createPositionsCompaniesArray(array $data)
@@ -91,7 +96,10 @@ class PeopleService implements DatabaseServiceInterface
 
     public function getGroupsList(PeopleWork $model)
     {
-        $groups = $this->groupRepository->getByTeacher($model->id);
+        $teachers = $this->peopleStampRepository->getByPeopleId($model->id);
+        if (empty($teachers))
+            return "";
+        $groups = $this->groupRepository->getByTeacher($teachers[0]->id);
 
         return implode('<br>', array_map(function (TrainingGroupWork $group) {
             return StringFormatter::stringAsLink(
@@ -104,7 +112,10 @@ class PeopleService implements DatabaseServiceInterface
     public function getStudentAchievements(PeopleWork $model)
     {
         $result = '';
-        $achievements = $this->achievementRepository->getByTeacherId($model->id);
+        $teachers = $this->peopleStampRepository->getByPeopleId($model->id);
+        if (empty($teachers))
+            return "";
+        $achievements = $this->achievementRepository->getByTeacherId($teachers[0]->id);
         foreach ($achievements as $achievement) {
             /** @var ParticipantAchievementWork $achievement */
             $participants = $achievement->actParticipantWork->squadParticipantsWork;
@@ -112,7 +123,7 @@ class PeopleService implements DatabaseServiceInterface
                 $result .=
                     StringFormatter::stringAsLink(
                         $participant->participantWork->getFIO(PersonInterface::FIO_SURNAME_INITIALS),
-                        Url::to(['/dictionaries/foreign-event-participants/view', 'id' => $participant->id])
+                        Url::to(['/dictionaries/foreign-event-participants/view', 'id' => $participant->participant_id])
                     ) . ' &mdash; ' .
                     $achievement->achievement . ' ' .
                     StringFormatter::stringAsLink(

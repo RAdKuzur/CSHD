@@ -146,9 +146,12 @@ class HtmlBuilder
     public static function createAccordion(string $content, int $lengthPrev = 20, string $textBtnOpen = 'Развернуть', string $textBtnClose = 'Скрыть')
     {
         $contentString = strip_tags($content);
+        $text = html_entity_decode($contentString);
+        $short = mb_substr($text, 0, $lengthPrev);
+
         $result = '<div class="accordion-block">
                         <div class="flexx space represent">
-                            <div class="prev-accordion">' . mb_substr($contentString, 0, $lengthPrev) . '...</div>
+                            <div class="prev-accordion">' . $short . '...</div>
                             <button class="accordion-btn btn-secondary">' . $textBtnOpen . '</button>
                         </div>
                         <div class="accordion-date">

@@ -508,6 +508,9 @@ class RulesConfig
                 'index',
                 'view',
             ],
+            \frontend\controllers\dictionaries\ThematicDirectionController::class => [
+                'index',
+            ],
         ],
 
         'edit_dictionaries' => [

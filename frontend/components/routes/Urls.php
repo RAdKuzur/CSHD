@@ -161,6 +161,7 @@ class Urls
     const PARTICIPANT_VIEW = "dictionaries/foreign-event-participants/view";
     const PARTICIPANT_FILE_LOAD = "dictionaries/foreign-event-participants/file-load";
     const PARTICIPANT_INDEX = "dictionaries/foreign-event-participants/index";
+    const THEMATIC_DIRECTION_INDEX = "dictionaries/thematic-direction/index";
     const PARTICIPANT_ERROR_CHECK = "dictionaries/foreign-event-participants/error-check";
 
     /**

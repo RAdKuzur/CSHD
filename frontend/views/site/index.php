@@ -222,6 +222,12 @@ $this->title = 'ЦСХД';
                     echo HtmlBuilder::createGroupButton(ButtonsFormatter::anyOneLink($svg . ' Участники деятельности', Yii::$app->frontUrls::PARTICIPANT_INDEX, ButtonsFormatter::BTN_SUCCESS));
                     ?>
                 </div>
+                <div class="flexx">
+                    <?php
+                    $svg = HtmlBuilder::paintSVG(FilePaths::SVG_DIRECTORY);
+                    echo HtmlBuilder::createGroupButton(ButtonsFormatter::anyOneLink($svg . ' Тематические направления', Yii::$app->frontUrls::THEMATIC_DIRECTION_INDEX, ButtonsFormatter::BTN_SUCCESS));
+                    ?>
+                </div>
             </div>
         </div>
     </div>

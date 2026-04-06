@@ -628,7 +628,7 @@ public static function filterButton($resetUrl)
             $eventsLink2 .= self::createActParticipantBlock($event);
         }
 
-        $result .= '<tr><td><b>Мепроприятия</b></td><td style="width: 45%">'.$eventsLink1.'</td><td><b>Мепроприятия</b></td><td style="width: 45%">'.$eventsLink2.'</td></tr>';
+        $result .= '<tr><td><b>Мероприятия</b></td><td style="width: 45%">'.$eventsLink1.'</td><td><b>Мероприятия</b></td><td style="width: 45%">'.$eventsLink2.'</td></tr>';
 
         $achievesLink1 = '';
         foreach ($achieves1 as $achievement) {

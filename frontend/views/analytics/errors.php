@@ -8,6 +8,7 @@ use yii\data\ArrayDataProvider;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use common\helpers\html\HtmlCreator;
+use kartik\export\ExportMenu;
 
 /* @var $this yii\web\View */
 /* @var $model AnalyticErrorForm */
@@ -19,18 +20,121 @@ $id = Yii::$app->request->get('id');
 
 $this->title = 'Ошибки заполнения';
 $this->params['breadcrumbs'][] = $this->title;
+
+
+$gridColumns = [
+    [
+        'attribute' => 'error_code',
+        'label' => 'Код ошибки',
+        'value' => function(ErrorsWork $model) {
+            return Yii::$app->errors->get($model->error)->code;
+        }
+    ],
+    [
+        'attribute' => 'error_description',
+        'label' => 'Описание проблемы',
+        'value' => function(ErrorsWork $model) {
+            return Yii::$app->errors->get($model->error)->description;
+        }
+    ],
+    [
+        'attribute' => 'create_datetime',
+        'label' => 'Дата и время',
+        'value' => function(ErrorsWork $model) {
+            $date = explode(' ', $model->create_datetime)[0];
+            $time = explode(' ', $model->create_datetime)[1];
+            return
+                DateFormatter::format($date, DateFormatter::Ymd_dash, DateFormatter::dm_dot) . ' в ' .
+                DateFormatter::format($time, DateFormatter::His_colon, DateFormatter::Hi_colon);
+        }
+    ],
+    [
+        'attribute' => 'entity_name',
+        'label' => 'Место возникновения',
+        'format' => 'raw',
+        'value' => function(ErrorsWork $model) {
+            return Html::a($model->getEntityName(), [
+                'educational/'.str_replace('_', '-' , $model->table_name) . '/view',
+                'id' => $model->table_row_id
+            ]);
+        }
+    ],
+    [
+        'attribute' => 'branch',
+        'label' => 'Отдел',
+        'value' => function(ErrorsWork $model) {
+            return Yii::$app->branches->get($model->branch);
+        }
+    ],
+];
+
+?>
+
+
+<?php
+$tabsConfig = [
+    'groups' => [
+        'label' => 'Учебные группы',
+        'data' => $model->groupErrors,
+    ],
+    'programs' => [
+        'label' => 'Образовательные программы',
+        'data' => $model->programErrors,
+    ],
+    'orders' => [
+        'label' => 'Приказы',
+        'data' => $model->orderErrors,
+    ],
+    'events' => [
+        'label' => 'Мероприятия',
+        'data' => $model->eventErrors,
+    ],
+    'achievements' => [
+        'label' => 'Учёт достижений',
+        'data' => $model->foreignEventErrors,
+    ],
+];
+
+$exportColumns = $gridColumns;
+
+foreach ($exportColumns as &$column) {
+    if (isset($column['attribute']) && $column['attribute'] === 'entity_name') {
+        $column['value'] = function (ErrorsWork $model) {
+            return $model->getEntityNameForExport();
+        };
+        // Убираем 'raw' — для формулы он не нужен
+        unset($column['format']);
+        break;
+    }
+}
+unset($column);
+
+
+$exportModels = $tabsConfig[$activeTab]['data'] ?? [];
+$exportDataProvider = new ArrayDataProvider([
+    'allModels' => $exportModels,
+    'pagination' => false,
+]);
 ?>
 
 <div style="width:100%; height:1px; clear:both;"></div>
 
 <div class="analytics-errors">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <div class="flexx space" style="margin-bottom: 15px;">
-        <div class="flexx">
+    <div class="substrate">
+        <h1><?= Html::encode($this->title) ?></h1>
 
+        <div class="flexx space" style="margin-bottom: 15px;">
+            <div class="flexx">
+                <div class="export-menu">
+                    <?= ExportMenu::widget([
+                        'dataProvider' => $exportDataProvider,
+                        'columns' => $exportColumns,
+                    ]); ?>
+                </div>
+            </div>
+            <?= HtmlCreator::filterToggle() ?>
         </div>
-        <?= HtmlCreator::filterToggle() ?>
     </div>
 
     <?= $this->render('_search_errors', [
@@ -39,339 +143,44 @@ $this->params['breadcrumbs'][] = $this->title;
         'activeTab' => $activeTab,
     ]) ?>
 
+    <?php
+    $tabsItems = [];
+
+    foreach ($tabsConfig as $key => $tab) {
+
+        $data = $tab['data'];
+
+        $content = !empty($data)
+            ? GridView::widget([
+                'summary' => false,
+                'dataProvider' => new ArrayDataProvider([
+                    'allModels' => $data,
+                    'pagination' => false,
+                    'sort' => [
+                        'attributes' => [
+                            'error_code',
+                            'error_description',
+                            'create_datetime',
+                            'entity_name',
+                            'branch',
+                        ],
+                    ],
+                ]),
+                'columns' => $gridColumns,
+            ])
+            : '<div class="alert alert-info">Ошибки в данной вкладке не были найдены</div>';
+
+        $tabsItems[] = [
+            'label' => $tab['label'],
+            'content' => $content,
+            'active' => $activeTab === $key,
+            'linkOptions' => ['data-tab' => $key],
+        ];
+    }
+    ?>
+
     <?= Tabs::widget([
-        'items' => [
-            [
-                'label' => 'Учебные группы',
-                'content' => !empty($model->groupErrors) ? GridView::widget([
-                    'summary' => false,
-                    'dataProvider' => new ArrayDataProvider([
-                        'allModels' => $model->groupErrors,
-                        'pagination' => false,
-                        'sort' => [
-                            'attributes' => [
-                                'error_code',
-                                'error_description',
-                                'create_datetime',
-                                'entity_name',
-                                'branch',
-                            ],
-                        ],
-                    ]),
-                    'columns' => [
-                        [
-                            'attribute' => 'error_code',
-                            'label' => 'Код ошибки',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->code;
-                            }
-                        ],
-                        [
-                            'attribute' => 'error_description',
-                            'label' => 'Описание проблемы',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->description;
-                            }
-                        ],
-                        [
-                            'attribute' => 'create_datetime',
-                            'label' => 'Дата и время',
-                            'value' => function(ErrorsWork $model) {
-                                $date = explode(' ', $model->create_datetime)[0];
-                                $time = explode(' ', $model->create_datetime)[1];
-                                return 
-                                    DateFormatter::format($date, DateFormatter::Ymd_dash, DateFormatter::dm_dot) . ' в ' .
-                                    DateFormatter::format($time, DateFormatter::His_colon, DateFormatter::Hi_colon);
-                            }
-                        ],
-                        [
-                            'attribute' => 'entity_name',
-                            'label' => 'Место возникновения',
-                            'format' => 'raw',
-                            'value' => function(ErrorsWork $model) {
-                                return Html::a($model->getEntityName(), [
-                                    'educational/'.str_replace('_', '-' , $model->table_name) . '/view',
-                                    'id' => $model->table_row_id
-                                ]);
-                            }
-                        ],
-                        [
-                            'attribute' => 'branch',
-                            'label' => 'Отдел',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->branches->get($model->branch);
-                            }
-                        ],
-                    ],
-                ]) : '<div class="alert alert-info">Ошибки в данной вкладке не были найдены</div>',
-                'active' => $activeTab === 'groups',
-                'linkOptions' => ['data-tab' => 'groups'],
-            ],
-            [
-                'label' => 'Образовательные программы',
-                'content' => !empty($model->programErrors) ? GridView::widget([
-                    'summary' => false,
-                    'dataProvider' => new ArrayDataProvider([
-                        'allModels' => $model->programErrors,
-                        'pagination' => false,
-                        'sort' => [
-                            'attributes' => [
-                                'error_code',
-                                'error_description',
-                                'create_datetime',
-                                'entity_name',
-                                'branch',
-                            ],
-                        ],
-                    ]),
-                    'columns' => [
-                        [
-                            'attribute' => 'error_code',
-                            'label' => 'Код ошибки',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->code;
-                            }
-                        ],
-                        [
-                            'attribute' => 'error_description',
-                            'label' => 'Описание проблемы',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->description;
-                            }
-                        ],
-                        [
-                            'attribute' => 'create_datetime',
-                            'label' => 'Дата и время',
-                            'value' => function(ErrorsWork $model) {
-                                $date = explode(' ', $model->create_datetime)[0];
-                                $time = explode(' ', $model->create_datetime)[1];
-                                return 
-                                    DateFormatter::format($date, DateFormatter::Ymd_dash, DateFormatter::dm_dot) . ' в ' .
-                                    DateFormatter::format($time, DateFormatter::His_colon, DateFormatter::Hi_colon);
-                            }
-                        ],
-                        [
-                            'attribute' => 'entity_name',
-                            'label' => 'Место возникновения',
-                            'format' => 'raw',
-                            'value' => function(ErrorsWork $model) {
-                                return Html::a($model->getEntityName(), [
-                                    'educational/'.str_replace('_', '-' , $model->table_name) . '/view',
-                                    'id' => $model->table_row_id
-                                ]);
-                            }
-                        ],
-                        [
-                            'attribute' => 'branch',
-                            'label' => 'Отдел',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->branches->get($model->branch);
-                            }
-                        ],
-                    ],
-                ]) : '<div class="alert alert-info">Ошибки в данной вкладке не были найдены</div>',
-                'active' => $activeTab === 'programs',
-                'linkOptions' => ['data-tab' => 'programs'],
-            ],
-            [
-                'label' => 'Приказы',
-                'content' => !empty($model->orderErrors) ? GridView::widget([
-                    'summary' => false,
-                    'dataProvider' => new ArrayDataProvider([
-                        'allModels' => $model->orderErrors,
-                        'pagination' => false,
-                        'sort' => [
-                            'attributes' => [
-                                'error_code',
-                                'error_description',
-                                'create_datetime',
-                                'entity_name',
-                                'branch',
-                            ],
-                        ],
-                    ]),
-                    'columns' => [
-                        [
-                            'attribute' => 'error_code',
-                            'label' => 'Код ошибки',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->code;
-                            }
-                        ],
-                        [
-                            'attribute' => 'error_description',
-                            'label' => 'Описание проблемы',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->description;
-                            }
-                        ],
-                        [
-                            'attribute' => 'create_datetime',
-                            'label' => 'Дата и время',
-                            'value' => function(ErrorsWork $model) {
-                                $date = explode(' ', $model->create_datetime)[0];
-                                $time = explode(' ', $model->create_datetime)[1];
-                                return 
-                                    DateFormatter::format($date, DateFormatter::Ymd_dash, DateFormatter::dm_dot) . ' в ' .
-                                    DateFormatter::format($time, DateFormatter::His_colon, DateFormatter::Hi_colon);
-                            }
-                        ],
-                        [
-                            'attribute' => 'entity_name',
-                            'label' => 'Место возникновения',
-                            'format' => 'raw',
-                            'value' => function(ErrorsWork $model) {
-                                return Html::a($model->getEntityName(), [
-                                    'order/'.str_replace('_', '-' , $model->table_name) . '/view',
-                                    'id' => $model->table_row_id
-                                ]);
-                            }
-                        ],
-                        [
-                            'attribute' => 'branch',
-                            'label' => 'Отдел',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->branches->get($model->branch);
-                            }
-                        ],
-                    ],
-                ]) : '<div class="alert alert-info">Ошибки в данной вкладке не были найдены</div>',
-                'active' => $activeTab === 'orders',
-                'linkOptions' => ['data-tab' => 'orders'],
-            ],
-            [
-                'label' => 'Мероприятия',
-                'content' => !empty($model->eventErrors) ? GridView::widget([
-                    'summary' => false,
-                    'dataProvider' => new ArrayDataProvider([
-                        'allModels' => $model->eventErrors,
-                        'pagination' => false,
-                        'sort' => [
-                            'attributes' => [
-                                'error_code',
-                                'error_description',
-                                'create_datetime',
-                                'entity_name',
-                                'branch',
-                            ],
-                        ],
-                    ]),
-                    'columns' => [
-                        [
-                            'attribute' => 'error_code',
-                            'label' => 'Код ошибки',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->code;
-                            }
-                        ],
-                        [
-                            'attribute' => 'error_description',
-                            'label' => 'Описание проблемы',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->description;
-                            }
-                        ],
-                        [
-                            'attribute' => 'create_datetime',
-                            'label' => 'Дата и время',
-                            'value' => function(ErrorsWork $model) {
-                                $date = explode(' ', $model->create_datetime)[0];
-                                $time = explode(' ', $model->create_datetime)[1];
-                                return 
-                                    DateFormatter::format($date, DateFormatter::Ymd_dash, DateFormatter::dm_dot) . ' в ' .
-                                    DateFormatter::format($time, DateFormatter::His_colon, DateFormatter::Hi_colon);
-                            }
-                        ],
-                        [
-                            'attribute' => 'entity_name',
-                            'label' => 'Место возникновения',
-                            'format' => 'raw',
-                            'value' => function(ErrorsWork $model) {
-                                return Html::a($model->getEntityName(), [
-                                    'order/'. 'our-event' . '/view',
-                                    'id' => $model->table_row_id
-                                ]);
-                            }
-                        ],
-                        [
-                            'attribute' => 'branch',
-                            'label' => 'Отдел',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->branches->get($model->branch);
-                            }
-                        ],
-                    ],
-                ]) : '<div class="alert alert-info">Ошибки в данной вкладке не были найдены</div>',
-                'active' => $activeTab === 'events',
-                'linkOptions' => ['data-tab' => 'events'],
-            ],
-            [
-                'label' => 'Учёт достижений',
-                'content' => !empty($model->foreignEventErrors) ? GridView::widget([
-                    'summary' => false,
-                    'dataProvider' => new ArrayDataProvider([
-                        'allModels' => $model->foreignEventErrors,
-                        'pagination' => false,
-                        'sort' => [
-                            'attributes' => [
-                                'error_code',
-                                'error_description',
-                                'create_datetime',
-                                'entity_name',
-                                'branch',
-                            ],
-                        ],
-                    ]),
-                    'columns' => [
-                        [
-                            'attribute' => 'error_code',
-                            'label' => 'Код ошибки',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->code;
-                            }
-                        ],
-                        [
-                            'attribute' => 'error_description',
-                            'label' => 'Описание проблемы',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->errors->get($model->error)->description;
-                            }
-                        ],
-                        [
-                            'attribute' => 'create_datetime',
-                            'label' => 'Дата и время',
-                            'value' => function(ErrorsWork $model) {
-                                $date = explode(' ', $model->create_datetime)[0];
-                                $time = explode(' ', $model->create_datetime)[1];
-                                return 
-                                    DateFormatter::format($date, DateFormatter::Ymd_dash, DateFormatter::dm_dot) . ' в ' .
-                                    DateFormatter::format($time, DateFormatter::His_colon, DateFormatter::Hi_colon);
-                            }
-                        ],
-                        [
-                            'attribute' => 'entity_name',
-                            'label' => 'Место возникновения',
-                            'format' => 'raw',
-                            'value' => function(ErrorsWork $model) {
-                                return Html::a($model->getEntityName(), [
-                                    'event/'.str_replace('_', '-' , $model->table_name) . '/view',
-                                    'id' => $model->table_row_id
-                                ]);
-                            }
-                        ],
-                        [
-                            'attribute' => 'branch',
-                            'label' => 'Отдел',
-                            'value' => function(ErrorsWork $model) {
-                                return Yii::$app->branches->get($model->branch);
-                            }
-                        ],
-                    ],
-                ]) : '<div class="alert alert-info">Ошибки в данной вкладке не были найдены</div>',
-                'active' => $activeTab === 'achievements',
-                'linkOptions' => ['data-tab' => 'achievements'],
-            ],
-        ],
+        'items' => $tabsItems,
     ]); ?>
 </div>
 

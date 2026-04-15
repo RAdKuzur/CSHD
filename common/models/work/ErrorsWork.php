@@ -124,6 +124,99 @@ class ErrorsWork extends Errors
         return '';
     }
 
+    //    то же самое что и сверху, но обёрнутое в ссылки для excel
+    public function getEntityNameForExport(): string
+    {
+        if ($this->table_name == TrainingGroupWork::tableName()) {
+            /** @var TrainingGroupWork $group */
+            $group = (Yii::createObject(TrainingGroupRepository::class))->get($this->table_row_id);
+            return $this->formatExcelHyperlink(
+                $group->number,
+                Url::to(['/' . Urls::TRAINING_GROUP_VIEW, 'id' => $group->id], true)
+            );
+        }
+
+        if ($this->table_name == TrainingProgramWork::tableName()) {
+            /** @var TrainingProgramWork $program */
+            $program = (Yii::createObject(TrainingProgramRepository::class))->get($this->table_row_id);
+            return $this->formatExcelHyperlink(
+                $program->name,
+                Url::to(['/' . Urls::TRAINING_PROGRAM_VIEW, 'id' => $program->id], true)
+            );
+        }
+
+        if ($this->table_name == EventWork::tableName()) {
+            /** @var EventWork $event */
+            $event = (Yii::createObject(EventRepository::class))->get($this->table_row_id);
+            return $this->formatExcelHyperlink(
+                $event->name,
+                Url::to(['/' . Urls::OUR_EVENT_VIEW, 'id' => $event->id], true)
+            );
+        }
+
+        if ($this->table_name == ForeignEventWork::tableName()) {
+            /** @var ForeignEventWork $event */
+            $event = (Yii::createObject(ForeignEventRepository::class))->get($this->table_row_id);
+            return $this->formatExcelHyperlink(
+                $event->name,
+                Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $event->id], true)
+            );
+        }
+
+        if ($this->table_name == ActParticipantWork::tableName()) {
+            /** @var ActParticipantWork $act */
+            $act = (Yii::createObject(ActParticipantRepository::class))->get($this->table_row_id);
+            $text = "Акт участия в мероприятии " . $act->foreignEventWork->name;
+            return $this->formatExcelHyperlink(
+                $text,
+                Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $act->foreign_event_id], true)
+            );
+        }
+
+        if ($this->table_name == ForeignEventParticipantsWork::tableName()) {
+            /** @var ForeignEventParticipantsWork $participant */
+            $participant = (Yii::createObject(ForeignEventParticipantsRepository::class))->get($this->table_row_id);
+            $text = "Участник деятельности " . $participant->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
+            return $this->formatExcelHyperlink(
+                $text,
+                Url::to(['/' . Urls::PARTICIPANT_VIEW, 'id' => $participant->id], true)
+            );
+        }
+
+        if ($this->table_name == DocumentOrderWork::tableName()) {
+            /** @var DocumentOrderWork $order */
+            $order = (Yii::createObject(DocumentOrderRepository::class))->get($this->table_row_id);
+            $url = '/' . Urls::ORDER_MAIN_VIEW;
+            if ($order->isTraining()) {
+                $url = '/' . Urls::ORDER_TRAINING_VIEW;
+            }
+            if ($order->isEvent()) {
+                $url = '/' . Urls::ORDER_EVENT_VIEW;
+            }
+            return $this->formatExcelHyperlink(
+                $order->getOrderName(),
+                Url::to([$url, 'id' => $order->id], true)
+            );
+        }
+
+        return '';
+    }
+
+    /**
+     * Вспомогательный метод — формирует корректную формулу Excel
+     */
+    private function formatExcelHyperlink(string $text, string $url): string
+    {
+        if (empty($url) || empty($text)) {
+            return $text;
+        }
+
+        $textEsc = str_replace('"', '""', $text);
+        $urlEsc  = str_replace('"', '""', $url);
+
+        return '=HYPERLINK("' . $urlEsc . '", "' . $textEsc . '")';
+    }
+
     public function setState(int $state = Error::TYPE_BASE)
     {
         $this->state = $state;

@@ -250,6 +250,18 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
 <script>
+    function initFormState() {
+        showHours();
+    }
+
+    document.addEventListener('DOMContentLoaded', initFormState);
+
+    window.addEventListener('pageshow', function () {
+        initFormState();
+    });
+</script>
+
+<script>
     function showHours()
     {
         var elem = document.getElementById('interview-0');
@@ -261,9 +273,10 @@ $this->params['breadcrumbs'][] = $this->title;
         var elem1 = document.getElementById('interview-1');
         var elem2 = document.getElementById('interview-2');
         var elem3 = document.getElementById('interview-3');
+        var elem4 = document.getElementById('interview-4');
         var elem5 = document.getElementById('interview-5');
         var unic = document.getElementById('unic');
-        if (elem1.checked || elem2.checked || elem3.checked || elem5.checked) { unic.style.display = "block"; }
+        if (elem1.checked || elem2.checked || elem3.checked || elem4.checked || elem5.checked) { unic.style.display = "block"; }
         else { unic.style.display = "none"; }
     }
 

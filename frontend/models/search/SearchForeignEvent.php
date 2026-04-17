@@ -114,7 +114,7 @@ class SearchForeignEvent extends Model implements SearchInterfaces
                 'actParticipantWorks.squadParticipantWork.participantWork' => function ($query) {
                     $query->alias('participant');
                 },
-            ]);
+            ])->groupBy('foreign_event.id');;
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

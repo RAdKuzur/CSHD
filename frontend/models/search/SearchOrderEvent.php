@@ -83,7 +83,7 @@ class SearchOrderEvent extends OrderSearch implements SearchInterfaces
                 'orderPeopleWorks.peopleStampWork.peopleWork' => function ($query) {
                     $query->alias('responsiblePeople');
                 }
-            ]);
+            ])->groupBy('document_order.id');
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,

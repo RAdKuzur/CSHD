@@ -170,8 +170,8 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $this->loadParams($params);
 
         $query = OrderTrainingWork::find()
-            ->distinct()
-            ->where(['type' => DocumentOrderWork::ORDER_TRAINING]);
+            ->where(['type' => DocumentOrderWork::ORDER_TRAINING])
+        ->groupBy('document_order.id');
 
         $query = $this->specialOrders($query);
         $query = $this->addJoinsToQuery($query);
@@ -179,7 +179,6 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'sort'=> ['defaultOrder' => ['order_date' => SORT_DESC, 'order_number' => SORT_DESC, 'order_copy_id' => SORT_DESC, 'order_postfix' => SORT_DESC]],
-            'pagination' => ['pageSize' => 10],
         ]);
 
         $this->sortAttributes($dataProvider);

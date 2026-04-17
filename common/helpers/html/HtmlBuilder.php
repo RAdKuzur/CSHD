@@ -143,7 +143,7 @@ class HtmlBuilder
      * @param string $textBtnClose
      * @return string
      */
-    public static function createAccordion(string $content, int $lengthPrev = 20, string $textBtnOpen = 'Развернуть', string $textBtnClose = 'Скрыть')
+    public static function createAccordion(?string $content = "", int $lengthPrev = 20, string $textBtnOpen = 'Развернуть', string $textBtnClose = 'Скрыть')
     {
         $contentString = strip_tags($content);
         $text = html_entity_decode($contentString);

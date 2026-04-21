@@ -8,6 +8,7 @@ use common\helpers\DateFormatter;
 use common\helpers\files\FilePaths;
 use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
+use common\models\Error;
 use common\models\scaffold\ForeignEventParticipants;
 use common\models\scaffold\PersonalDataParticipant;
 use common\models\work\ErrorsWork;
@@ -20,6 +21,7 @@ use frontend\models\work\educational\training_group\TrainingGroupParticipantWork
 use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\models\work\team\ActParticipantWork;
 use InvalidArgumentException;
+use phpseclib3\File\ASN1\Maps\CRLDistributionPoints;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -339,5 +341,18 @@ class ForeignEventParticipantsWork extends ForeignEventParticipants implements P
                 'table_row_id' => $this->id,
             ])
             ->exists();
+    }
+
+    public function getErrorsListString() : string
+    {
+        $errorsList = $this->errorsTraitRepository->getErrorsByTableRow(static::tableName(), $this->id);
+        $result = "";
+        foreach ($errorsList as $err) {
+            /** @var ErrorsWork $err */
+            /** @var Error $tempErr */
+            $tempErr = Yii::$app->errors->get($err->error);
+            $result .= "Код: $tempErr->code, Ошибка: $tempErr->description\n" ;
+        }
+        return $result;
     }
 }

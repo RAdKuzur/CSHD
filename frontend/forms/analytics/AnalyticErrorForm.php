@@ -4,6 +4,7 @@
 namespace frontend\forms\analytics;
 
 use common\models\work\ErrorsWork;
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\TrainingProgramWork;
 use frontend\models\work\event\EventWork;
@@ -17,6 +18,7 @@ use yii\base\BaseObject;
  * @property ErrorsWork[] $orderErrors
  * @property ErrorsWork[] $eventErrors
  * @property ErrorsWork[] $foreignEventErrors
+ * @property ErrorsWork[] $foreignEventParticipantsErrors
  */
 class AnalyticErrorForm extends BaseObject
 {
@@ -26,12 +28,15 @@ class AnalyticErrorForm extends BaseObject
      * @var ErrorsWork[] $_orderErrors
      * @var ErrorsWork[] $_eventErrors
      * @var ErrorsWork[] $_foreignEventErrors
+     * @var ErrorsWork[] $_foreignEventParticipantsErrors
+     *
      */
     private array $_groupErrors;
     private array $_programErrors;
     private array $_orderErrors;
     private array $_eventErrors;
     private array $_foreignEventErrors;
+    private array $_foreignEventParticipantsErrors;
 
     
 
@@ -69,6 +74,11 @@ class AnalyticErrorForm extends BaseObject
             $errors, function (ErrorsWork $value) {
             return $value->table_name === ForeignEventWork::tableName();
         });
+
+        $this->_foreignEventParticipantsErrors = array_filter(
+            $errors, function (ErrorsWork $value) {
+            return $value->table_name == ForeignEventParticipantsWork::tableName();
+        });
     }
 
     public function getGroupErrors() : array
@@ -96,6 +106,11 @@ class AnalyticErrorForm extends BaseObject
         return $this->_foreignEventErrors;
     }
 
+    public function getForeignEventParticipantsErrors() : array
+    {
+        return $this->_foreignEventParticipantsErrors;
+    }
+
     public function setGroupErrors(array $errors)
     {
         $this->_groupErrors = $errors;
@@ -119,5 +134,10 @@ class AnalyticErrorForm extends BaseObject
     public function setForeignEventErrors(array $errors)
     {
         $this->_foreignEventErrors = $errors;
+    }
+
+    public function setForeignEventParticipantsErrors(array $errors)
+    {
+        $this->_foreignEventParticipantsErrors = $errors;
     }
 }

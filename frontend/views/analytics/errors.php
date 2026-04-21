@@ -53,10 +53,7 @@ $gridColumns = [
         'label' => 'Место возникновения',
         'format' => 'raw',
         'value' => function(ErrorsWork $model) {
-            return Html::a($model->getEntityName(), [
-                'educational/'.str_replace('_', '-' , $model->table_name) . '/view',
-                'id' => $model->table_row_id
-            ]);
+            return Html::a($model->getEntityName());
         }
     ],
     [
@@ -92,6 +89,10 @@ $tabsConfig = [
     'achievements' => [
         'label' => 'Учёт достижений',
         'data' => $model->foreignEventErrors,
+    ],
+    'foreignEventParticipant' => [
+        'label' => 'Участники деятельности',
+        'data' => $model->foreignEventParticipantsErrors,
     ],
 ];
 

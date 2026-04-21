@@ -49,6 +49,9 @@ class AnalyticsController extends Controller
         $modelErrors->setForeignEventErrors(
             $searchModel->search(Yii::$app->request->queryParams, $modelErrors->getForeignEventErrors())
         );
+        $modelErrors->setForeignEventParticipantsErrors(
+            $searchModel->search(Yii::$app->request->queryParams, $modelErrors->getForeignEventParticipantsErrors())
+        );
         
         $branches = Yii::$app->branches->getList();
         

@@ -24,6 +24,14 @@ class ErrorsRepository
         });
     }
 
+    public  function getErrorsByTableName(string $tableName)
+    {
+        return ErrorsWork::find()
+            ->where(['table_name' => $tableName])
+            ->andWhere(['was_amnesty' => 0])
+            ->all();
+    }
+
     public function getErrorsByTableRow(string $tableName, int $rowId)
     {
         return ErrorsWork::find()

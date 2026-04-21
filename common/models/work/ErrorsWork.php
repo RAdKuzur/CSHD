@@ -101,10 +101,19 @@ class ErrorsWork extends Errors
             $eventLink = StringFormatter::stringAsLink($act->foreignEventWork->name, Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $act->foreign_event_id]));
             return "Акт участия в мероприятии {$eventLink}";
         }
-        if ($this->table_name == ForeignEventParticipantsWork::tableName()){
-            /** @var ForeignEventParticipantsWork $participant */
-            $participant = (Yii::createObject(ForeignEventParticipantsRepository::class))->get($this->table_row_id);
-            $link = StringFormatter::stringAsLink($participant->getFIO(PersonInterface::FIO_SURNAME_INITIALS), Url::to(['/' . Urls::PARTICIPANT_VIEW , 'id' => $participant->id]));
+        if ($this->table_name == ForeignEventParticipantsWork::tableName()) {
+            $participant = (Yii::createObject(ForeignEventParticipantsRepository::class))
+                ->get($this->table_row_id);
+
+            if ($participant === null) {
+                return "!!!Участник не найден!!!";
+            }
+
+            $link = StringFormatter::stringAsLink(
+                $participant->getFIO(PersonInterface::FIO_SURNAME_INITIALS),
+                Url::to(['/' . Urls::PARTICIPANT_VIEW , 'id' => $participant->id])
+            );
+
             return "Участник деятельности {$link}";
         }
 

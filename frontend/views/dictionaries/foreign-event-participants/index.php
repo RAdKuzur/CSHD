@@ -37,8 +37,9 @@ $this->params['breadcrumbs'][] = $this->title;
                                 return $model->getSexString();
                             }],
                             ['attribute' => 'birthdate', 'value' => function($model){return date("d.m.Y", strtotime($model->birthdate));}],
-                            ['attribute' => 'eventsExcel', 'label' => 'Мероприятия', 'format' => 'raw'],
-                            ['attribute' => 'studiesExcel', 'label' => 'Учебные группы'],
+                            ['attribute' => 'Ошибки', 'value' => function(ForeignEventParticipantsWork $model) {
+                                return $model->getErrorsListString();
+                            }],
                         ];
 
                         echo ExportMenu::widget([

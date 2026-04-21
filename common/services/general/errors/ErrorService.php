@@ -16,6 +16,7 @@ use common\repositories\general\ErrorsRepository;
 use common\repositories\general\UserRepository;
 use common\repositories\order\DocumentOrderRepository;
 use common\repositories\rubac\UserPermissionFunctionRepository;
+use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\TrainingProgramWork;
 use frontend\models\work\event\EventWork;
@@ -74,6 +75,8 @@ class ErrorService
         $errorsJournal = [];
         $errorsProgram = [];
         $errorsOrder = [];
+        $errorsForeignEventParticipant = [];
+
         // Поиск ошибок по учету достижения и мероприятиям
         if (Yii::$app->rubac->checkPermission($userId, 'get_achieve_errors')) {
             // Находим ID мероприятий в соответствии с отделом пользователя (или все мероприятия)
@@ -140,7 +143,11 @@ class ErrorService
             // deprecated
         }
 
-        return array_merge($errorsEvent, $errorsForeignEvent, $errorsJournal, $errorsProgram, $errorsOrder);
+        if (Yii::$app->rubac->checkPermission($userId, 'get_all_errors')) {
+            $errorsForeignEventParticipant = $this->errorsRepository->getErrorByTableName(ForeignEventParticipantsWork::tableName());
+        }
+
+        return array_merge($errorsEvent, $errorsForeignEvent, $errorsJournal, $errorsProgram, $errorsOrder, $errorsForeignEventParticipant);
     }
 
     public function amnestyErrors(string $tableName, int $rowId)

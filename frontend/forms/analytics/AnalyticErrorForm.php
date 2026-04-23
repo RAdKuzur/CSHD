@@ -31,12 +31,12 @@ class AnalyticErrorForm extends BaseObject
      * @var ErrorsWork[] $_foreignEventParticipantsErrors
      *
      */
-    private array $_groupErrors;
-    private array $_programErrors;
-    private array $_orderErrors;
-    private array $_eventErrors;
-    private array $_foreignEventErrors;
-    private array $_foreignEventParticipantsErrors;
+    private array $_groupErrors = [];
+    private array $_programErrors = [];
+    private array $_orderErrors= [];
+    private array $_eventErrors = [];
+    private array $_foreignEventErrors = [];
+    private array $_foreignEventParticipantsErrors = [];
 
     
 
@@ -45,40 +45,33 @@ class AnalyticErrorForm extends BaseObject
         $config = [])
     {
         parent::__construct($config);
-        //Ошибки в учебных группах
-        $this->_groupErrors = array_filter(
-            $errors, function (ErrorsWork $value) {
-            return $value->table_name === TrainingGroupWork::tableName();
-        });
-
-        //Ошибки в образовательных программах
-        $this->_programErrors = array_filter(
-            $errors, function (ErrorsWork $value) {
-            return $value->table_name === TrainingProgramWork::tableName();
-        });
-
-        //Ошибки в приказах
-        $this->_orderErrors = array_filter(
-            $errors, function (ErrorsWork $value) {
-            return $value->table_name === DocumentOrderWork::tableName();
-        });
-
-        //Ошибки в мероприятиях
-        $this->_eventErrors = array_filter(
-            $errors, function (ErrorsWork $value) {
-            return $value->table_name === EventWork::tableName();
-        });
-
-        //Ошибки в учете достижений
-        $this->_foreignEventErrors = array_filter(
-            $errors, function (ErrorsWork $value) {
-            return $value->table_name === ForeignEventWork::tableName();
-        });
-
-        $this->_foreignEventParticipantsErrors = array_filter(
-            $errors, function (ErrorsWork $value) {
-            return $value->table_name == ForeignEventParticipantsWork::tableName();
-        });
+        foreach ($errors as $error) {
+            /** @var ErrorsWork $error */
+            switch ($error->table_name) {
+                //Ошибки в учебных группах
+                case TrainingGroupWork::tableName():
+                    $this->_groupErrors[] = $error;
+                    break;
+                //Ошибки в образовательных программах
+                case TrainingProgramWork::tableName():
+                    $this->_programErrors[]= $error;
+                    break;
+                //Ошибки в приказах
+                case DocumentOrderWork::tableName():
+                    $this->_orderErrors[] = $error;
+                    break;
+                //Ошибки в мероприятиях
+                case EventWork::tableName():
+                    $this->_eventErrors[] = $error;
+                    break;
+                //Ошибки в учете достижений
+                case ForeignEventWork::tableName():
+                    $this->_foreignEventErrors[] = $error;
+                    break;
+                case ForeignEventParticipantsWork::tableName():
+                    $this->_foreignEventParticipantsErrors[] = $error;
+            }
+        }
     }
 
     public function getGroupErrors() : array

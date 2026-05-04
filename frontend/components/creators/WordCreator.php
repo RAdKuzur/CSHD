@@ -493,9 +493,9 @@ class WordCreator
             $fio = $res[$i]->people->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
 
             $table->addRow();
-            $cell = $table->addCell(8000);
+            $cell = $table->addCell(7000);
             $cell->addText('«___» __________ 20___ г.');
-            $cell = $table->addCell(5000);
+            $cell = $table->addCell(6000);
             $cell->addText('    ________________/', null, array('align' => 'right'));
             $cell = $table->addCell(5000);
             $cell->addText($fio . '/');
@@ -813,9 +813,9 @@ class WordCreator
             $fio = $res[$i]->people->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
 
             $table->addRow();
-            $cell = $table->addCell(8000);
+            $cell = $table->addCell(7000);
             $cell->addText('«___» __________ 20___ г.');
-            $cell = $table->addCell(5000);
+            $cell = $table->addCell(6000);
             $cell->addText('    ________________/', null, array('align' => 'right'));
             $cell = $table->addCell(5000);
             $cell->addText($fio . '/');
@@ -1201,10 +1201,10 @@ class WordCreator
             $fio = $res[$i]->people->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
 
             $table->addRow();
-            $cell = $table->addCell(8000);
+            $cell = $table->addCell(7000);
             $cell->addText('«___» __________ 20___ г.');
-            $cell = $table->addCell(5000);
-            $cell->addText('    ________________/', null, array('align' => 'right'));
+            $cell = $table->addCell(6000);
+            $cell->addText('   ________________/', null, array('align' => 'right'));
             $cell = $table->addCell(5000);
             $cell->addText($fio . '/');
         }
@@ -1536,9 +1536,9 @@ class WordCreator
         {
             $fio = $res[$i]->people->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
             $table->addRow();
-            $cell = $table->addCell(8000);
+            $cell = $table->addCell(7000);
             $cell->addText('«___» __________ 20___ г.');
-            $cell = $table->addCell(5000);
+            $cell = $table->addCell(6000);
             $cell->addText('    ________________/', null, array('align' => 'right'));
             $cell = $table->addCell(5000);
             $cell->addText($fio . '/');

@@ -81,10 +81,15 @@ class SearchTrainingGroup extends Model implements SearchInterfaces
     {
         /** @var UserWork $user */
         $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
+        $branchesArray = [];
+        foreach ($user->akaWorks as $akaWork) {
+            $branchesArray[] = $akaWork->branch;
+        }
+
         $specialGroups = new PbacGroupAccess(
             new PbacGroupData(
                 $user,
-                [$user->akaWork->branch]
+                $branchesArray
             )
         );
         return $specialGroups->getAllowedGroupsQuery($query);

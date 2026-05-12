@@ -3,11 +3,13 @@
 namespace common\models\work;
 
 use common\models\scaffold\User;
+use frontend\models\work\general\PeoplePositionCompanyBranchWork;
 use frontend\models\work\general\PeopleWork;
 use Yii;
 use yii\web\IdentityInterface;
 
 /** @property PeopleWork $akaWork */
+/** @property PeoplePositionCompanyBranchWork $akaWorks */
 
 class UserWork extends User implements IdentityInterface
 {
@@ -55,6 +57,11 @@ class UserWork extends User implements IdentityInterface
     public function getAkaWork()
     {
         return $this->hasOne(PeopleWork::class, ['id' => 'aka']);
+    }
+
+    public function getAkaWorks()
+    {
+        return $this->hasMany(PeoplePositionCompanyBranchWork::class, ['people_id' => 'aka']);
     }
 
     public function getId()

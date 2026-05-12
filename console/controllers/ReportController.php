@@ -5,6 +5,7 @@ namespace console\controllers;
 use common\components\dictionaries\base\BranchDictionary;
 use common\components\dictionaries\base\EventLevelDictionary;
 use common\models\scaffold\ForeignEvent;
+use common\models\work\UserWork;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
 use frontend\models\work\educational\training_group\GroupProjectThemesWork;
 use frontend\models\work\educational\training_group\TrainingGroupParticipantWork;
@@ -15,6 +16,7 @@ use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\models\work\team\ActParticipantBranchWork;
 use frontend\models\work\team\ActParticipantWork;
 use frontend\models\work\team\SquadParticipantWork;
+use frontend\services\ReportService;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -30,6 +32,26 @@ class ReportController extends \yii\console\Controller
         BranchDictionary::MOBILE_QUANTUM ,
         BranchDictionary::COD,
     ];
+     // Константы table_name
+    private const T_GROUP = 'training_group';
+    private const T_PROGRAM = 'training_program';
+    private const T_EVENT = 'event';
+    private const T_FOREIGN_EVENT = 'foreign_event';
+    private const T_ORDER = 'document_order';
+
+    // Комбинации таблиц для разных типов отчётов
+    private const ALL_TABLES_EVENTS_ACHIEVEMENTS = [self::T_EVENT, self::T_FOREIGN_EVENT];
+    private const ALL_TABLES_GROUPS_PROGRAMS = [self::T_GROUP, self::T_PROGRAM];
+    private const ALL_TABLES_FULL = [self::T_GROUP, self::T_PROGRAM, self::T_EVENT, self::T_FOREIGN_EVENT, self::T_ORDER];
+    private const ALL_TABLES_GROUPS_TRAINING_ORDERS = [self::T_GROUP, self::T_ORDER];
+    private const ALL_TABLES_PROGRAMS = [self::T_PROGRAM];
+
+    private ReportService $reportService;
+
+    public function __construct($id, $module, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+    }
     public function actionReportParticipant(){
         foreach(self::BRANCHES as $branch) {
             $allGroups = TrainingGroupWork::find()
@@ -257,6 +279,251 @@ class ReportController extends \yii\console\Controller
             if ($generalCount != 0) {
                 var_dump(Yii::$app->branches->get($branch), count($participants) / $generalCount * 100);
             }
+        }
+    }
+
+   /**
+     * CRON: отправка отчета по ошибкам
+     */
+    public function actionSendErrorsReport()
+    {
+        $map = [
+            17  => ['branches' => null, 'type' => 'all'],
+            146 => ['branches' => null, 'type' => 'orders_main'],
+            130 => ['branches' => null, 'type' => 'events_achievements'],
+
+            161 => ['branches' => [BranchDictionary::TECHNOPARK, BranchDictionary::MOBILE_QUANTUM], 'type' => 'branch_full'],
+            99  => ['branches' => [BranchDictionary::TECHNOPARK, BranchDictionary::MOBILE_QUANTUM], 'type' => 'branch_events_achievements'],
+
+            11  => ['branches' => [BranchDictionary::QUANTORIUM], 'type' => 'branch_full'],
+            78  => ['branches' => [BranchDictionary::QUANTORIUM], 'type' => 'branch_programs'],
+            131 => ['branches' => [BranchDictionary::COD], 'type' => 'branch_full'],
+            132 => ['branches' => [BranchDictionary::COD], 'type' => 'branch_events_achievements'],
+            29  => ['branches' => [BranchDictionary::COD], 'type' => 'branch_groups_programs'],
+            10  => ['branches' => [BranchDictionary::CDNTT], 'type' => 'branch_full'],
+            16  => ['branches' => [BranchDictionary::CDNTT], 'type' => 'branch_events_achievements'],
+            25  => ['branches' => [BranchDictionary::CDNTT], 'type' => 'branch_groups_training_orders'],
+
+            // // // Получатели, у которых нет записи в системе (указываем email)
+            'iivanova@schooltech.ru' => ['branches' => [BranchDictionary::TECHNOPARK, BranchDictionary::MOBILE_QUANTUM], 'type' => 'branch_groups_training_orders'],
+            'vlim@schooltech.ru'      => ['branches' => [BranchDictionary::QUANTORIUM], 'type' => 'branch_full_without_programs'],
+        ];
+
+        $reportService = Yii::$container->get(ReportService::class);
+
+        $configs = [
+            'branch_full' => [
+                'tables' => self::ALL_TABLES_FULL,
+                'filter' => [$this, 'trainingOrderFilter'],
+            ],
+            'branch_events_achievements' => [
+                'tables' => self::ALL_TABLES_EVENTS_ACHIEVEMENTS,
+                'filter' => null,
+            ],
+            'branch_groups_training_orders' => [
+                'tables' => self::ALL_TABLES_GROUPS_TRAINING_ORDERS,
+                'filter' => [$this, 'trainingOrderFilter'],
+            ],
+            'branch_groups_programs' => [
+                'tables' => self::ALL_TABLES_GROUPS_PROGRAMS,
+                'filter' => null,
+            ],
+            'branch_programs' => [
+                'tables' => self::ALL_TABLES_PROGRAMS,
+                'filter' => null,
+            ],
+            'branch_full_without_programs' => [
+                'tables' => [self::T_GROUP, self::T_EVENT, self::T_FOREIGN_EVENT, self::T_ORDER],
+                'filter' => [$this, 'trainingOrderFilter'],
+            ],
+        ];
+
+        foreach ($map as $identifier => $params) {
+            $branches = $params['branches'];
+            $type = $params['type'];
+
+            if (is_numeric($identifier)) {
+                $userId = (int)$identifier;
+                $email = UserWork::find()
+                    ->select('email')
+                    ->where(['id' => $userId])
+                    ->scalar();
+            } else {
+
+                $email = $identifier;
+                $userId = null;
+
+                $user = UserWork::findOne(['email' => $email]);
+                if ($user) {
+                    $userId = $user->id;
+                }
+            }
+
+            if (!$email) {
+                echo "User {$identifier} has no email\n";
+                continue;
+            }
+
+            $spreadsheet = null;
+            $reportName = '';
+
+            switch ($type) {
+                case 'all':
+                    $spreadsheet = $reportService->prepareErrorsReportByUser($userId ?? 17);
+                    $reportName = 'Все_ошибки';
+                    break;
+
+                case 'orders_main':
+                    $spreadsheet = $reportService->prepareMainActivityOrdersReport();
+                    $reportName = 'Приказы_основной_деятельности';
+                    break;
+
+                case 'events_achievements':
+                    $spreadsheet = $reportService->prepareEventsAndAchievementsReport();
+                    $reportName = 'Мероприятия_и_достижения';
+                    break;
+                
+                case 'branch_full':
+                    $spreadsheet = $reportService->prepareMultiBranchReportByTables(
+                        $branches,
+                        $configs['branch_full']['tables'],
+                        $configs['branch_full']['filter'],
+                        $type
+                    );
+                    $reportName = 'Все_ошибки_отделов';
+                    break;
+
+                case 'branch_events_achievements':
+                    $spreadsheet = $reportService->prepareMultiBranchReportByTables(
+                        $branches,
+                        $configs['branch_events_achievements']['tables'],
+                        null,
+                        $type
+                    );
+                    $reportName = 'Мероприятия_и_достижения_отделов';
+                    break;
+
+                case 'branch_groups_training_orders':
+                    $spreadsheet = $reportService->prepareMultiBranchReportByTables(
+                        $branches,
+                        $configs['branch_groups_training_orders']['tables'],
+                        $configs['branch_groups_training_orders']['filter'],
+                        $type
+                    );
+                    $reportName = 'Группы_и_учебные_приказы_отделов';
+                    break;
+
+                case 'branch_groups_programs':
+                    $spreadsheet = $reportService->prepareMultiBranchReportByTables(
+                        $branches,
+                        $configs['branch_groups_programs']['tables'],
+                        null,
+                        $type
+                    );
+                    $reportName = 'Группы_и_программы_отделов';
+                    break;
+
+                case 'branch_programs':
+                    $spreadsheet = $reportService->prepareMultiBranchReportByTables(
+                        $branches,
+                        $configs['branch_programs']['tables'],
+                        null,
+                        $type
+                    );
+                    $reportName = 'Программы_отделов';
+                    break;
+
+                case 'branch_full_without_programs':
+                    $spreadsheet = $reportService->prepareMultiBranchReportByTables(
+                        $branches,
+                        $configs['branch_full_without_programs']['tables'],
+                        $configs['branch_full_without_programs']['filter'],
+                        $type
+                    );
+                    $reportName = 'Группы_мероприятия_достижения_приказы_отделов';
+                    break;
+
+                default:
+                    
+                    if (isset($configs[$type]) && !empty($branches)) {
+                        $cfg = $configs[$type];
+                        $spreadsheet = $reportService->prepareMultiBranchReportByTables(
+                            $branches,
+                            $cfg['tables'],
+                            $cfg['filter'] ?? null,
+                            $type
+                        );
+                        $reportName = str_replace('branch_', '', $type);
+                    }
+                    break;
+            }
+
+            if (!$spreadsheet) {
+                echo "No data for user {$identifier}\n";
+                continue;
+            }
+
+            // Формируем заголовок письма
+            $title = $this->getReportTitle($type, $branches);
+
+            $sender = new \frontend\invokables\SendErrorsReport(
+                $spreadsheet,
+                $reportName,
+                $email,
+                $title
+            );
+            $sender();
+
+            echo "Sent to {$email}\n";
+        }
+    }
+
+    /**
+     * Дополнительный фильтр: для приказов оставляет только учебные (type = ORDER_TRAINING)
+     */
+    public function trainingOrderFilter($error, $orderRepo): bool
+    {
+        if ($error->table_name !== self::T_ORDER) {
+            return true;
+        }
+        $order = $orderRepo->get($error->table_row_id);
+        return $order !== null && $order->isTraining();
+    }
+
+     /**
+     * Заголовок письма в зависимости от типа отчёта и списка отделов
+     */
+    private function getReportTitle($type, $branches = null): string
+    {
+        $branchNames = '';
+        if (is_array($branches) && !empty($branches)) {
+            $names = array_map(function ($b) {
+                return Yii::$app->branches->get($b);
+            }, $branches);
+            $branchNames = implode(', ', $names);
+        }
+
+        switch ($type) {
+            case 'all':
+                return 'все ошибки, зарегистрированные в системе за последнюю неделю';
+            case 'orders_main':
+                return 'ошибки в приказах по основной деятельности за последнюю неделю';
+            case 'events_achievements':
+                return 'ошибки в мероприятиях и учёте достижений за последнюю неделю';
+            case 'branch_events_achievements':
+                return "ошибки в мероприятиях и учёте достижений отделов {$branchNames} за последнюю неделю";
+            case 'branch_full':
+                return "все ошибки отделов {$branchNames} (учебные группы, программы, мероприятия, достижения, учебные приказы) за последнюю неделю";
+            case 'branch_groups_training_orders':
+                return "ошибки учебных групп и учебных приказов отделов {$branchNames} за последнюю неделю";
+            case 'branch_groups_programs':
+                return "ошибки учебных групп и программ отделов {$branchNames} за последнюю неделю";
+            case 'branch_programs':
+                return "ошибки образовательных программ отделов {$branchNames} за последнюю неделю";
+            case 'branch_full_without_programs':
+                return "ошибки отделов {$branchNames} (учебные группы, мероприятия, достижения, учебные приказы) за последнюю неделю";
+            default:
+                return 'отчет об ошибках';
         }
     }
 }

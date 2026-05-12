@@ -76,7 +76,11 @@ class ErrorsRepository
     }
     public function getErrorByTableName($tableName)
     {
-        return ErrorsWork::find()->where(['table_name' => $tableName])->all();
+        return ErrorsWork::find()
+            ->where(['table_name' => $tableName])
+            ->andWhere(['was_amnesty' => 0])  
+            ->orderBy(['create_datetime' => SORT_DESC])
+            ->all();
     }
     public function delete(ErrorsWork $model)
     {

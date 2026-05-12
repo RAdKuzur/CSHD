@@ -12,16 +12,19 @@ use common\models\scaffold\Event;
 use common\models\work\UserWork;
 use common\repositories\event\EventRepository;
 use common\repositories\regulation\RegulationRepository;
+use common\components\traits\ErrorTrait;
 use frontend\models\work\general\PeopleStampWork;
 use frontend\models\work\general\PeopleWork;
 use frontend\models\work\order\DocumentOrderWork;
 use frontend\models\work\order\OrderMainWork;
 use frontend\models\work\regulation\RegulationWork;
+use common\models\work\ErrorsWork;
 use InvalidArgumentException;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
+
 use yii\helpers\Url;
 
 /** @property UserWork $creatorWork */
@@ -35,7 +38,7 @@ use yii\helpers\Url;
 
 class EventWork extends Event implements FileInterface
 {
-    use EventTrait;
+use EventTrait, ErrorTrait;
 
     /**
      * Имена файлов для сохранения в БД
@@ -513,5 +516,16 @@ class EventWork extends Event implements FileInterface
     public function getEventGroupWorks()
     {
         return $this->hasMany(EventGroupWork::class, ['event_id' => 'id']);
+    }
+
+     public function getErrorState(): bool
+    {
+        return ErrorsWork::find()
+            ->where([
+                'table_name' => EventWork::tableName(),
+                'table_row_id' => $this->id,
+                'was_amnesty' => 0,
+            ])
+            ->exists();
     }
 }

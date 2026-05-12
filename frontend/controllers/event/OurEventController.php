@@ -32,6 +32,8 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
+use common\helpers\ErrorAssociationHelper;
+use common\models\work\ErrorsWork;
 
 /**
  * EventController implements the CRUD actions for Event model.
@@ -97,7 +99,10 @@ class OurEventController extends DocumentController
         $searchModel = new SearchEvent();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $links = ButtonsFormatter::primaryCreateLink('мероприятие');
+        $links = array_merge(
+            ButtonsFormatter::primaryCreateLink('мероприятие'),
+            ButtonsFormatter::anyOneLink('Найти все ошибки', 'find-all-errors', ButtonsFormatter::BTN_DANGER)
+        );
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
         return $this->render('index', [
@@ -105,6 +110,24 @@ class OurEventController extends DocumentController
             'dataProvider' => $dataProvider,
             'buttonsAct' => $buttonHtml,
         ]);
+    }
+    public function actionFindAllErrors()
+    {
+        $events = $this->repository->getAll();
+        $count = 0;
+        $errorCount = 0;
+        
+        foreach ($events as $event) {
+            $event->checkModel(ErrorAssociationHelper::getEventErrorsList(), EventWork::tableName(), $event->id);
+            $count++;
+            
+            if ($event->getErrorState()) {
+                $errorCount++;
+            }
+        }
+        
+        Yii::$app->session->setFlash('success', "Проверено мероприятий: {$count}. Найдено мероприятий с ошибками: {$errorCount}");
+        return $this->redirect(['index']);
     }
 
     /**
@@ -115,10 +138,13 @@ class OurEventController extends DocumentController
      */
     public function actionView($id)
     {
-        $links = ButtonsFormatter::updateDeleteLinks($id);
+        $links = array_merge(
+            ButtonsFormatter::updateDeleteLinks($id),
+            ButtonsFormatter::anyOneLink('Простить ошибки','amnesty', ButtonsFormatter::BTN_WARNING, '',
+        ['id' => $id])
+        );
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
-        /** @var EventWork $model */
         $model = $this->repository->get($id);
         $model->checkFilesExist();
 
@@ -158,6 +184,8 @@ class OurEventController extends DocumentController
             $model->recordEvent(new CreateEventBranchEvent($model->id, $model->branches), get_class($model));
             $model->recordEvent(new CreateEventScopeEvent($model->id, $model->scopes), get_class($model));
             $model->releaseEvents();
+
+            $model->checkModel(ErrorAssociationHelper::getEventErrorsList(), EventWork::tableName(), $model->id);
 
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -212,6 +240,8 @@ class OurEventController extends DocumentController
                 $model->recordEvent(new CreateEventBranchEvent($model->id, $model->branches), get_class($model));
                 $model->recordEvent(new CreateEventScopeEvent($model->id, $model->scopes), get_class($model));
                 $model->releaseEvents();
+
+                $model->checkModel(ErrorAssociationHelper::getEventErrorsList(), EventWork::tableName(), $model->id);
 
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -282,8 +312,25 @@ class OurEventController extends DocumentController
         return $this->redirect('index?r=event/view&id='.$id);
     }*/
 
+    public function actionAmnesty($id)
+    {
+        /** @var EventWork $model */
+        $model = $this->repository->get($id);
+        $model->amnestyErrors(EventWork::tableName(), $id);
+        Yii::$app->session->setFlash('success', 'Ошибки прощены');
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
     public function beforeAction($action)
     {
+        if (in_array($action->id, ['find-all-errors', 'amnesty'])) {
+            if (!Yii::$app->user->isGuest) {
+                return parent::beforeAction($action);
+            }
+            $this->redirect(['/site/login']);
+            return false;
+        }
+
         $result = $this->checkActionAccess($action);
         if ($result['url'] !== '') {
             $this->redirect($result['url']);

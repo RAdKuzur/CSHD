@@ -135,16 +135,17 @@ class ErrorsWork extends Errors
 
     public function getEntityNameForExport()
     {
-        if ($this->table_name == TrainingGroupWork::tableName()) {
 
+        if ($this->table_name == TrainingGroupWork::tableName()) {
+            
             $group = (Yii::createObject(TrainingGroupRepository::class))->get($this->table_row_id);
             if ($group === null) {
                 return "!!!Группа не найдена!!!";
-            }  
-            return [
-                'text' => $group->number,
-                'url'  => Url::to(['/' . Urls::TRAINING_GROUP_VIEW, 'id' => $group->id], true),
-            ];
+            }
+            return $this->formatExcelHyperlink(
+                $group->number,
+                Url::to(['/' . Urls::TRAINING_GROUP_VIEW, 'id' => $group->id], true)
+            );
         }
 
         if ($this->table_name == TrainingProgramWork::tableName()) {
@@ -153,10 +154,10 @@ class ErrorsWork extends Errors
             if ($program === null) {
                 return "!!!Программа не найдена!!!";
             }
-            return [
-                'text' => $program->name,
-                'url'  => Url::to(['/' . Urls::TRAINING_PROGRAM_VIEW, 'id' => $program->id], true),
-            ];
+            return $this->formatExcelHyperlink(
+                $program->name,
+                Url::to(['/' . Urls::TRAINING_PROGRAM_VIEW, 'id' => $program->id], true)
+            );
         }
 
         if ($this->table_name == EventWork::tableName()) {
@@ -165,10 +166,10 @@ class ErrorsWork extends Errors
             if ($event === null) {
                 return "!!!Мероприятие не найдено!!!";
             }
-            return [
-                'text' => $event->name,
-                'url'  => Url::to(['/' . Urls::OUR_EVENT_VIEW, 'id' => $event->id], true),
-            ];
+            return $this->formatExcelHyperlink(
+                $event->name,
+                Url::to(['/' . Urls::OUR_EVENT_VIEW, 'id' => $event->id], true)
+            );
         }
 
         if ($this->table_name == ForeignEventWork::tableName()) {
@@ -177,39 +178,39 @@ class ErrorsWork extends Errors
             if ($event === null) {
                 return "!!!Мероприятие не найдено!!!";
             }
-            return [
-                'text' => $event->name,
-                'url'  => Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $event->id], true)
-            ];
+            return $this->formatExcelHyperlink(
+                $event->name,
+                Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $event->id], true)
+            );
         }
 
         if ($this->table_name == ActParticipantWork::tableName()) {
 
             $act = (Yii::createObject(ActParticipantRepository::class))->get($this->table_row_id);
-           if ($act === null) {
+            if ($act === null) {
                 return "!!!Акт не найден!!!";
             }
             if ($act->foreignEventWork === null) {
                 return "!!!Мероприятие акта не найдено!!!";
             }
             $text = "Акт участия в мероприятии " . $act->foreignEventWork->name;
-            return [
-                'text' => $text,
-                'url'  => Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $act->foreign_event_id], true),
-            ];
+            return $this->formatExcelHyperlink(
+                $text,
+                Url::to(['/' . Urls::FOREIGN_EVENT_VIEW, 'id' => $act->foreign_event_id], true)
+            );
         }
 
         if ($this->table_name == ForeignEventParticipantsWork::tableName()) {
 
             $participant = (Yii::createObject(ForeignEventParticipantsRepository::class))->get($this->table_row_id);
-             if ($participant === null) {
+            if ($participant === null) {
                 return "!!!Участник не найден!!!";
             }
             $text = "Участник деятельности " . $participant->getFIO(PersonInterface::FIO_SURNAME_INITIALS);
-            return [
-                'text' => $text,
-                'url'  => Url::to(['/' . Urls::PARTICIPANT_VIEW, 'id' => $participant->id], true)
-            ];
+            return $this->formatExcelHyperlink(
+                $text,
+                Url::to(['/' . Urls::PARTICIPANT_VIEW, 'id' => $participant->id], true)
+            );
         }
 
         if ($this->table_name == DocumentOrderWork::tableName()) {
@@ -225,10 +226,10 @@ class ErrorsWork extends Errors
             if ($order->isEvent()) {
                 $url = '/' . Urls::ORDER_EVENT_VIEW;
             }
-            return [
-                'text' => $order->getOrderName(),
-                'url'  => Url::to([$url, 'id' => $order->id], true)
-            ];
+            return $this->formatExcelHyperlink(
+                $order->getOrderName(),
+                Url::to([$url, 'id' => $order->id], true)
+            );
         }
 
         return '-';

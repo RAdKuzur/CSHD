@@ -70,11 +70,16 @@ class ErrorAssociationHelper
     public static function getEventErrorsList()
     {
         return [
+            ErrorDictionary::ACHIEVE_001,
+            ErrorDictionary::ACHIEVE_002,
+            ErrorDictionary::ACHIEVE_003,  
+
             ErrorDictionary::ACHIEVE_008,
             ErrorDictionary::ACHIEVE_009,
             ErrorDictionary::ACHIEVE_010,
             ErrorDictionary::ACHIEVE_011,
             ErrorDictionary::ACHIEVE_012
+
         ];
     }
 

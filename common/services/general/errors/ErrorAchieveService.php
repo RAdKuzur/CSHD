@@ -52,12 +52,14 @@ class ErrorAchieveService
         /** @var ForeignEventWork $event */
         $event = $this->foreignEventRepository->get($rowId);
         if ($event->begin_date > $event->end_date) {
+            $branch = $this->getBranchForForeignEvent($rowId);
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::ACHIEVE_001,
                     ForeignEventWork::tableName(),
                     $rowId,
-                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_001)->getErrorState()
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_001)->getErrorState(),
+                    $branch
                 )
             );
         }
@@ -80,12 +82,14 @@ class ErrorAchieveService
         /** @var ForeignEventWork $event */
         $event = $this->foreignEventRepository->get($rowId);
         if (is_null($event->city) || strlen($event->city) == 0) {
+            $branch = $this->getBranchForForeignEvent($rowId);
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::ACHIEVE_002,
                     ForeignEventWork::tableName(),
                     $rowId,
-                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_002)->getErrorState()
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_002)->getErrorState(),
+                    $branch
                 )
             );
         }
@@ -108,12 +112,14 @@ class ErrorAchieveService
         /** @var ActParticipantWork[] $acts */
         $acts = $this->actParticipantRepository->getByForeignEventIds([$rowId]);
         if (count($acts) == 0) {
+            $branch = $this->getBranchForForeignEvent($rowId);
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::ACHIEVE_003,
                     ForeignEventWork::tableName(),
                     $rowId,
-                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_003)->getErrorState()
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_003)->getErrorState(),
+                    $branch
                 )
             );
         }
@@ -174,12 +180,14 @@ class ErrorAchieveService
         $achieves = $this->achievementRepository->getByForeignEvent($rowId);
 
         if (count($achieves) == 0) {
+            $branch = $this->getBranchForForeignEvent($rowId);
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::ACHIEVE_005,
                     ForeignEventWork::tableName(),
                     $rowId,
-                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_005)->getErrorState()
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_005)->getErrorState(),
+                    $branch
                 )
             );
         }
@@ -202,12 +210,14 @@ class ErrorAchieveService
         /** @var ForeignEventWork $event */
         $event = $this->foreignEventRepository->get($rowId);
         if (count($event->getFileLinks(FilesHelper::TYPE_DOC)) == 0) {
+            $branch = $this->getBranchForForeignEvent($rowId);
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::ACHIEVE_006,
                     ForeignEventWork::tableName(),
                     $rowId,
-                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_006)->getErrorState()
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_006)->getErrorState(),
+                    $branch
                 )
             );
         }
@@ -230,12 +240,14 @@ class ErrorAchieveService
         /** @var ForeignEventWork $event */
         $event = $this->foreignEventRepository->get($rowId);
         if (is_null($event->organizer_id)) {
+            $branch = $this->getBranchForForeignEvent($rowId); 
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::ACHIEVE_007,
                     ForeignEventWork::tableName(),
                     $rowId,
-                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_007)->getErrorState()
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_007)->getErrorState(),
+                    $branch
                 )
             );
         }
@@ -421,5 +433,108 @@ class ErrorAchieveService
         if (count($branchesEvent) > 0) {
             $this->errorsRepository->delete($error);
         }
+    }
+
+    // ========== МЕТОДЫ ДЛЯ EventWork (обычные мероприятия) ==========
+
+    // УД001 - проверка логики дат (finish_date >= start_date)
+    public function makeAchieve_001_Event($rowId)
+    {
+        /** @var EventWork $event */
+        $event = $this->eventRepository->get($rowId);
+        if ($event->finish_date < $event->start_date) {
+            $this->errorsRepository->save(
+                ErrorsWork::fill(
+                    ErrorDictionary::ACHIEVE_001,
+                    EventWork::tableName(),
+                    $rowId,
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_001)->getErrorState(),
+                    $event->eventBranchWorks[0] ? $event->eventBranchWorks[0]->branch : null
+                )
+            );
+        }
+    }
+
+    public function fixAchieve_001_Event($errorId)
+    {
+        $error = $this->errorsRepository->get($errorId);
+        $event = $this->eventRepository->get($error->table_row_id);
+        if ($event->finish_date >= $event->start_date) {
+            $this->errorsRepository->delete($error);
+        }
+    }
+
+    // УД002 - проверка наличия адреса
+    public function makeAchieve_002_Event($rowId)
+    {
+        /** @var EventWork $event */
+        $event = $this->eventRepository->get($rowId);
+        if (is_null($event->address) || strlen(trim($event->address)) == 0) {
+            $this->errorsRepository->save(
+                ErrorsWork::fill(
+                    ErrorDictionary::ACHIEVE_002,
+                    EventWork::tableName(),
+                    $rowId,
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_002)->getErrorState(),
+                    $event->eventBranchWorks[0] ? $event->eventBranchWorks[0]->branch : null
+                )
+            );
+        }
+    }
+
+    public function fixAchieve_002_Event($errorId)
+    {
+        $error = $this->errorsRepository->get($errorId);
+        $event = $this->eventRepository->get($error->table_row_id);
+        if (!(is_null($event->address) || strlen(trim($event->address)) == 0)) {
+            $this->errorsRepository->delete($error);
+        }
+    }
+
+    // УД003 - проверка наличия участников (по счетчикам)
+    public function makeAchieve_003_Event($rowId)
+    {
+        /** @var EventWork $event */
+        $event = $this->eventRepository->get($rowId);
+        $totalParticipants = $event->child_participants_count + 
+                            $event->teacher_participants_count + 
+                            $event->other_participants_count;
+        
+        if ($totalParticipants == 0) {
+            $this->errorsRepository->save(
+                ErrorsWork::fill(
+                    ErrorDictionary::ACHIEVE_003,
+                    EventWork::tableName(),
+                    $rowId,
+                    Yii::$app->errors->get(ErrorDictionary::ACHIEVE_003)->getErrorState(),
+                    $event->eventBranchWorks[0] ? $event->eventBranchWorks[0]->branch : null
+                )
+            );
+        }
+    }
+
+    public function fixAchieve_003_Event($errorId)
+    {
+        $error = $this->errorsRepository->get($errorId);
+        $event = $this->eventRepository->get($error->table_row_id);
+        $totalParticipants = $event->child_participants_count + 
+                            $event->teacher_participants_count + 
+                            $event->other_participants_count;
+        
+        if ($totalParticipants > 0) {
+            $this->errorsRepository->delete($error);
+        }
+    }
+    
+   private function getBranchForForeignEvent(int $foreignEventId): ?int
+    {
+        $acts = $this->actParticipantRepository->getByForeignEventIds([$foreignEventId]);
+        foreach ($acts as $act) {
+            $branches = $this->actParticipantRepository->getParticipantBranches($act->id);
+            if (!empty($branches)) {
+                return $branches[0]->branch;
+            }
+        }
+        return null;
     }
 }

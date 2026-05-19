@@ -98,7 +98,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => VerticalActionColumn::class],
         ],
         'rowOptions' => function ($model) {
-            return ['data-href' => Url::to([Yii::$app->frontUrls::OUR_EVENT_VIEW, 'id' => $model->id])];
+            $hasError = $model->getErrorState();
+            return [
+                'data-href' => Url::to([Yii::$app->frontUrls::OUR_EVENT_VIEW, 'id' => $model->id]),
+                'class' => $hasError ? 'error-row' : '',
+            ];
         },
     ]); ?>
     </div>

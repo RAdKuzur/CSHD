@@ -20,7 +20,7 @@ return [
         'fixture' => [
             'class' => \yii\console\controllers\FixtureController::class,
             'namespace' => 'common\fixtures',
-          ],
+        ],
     ],
     'components' => [
         'log' => [
@@ -31,8 +31,28 @@ return [
                 ],
             ],
         ],
+         'urlManager' => [
+            'class' => 'yii\web\UrlManager',
+            'enablePrettyUrl' => false,
+            'showScriptName' => true,
+            'hostInfo' => $params['console.hostInfo'] ?? 'http://localhost/cshd/frontend/web',
+            'scriptUrl' => $params['console.scriptUrl'] ?? 'http://localhost/cshd/frontend/web/index.php',
+        ],
         'branches' => [
             'class' => 'common\\components\\dictionaries\\base\\BranchDictionary',
+        ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@common/mail',
+            'useFileTransport' => false,
+            'transport' => [
+                'class' => 'Swift_SmtpTransport',
+                'host' => 'smtp.yandex.ru',
+                'username' => 'noreply@schooltech.ru',
+                'password' => 'noreply0noreply',
+                'port' => 465,
+                'encryption' => 'ssl',
+            ],
         ],
     ],
     'params' => $params,

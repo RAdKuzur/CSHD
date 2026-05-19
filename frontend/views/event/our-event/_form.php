@@ -110,14 +110,20 @@ $isCreate = $model->isNewRecord;
     <?= $form->field($model, 'event_way')->dropDownList(Yii::$app->eventWay->getList(), [])->label('Формат проведения'); ?>
     <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'event_level')->dropDownList(
-            Yii::$app->eventLevel->getList(),
-            [
-                    'options' => $isCreate ? [
-                            3 => ['disabled' => true, 'style' => 'color: #888;'],
-                            4 => ['disabled' => true, 'style' => 'color: #888;']
-                    ] : [],
-                    'prompt' => 'Выберите уровень мероприятия'
-            ]
+        Yii::$app->eventLevel->getList(),
+        [
+            'options' => [
+                3 => [
+                    'disabled' => $model->event_level != 3,
+                    'style' => 'color:#888;'
+                ],
+                4 => [
+                    'disabled' => $model->event_level != 4,
+                    'style' => 'color:#888;'
+                ],
+            ],
+            'prompt' => 'Выберите уровень мероприятия'
+        ]
     )->label('Уровень мероприятия'); ?>
 
     <div class="checkList">

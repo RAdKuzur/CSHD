@@ -74,4 +74,12 @@ trait ErrorTrait
             }
         }
     }
+    public function amnestyErrors(string $tableName, int $rowId): void
+    {
+        $errors = $this->errorsTraitRepository->getErrorsByTableRow($tableName, $rowId);
+        foreach ($errors as $error) {
+            $error->setAmnesty();
+            $this->errorsTraitRepository->save($error);
+        }
+    }
 }

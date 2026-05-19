@@ -149,10 +149,14 @@ class SearchOrderTraining extends OrderSearch implements SearchInterfaces
     {
         /** @var UserWork $user */
         $user = (Yii::createObject(UserRepository::class))->get(Yii::$app->rubac->authId());
+        $branchesArray = [];
+        foreach ($user->akaWorks as $akaWork) {
+            $branchesArray[] = $akaWork->branch;
+        }
         $specialOrders = new PbacOrderAccess(
             new PbacOrderData(
                 $user,
-                $user->akaWork->peoplePositionCompanyBranchWork[0]->branch ? : 0
+                $branchesArray
             )
         );
 

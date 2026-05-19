@@ -31,6 +31,15 @@ class DocumentOrderRepository
         return DocumentOrderWork::find()->andWhere(['<>', 'id', $id])->andWhere(['type' => $type])->andWhere(['state' => DocumentOrderWork::ACTUAL])->all();
     }
 
+    public function filterByBranches(ActiveQuery  $query, array  $branches) {
+        $nomenclaturesByBranches = [];
+        foreach ($branches as $branch) {
+            $nomenclaturesByBranches = array_merge($nomenclaturesByBranches, Yii::$app->nomenclature->getListByBranch($branch));
+        }
+        $nomenclatures = array_keys($nomenclaturesByBranches);
+        return $query->andWhere(['IN', 'order_number', $nomenclatures]);
+    }
+
     public function filterByBranch(ActiveQuery $query, int $branch)
     {
         $nomenclatures = array_keys(Yii::$app->nomenclature->getListByBranch($branch));

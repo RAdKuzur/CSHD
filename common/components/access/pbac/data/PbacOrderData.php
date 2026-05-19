@@ -7,14 +7,14 @@ use common\models\work\UserWork;
 class PbacOrderData extends PbacData
 {
     public UserWork $user;
-    public int $branch;
+    public array $branches;
 
     public function __construct(
         UserWork $user,
-        int $branch
+        array $branches
     )
     {
         $this->user = $user;
-        $this->branch = $branch;
+        $this->branches = $branches;
     }
 }

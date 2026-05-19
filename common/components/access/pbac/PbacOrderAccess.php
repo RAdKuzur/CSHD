@@ -33,7 +33,7 @@ class PbacOrderAccess implements PbacComponentInterface
         $accessBranchOrders = $this->permissionFunctionRepository->getByUserPermissionBranch($this->data->user->id, PermissionFunctionWork::PERMISSION_BRANCH_ORDER);
 
         if ($accessBranchOrders) {
-            $query = $this->orderRepository->filterByBranch($query, $this->data->branch);
+            $query = $this->orderRepository->filterByBranches($query, $this->data->branches);
         }
 
         return $query;

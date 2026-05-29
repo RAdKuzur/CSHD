@@ -166,6 +166,15 @@ class ActParticipantWork extends ActParticipant
         }
     }
 
+    public function getTypeParticipantEC(){
+        if($this->type == 1){
+            return "Групповая";
+        }
+        else {
+            return "Индивидуальная";
+        }
+    }
+
     public function getFocusName(){
         return Yii::$app->focus->get($this->focus);
     }

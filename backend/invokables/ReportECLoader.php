@@ -61,6 +61,29 @@ class ReportECLoader
         $inputData->getSheet(1)->setCellValue('D10', $data['result'][EventLevelDictionary::REGIONAL]['prizes']);
         $inputData->getSheet(1)->setCellValue('D11', $data['result'][EventLevelDictionary::REGIONAL]['winners']);
     }
+
+    public function convertEvent(int $level): ?string
+    {
+        switch ($level) {
+            case EventLevelDictionary::INTERIOR:
+                return 'Внутренний';
+            case EventLevelDictionary::DISTRICT:
+                return 'Районный';
+            case EventLevelDictionary::URBAN:
+                return 'Городской';
+            case EventLevelDictionary::REGIONAL:
+                return 'Региональный';
+            case EventLevelDictionary::FEDERAL:
+                return 'Всероссийский';
+            case EventLevelDictionary::INTERREGIONAL:
+                return 'Всероссийский';
+            case EventLevelDictionary::INTERNATIONAL:
+                return 'Международный';
+        }
+        return null;
+    }
+
+
     public function setParticipantSection(Spreadsheet $inputData, array $data)
     {
         $counter = 0;
@@ -68,11 +91,17 @@ class ReportECLoader
         foreach ($data as $participants) {
             foreach ($participants['participantsWinner'] as $participant) {
                 foreach ($participant->squadParticipantWork as $person) {
-                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
-                    $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($person->actParticipantWork->foreignEventWork->level));
+                    //ДЛЯ РЕГИОНАЛЬНЫХ НУЖНО ТОЛЬКО ФАМИЛИЮ
+                    if ($person->actParticipantWork->foreignEventWork->level == 6){
+                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
+                    }
+                    else {
+                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
+                    }
+                    $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), $this->convertEvent($person->actParticipantWork->foreignEventWork->level));
                     $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
                     $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);
-                    $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $person->actParticipantWork->getTypeParticipant());
+                    $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $person->actParticipantWork->getTypeParticipantEC());
                     $inputData->getSheet(2)->setCellValue('G' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->getPrettyType());
                     $inputData->getSheet(2)->setCellValue('H' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->achievement);
                     $inputData->getSheet(2)->setCellValue('I' . (5 + $counter), '');
@@ -83,11 +112,16 @@ class ReportECLoader
             }
             foreach ($participants['participantsPrize'] as $participant) {
                 foreach ($participant->squadParticipantWork as $person) {
-                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
-                    $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), Yii::$app->eventLevel->get($person->actParticipantWork->foreignEventWork->level));
+                    if ($person->actParticipantWork->foreignEventWork->level == 6){
+                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
+                    }
+                    else {
+                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
+                    }
+                    $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), $this->convertEvent($person->actParticipantWork->foreignEventWork->level));
                     $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
                     $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);
-                    $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $person->actParticipantWork->getTypeParticipant());
+                    $inputData->getSheet(2)->setCellValue('F' . (5 + $counter), $person->actParticipantWork->getTypeParticipantEC());
                     $inputData->getSheet(2)->setCellValue('G' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->getPrettyType());
                     $inputData->getSheet(2)->setCellValue('H' . (5 + $counter), $person->actParticipantWork->participantAchievementWork[0]->achievement);
                     $inputData->getSheet(2)->setCellValue('I' . (5 + $counter), '');

@@ -63,13 +63,17 @@ class ReportForeignEventService implements ForeignEventServiceInterface
 
             $winners = [];
             $prizers = [];
+            $participants = [];
             foreach ($this->actRepository->findAll($winQuery) as $participant) {
                 $winners[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
             }
             foreach ($this->actRepository->findAll($prizeQuery) as $participant) {
                 $prizers[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
             }
-
+            foreach ($this->actRepository->findAll($participantQuery) as $participant) {
+                $participants[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
+            }
+            // count(array_unique(array_merge(...$participants))),
             $result['levels'][$level] = [
                 'participant' => count($this->actRepository->findAll($participantQuery)),
                 'winners' => count(array_unique(array_merge(...$winners))),

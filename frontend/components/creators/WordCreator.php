@@ -102,20 +102,61 @@ class WordCreator
                 $expertExept = 946;
         }
 
-        $section->addText('Присутствовали ответственные лица:', null, array('align' => 'both', 'spaceAfter' => 0));
+
+        $section->addText('Присутствовали ответственные лица:', null, array('spaceAfter' => 0));
         $numCount = 1;
 
 
-//        add
+        $inputData->addNumberingStyle(
+            'teachersList',
+            [
+                'type' => 'multilevel',
+                'levels' => [
+                    [
+                        'format' => 'decimal',
+                        'text' => '%1.',
+                        'left' => 1080,     // ≈ 1 см
+                        'hanging' => 360,   // ≈ 0.5 см
+                    ],
+                ],
+            ]
+        );
+
+        $isFirst = true;
+
         foreach ($teachers as $teacher) {
             $teacherFio = $teacher->getFIO(PersonInterface::FIO_FULL);
-            $teacherPosition = implode(', ', $teacher->getPositionsBranch($modelGroup->branch));
-            if ($teacherPosition === "") {
-                $teacherPosition = $teacher->peoplePositionCompanyBranchWork[0]->positionWork->name;
+            $teacherPositions = $teacher->getPositionsBranch($modelGroup->branch);
+
+            if (empty($teacherPositions)) {
+                $teacherPositions = [$teacher->peoplePositionCompanyBranchWork[0]->positionWork->name];
             }
-            $section->addText('          ' . $numCount. '. ' . $teacherPosition . ' - ' .  $teacherFio . '.', null, array('align' => 'both', 'spaceAfter' => 0));
-            $numCount+=1;
+
+            foreach ($teacherPositions as $i => $position) {
+                if ($i > 0) {
+                    $teacherPositions[$i] = mb_strtolower($position, 'UTF-8');
+                }
+            }
+
+            $teacherPosition = implode(', ', $teacherPositions);
+            $section->addListItem(
+                $teacherPosition . ' - ' . $teacherFio . '.',
+                0,
+                null,
+                'teachersList'
+            );
+
         }
+//        add
+//        foreach ($teachers as $teacher) {
+//            $teacherFio = $teacher->getFIO(PersonInterface::FIO_FULL);
+//            $teacherPosition = implode(', ', $teacher->getPositionsBranch($modelGroup->branch));
+//            if ($teacherPosition === "") {
+//                $teacherPosition = $teacher->peoplePositionCompanyBranchWork[0]->positionWork->name;
+//            }
+//            $section->addText('          ' . $numCount. '. ' . $teacherPosition . ' - ' .  $teacherFio . '.', null, array('align' => 'both', 'spaceAfter' => 0));
+//            $numCount+=1;
+//        }
 
 ////        del
 //        if (count($modelGroup->teachersWork) > 1) {

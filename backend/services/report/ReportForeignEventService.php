@@ -4,6 +4,7 @@ namespace backend\services\report;
 
 use backend\builders\ParticipantReportBuilder;
 use backend\services\report\interfaces\ForeignEventServiceInterface;
+use common\components\dictionaries\base\BranchDictionary;
 use common\repositories\act_participant\ActParticipantRepository;
 use common\repositories\event\ForeignEventRepository;
 use frontend\models\work\event\ParticipantAchievementWork;
@@ -47,9 +48,10 @@ class ReportForeignEventService implements ForeignEventServiceInterface
         $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
-        $actsQuery = $this->builder->filterByBranches($actsQuery, $branches);
-        $actsQuery = $this->builder->filterByFocuses($actsQuery, $focuses);
-        $actsQuery = $this->builder->filterByAllowRemote($actsQuery, $allowRemotes);
+
+        $actsQuery = $this->builder->filterByBranches($actsQuery, array_merge($branches, [NULL]) );
+        $actsQuery = $this->builder->filterByFocuses($actsQuery, array_merge($focuses, [NULL]) );
+        $actsQuery = $this->builder->filterByAllowRemote($actsQuery, array_merge($allowRemotes, [null]));
 
         $result = [];
         $tempSumPart = 0;
@@ -59,10 +61,19 @@ class ReportForeignEventService implements ForeignEventServiceInterface
             $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
             $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
 
+            $winners = [];
+            $prizers = [];
+            foreach ($this->actRepository->findAll($winQuery) as $participant) {
+                $winners[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
+            }
+            foreach ($this->actRepository->findAll($prizeQuery) as $participant) {
+                $prizers[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
+            }
+
             $result['levels'][$level] = [
                 'participant' => count($this->actRepository->findAll($participantQuery)),
-                'winners' => count($this->actRepository->findAll($winQuery)),
-                'prizes' => count($this->actRepository->findAll($prizeQuery))
+                'winners' => count(array_unique(array_merge(...$winners))),
+                'prizes' => count(array_unique(array_merge(...$prizers))),
             ];
 
             if (in_array($level, Yii::$app->eventLevel->getReportLevels())) {

@@ -53,7 +53,7 @@ class PeoplePositionCompanyBranchRepository
                 $positionIds = [25, 326, 16, 14];
                 break;
             case BranchDictionary::CDNTT:
-                $positionIds = [25, 20, 15, 14, 106];
+                $positionIds = [25, 20, 15, 14, 106, 44];
                 break;
             case BranchDictionary::QUANTORIUM:
                 $positionIds = [25, 18, 21, 15, 105];

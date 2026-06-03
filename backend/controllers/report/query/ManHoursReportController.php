@@ -69,14 +69,14 @@ class ManHoursReportController extends Controller
         }
     }
 
-//    public function beforeAction($action)
-//    {
-//        $result = $this->checkActionAccess($action);
-//        if ($result['url'] !== '') {
-//            $this->redirect($result['url']);
-//            return $result['status'];
-//        }
-//
-//        return parent::beforeAction($action);
-//    }
+    public function beforeAction($action)
+    {
+        $result = $this->checkActionAccess($action);
+        if ($result['url'] !== '') {
+            $this->redirect($result['url']);
+            return $result['status'];
+        }
+
+        return parent::beforeAction($action);
+    }
 }

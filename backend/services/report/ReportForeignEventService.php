@@ -75,7 +75,8 @@ class ReportForeignEventService implements ForeignEventServiceInterface
             }
             // count(array_unique(array_merge(...$participants))),
             $result['levels'][$level] = [
-                'participant' => count($this->actRepository->findAll($participantQuery)),
+                'participant' => count(array_unique(array_merge(...$participants))),
+                //'participant' => count($this->actRepository->findAll($participantQuery)),
                 'winners' => count(array_unique(array_merge(...$winners))),
                 'prizes' => count(array_unique(array_merge(...$prizers))),
             ];

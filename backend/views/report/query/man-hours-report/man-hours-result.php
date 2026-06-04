@@ -18,7 +18,9 @@ $this->title = 'Результат отчета по обучающимся';
 <h2>Результат отчета по обучающимся</h2>
 
 
-<p>Человеко-часы: <?= $manHoursResult['result'] ?></p>
+    <?php if (!empty($manHoursResult['result'])): ?>
+        <p>Человеко-часы: <?= $manHoursResult['result'] ?></p>
+    <?php endif; ?>
 <?php if (!empty($participantsResult)):
     $total = $participantsResult['result'];
 

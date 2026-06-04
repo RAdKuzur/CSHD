@@ -176,53 +176,39 @@ class ReportManHoursService implements ManHoursServiceInterface
     ) : array
     {
         $query = $this->getTrainingGroupsQueryByFilters($branches, $focuses, $allowRemotes, $budgets);
-        // для подсчета уникальных НЕ игнорируем разделы (по таймингам)
+        // для подсчета уникальных игнорируем разделы (по таймингам)
         if ($calculateSubtype === ManHoursReportForm::PARTICIPANTS_UNIQUE) {
-            $result = [];
-            $participants = [];
+            $tempQuery = $this->builder->filterGroupsByDates(clone $query, $startDate, $endDate, $calculateTypes);
+            $tempQuery = $this->builder->filterGroupsByTeachers($tempQuery, $teacherIds);
+            $groups = $this->repository->findAll($tempQuery);
 
-            foreach ($calculateTypes as $calculateType) {
-                $tempQuery = $this->builder->filterGroupsByDates(
-                    clone $query,
-                    $startDate,
-                    $endDate,
-                    [$calculateType]
-                );
+            $participants = $this->participantRepository->getParticipantsFromGroups(
+                ArrayHelper::getColumn($groups, 'id')
+            );
 
-                $tempQuery = $this->builder->filterGroupsByTeachers($tempQuery, $teacherIds);
-
-                $groups = $this->repository->findAll($tempQuery);
-
-                $tempParticipants = $this->participantRepository->getParticipantsFromGroups(
-                    ArrayHelper::getColumn($groups, 'id')
-                );
-
-                // фильтр по льготам
-                if (in_array(ManHoursReportForm::PARTICIPANT_WITH_BENEFITS_BY_SVO, $calculateTypes)) {
-                    $tempParticipants = array_filter($tempParticipants, function($participant) {
-                        return $participant->participantWork->benefits == BenefitsDictionary::SVO;
-                    });
-                }
-
-                // уникальные внутри calculateType
-                $uniqueParticipants = array_reduce($tempParticipants, function ($carry, $item) {
-                    $participantId = $item->participant_id;
-
-                    if (!isset($carry[$participantId])) {
-                        $carry[$participantId] = $item;
-                    }
-
-                    return $carry;
-                }, []);
-
-                $uniqueParticipants = $this->participantRepository->getByIds(
-                    ArrayHelper::getColumn($uniqueParticipants, 'id')
-                );
-
-                $result[$calculateType] = count($uniqueParticipants);
-
-                array_push($participants, ...$uniqueParticipants);
+            if (in_array(ManHoursReportForm::PARTICIPANT_WITH_BENEFITS_BY_SVO, $calculateTypes)) {
+                $participants = array_filter($participants, function($participant) use ($calculateTypes) {
+                    return $participant->participantWork->benefits == BenefitsDictionary::SVO;
+                });
             }
+
+
+            $uniqueParticipants = array_reduce($participants, function ($carry, $item) {
+                $participantId = $item->participant_id;
+                if (!isset($carry[$participantId])) {
+                    $carry[$participantId] = $item;
+                }
+                return $carry;
+            }, []);
+
+            $participants = $this->participantRepository->getByIds(
+                ArrayHelper::getColumn(
+                    $uniqueParticipants,
+                    'id'
+                )
+            );
+
+            $result = count($participants);
         }
         // для подсчета всех - проверяем каждый раздел в отдельности
         else {

@@ -91,13 +91,7 @@ class ReportECLoader
         foreach ($data as $participants) {
             foreach ($participants['participantsWinner'] as $participant) {
                 foreach ($participant->squadParticipantWork as $person) {
-                    //ДЛЯ РЕГИОНАЛЬНЫХ НУЖНО ТОЛЬКО ФАМИЛИЮ
-                    if ($person->actParticipantWork->foreignEventWork->level == 6){
-                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
-                    }
-                    else {
-                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
-                    }
+                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
                     $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), $this->convertEvent($person->actParticipantWork->foreignEventWork->level));
                     $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
                     $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);
@@ -112,12 +106,7 @@ class ReportECLoader
             }
             foreach ($participants['participantsPrize'] as $participant) {
                 foreach ($participant->squadParticipantWork as $person) {
-                    if ($person->actParticipantWork->foreignEventWork->level == 6){
-                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
-                    }
-                    else {
-                        $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->getSurnameInitials());
-                    }
+                    $inputData->getSheet(2)->setCellValue('B' . (5 + $counter), $person->participantWork->surname);
                     $inputData->getSheet(2)->setCellValue('C' . (5 + $counter), $this->convertEvent($person->actParticipantWork->foreignEventWork->level));
                     $inputData->getSheet(2)->setCellValue('D' . (5 + $counter), $person->actParticipantWork->foreignEventWork->name);
                     $inputData->getSheet(2)->setCellValue('E' . (5 + $counter), $person->actParticipantWork->nomination);

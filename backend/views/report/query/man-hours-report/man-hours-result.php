@@ -20,14 +20,18 @@ $this->title = 'Результат отчета по обучающимся';
 
 <p>Человеко-часы: <?= $manHoursResult['result'] ?></p>
 <?php if (!empty($participantsResult)):
-    $total = 0;
+    $total = $participantsResult['result'];
 
     if (is_array($participantsResult['result'])) {
         $total = array_sum($participantsResult['result']);
     }
     ?>
     <p>
-        Обучающиеся: <strong><?= $total ?></strong>
+        <?php if (!is_array($participantsResult['result'])): ?>
+            Уникальные обучающиеся: <strong><?= $total ?></strong>
+        <?php else: ?>
+            Обучающиеся: <strong><?= $total ?></strong>
+        <?php endif; ?>
     </p>
     <table class="table table-striped">
         <?php if (is_array($participantsResult['result'])): ?>
@@ -35,7 +39,7 @@ $this->title = 'Результат отчета по обучающимся';
                 <tr><td><?= ManHoursReportForm::$types[$index] ?></td><td><?= $participantChapter ?></td></tr>
             <?php endforeach; ?>
         <?php else: ?>
-            <p><?= $participantsResult['result'] ?></p>
+
         <?php endif; ?>
     </table>
 <?php else: ?>

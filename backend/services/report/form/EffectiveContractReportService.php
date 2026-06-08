@@ -74,7 +74,6 @@ class EffectiveContractReportService
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
 
-
         $events = $this->repository->getByDatesAndLevels($startDate, $endDate, self::EVENT_LEVELS);
 
         $actsQuery = $this->builder->query();
@@ -101,25 +100,68 @@ class EffectiveContractReportService
             $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, [$level]);
             $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
             $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
-            $winners = [];
-            $prizers = [];
-            foreach ($this->actRepository->findAll($winQuery) as $participant) {
-                $winners[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
+
+            // Разделяем индивидуальные и командные достижения
+            $individualWinners = [];
+            $teamWinners = [];
+            $individualPrizers = [];
+            $teamPrizers = [];
+
+            // Обработка победителей
+            foreach ($this->actRepository->findAll($winQuery) as $actParticipant) {
+                if (!empty($actParticipant->team_name_id)) {
+                    // Командная заявка: сохраняем ID команды
+                    $teamWinners[] = $actParticipant->team_name_id;
+                } else {
+                    // Индивидуальная заявка: сохраняем ID участников
+                    foreach ($actParticipant->squadParticipantsWork as $squadParticipant) {
+                        $individualWinners[] = $squadParticipant->participant_id;
+                    }
+                }
             }
-            foreach ($this->actRepository->findAll($prizeQuery) as $participant) {
-                $prizers[] = ArrayHelper::getColumn($participant->squadParticipantsWork, 'participant_id');
+
+            // Обработка призеров (аналогично)
+            foreach ($this->actRepository->findAll($prizeQuery) as $actParticipant) {
+                if (!empty($actParticipant->team_name_id)) {
+                    $teamPrizers[] = $actParticipant->team_name_id;
+                } else {
+                    foreach ($actParticipant->squadParticipantsWork as $squadParticipant) {
+                        $individualPrizers[] = $squadParticipant->participant_id;
+                    }
+                }
             }
+
+            // Удаляем дубликаты
+            $uniqueIndividualWinners = array_unique($individualWinners);
+            $uniqueTeamWinners = array_unique($teamWinners);
+            $uniqueIndividualPrizers = array_unique($individualPrizers);
+            $uniqueTeamPrizers = array_unique($teamPrizers);
+
+            // Считаем итоги: количество людей + количество команд
+            $totalWinners = count($uniqueIndividualWinners) + count($uniqueTeamWinners);
+            $totalPrizers = count($uniqueIndividualPrizers) + count($uniqueTeamPrizers);
+
+            // Итоговый показатель
+            $resultValue = $totalWinners + $totalPrizers;
+
             $result[$level] = [
                 'participant' => count($this->actRepository->findAll($participantQuery)),
-                'winners' => count(array_unique(array_merge(...$winners))),
-                'prizes' => count(array_unique(array_merge(...$prizers))),
+                'winners' => $totalWinners,
+                'prizes' => $totalPrizers,
+                'result_value' => $resultValue
+            ];
+
+            // Дополнительно можно сохранить детализацию для отладки
+            $result[$level . '_details'] = [
+                'individual_winners_count' => count($uniqueIndividualWinners),
+                'team_winners_count' => count($uniqueTeamWinners),
+                'individual_prizers_count' => count($uniqueIndividualPrizers),
+                'team_prizers_count' => count($uniqueTeamPrizers),
             ];
 
             if (in_array($level, Yii::$app->eventLevel->getReportLevels())) {
                 $tempSumPart += count($this->actRepository->findAll($participantQuery));
-                $tempSumAchieve +=
-                    count($this->actRepository->findAll($winQuery)) +
-                    count($this->actRepository->findAll($prizeQuery));
+                $tempSumAchieve += $totalWinners + $totalPrizers;
             }
         }
         $result['percent'] = $tempSumPart != 0 ? round($tempSumAchieve / $tempSumPart, 2) : 0;

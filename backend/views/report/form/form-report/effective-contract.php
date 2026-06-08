@@ -5,6 +5,19 @@ use yii\widgets\ActiveForm;
 /** @var $model \backend\forms\report\ECForm */
 $this->title = 'Эффективный контракт';
 $this->params['breadcrumbs'][] = $this->title;
+    // Получаем предыдущий год
+    $previousYear = date('Y') - 1;
+    $currentYear = date('Y');
+    $defaultStartDate = $previousYear . '-01-01';
+    $defaultEndDate = $currentYear . '-01-01';
+
+    // Устанавливаем значения по умолчанию для модели, если они еще не установлены
+    if (empty($model->startDate)) {
+        $model->startDate = $defaultStartDate;
+    }
+    if (empty($model->endDate)) {
+        $model->endDate = $defaultEndDate;
+}
 ?>
 <?php $form = ActiveForm::begin(['id' => 'effective-contract']);?>
 <?= $form->field($model, 'startDate', ['template' => '{label}&nbsp;{input}',

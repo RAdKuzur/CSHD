@@ -37,7 +37,7 @@ class EffectiveContractReportService
     const EVENT_LEVELS = [
         EventLevelDictionary::REGIONAL,
         EventLevelDictionary::FEDERAL,
-        EventLevelDictionary::INTERNATIONAL,
+        EventLevelDictionary::INTERNATIONAL
     ];
 
     private ForeignEventRepository $repository;
@@ -97,7 +97,16 @@ class EffectiveContractReportService
         $tempSumPart = 0;
         $tempSumAchieve = 0;
         foreach (self::EVENT_LEVELS as $level) {
-            $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, [$level]);
+
+            if ($level == EventLevelDictionary::FEDERAL)
+            {
+                $queryLevels = [EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERREGIONAL];
+            }
+            else {
+                $queryLevels = [$level];
+            }
+
+            $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, $queryLevels);
             $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
             $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
 
@@ -141,14 +150,11 @@ class EffectiveContractReportService
             $totalWinners = count($uniqueIndividualWinners) + count($uniqueTeamWinners);
             $totalPrizers = count($uniqueIndividualPrizers) + count($uniqueTeamPrizers);
 
-            // Итоговый показатель
-            $resultValue = $totalWinners + $totalPrizers;
 
             $result[$level] = [
                 'participant' => count($this->actRepository->findAll($participantQuery)),
                 'winners' => $totalWinners,
-                'prizes' => $totalPrizers,
-                'result_value' => $resultValue
+                'prizes' => $totalPrizers
             ];
 
             // Дополнительно можно сохранить детализацию для отладки
@@ -190,7 +196,14 @@ class EffectiveContractReportService
         $tempSumPart = 0;
         $tempSumAchieve = 0;
         foreach (self::EVENT_LEVELS as $level) {
-            $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, [$level]);
+            if ($level == EventLevelDictionary::FEDERAL)
+            {
+                $queryLevels = [EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERREGIONAL];
+            }
+            else {
+                $queryLevels = [$level];
+            }
+            $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, $queryLevels);
             $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
             $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
             $result['levels'][$level] = [

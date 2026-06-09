@@ -103,6 +103,26 @@ class VisitRepository
         return $command->getRawSql();
     }
 
+    public function prepareBatchUpdateLessons(array $updates)
+    {
+        if (empty($updates)) {
+            return null;
+        }
+
+        $cases = [];
+        $ids = [];
+
+        // Строим CASE выражение
+        foreach ($updates as $id => $lessonsJson) {
+            $cases[] = "WHEN id = {$id} THEN '{$lessonsJson}'";
+            $ids[] = $id;
+        }
+
+        $sql = "UPDATE visit SET lessons = CASE " . implode(' ', $cases) . " END WHERE id IN (" . implode(',', $ids) . ")";
+
+        return $sql;
+    }
+
     public function prepareCreate($visitIds, $lessons)
     {
         $model = VisitWork::fill($visitIds, $lessons);
@@ -118,15 +138,31 @@ class VisitRepository
         return $command->getRawSql();
     }
     public function deleteLesson($lessonId, $participantId){
-        $visit = VisitWork::find()->where(['training_group_participant_id' => $participantId])->one();
-        $newLesson = [];
-        $lessons = json_decode($visit->lessons);
-        foreach ($lessons as $lesson) {
-            if ($lesson->lesson_id != $lessonId) {
-                $newLesson[] = $lesson;
-            }
+        $query = VisitWork::find()->where(['training_group_participant_id' => $participantId]);
+
+        $visit = $query->one();
+
+        if (!$visit) {
+            Yii::error("Visit not found for participant: {$participantId}, lesson: {$lessonId}");
+            return false;
         }
+
+        $lessons = json_decode($visit->lessons, true); // Используйте true для ассоциативного массива
+
+        if (!is_array($lessons)) {
+            $lessons = [];
+        }
+
+        // Фильтруем уроки
+        $newLesson = array_filter($lessons, function($lesson) use ($lessonId) {
+            return $lesson['lesson_id'] != $lessonId;
+        });
+
+        // Переиндексируем массив
+        $newLesson = array_values($newLesson);
+
         $visit->lessons = json_encode($newLesson);
-        $this->save($visit);
+
+        return $this->save($visit);
     }
 }

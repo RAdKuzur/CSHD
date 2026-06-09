@@ -27,14 +27,14 @@ class GroupLessonService implements DatabaseServiceInterface
         return $lessonThemes;
     }
 
-    public function delete($id)
+    public function delete($id,$entityId)
     {
-        if (count($this->isAvailableDelete($id)) > 0) {
+        if (count($this->isAvailableDelete($entityId)) > 0) {
             return false;
         }
 
         /** @var TrainingGroupLessonWork $model */
-        $model = $this->repository->get($id);
+        $model = $this->repository->get($entityId);
         $model->recordEvent(
             new DeleteLessonFromVisitEvent($id, [$model]),
             TrainingGroupLessonWork::class

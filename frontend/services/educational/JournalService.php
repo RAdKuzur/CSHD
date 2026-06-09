@@ -98,15 +98,14 @@ class JournalService
     }
 
     /**
-     * @param $groupId
+     * @param $LessonsJson
      * @param TrainingGroupLessonWork[] $addLessons
      * @param TrainingGroupLessonWork[] $delLessons
      * @return false|string
      */
-    public function createLessonString($groupId, array $addLessons, array $delLessons)
+    public function createLessonString($LessonsJson, array $addLessons, array $delLessons)
     {
-        $curLessonsString = $this->visitRepository->getByTrainingGroup($groupId)[0]->lessons;
-        $curLessonsJson = json_decode($curLessonsString);
+        $curLessonsJson = json_decode($LessonsJson);
 
         $delLessonIds = array_map(function ($lesson) {
             /** @var TrainingGroupLessonWork $lesson */

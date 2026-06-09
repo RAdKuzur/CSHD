@@ -36,11 +36,17 @@ class DeleteLessonFromVisitEvent implements EventInterface
 
     public function execute()
     {
-        $newLessonsString = $this->service->createLessonString($this->groupId, [], $this->lessons);
-        $trainingGroupIds = ArrayHelper::getColumn($this->repository->getByTrainingGroup($this->groupId), 'id');
+        $updates = [];
+        $visits = $this->repository->getByTrainingGroup($this->groupId);
+        foreach ($visits as $visit) {
+            $curLessonsString = $visit->lessons;
+            $newLessonsJson = $this->service->createLessonString($curLessonsString, [], $this->lessons);
+            $updates[$visit->id] = $newLessonsJson;
+        }
+
 
         return [
-            $this->repository->prepareUpdateLessons($trainingGroupIds, $newLessonsString)
+            $this->repository->prepareBatchUpdateLessons($updates)
         ];
     }
 }

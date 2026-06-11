@@ -81,13 +81,14 @@ class EffectiveContractReportService
         $participants = $this->participantBuilder->filterByGroups($participants, ArrayHelper::getColumn($groups, 'id'));
         $participantsAllUnic = $this->participantBuilder->distinct(clone $participants, ['participant_id']);
 
-        $events = $this->repository->getByDatesAndLevels($startDate, $endDate, self::EVENT_LEVELS);
+        $events = $this->repository->getByDatesAndLevelsEndDate($startDate, $endDate, self::EVENT_LEVELS);
 
         $actsQuery = $this->builder->query();
         $actsQuery = $this->builder->filterByEvents($actsQuery, ArrayHelper::getColumn($events, 'id'));
         $actsQuery = $this->builder->joinWith($actsQuery, 'foreignEventWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'actParticipantBranchWork');
         $actsQuery = $this->builder->joinWith($actsQuery, 'participantAchievementWork');
+
 
 //        $actsQuery = $this->builder->filterByBranches($actsQuery, [
 //            BranchDictionary::TECHNOPARK, BranchDictionary::COD, BranchDictionary::MOBILE_QUANTUM, BranchDictionary::QUANTORIUM, BranchDictionary::CDNTT
@@ -112,13 +113,9 @@ class EffectiveContractReportService
             else {
                 $queryLevels = [$level];
             }
-            $temp = $actsQuery->createCommand()->getRawSql();
             $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, $queryLevels);
-            $temp = $participantQuery->createCommand()->getRawSql();
             $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
-            $temp = $prizeQuery->createCommand()->getRawSql();
             $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
-            $temp = $winQuery->createCommand()->getRawSql();
 
             // Разделяем индивидуальные и командные достижения
             $individualWinners = [];
@@ -205,7 +202,7 @@ class EffectiveContractReportService
         $result = [];
         $tempSumPart = 0;
         $tempSumAchieve = 0;
-        foreach (self::EVENT_LEVELS as $level) {
+        foreach (self::EVENT_LEVELS_CYCLE as $level) {
             if ($level == EventLevelDictionary::FEDERAL)
             {
                 $queryLevels = [EventLevelDictionary::FEDERAL, EventLevelDictionary::INTERREGIONAL];

@@ -40,10 +40,10 @@ class ForeignEventRepository
     public function getByDatesAndLevels(string $startDate, string $endDate, array $levels = [])
     {
         $query = ForeignEventWork::find()->where(['>=', 'end_date', $startDate])->andWhere(['<=', 'begin_date', $endDate]);
+        //$query = ForeignEventWork::find()->where(['>=', 'end_date', $startDate])->andWhere(['<=', 'end_date', $endDate]);
         if (count($levels) > 0) {
             $query = $query->andWhere(['IN', 'level', $levels]);
         }
-
         return $query->all();
     }
 
@@ -56,7 +56,7 @@ class ForeignEventRepository
         if (!empty($levels)) {
             $query = $query->andWhere(['IN', 'level', $levels]);
         }
-
+        $temp = $query->createCommand()->getRawSql();
         return $query->all();
     }
 

@@ -37,6 +37,13 @@ class EffectiveContractReportService
     const EVENT_LEVELS = [
         EventLevelDictionary::REGIONAL,
         EventLevelDictionary::FEDERAL,
+        EventLevelDictionary::INTERREGIONAL,
+        EventLevelDictionary::INTERNATIONAL
+    ];
+
+    const EVENT_LEVELS_CYCLE = [
+        EventLevelDictionary::REGIONAL,
+        EventLevelDictionary::FEDERAL,
         EventLevelDictionary::INTERNATIONAL
     ];
 
@@ -96,7 +103,7 @@ class EffectiveContractReportService
         $result = [];
         $tempSumPart = 0;
         $tempSumAchieve = 0;
-        foreach (self::EVENT_LEVELS as $level) {
+        foreach (self::EVENT_LEVELS_CYCLE as $level) {
 
             if ($level == EventLevelDictionary::FEDERAL)
             {
@@ -105,10 +112,13 @@ class EffectiveContractReportService
             else {
                 $queryLevels = [$level];
             }
-
+            $temp = $actsQuery->createCommand()->getRawSql();
             $participantQuery = $this->builder->filterByEventLevels(clone $actsQuery, $queryLevels);
+            $temp = $participantQuery->createCommand()->getRawSql();
             $prizeQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_PRIZE]);
+            $temp = $prizeQuery->createCommand()->getRawSql();
             $winQuery = $this->builder->filterByPrizes(clone $participantQuery, [ParticipantAchievementWork::TYPE_WINNER]);
+            $temp = $winQuery->createCommand()->getRawSql();
 
             // Разделяем индивидуальные и командные достижения
             $individualWinners = [];

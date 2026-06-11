@@ -38,9 +38,11 @@ class TrainingGroupParticipantService implements DatabaseServiceInterface
             return -1;
         }
 
-        $this->visitRepository->delete(
-            $this->visitRepository->getByTrainingGroupParticipant($entityId)
-        );
+        // На тот случай, если ученик в группу был добавлен, но не зачислен. Тогда и visit у него не будет
+        $result = $this->visitRepository->getByTrainingGroupParticipant($entityId);
+        if ($result != null) {
+            $this->visitRepository->delete($result);
+        }
 
         return $this->repository->delete(
             $this->repository->get($entityId)

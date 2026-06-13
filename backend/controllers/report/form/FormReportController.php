@@ -109,7 +109,8 @@ class FormReportController extends Controller
     {
         $model = new TeacherReportForm();
         if($model->load(Yii::$app->request->post())) {
-            $this->teacherReportFormService->createTeacherReportForm($model);
+            $data = $this->teacherReportFormService->prepareTeacherReportForm($model);
+            $this->teacherReportFormService->createExcelVariantReport($model, $data);
         }
         return $this->render('teacher', [
             'model' => $model

@@ -5,12 +5,14 @@ namespace backend\controllers\report\form;
 use backend\forms\report\DodForm;
 use backend\forms\report\ECForm;
 use backend\forms\report\SAForm;
+use backend\forms\report\TeacherReportForm;
 use backend\invokables\ReportDodLoader;
 use backend\invokables\ReportECLoader;
 use backend\invokables\ReportSALoader;
 use backend\services\report\form\DodReportService;
 use backend\services\report\form\EffectiveContractReportService;
 use backend\services\report\form\StateAssignmentReportService;
+use backend\services\report\form\TeacherReportFormService;
 use backend\services\report\ReportFacade;
 use common\helpers\DateFormatter;
 use Yii;
@@ -21,6 +23,7 @@ class FormReportController extends Controller
     private StateAssignmentReportService $stateAssignmentService;
     private DodReportService $dodReportService;
     private EffectiveContractReportService $effectiveContractReportService;
+    private TeacherReportFormService $teacherReportFormService;
 
     public function __construct(
         $id,
@@ -28,6 +31,7 @@ class FormReportController extends Controller
         StateAssignmentReportService $stateAssignmentService,
         DodReportService $dodReportService,
         EffectiveContractReportService $effectiveContractReportService,
+        TeacherReportFormService $teacherReportFormService,
         $config = []
     )
     {
@@ -35,6 +39,7 @@ class FormReportController extends Controller
         $this->stateAssignmentService = $stateAssignmentService;
         $this->dodReportService = $dodReportService;
         $this->effectiveContractReportService = $effectiveContractReportService;
+        $this->teacherReportFormService = $teacherReportFormService;
     }
 
     public function actionFormList()
@@ -96,6 +101,17 @@ class FormReportController extends Controller
             $loader();
         }
         return $this->render('effective-contract', [
+            'model' => $model
+        ]);
+    }
+
+    public function actionTeacher()
+    {
+        $model = new TeacherReportForm();
+        if($model->load(Yii::$app->request->post())) {
+            $this->teacherReportFormService->createTeacherReportForm($model);
+        }
+        return $this->render('teacher', [
             'model' => $model
         ]);
     }

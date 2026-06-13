@@ -17,7 +17,7 @@ $this->title = 'Отчеты по готовым формам';
 
 <?= Html::a("Отчет ДО", Url::to(['report-form/do']), ['class'=>'btn btn-success']); ?>
 
-<?= Html::a("Расчет выработки пед. работников", Url::to(['report-form/teacher']), ['class'=>'btn btn-success']); ?>
+<?= Html::a("Расчет выработки пед. работников", Url::to(['teacher']), ['class'=>'btn btn-success']); ?>
 
 <?= Html::a("Отчет гос. задание", Url::to(['state-assignment']), ['class'=>'btn btn-primary']); ?>
 

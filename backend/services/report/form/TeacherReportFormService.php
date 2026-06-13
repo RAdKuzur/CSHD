@@ -74,7 +74,6 @@ class TeacherReportFormService
 
         foreach ($teacherGroups as $teacherGroup) {
 
-            // $teacherGroup->teacherWork->getFioPosition(); ---  ФИО и должность
             $fioPosition = $teacherGroup->teacherWork->getFioPosition();
 
             //добавление помесячных данных о занятиях
@@ -85,17 +84,22 @@ class TeacherReportFormService
                     $dataLessons[$lesson->id] = $monthOfLesson;
                 }
             }
-
+            $totalGroupLesson = [];
             //сбор данных о часах в группах (помесячно)
             foreach ($teacherGroup->trainingGroup->trainingGroupParticipants as $participant) {
                 $lessons = json_decode($participant->visit->lessons); // это ячейка lessons в таблице  visits
                 foreach ($lessons as $lesson) {
+                    $month = $dataLessons[$lesson->lesson_id];
+                    $totalGroupLesson[$month]++;
                     if ($lesson->status !== -1) { // в зависимости от ТЗ условие может меняться
-                        $month = $dataLessons[$lesson->lesson_id];
-                        $dataHours[$teacherGroup->trainingGroup->id][$month]['hours']++;
+                        // $dataHours[$teacherGroup->trainingGroup->id][$month]['hours']++;
                         $dataHours[$teacherGroup->trainingGroup->id][$month]['count'] = count($teacherGroup->trainingGroup->trainingGroupParticipants);
                     }
                 }
+            }
+
+            foreach (self::MONTH as $index => $month) {
+                $dataHours[$teacherGroup->trainingGroup->id][$index]['hours'] = $totalGroupLesson[$index] / count($teacherGroup->trainingGroup->trainingGroupParticipants);
             }
 
             //сборка даннных в итоговый массив
@@ -164,7 +168,9 @@ class TeacherReportFormService
                     );
                     $column++;
 
-                    $totalHours += $group['group']['dataHours'][$indexMonth]['hours'];
+                    //$totalHours += $group['group']['dataHours'][$indexMonth]['hours'];
+
+                    $totalHours += $group['group']['dataHours'][$indexMonth]['hours'] * $group['group']['dataHours'][$indexMonth]['count'];
                     $dataMonth[$indexMonth]['hours'] += $group['group']['dataHours'][$indexMonth]['hours'];
                     $dataMonth[$indexMonth]['count'] += $group['group']['dataHours'][$indexMonth]['count'];
                 }

@@ -13,6 +13,11 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Yii;
 use yii\helpers\ArrayHelper;
 
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Font;
+
+
 class TeacherReportFormService
 {
     const CALCULATE_TYPES = [
@@ -111,15 +116,32 @@ class TeacherReportFormService
     {
         $inputData = IOFactory::load(Yii::$app->basePath . FilePaths::REPORT_TEMPLATES . 'report_teacher_hours.xlsx');
 
-        $startIndex = 2;
+        $startIndex = 2; // начинаем со второй
         foreach ($data as $index => $item) {
-            $inputData->getActiveSheet()->mergeCells('A'.$startIndex . ':' . 'Z'.$startIndex);
-            $inputData->getActiveSheet()->setCellValue(
-                'A'. $startIndex,
-                $index
-            );
+            $teacherTotalHours = 0;
+            $dataMonth = [];
+
+            //ФИО педагога
+            $mergedRange = 'A'.$startIndex . ':' . 'Z'.$startIndex;
+            $inputData->getActiveSheet()->mergeCells($mergedRange);
+            $inputData->getActiveSheet()->setCellValue('A'. $startIndex, $index);
+            $inputData->getActiveSheet()->getStyle($mergedRange)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'font' => [
+                    'bold' => true,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                    ],
+                ],
+            ]);
+
             $startIndex++;
-            $startIndex = $this->prepareTeacherHeader($inputData, $startIndex ,$model->getYear());
+            $startIndex = $this->prepareTeacherHeader($inputData, $startIndex ,$model->getYear()); //заголовок с датой и временем
             foreach ($item as $group) {
                 $totalHours = 0;
                 $inputData->getActiveSheet()->setCellValue(
@@ -127,28 +149,35 @@ class TeacherReportFormService
                     $group['group']['number']
                 );
 
+                //пошли человеко-часы
                 $column = 'B';
                 foreach (self::MONTH as $indexMonth => $month) {
                     $inputData->getActiveSheet()->setCellValue(
                         $column . $startIndex,
                         $group['group']['dataHours'][$indexMonth]['hours'] ?? 0
                     );
-                    $totalHours += $group['group']['dataHours'][$indexMonth]['hours'];
                     $column++;
+
                     $inputData->getActiveSheet()->setCellValue(
                         $column . $startIndex,
                         $group['group']['dataHours'][$indexMonth]['count'] ?? 0
                     );
                     $column++;
 
+                    $totalHours += $group['group']['dataHours'][$indexMonth]['hours'];
+                    $dataMonth[$indexMonth]['hours'] += $group['group']['dataHours'][$indexMonth]['hours'];
+                    $dataMonth[$indexMonth]['count'] += $group['group']['dataHours'][$indexMonth]['count'];
                 }
 
                 $inputData->getActiveSheet()->setCellValue(
                     'Z' . $startIndex,
                     $totalHours
                 );
+                $teacherTotalHours += $totalHours;
                 $startIndex++;
             }
+
+            $this->prepareTotalTeacherFooter($inputData, $startIndex, $dataMonth, $teacherTotalHours);
 
             $startIndex++;
             $startIndex++;
@@ -166,37 +195,140 @@ class TeacherReportFormService
             $secondCell = ++$column . $index;
             $inputData->getActiveSheet()->mergeCells($firstCell . ':' . $secondCell);
             $inputData->getActiveSheet()->setCellValue($firstCell, $month . ' ' . $year);
+            $inputData->getActiveSheet()->getStyle($firstCell)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'font' => [
+                    'bold' => true,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                    ],
+                ],
+            ]);
             $column++;
         }
 
-        $inputData->getActiveSheet()->setCellValue(
-            'Z'. $index,
-            'ИТОГО'
-        );
+        $inputData->getActiveSheet()->setCellValue('Z' . $index, 'ИТОГО');
+        $inputData->getActiveSheet()->getStyle('Z' . $index)->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
 
         $index++;
-        $inputData->getActiveSheet()->setCellValue(
-            'A'. $index,
-            'Группа'
-        );
+        $inputData->getActiveSheet()->setCellValue('A' . $index, 'Группа');
+        $inputData->getActiveSheet()->getStyle('A' . $index)->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
+
         $column = 'B';
         foreach (self::MONTH as $month) {
-            $inputData->getActiveSheet()->setCellValue(
-                $column . $index,
-                'Кол-во ак. часов'
-            );
+            $inputData->getActiveSheet()->setCellValue($column . $index, 'Кол-во ак. часов');
+            $inputData->getActiveSheet()->getStyle($column . $index)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'font' => [
+                    'bold' => true,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                    ],
+                ],
+            ]);
             $column++;
-            $inputData->getActiveSheet()->setCellValue(
-                $column . $index,
-                'Кол-во чел.'
-            );
+
+            $inputData->getActiveSheet()->setCellValue($column . $index, 'Кол-во чел.');
+            $inputData->getActiveSheet()->getStyle($column . $index)->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'font' => [
+                    'bold' => true,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                    ],
+                ],
+            ]);
             $column++;
         }
-        $inputData->getActiveSheet()->setCellValue(
-            'Z'. $index,
-            'ИТОГО'
-        );
+
+        $inputData->getActiveSheet()->setCellValue('Z' . $index, 'ИТОГО');
+        $inputData->getActiveSheet()->getStyle('Z' . $index)->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                ],
+            ],
+        ]);
 
         return $index + 1;
+    }
+
+    public function prepareTotalTeacherFooter($inputData, $startIndex, $dataMonth, $teacherTotalHours) {
+        $inputData->getActiveSheet()->setCellValue(
+            'A'. $startIndex,
+            'ИТОГО'
+        );
+        $inputData->getActiveSheet()->getStyle('A' . $startIndex)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+        $column = 'B';
+        foreach (self::MONTH as $indexMonth => $month) {
+            $inputData->getActiveSheet()->setCellValue(
+                $column . $startIndex,
+                $dataMonth[$indexMonth]['hours']
+            );
+            $inputData->getActiveSheet()->getStyle($column . $startIndex)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $column++;
+
+            $inputData->getActiveSheet()->setCellValue(
+                $column . $startIndex,
+                $dataMonth[$indexMonth]['count']
+            );
+            $inputData->getActiveSheet()->getStyle($column . $startIndex)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $column++;
+        }
+
+        $inputData->getActiveSheet()->setCellValue(
+            'Z' . $startIndex,
+            $teacherTotalHours
+        );
+        $inputData->getActiveSheet()->getStyle('Z' . $startIndex)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
     }
 }

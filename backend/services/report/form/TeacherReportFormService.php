@@ -191,6 +191,7 @@ class TeacherReportFormService
         HeaderWizard::setExcelLoadHeaders('Расчёт по выработки пед. работников.xlsx');
         $writer = new Xlsx($inputData);
         $writer->save('php://output');
+        exit;
     }
 
     public function prepareTeacherHeader($inputData, $index, $year)

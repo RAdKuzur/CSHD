@@ -6,6 +6,7 @@ use backend\forms\report\ManHoursReportForm;
 use common\helpers\common\QueryHelper;
 use common\repositories\educational\TeacherGroupRepository;
 use common\repositories\educational\TrainingProgramRepository;
+use frontend\models\work\educational\training_group\TeacherGroupWork;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -33,6 +34,18 @@ class TrainingGroupReportBuilder
         return TrainingGroupWork::find();
     }
 
+
+    public function teacherGroupQuery() : ActiveQuery
+    {
+        return TeacherGroupWork::find();
+    }
+
+    public function filterTrainingGroupIDs(ActiveQuery $query, array $ids) : ActiveQuery {
+        return $query->andWhere(['IN', 'training_group_id', $ids]);
+    }
+    public function orderByTeacherGroup(ActiveQuery $query) : ActiveQuery {
+        return $query->orderBy(['teacher_id' => SORT_ASC]);
+    }
     /**
      * Фильтр учебных групп по отделам
      *

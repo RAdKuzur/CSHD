@@ -17,6 +17,7 @@ namespace common\models\scaffold;
  * @property GroupProjectThemes $groupProjectThemes
  * @property ForeignEventParticipants $participant
  * @property TrainingGroup $trainingGroup
+ * @property Visit $visit
  */
 class  TrainingGroupParticipant extends \yii\db\ActiveRecord
 {
@@ -86,5 +87,13 @@ class  TrainingGroupParticipant extends \yii\db\ActiveRecord
     public function getTrainingGroup()
     {
         return $this->hasOne(TrainingGroup::class, ['id' => 'training_group_id']);
+    }
+    /**
+     * Gets query for [[Visit]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getVisit() {
+        return $this->hasOne(Visit::class, ['training_group_participant_id' => 'id']);
     }
 }

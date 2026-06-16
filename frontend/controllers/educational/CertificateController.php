@@ -5,6 +5,7 @@ namespace frontend\controllers\educational;
 use common\helpers\files\FilesHelper;
 use common\repositories\educational\CertificateRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
+use common\repositories\educational\CertificateTemplatesRepository;
 use frontend\components\GroupParticipantWidget;
 use frontend\components\wizards\CertificateWizard;
 use frontend\forms\certificate\CertificateForm;
@@ -41,9 +42,13 @@ class CertificateController extends Controller
         $searchModel = new SearchCertificate();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+        // Получаем все доступные шаблоны
+        $templates = (Yii::createObject(CertificateTemplatesRepository::class))->getAll();
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'templates' => $templates,
         ]);
     }
 
@@ -83,6 +88,46 @@ class CertificateController extends Controller
 
         return $this->redirect(['index']);
     }
+
+    public function actionChangeTemplate($id)
+    {
+        $form = new CertificateForm(
+            $this->service->buildGroupQuery($id),
+            $this->service->buildParticipantQuery($id),
+            $id  // Передаем id существующего сертификата
+        );
+
+        if ($form->load(Yii::$app->request->post())) {
+            // Обновляем только templateId у существующего сертификата
+            $this->service->updateCertificateTemplate($form->entity, $form->templateId);
+
+            Yii::$app->session->setFlash('success', 'Тип сертификата успешно изменен');
+            return $this->redirect(['view', 'id' => $id]);
+        }
+
+        // Если не POST запрос, возвращаемся на страницу просмотра
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
+    public function actionMassChangeTemplate()
+    {
+        $request = Yii::$app->request;
+
+        if ($request->isPost) {
+            $certificateIds = explode(',', $request->post('certificate_ids'));
+            $templateId = $request->post('template_id');
+
+            if (!empty($certificateIds) && $templateId) {
+                $count = $this->service->massUpdateCertificateTemplate($certificateIds, $templateId);
+                Yii::$app->session->setFlash('success', "Успешно обновлено {$count} сертификатов");
+            } else {
+                Yii::$app->session->setFlash('error', 'Не выбраны сертификаты или шаблон');
+            }
+        }
+
+        return $this->redirect(['index']);
+    }
+
 
     public function actionDownloadArchive()
     {

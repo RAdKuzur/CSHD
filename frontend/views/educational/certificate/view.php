@@ -4,7 +4,9 @@ use common\helpers\StringFormatter;
 use frontend\forms\certificate\CertificateForm;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
 use yii\widgets\DetailView;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model CertificateForm */
@@ -55,10 +57,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 );
             }],
             ['attribute' => 'pdfFile', 'format' => 'raw', 'label' => 'Файлы', 'value' => function (CertificateForm $model) {
+                // Используем стандартные классы Bootstrap для разделения кнопок (btn-block или маргины)
                 return Html::a(
                         "Скачать pdf-файл",
                         Url::to(['generation-pdf', 'id' => $model->id]),
-                        ['class'=>'btn btn-success', 'style' => 'margin-bottom: 8px']
+                        ['class'=>'btn btn-success mb-2', 'style' => 'margin-bottom: 5px;'] // mb-2 для BS4/5, style-костыль для BS3 облегчен
                     ).
                     '<br>'.
                     Html::a(
@@ -69,5 +72,35 @@ $this->params['breadcrumbs'][] = $this->title;
             }],
         ],
     ]) ?>
+
+    <?php if (Yii::$app->rubac->checkPermission(Yii::$app->rubac->authId(), 'delete_certificates')): ?>
+        <div class="certificate-template-change table-responsive" style="margin-top: 30px;">
+            <h3>Изменить тип сертификата</h3>
+
+            <?php $form = ActiveForm::begin([
+                'action' => ['change-template', 'id' => $model->id],
+                'method' => 'post',
+            ]); ?>
+
+            <div class="input-group">
+                <?= $form->field($model, 'templateId', ['options' => ['tag' => false]])->dropDownList(
+                    ArrayHelper::map($model->templates, 'id', 'name'),
+                    ['prompt' => 'Выберите шаблон...', 'class' => 'form-control']
+                )->label(false) ?>
+
+                <span class="input-group-btn">
+                    <?= Html::submitButton('Изменить шаблон', [
+                        'class' => 'btn btn-warning',
+                        'data' => [
+                            'confirm' => 'Вы действительно хотите изменить тип сертификата?',
+                        ],
+                    ]) ?>
+                </span>
+
+            </div>
+
+            <?php ActiveForm::end(); ?>
+        </div>
+    <?php endif; ?>
 
 </div>

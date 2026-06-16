@@ -75,6 +75,34 @@ class CertificateService
         }
     }
 
+    public function updateCertificateTemplate(CertificateWork $certificate, int $templateId)
+    {
+        $certificate->certificate_template_id = $templateId;
+
+        if (!$certificate->save()) {
+            throw new \yii\db\Exception('Ошибка при обновлении шаблона сертификата');
+        }
+
+        return true;
+    }
+
+    public function massUpdateCertificateTemplate(array $certificateIds, int $templateId)
+    {
+        $count = 0;
+
+        foreach ($certificateIds as $id) {
+            $certificate = CertificateWork::findOne($id);
+            if ($certificate) {
+                $certificate->certificate_template_id = $templateId;
+                if ($certificate->save()) {
+                    $count++;
+                }
+            }
+        }
+
+        return $count;
+    }
+
     public function downloadCertificates()
     {
         CertificateWizard::archiveDownload();

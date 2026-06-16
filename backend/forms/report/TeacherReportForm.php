@@ -8,9 +8,10 @@ class TeacherReportForm extends Model
 {
     public $branch;
     public $year;
+    public $budget;
     public function rules(){
         return [
-            [['branch', 'year'], 'integer'],
+            [['branch', 'year', 'budget'], 'required'],
         ];
     }
 
@@ -19,5 +20,8 @@ class TeacherReportForm extends Model
     }
     public function getYear(){
         return $this->year;
+    }
+    public function getBudget(){
+        return $this->budget;
     }
 }

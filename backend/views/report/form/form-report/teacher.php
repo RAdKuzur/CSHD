@@ -26,6 +26,12 @@ $years = array_combine(
             ->label('Отдел');
         ?>
     </div>
+    <div>
+        <?= $form->field($model, 'budget')->checkboxList([
+            0 => 'Внебюджетная',
+            1 => 'Бюджетная'
+        ])->label('Основа'); ?>
+    </div>
     <div class="form-group">
         <?= Html::submitButton('Скачать отчет', ['class' => 'btn btn-primary']) ?>
     </div>

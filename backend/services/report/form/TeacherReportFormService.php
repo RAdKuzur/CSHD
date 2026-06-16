@@ -61,6 +61,7 @@ class TeacherReportFormService
         //фильтрация по дате и отделу
         $groupsQuery = $this->trainingGroupReportBuilder->query();
         $groupsQuery = $this->trainingGroupReportBuilder->filterGroupsByDates($groupsQuery, $model->getYear().'-01-01', ($model->getYear() + 1).'-01-01', self::CALCULATE_TYPES);
+        $groupsQuery = $this->trainingGroupReportBuilder->filterGroupsByBudget($groupsQuery, $model->getBudget());
         $groupsQuery = $this->trainingGroupReportBuilder->filterGroupsByBranches($groupsQuery, [$model->getBranch()]);
         $groupIds = ArrayHelper::getColumn($groupsQuery->all(), 'id');
 

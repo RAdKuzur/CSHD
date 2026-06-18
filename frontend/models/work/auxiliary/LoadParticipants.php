@@ -77,7 +77,7 @@ class LoadParticipants extends Model
 
         $data = ExcelWizard::getDataFromColumns(
             Yii::$app->basePath . FilePaths::TEMP_FILEPATH . '/' . $newFilename,
-            ['Фамилия обучающегося', 'Имя обучающегося', 'Отчество обучающегося', 'Дата рождения (л)', 'Контакт: Рабочий e-mail']
+            ['Фамилия обучающегося', 'Имя обучающегося', 'Отчество обучающегося', 'Дата рождения (л)', 'Контакт: Рабочий e-mail', 'Член семьи гражданина, участвующего в СВО']
         );
         // 1. Собираем индексы, которые нужно удалить
         $indexesToRemove = [];
@@ -113,13 +113,15 @@ class LoadParticipants extends Model
             $surname=  $data['Фамилия обучающегося'][$i];
             $patronymic = $data['Отчество обучающегося'][$i];
             $sex = $this->participantRepository->getSexByName($data['Имя обучающегося'][$i]);
+            $benefits = $data['Член семьи гражданина, участвующего в СВО'][$i] == 'Да' ? 1 : 0;
             $participant = ForeignEventParticipantsWork::fill(
                 $name,
                 $surname,
                 $birthdate,
                 $email,
                 $sex,
-                $patronymic
+                $patronymic,
+                $benefits
             );
 
             $exists = $this->participantRepository->participantExists($participant);

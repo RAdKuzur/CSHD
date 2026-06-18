@@ -24,18 +24,26 @@ class ExcelWizard
         $highestRow = $worksheet->getHighestRow();
         $highestCol = $worksheet->getHighestColumn();
 
-        $columnIndex = 1;
-        $tempValue = $worksheet->getCell(Coordinate::stringFromColumnIndex($columnIndex) . $headerRow)->getValue();
-        while (Coordinate::stringFromColumnIndex($columnIndex) < $highestCol && $tempValue !== $header) {
-            $columnIndex++;
-            $tempValue = $worksheet->getCell(Coordinate::stringFromColumnIndex($columnIndex) . $headerRow)->getValue();
+        $highestColIndex = Coordinate::columnIndexFromString($highestCol);
+        $columnIndex = null;
+
+        for ($i = 1; $i <= $highestColIndex; $i++) {
+            $value = trim((string)$worksheet
+                ->getCell(Coordinate::stringFromColumnIndex($i) . $headerRow)
+                ->getValue());
+
+            if ($value === trim($header)) {
+                $columnIndex = $i;
+                break;
+            }
         }
 
         $data = [];
-        $mainIndex = 0;
-        while ($mainIndex < $highestRow - $headerRow) {
-            $data[] = $worksheet->getCell(Coordinate::stringFromColumnIndex($columnIndex) . ($headerRow + $mainIndex + 1))->getFormattedValue()/*$row*/;
-            $mainIndex++;
+
+        for ($row = $headerRow + 1; $row <= $highestRow; $row++) {
+            $data[] = $worksheet
+                ->getCell(Coordinate::stringFromColumnIndex($columnIndex) . $row)
+                ->getFormattedValue();
         }
 
         return $data;

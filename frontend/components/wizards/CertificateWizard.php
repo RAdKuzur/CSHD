@@ -37,6 +37,9 @@ class CertificateWizard
                 $mpdf = CertificateWizard::certificateTechnosummer($certificate, $participant);
             }
         }
+        else if (strripos($certificate->certificateTemplatesWork->name, CertificateWork::POINTS)) {
+            $mpdf = CertificateWizard::certificateSchoolWithPoints($certificate, $participant);
+        }
         else if (strripos($certificate->certificateTemplatesWork->name, CertificateWork::SCHOOL)) {
             $mpdf = CertificateWizard::certificateSchool($certificate, $participant);
         }
@@ -87,6 +90,20 @@ class CertificateWizard
         $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
         return CertificateBuilder::createPdfClass($content, $path);
     }
+
+    private static function certificateSchoolWithPoints(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
+    {
+        $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
+
+        $trainedText = CertificateHelper::getPointText($participant);
+        $size = CertificateHelper::getTextSize(strlen($trainedText));
+
+        $content = CertificateBuilder::createSchoolWithPointCertificate($certificate, $trainedText, $participant, $genderVerbs);
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
+        return CertificateBuilder::createPdfClass($content, $path);
+    }
+
+
 
     private static function certificateTechnosummer(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
     {

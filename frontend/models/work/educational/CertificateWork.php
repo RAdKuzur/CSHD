@@ -18,6 +18,7 @@ class CertificateWork extends Certificate
     const INTENSIVE = 'Интенсив';
     const PRO = 'ПРО';
     const SCHOOL = 'школа';
+    const POINTS = 'баллы';
     const PLUS = 'Плюс';
 
     const STATUS_CREATE = 0;

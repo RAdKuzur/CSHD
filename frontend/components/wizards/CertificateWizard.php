@@ -110,7 +110,7 @@ class CertificateWizard
     {
         $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
 
-        $trainedText = CertificateHelper::getMainText($participant, $genderVerbs, 40);
+        $trainedText = CertificateHelper::getPointText($participant, 40);
         $size = CertificateHelper::getTextSize(strlen($trainedText));
 
         $content = CertificateBuilder::createSchoolWithPointCertificate($certificate, $trainedText, $participant, $genderVerbs);

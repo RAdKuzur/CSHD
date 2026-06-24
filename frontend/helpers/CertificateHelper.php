@@ -42,6 +42,10 @@ class CertificateHelper
                             .$participant->trainingGroupWork->trainingProgram->capacity .' ак. ч.'. $typeText;
     }
 
+    public static function getPointText(TrainingGroupParticipantWork $participant, int $maxPoints = 100) {
+        return 'с результатом '. $participant->points .' из '. $maxPoints .' баллов.';
+    }
+
     public static function getTextSize(int $textLength)
     {
         if ($textLength >= 1070) {

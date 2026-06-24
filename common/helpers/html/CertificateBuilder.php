@@ -148,10 +148,15 @@ class CertificateBuilder
             <p style="'.$styleDistance.'"></p>
             <p style="font-size: 24px; font-weight: bold;'.$style.'">'. $participant->participantWork->getFIO(PersonInterface::FIO_FULL) .'</p>
             <p style="'.$styleDistance.'"></p>
+            <p style="font-size: 16px;'.$style.'">'.$genderVerbs[0].' очное обучение по программе мероприятия</p>
+            <p style="'.$styleDistance.'"></p>
             <p style="font-size: 24px;'.$style.'">ЛЕТНЯЯ ШКОЛА</p>
-            <p style="margin: 70px"></p>
-            <p style="font-size: 16px;'.$style.'">'.$trainedText.'</span></p>
-            <p style="height: 60px;"></p>
+            <p style="font-size: 20px;'.$style.'">"'.$participant->trainingGroupWork->trainingProgramWork->name.'"</p>
+            <p style="'.$styleDistance.'"></p>
+            <p style="font-size: 16px;'.$style.'">в объеме '.$participant->trainingGroupWork->trainingProgram->capacity .' академических часов</p>
+            <p style="'.$styleDistance.'"></p>
+            <p style="font-size: 16px;'.$style.'">и '.$genderVerbs[4].' участие в итоговом конкурсе по решению криптографических задач, '.$trainedText.'</span></p>
+            <p style="height: 70px;"></p>
             <p style="width: 600px; border-bottom: 1px solid black; margin: 0; padding-left: -40px; font-size: 2px;"></p>
             <p style="font-size: 14px; '.$style.'">В.В. Войков <br>
                         Директор <br>
@@ -160,7 +165,6 @@ class CertificateBuilder
             <p style="font-size: 14px; color: #585858;'.$style.'">Рег. номер '.$certificate->getCertificateLongNumber().'</p>
             </div>
             </body>';
-
         return $content;
     }
 

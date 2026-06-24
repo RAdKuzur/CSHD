@@ -17,7 +17,7 @@ class CertificateHelper
         }
     }
 
-    public static function getMainText(TrainingGroupParticipantWork $participant, array $genderVerbs)
+    public static function getMainText(TrainingGroupParticipantWork $participant, array $genderVerbs, int $maxPoints = 100)
     {
         $typeText = '';
         if ($participant->trainingGroupWork->trainingProgramWork->isProjectCertificate()) {
@@ -27,8 +27,8 @@ class CertificateHelper
             }
         }
         if ($participant->trainingGroupWork->trainingProgramWork->isControlWorkCertificate()) {
-            $typeText = ', ' . $genderVerbs[1] . ' итоговую контрольную работу с оценкой '
-                . $participant->points .' из 100 баллов.';
+            $typeText = ', ' . $genderVerbs[1] . ' итоговую контрольную работу с результатом '
+                . $participant->points .' из '.$maxPoints.' баллов.';
         }
         if ($participant->trainingGroupWork->trainingProgramWork->isOpenLessonCertificate()) {
             if ($participant->groupProjectThemesWork) {
@@ -40,10 +40,6 @@ class CertificateHelper
         return 'успешно '. $genderVerbs[0] . ' обучение по дополнительной общеразвивающей программе 
                             "'.$participant->trainingGroupWork->trainingProgramWork->name.'" в объеме '
                             .$participant->trainingGroupWork->trainingProgram->capacity .' ак. ч.'. $typeText;
-    }
-
-    public static function getPointText(TrainingGroupParticipantWork $participant) {
-        return 'Набрав '. $participant->points .' из 100 баллов.';
     }
 
     public static function getTextSize(int $textLength)

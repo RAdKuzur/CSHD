@@ -19,6 +19,8 @@ class CertificateWork extends Certificate
     const PRO = 'ПРО';
     const SCHOOL = 'школа';
     const POINTS = 'баллы';
+    const LIM = 'лим';
+
     const PLUS = 'Плюс';
 
     const STATUS_CREATE = 0;

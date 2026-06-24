@@ -40,6 +40,9 @@ class CertificateWizard
         else if (strripos($certificate->certificateTemplatesWork->name, CertificateWork::POINTS)) {
             $mpdf = CertificateWizard::certificateSchoolWithPoints($certificate, $participant);
         }
+        else if (strripos($certificate->certificateTemplatesWork->name, CertificateWork::LIM)) {
+            $mpdf = CertificateWizard::certificateSchoolSpecialLim($certificate, $participant);
+        }
         else if (strripos($certificate->certificateTemplatesWork->name, CertificateWork::SCHOOL)) {
             $mpdf = CertificateWizard::certificateSchool($certificate, $participant);
         }
@@ -95,7 +98,7 @@ class CertificateWizard
     {
         $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
 
-        $trainedText = CertificateHelper::getPointText($participant);
+        $trainedText = CertificateHelper::getMainText($participant, $genderVerbs);
         $size = CertificateHelper::getTextSize(strlen($trainedText));
 
         $content = CertificateBuilder::createSchoolWithPointCertificate($certificate, $trainedText, $participant, $genderVerbs);
@@ -103,7 +106,17 @@ class CertificateWizard
         return CertificateBuilder::createPdfClass($content, $path);
     }
 
+    private static function certificateSchoolSpecialLim(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
+    {
+        $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
 
+        $trainedText = CertificateHelper::getMainText($participant, $genderVerbs, 40);
+        $size = CertificateHelper::getTextSize(strlen($trainedText));
+
+        $content = CertificateBuilder::createSchoolWithPointCertificate($certificate, $trainedText, $participant, $genderVerbs);
+        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
+        return CertificateBuilder::createPdfClass($content, $path);
+    }
 
     private static function certificateTechnosummer(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
     {

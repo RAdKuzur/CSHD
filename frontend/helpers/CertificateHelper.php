@@ -43,7 +43,7 @@ class CertificateHelper
     }
 
     public static function getPointText(TrainingGroupParticipantWork $participant, int $maxPoints = 100) {
-        return 'с результатом '. $participant->points .' баллов из '. $maxPoints .' возможных.';
+        return 'с результатом '. $participant->points .' из '. $maxPoints .' возможных баллов.';
     }
 
     public static function getTextSize(int $textLength)

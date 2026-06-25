@@ -150,6 +150,7 @@ class Urls
     const CERTIFICATE_INDEX = "educational/certificate/index";
     const CERTIFICATE_CREATE = "educational/certificate/create";
     const CERTIFICATE_SEND_ALL = "educational/certificate/send-all";
+    const CERTIFICATE_DOWNLOAD_ARCHIVE = "educational/certificate/download-all-certificates";
 
     /**
      * Константы ForeignEventParticipants

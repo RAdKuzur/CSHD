@@ -41,7 +41,7 @@ class CertificateWizard
             $mpdf = CertificateWizard::certificateSchoolWithPoints($certificate, $participant);
         }
         else if (strripos($certificate->certificateTemplatesWork->name, CertificateWork::LIM)) {
-            $mpdf = CertificateWizard::certificateSchoolSpecialLim($certificate, $participant);
+            $mpdf = CertificateWizard::certificateSchoolWithPoints($certificate, $participant, true);
         }
         else if (strripos($certificate->certificateTemplatesWork->name, CertificateWork::SCHOOL)) {
             $mpdf = CertificateWizard::certificateSchool($certificate, $participant);
@@ -94,23 +94,12 @@ class CertificateWizard
         return CertificateBuilder::createPdfClass($content, $path);
     }
 
-    private static function certificateSchoolWithPoints(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
+    private static function certificateSchoolWithPoints(CertificateWork $certificate, TrainingGroupParticipantWork $participant, bool $special = false)
     {
         $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
 
-        $trainedText = CertificateHelper::getMainText($participant, $genderVerbs);
-        $size = CertificateHelper::getTextSize(strlen($trainedText));
+        $trainedText = $special ?  CertificateHelper::getPointText($participant, 40) :  CertificateHelper::getPointText($participant);
 
-        $content = CertificateBuilder::createSchoolWithPointCertificate($certificate, $trainedText, $participant, $genderVerbs);
-        $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;
-        return CertificateBuilder::createPdfClass($content, $path);
-    }
-
-    private static function certificateSchoolSpecialLim(CertificateWork $certificate, TrainingGroupParticipantWork $participant)
-    {
-        $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
-
-        $trainedText = CertificateHelper::getPointText($participant, 40);
         $size = CertificateHelper::getTextSize(strlen($trainedText));
 
         $content = CertificateBuilder::createSchoolWithPointCertificate($certificate, $trainedText, $participant, $genderVerbs);

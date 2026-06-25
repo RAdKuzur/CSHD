@@ -42,6 +42,21 @@ class CertificateRepository
             ->all();
     }
 
+    public function getCertificatesByGroupIdWithoEagerLoading(int $groupId)
+    {
+        return CertificateWork::find()
+            ->joinWith([
+                'trainingGroupParticipantWork',  // JOIN
+                'certificateTemplatesWork'       // Тоже нужно для downloadCertificate
+            ])
+            ->with([
+                'trainingGroupParticipantWork.participantWork',  // Загружаем цепочку связей
+                'certificateTemplatesWork'
+            ])
+            ->where(['training_group_participant.training_group_id' => $groupId])
+            ->all();
+    }
+
     public function prepareSetStatus($id, $status)
     {
         $command = Yii::$app->db->createCommand();

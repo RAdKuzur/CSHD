@@ -55,6 +55,11 @@ class CertificateService
 
         return $ids;
     }
+
+    public function getAllCertificatesByGroupId(int $groupId) {
+        return $this->repository->getCertificatesByGroupIdWithoEagerLoading($groupId);
+    }
+
     public function generateNumber()
     {
         return $this->repository->maxCertificateNumber() + 1;
@@ -70,6 +75,15 @@ class CertificateService
         foreach ($certificateIds as $id) {
             /** @var CertificateWork $certificate */
             $certificate = $this->repository->get($id);
+            $participant = $certificate->trainingGroupParticipantWork;
+            CertificateWizard::downloadCertificate($certificate, $participant, CertificateWizard::DESTINATION_SERVER);
+        }
+    }
+
+    public function uploadCertificatesByCertificates(array $certificates) {
+        FilesHelper::createDirectory(Yii::$app->basePath.'/download/'.Yii::$app->user->identity->getId().'/');
+        foreach ($certificates as $certificate) {
+            /** @var CertificateWork $certificate */
             $participant = $certificate->trainingGroupParticipantWork;
             CertificateWizard::downloadCertificate($certificate, $participant, CertificateWizard::DESTINATION_SERVER);
         }

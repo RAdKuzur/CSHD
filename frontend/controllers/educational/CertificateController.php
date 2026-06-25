@@ -135,6 +135,12 @@ class CertificateController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionDownloadAllCertificates($groupId) {
+        $certificates = $this->service->getAllCertificatesByGroupId($groupId);
+        $this->service->uploadCertificatesByCertificates($certificates);
+        return $this->redirect(['download-archive']);
+    }
+
     public function actionSendAll($groupId)
     {
         CertificateWizard::sendCertificates(

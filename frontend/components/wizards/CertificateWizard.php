@@ -98,9 +98,9 @@ class CertificateWizard
     {
         $genderVerbs = CertificateHelper::getGenderVerbs($participant->participantWork);
 
-        $trainedText = $special ?  CertificateHelper::getPointText($participant, 40) :  CertificateHelper::getPointText($participant);
-
-        $size = CertificateHelper::getTextSize(strlen($trainedText));
+        $postText = $special ?  CertificateHelper::getPointText($participant, 40) :  CertificateHelper::getPointText($participant);
+        $preText = $special ? 'участие в итоговом конкурсе по решению криптографических задач, ' : 'участие в итоговом контрольном мероприятии, ';
+        $trainedText = $preText . $postText;
 
         $content = CertificateBuilder::createSchoolWithPointCertificate($certificate, $trainedText, $participant, $genderVerbs);
         $path = Yii::$app->basePath . '/../' . $certificate->certificateTemplatesWork->path;

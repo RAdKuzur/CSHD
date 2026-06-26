@@ -155,7 +155,7 @@ class CertificateBuilder
             <p style="'.$styleDistance.'"></p>
             <p style="font-size: 16px;'.$style.'">в объеме '.$participant->trainingGroupWork->trainingProgram->capacity .' академических часов</p>
             <p style="'.$styleDistance.'"></p>
-            <p style="font-size: 16px;'.$style.'">и '.$genderVerbs[4].' участие в итоговом конкурсе по решению криптографических задач, '.$trainedText.'</span></p>
+            <p style="font-size: 16px;'.$style.'">и '.$genderVerbs[4].' '.$trainedText.'</span></p>
             <p style="height: 70px;"></p>
             <p style="width: 600px; border-bottom: 1px solid black; margin: 0; padding-left: -40px; font-size: 2px;"></p>
             <p style="font-size: 14px; '.$style.'">В.В. Войков <br>

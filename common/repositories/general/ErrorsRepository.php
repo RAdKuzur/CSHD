@@ -82,12 +82,46 @@ class ErrorsRepository
             ->orderBy(['create_datetime' => SORT_DESC])
             ->all();
     }
+
+    public function getErrorsIdsByTableName($tableName)
+    {
+        return ErrorsWork::find()
+            ->select(['table_row_id', 'id']) // Выбираем оба поля
+            ->where(['table_name' => $tableName])
+            ->andWhere(['was_amnesty' => 0])
+            ->indexBy('id') // Делаем 'id' ключом массива
+            ->asArray() // Работаем с массивом для скорости и экономии памяти
+            ->column(); // Извлекает первую колонку из select (table_row_id), сохраняя ключи из indexBy
+    }
+
+    /**
+     * Возвращает объект запроса для поиска ошибок по имени таблицы.
+     * Используется для построения сложных или пакетных запросов (batch/column).
+     * * @param string $tableName
+     * @return \yii\db\ActiveQuery
+     */
+    public function getQueryForErrorsByTable(string $tableName)
+    {
+        return ErrorsWork::find()
+            ->where(['table_name' => $tableName])
+            ->andWhere(['was_amnesty' => 0]);
+    }
+
     public function delete(ErrorsWork $model)
     {
         if (!$model->delete()) {
             var_dump($model->getErrors());
         }
         return $model->delete();
+    }
+
+    public function deleteByListId(array $ids)
+    {
+        if (empty($ids)) {
+            return 0;
+        }
+
+        return ErrorsWork::deleteAll(['id' => $ids]);
     }
 
     public function save(ErrorsWork $model)
@@ -99,5 +133,35 @@ class ErrorsRepository
             return $model->id;
         }
         return false;
+    }
+
+    public function saveMultiple(array $models)
+    {
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $insertedIds = [];
+
+            foreach ($models as $model) {
+                if (!$model instanceof ErrorsWork) {
+                    continue;
+                }
+
+                // Ваша проверка на дубликаты
+                $exists = $this->getErrorsByTableRowError($model->table_name, $model->table_row_id, $model->error);
+
+                if (!$exists || !is_null($model->id)) {
+                    if (!$model->save()) {
+                        throw new DomainException('Ошибка группового сохранения. Проблемы: ' . json_encode($model->getErrors()));
+                    }
+                    $insertedIds[] = $model->id;
+                }
+            }
+
+            $transaction->commit();
+            return $insertedIds; // Возвращаем массив ID сохраненных ошибок
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            throw $e;
+        }
     }
 }

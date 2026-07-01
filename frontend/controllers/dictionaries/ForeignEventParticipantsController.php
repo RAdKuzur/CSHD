@@ -14,6 +14,7 @@ use common\repositories\dictionaries\PersonalDataParticipantRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\general\ErrorsRepository;
+use common\services\general\errors\ErrorForeignEventParticipantService;
 use DomainException;
 use frontend\events\foreign_event_participants\PersonalDataParticipantAttachEvent;
 use frontend\forms\participants\MergeNewParticipantForm;
@@ -43,6 +44,7 @@ class ForeignEventParticipantsController extends Controller
     private SquadParticipantRepository $squadParticipantRepository;
     private ParticipantAchievementRepository $achievementRepository;
     private PersonalDataParticipantRepository $personalDataRepository;
+    private ErrorForeignEventParticipantService $errorForeignEventParticipantService;
     private ForeignEventParticipantsService $service;
     public ErrorsRepository $errorsRepository;
     private LockWizard $lockWizard;
@@ -56,6 +58,7 @@ class ForeignEventParticipantsController extends Controller
         ParticipantAchievementRepository   $achievementRepository,
         PersonalDataParticipantRepository  $personalDataRepository,
         ForeignEventParticipantsService    $service,
+        ErrorForeignEventParticipantService $errorForeignEventParticipantService,
         ErrorsRepository $errorsRepository,
         LockWizard                         $lockWizard,
         $config = [])
@@ -67,6 +70,7 @@ class ForeignEventParticipantsController extends Controller
         $this->achievementRepository = $achievementRepository;
         $this->personalDataRepository = $personalDataRepository;
         $this->service = $service;
+        $this->errorForeignEventParticipantService = $errorForeignEventParticipantService;
         $this->errorsRepository = $errorsRepository;
         $this->lockWizard = $lockWizard;
     }
@@ -332,7 +336,7 @@ class ForeignEventParticipantsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    public function actionErrorCheck()
+    public function actionOldErrorCheck()
     {
         set_time_limit(300);
         Yii::$container->set('yii\web\Response', [
@@ -340,7 +344,7 @@ class ForeignEventParticipantsController extends Controller
         ]);
         /** @var $participant ForeignEventParticipantsWork **/
         $errors = $this->errorsRepository->getErrorByTableName(ForeignEventParticipantsWork::tableName());
-        $participants = ForeignEventParticipantsWork::find()->where(['NOT IN', 'id', ArrayHelper::getColumn($errors, 'table_row_id')])->all();
+        $participants = ForeignEventParticipantsWork::find()->where(['IN', 'id', ArrayHelper::getColumn($errors, 'table_row_id')])->all();
         foreach ($participants as $participant)
         {
             $participant->checkModel(ErrorAssociationHelper::getForeignEventParticipantErrorsList(), ForeignEventParticipantsWork::tableName(), $participant->id);
@@ -349,6 +353,14 @@ class ForeignEventParticipantsController extends Controller
         Yii::$app->session->setFlash('success', 'Проверка на ошибки произведена успешно!');
         return $this->redirect(['index']);
     }
+
+    public function actionErrorCheck()
+    {
+        $this->errorForeignEventParticipantService->allForeignParticipantCheckOnError002();
+        Yii::$app->session->setFlash('success', 'Проверка на ошибки произведена успешно!');
+        return $this->redirect(['index']);
+    }
+
     public function beforeAction($action)
     {
         $result = $this->checkActionAccess($action);

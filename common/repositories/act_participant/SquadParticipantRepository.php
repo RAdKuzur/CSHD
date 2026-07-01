@@ -45,6 +45,18 @@ class SquadParticipantRepository
         return $query->all();
     }
 
+    public function getCountByParticipantId(array $participantIds)
+    {
+        $query = SquadParticipantWork::find()
+            ->select(['participant_id', 'COUNT(*) as cnt'])
+            ->where(['participant_id' => $participantIds])
+            ->groupBy('participant_id')
+            ->asArray();
+        LogFactory::createCrudLog(LogInterface::LVL_INFO, 'Выгрузка всех записей squad_participant по ID участника деятельности', $query->createCommand()->getRawSql());
+        $rows = $query->all();
+        return  ArrayHelper::map($rows, 'participant_id', 'cnt');
+    }
+
     public function getCountByActAndParticipantId($actId, $participantId)
     {
         $query = SquadParticipantWork::find()->andWhere(['act_participant_id' => $actId, 'participant_id' => $participantId]);

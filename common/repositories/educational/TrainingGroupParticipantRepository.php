@@ -255,4 +255,26 @@ class TrainingGroupParticipantRepository
     {
         return TrainingGroupParticipantWork::find()->where(['participant_id' => $participantId])->all();
     }
+
+    /**
+     * Получить количество привязанных групп для каждого участника из списка
+     * * @param array $participantIds Массив ID участников [1, 2, 3, ...]
+     * @return array Массив вида [participant_id => количество_групп]
+     */
+    public function getCountsByParticipantIds(array $participantIds)
+    {
+        if (empty($participantIds)) {
+            return [];
+        }
+
+        $rows = TrainingGroupParticipantWork::find()
+            ->select(['participant_id', 'COUNT(*) as cnt'])
+            ->where(['participant_id' => $participantIds])
+            ->groupBy('participant_id')
+            ->asArray()
+            ->all();
+
+        // Превращаем двумерный массив в удобную плоскую карту: [id => count]
+        return ArrayHelper::map($rows, 'participant_id', 'cnt');
+    }
 }

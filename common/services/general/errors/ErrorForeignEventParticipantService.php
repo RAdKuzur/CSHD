@@ -6,6 +6,7 @@ use common\components\dictionaries\base\ErrorDictionary;
 use common\models\scaffold\ForeignEventParticipants;
 use common\models\work\ErrorsWork;
 use common\repositories\act_participant\SquadParticipantRepository;
+use common\repositories\dictionaries\ForeignEventParticipantsRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\general\ErrorsRepository;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
@@ -14,15 +15,18 @@ use Yii;
 
 class ErrorForeignEventParticipantService
 {
+    private ForeignEventParticipantsRepository $foreignEventParticipantsRepository;
     private TrainingGroupParticipantRepository $trainingGroupParticipantRepository;
     private SquadParticipantRepository $squadParticipantRepository;
     private ErrorsRepository $errorsRepository;
     public function __construct(
+        ForeignEventParticipantsRepository $foreignEventParticipantsRepository,
         TrainingGroupParticipantRepository $trainingGroupParticipantRepository,
         SquadParticipantRepository $squadParticipantRepository,
         ErrorsRepository $errorsRepository
     )
     {
+        $this->foreignEventParticipantsRepository = $foreignEventParticipantsRepository;
         $this->trainingGroupParticipantRepository = $trainingGroupParticipantRepository;
         $this->squadParticipantRepository = $squadParticipantRepository;
         $this->errorsRepository = $errorsRepository;
@@ -85,4 +89,39 @@ class ErrorForeignEventParticipantService
         }
 
     }
+
+    public function allForeignParticipantCheckOnError002() {
+        $errorsMap = $this->errorsRepository->getErrorsIdsByTableName(ForeignEventParticipantsWork::tableName());
+        $participantIdsWithError = array_unique($errorsMap);
+        $participantIds = $this->foreignEventParticipantsRepository->getAllIds();
+
+        $countGroupParticipantMap = $this->trainingGroupParticipantRepository->getCountsByParticipantIds($participantIds);
+        $countSquadParticipantMap = $this->squadParticipantRepository->getCountByParticipantId($participantIds);
+
+        $arrayDelete = [];
+        foreach ($errorsMap as $id => $participantId) {
+            if ($countGroupParticipantMap[$participantId] + $countSquadParticipantMap[$participantId] != 0) {
+                $arrayDelete[] = $id;
+            }
+        }
+        $this->errorsRepository->deleteByListId($arrayDelete);
+        $participantNotChecked = array_diff($participantIds, $participantIdsWithError);
+
+        foreach ($participantNotChecked as $participantId) {
+            if ($countGroupParticipantMap[$participantId] + $countSquadParticipantMap[$participantId] == 0) {
+                $this->errorsRepository->save(
+                    ErrorsWork::fill(
+                        ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_002,
+                        ForeignEventParticipantsWork::tableName(),
+                        $participantId,
+                        Yii::$app->errors->get(ErrorDictionary::FOREIGN_EVENT_PARTICIPANT_002)->getErrorState()
+                    )
+                );
+            }
+        }
+
+
+
+    }
+
 }

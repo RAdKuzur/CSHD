@@ -29,7 +29,7 @@ return [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.yandex.ru',
                 'username' => 'noreply@schooltech.ru',
-                'password' => 'noreply0noreply',
+                'password' => 'eailucglljqyjuxv',
                 'port' => 465,
                 'encryption' => 'ssl',
             ],

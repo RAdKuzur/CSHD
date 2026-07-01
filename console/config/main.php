@@ -49,7 +49,7 @@ return [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.yandex.ru',
                 'username' => 'noreply@schooltech.ru',
-                'password' => 'kglclkkbfgtfomzs',
+                'password' => 'noreply0noreply',
                 'port' => 465,
                 'encryption' => 'ssl',
             ],

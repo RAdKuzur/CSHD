@@ -289,6 +289,7 @@ class ReportController extends \yii\console\Controller
     {
         $map = [
             17  => ['branches' => null, 'type' => 'all'],
+            177  => ['branches' => null, 'type' => 'all'],
             146 => ['branches' => null, 'type' => 'orders_main'],
             130 => ['branches' => null, 'type' => 'events_achievements'],
 

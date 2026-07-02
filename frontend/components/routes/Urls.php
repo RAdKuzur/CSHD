@@ -63,6 +63,7 @@ class Urls
      */
     const FOREIGN_EVENT_VIEW = "event/foreign-event/view";
     const FOREIGN_EVENT_INDEX = "event/foreign-event/index";
+    const FOREIGN_EVENT_AMNESTY = "event/foreign-event/amnesty";
 
     /**
      * Константы TrainingProgram

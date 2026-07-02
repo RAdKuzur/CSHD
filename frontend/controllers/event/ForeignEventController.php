@@ -19,6 +19,7 @@ use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\general\FilesRepository;
 use common\repositories\order\OrderEventRepository;
 use common\repositories\order\OrderMainRepository;
+use common\services\general\errors\ErrorService;
 use common\services\general\files\FileService;
 use DomainException;
 use frontend\events\general\FileDeleteEvent;
@@ -26,6 +27,7 @@ use frontend\forms\event\EventParticipantForm;
 use frontend\forms\event\ForeignEventForm;
 use frontend\forms\event\ParticipantAchievementForm;
 use frontend\models\search\SearchForeignEvent;
+use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\event\ForeignEventWork;
 use frontend\models\work\event\ParticipantAchievementWork;
 use frontend\models\work\general\PeopleWork;
@@ -48,11 +50,13 @@ class ForeignEventController extends DocumentController
     private ActParticipantRepository $actParticipantRepository;
     private ForeignEventRepository $foreignEventRepository;
     private ParticipantAchievementRepository $participantAchievementRepository;
+    private ErrorService $errorService;
 
     public function __construct(
         $id,
         $module,
         ForeignEventService $service,
+        ErrorService $errorService,
         OrderEventRepository $orderEventRepository,
         PeopleRepository $peopleRepository,
         ParticipantAchievementRepository $achievementRepository,
@@ -65,6 +69,7 @@ class ForeignEventController extends DocumentController
     {
         parent::__construct($id, $module, Yii::createObject(FileService::class), Yii::createObject(FilesRepository::class), $config);
         $this->service = $service;
+        $this->errorService = $errorService;
         $this->lockWizard = $lockWizard;
         $this->orderEventRepository = $orderEventRepository;
         $this->peopleRepository = $peopleRepository;
@@ -131,7 +136,10 @@ class ForeignEventController extends DocumentController
 
         $links = array_merge(
             ButtonsFormatter::updateDeleteLinks($id),
-            ButtonsFormatter::anyOneLink('Простить ошибки', 'amnesty', ButtonsFormatter::BTN_WARNING)
+            ButtonsFormatter::anyOneLink('Простить ошибки',
+                Yii::$app->frontUrls::FOREIGN_EVENT_AMNESTY,
+                ButtonsFormatter::BTN_WARNING,
+            ' ',  ButtonsFormatter::createParameterLink($id))
         );
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
@@ -218,6 +226,15 @@ class ForeignEventController extends DocumentController
         }
         return $this->redirect(['update', 'id' => $modelId]);
     }
+
+    public function actionAmnesty($id)
+    {
+        $this->errorService->amnestyErrors(ForeignEventWork::tableName(), $id);
+        Yii::$app->session->setFlash('success', 'Ошибки успешно прощены');
+
+        return $this->redirect(['view', 'id' => $id]);
+    }
+
     public function beforeAction($action)
     {
         $result = $this->checkActionAccess($action);

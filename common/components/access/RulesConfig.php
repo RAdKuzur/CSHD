@@ -142,6 +142,12 @@ class RulesConfig
             ]
         ],
 
+        'forgive_foreign_event_errors' => [
+            \frontend\controllers\event\ForeignEventController::class => [
+                'amnesty'
+            ]
+        ],
+
         'forgive_base_errors' => [
 
         ],

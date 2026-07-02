@@ -252,6 +252,7 @@ class RubacComponent
             'archive_all_groups',
             'forgive_study_errors',
             'forgive_base_errors',
+            'forgive_foreign_event_errors',
             'delete_participants',
             'merge_participants',
             'view_training_programs',

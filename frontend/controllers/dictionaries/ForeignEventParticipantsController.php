@@ -14,6 +14,7 @@ use common\repositories\dictionaries\PersonalDataParticipantRepository;
 use common\repositories\educational\TrainingGroupParticipantRepository;
 use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\general\ErrorsRepository;
+use common\services\general\errors\BatchCheckService;
 use common\services\general\errors\ErrorForeignEventParticipantService;
 use DomainException;
 use frontend\events\foreign_event_participants\PersonalDataParticipantAttachEvent;
@@ -354,10 +355,167 @@ class ForeignEventParticipantsController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionErrorCheck()
+    public function tactionErrorCheck()
     {
         $this->errorForeignEventParticipantService->allForeignParticipantCheckOnError002();
         Yii::$app->session->setFlash('success', 'Проверка на ошибки произведена успешно!');
+        return $this->redirect(['index']);
+    }
+
+    public function ttactionErrorCheck()
+    {
+        set_time_limit(300);
+        Yii::$container->set('yii\web\Response', [
+            'timeout' => 300,
+        ]);
+
+        /** @var BatchCheckService $batchService */
+        $batchService = Yii::createObject(BatchCheckService::class);
+
+//        $errors = $this->errorsRepository->getErrorByTableName(ForeignEventParticipantsWork::tableName());
+//        $participantIds = array_unique(ArrayHelper::getColumn($errors, 'table_row_id'));
+//
+//        if (empty($participantIds)) {
+//            Yii::$app->session->setFlash('info', 'Нет записей для проверки');
+//            return $this->redirect(['index']);
+//        }
+
+        $participants = ForeignEventParticipantsWork::find()->all();
+        $participantIds = array_unique(ArrayHelper::getColumn($participants, 'id'));
+        // ПРЕДЗАГРУЗКА ДАННЫХ - один раз для всех ошибок
+        $errorList = ErrorAssociationHelper::getForeignEventParticipantErrorsList();
+        $preloadedData = [];
+
+        foreach ($errorList as $errorCode) {
+            $errorEntity = Yii::$app->errors->get($errorCode);
+            if ($errorEntity->getDataFetchFunction() !== null) {
+                // Вызываем DataFetch функцию, передавая все participantIds
+                $preloadedData[$errorCode] = $errorEntity->fetchData($participantIds);
+            }
+        }
+
+        $batchService->registerModels($participants);
+        $batchService->enableBatchMode();
+
+        $total = count($participants);
+        $processed = 0;
+
+        foreach ($participants as $participant) {
+            // Используем метод с предзагруженными данными
+            $participant->checkModelWithData(
+                $errorList,
+                ForeignEventParticipantsWork::tableName(),
+                $participant->id,
+                $preloadedData
+            );
+
+            $processed++;
+
+            if ($processed % 5000 === 0) {
+                $stats = $batchService->getStats();
+                $result = $batchService->flush();
+                Yii::info("Processed {$processed}/{$total}. Flushed: " . json_encode($result));
+            }
+        }
+
+        $finalResult = $batchService->flush();
+        $batchService->disableBatchMode();
+
+        set_time_limit(60);
+
+        Yii::$app->session->setFlash('success',
+            "Проверка завершена! Обработано: {$total} записей.\n" .
+            "Исправлено ошибок: {$finalResult['deleted']}\n" .
+            "Новых ошибок: {$finalResult['saved']}\n" .
+            "Обновлено состояний: {$finalResult['updated']}"
+        );
+
+        return $this->redirect(['index']);
+    }
+
+    public function actionErrorCheck()
+    {
+        set_time_limit(300);
+        Yii::$container->set('yii\web\Response', [
+            'timeout' => 300,
+        ]);
+
+        /** @var BatchCheckService $batchService */
+        $batchService = Yii::createObject(BatchCheckService::class);
+
+        $participants = ForeignEventParticipantsWork::find()->all();
+        $participantIds = array_unique(ArrayHelper::getColumn($participants, 'id'));
+
+        // ПРЕДЗАГРУЗКА ДАННЫХ - один раз для всех ошибок
+        $errorList = ErrorAssociationHelper::getForeignEventParticipantErrorsList();
+        $preloadedData = [];
+
+        foreach ($errorList as $errorCode) {
+            $errorEntity = Yii::$app->errors->get($errorCode);
+            if ($errorEntity->getDataFetchFunction() !== null) {
+                // Вызываем DataFetch функцию, передавая все participantIds
+                $preloadedData[$errorCode] = $errorEntity->fetchData($participantIds);
+            }
+        }
+
+        // НОВОЕ: Предзагружаем ВСЕ ошибки таблицы
+        $batchService->preloadTableErrors(ForeignEventParticipantsWork::tableName());
+        $allCurrentErrors = $batchService->getPreloadedErrors();
+        $allAmnestyErrors = $batchService->getPreloadedAmnestyErrors();
+
+        $batchService->registerModels($participants);
+        $batchService->enableBatchMode();
+
+        $total = count($participants);
+        $processed = 0;
+        // Накапливаем статистику
+        $totalSaved = 0;
+        $totalDeleted = 0;
+        $totalUpdated = 0;
+
+        foreach ($participants as $participant) {
+            // Передаем предзагруженные ошибки
+            $participant->checkModelWithData(
+                $errorList,
+                ForeignEventParticipantsWork::tableName(),
+                $participant->id,
+                $preloadedData,
+                $allCurrentErrors,    // <-- предзагруженные ошибки
+                $allAmnestyErrors     // <-- предзагруженные амнистии
+            );
+
+            $processed++;
+
+            if ($processed % 5000 === 0) {
+                $stats = $batchService->getStats();
+                $result = $batchService->flush();
+
+                // Накапливаем результаты
+                $totalSaved += $result['saved'];
+                $totalDeleted += $result['deleted'];
+                $totalUpdated += $result['updated'];
+
+                Yii::info("Processed {$processed}/{$total}. Flushed: " . json_encode($result) . ". Total so far: saved={$totalSaved}, deleted={$totalDeleted}, updated={$totalUpdated}");
+            }
+        }
+
+        // Финальный flush и накопление
+        $finalResult = $batchService->flush();
+        $totalSaved += $finalResult['saved'];
+        $totalDeleted += $finalResult['deleted'];
+        $totalUpdated += $finalResult['updated'];
+
+        $batchService->disableBatchMode();
+
+        set_time_limit(60);
+
+        Yii::$app->session->setFlash('success',
+            "Проверка завершена! Обработано: {$total} записей.\n" .
+            "Исправлено ошибок: {$totalDeleted}\n" .
+            "Новых ошибок: {$totalSaved}\n" .
+            "Обновлено состояний: {$totalUpdated}"
+        );
+
         return $this->redirect(['index']);
     }
 

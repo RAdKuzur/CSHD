@@ -40,6 +40,7 @@ class Error extends BaseObject
     private $makeFunction;
     private $fixFunction;
     private $changeStateFunction;
+    private $DataFetchFunction;
 
     public function __construct(
         string $code,
@@ -47,7 +48,8 @@ class Error extends BaseObject
         int $type,
         callable $makeFunction,
         callable $fixFunction,
-        callable $changeStateFunction = null
+        callable $changeStateFunction = null,
+        callable $DataFetchFunction = null
     )
     {
         if (!in_array($type, self::TYPES)) {
@@ -60,6 +62,7 @@ class Error extends BaseObject
         $this->makeFunction = $makeFunction;
         $this->fixFunction = $fixFunction;
         $this->changeStateFunction = $changeStateFunction;
+        $this->DataFetchFunction = $DataFetchFunction;
     }
 
     public function getCode()
@@ -92,6 +95,11 @@ class Error extends BaseObject
         return $this->changeStateFunction;
     }
 
+    public function getDataFetchFunction()
+    {
+        return $this->DataFetchFunction;
+    }
+
     public function setCode(string $code)
     {
         $this->_code = $code;
@@ -122,19 +130,42 @@ class Error extends BaseObject
         $this->changeStateFunction = $changeStateFunction;
     }
 
-    public function makeError($rowId)
+    public function setDataFetchFunction(callable $DataFetchFunction)
     {
+        $this->DataFetchFunction = $DataFetchFunction;
+    }
+
+    /**
+     * Make с опциональными данными
+     */
+    public function makeError($rowId, $data = null)
+    {
+        if ($data !== null) {
+            return ($this->makeFunction)($rowId, $data);
+        }
         return ($this->makeFunction)($rowId);
     }
 
-    public function fixError($errorId)
+    /**
+     * Fix с опциональными данными
+     */
+    public function fixError($errorId, $data = null)
     {
+        if ($data !== null) {
+            return ($this->fixFunction)($errorId, $data);
+        }
         return ($this->fixFunction)($errorId);
     }
 
-    public function changeState(...$args)
+    /**
+     * Выполняет DataFetch функцию
+     */
+    public function fetchData($participantIds)
     {
-        return call_user_func_array($this->changeStateFunction, $args);
+        if ($this->DataFetchFunction !== null) {
+            return ($this->DataFetchFunction)($participantIds);
+        }
+        return null;
     }
 
     public function getErrorState()
@@ -145,6 +176,11 @@ class Error extends BaseObject
         else {
             return self::TYPE_CRITICAL;
         }
+    }
+
+    public function changeState(...$args)
+    {
+        return call_user_func_array($this->changeStateFunction, $args);
     }
 
     public function isChangeable()

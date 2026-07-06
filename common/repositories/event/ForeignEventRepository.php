@@ -56,7 +56,6 @@ class ForeignEventRepository
         if (!empty($levels)) {
             $query = $query->andWhere(['IN', 'level', $levels]);
         }
-        $temp = $query->createCommand()->getRawSql();
         return $query->all();
     }
 

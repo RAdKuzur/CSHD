@@ -11,6 +11,7 @@ use common\repositories\event\EventRepository;
 use common\repositories\event\ForeignEventRepository;
 use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\general\ErrorsRepository;
+use common\repositories\general\ErrorsRepositoryInterface;
 use frontend\models\work\event\EventBranchWork;
 use frontend\models\work\event\EventWork;
 use frontend\models\work\event\ForeignEventWork;
@@ -22,7 +23,7 @@ use yii\helpers\ArrayHelper;
 
 class ErrorAchieveService
 {
-    private ErrorsRepository $errorsRepository;
+    private ErrorsRepositoryInterface $errorsRepository;
     private ForeignEventRepository $foreignEventRepository;
     private ActParticipantRepository $actParticipantRepository;
     private TrainingGroupParticipantRepository $groupParticipantRepository;
@@ -30,7 +31,7 @@ class ErrorAchieveService
     private EventRepository $eventRepository;
 
     public function __construct(
-        ErrorsRepository $errorsRepository,
+        ErrorsRepositoryInterface $errorsRepository,
         ForeignEventRepository $foreignEventRepository,
         ActParticipantRepository $actParticipantRepository,
         TrainingGroupParticipantRepository $groupParticipantRepository,
@@ -44,6 +45,11 @@ class ErrorAchieveService
         $this->groupParticipantRepository = $groupParticipantRepository;
         $this->achievementRepository = $achievementRepository;
         $this->eventRepository = $eventRepository;
+    }
+
+    public function setErrorsRepository(ErrorsRepositoryInterface $repository): void
+    {
+        $this->errorsRepository = $repository;
     }
 
     // Проверяем даты начала и окончания на валидность

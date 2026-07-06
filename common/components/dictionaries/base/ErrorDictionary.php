@@ -546,10 +546,13 @@ class ErrorDictionary extends BaseDictionary
 //                [$this->foreignEventParticipantService, 'fixForeignEventParticipant001'],
 //            ),
             self::FOREIGN_EVENT_PARTICIPANT_002 => new Error(
-                'УЧ002', 'Участник не фигурирует в учебной деятельности',
+                'УЧ002',
+                'Участник не фигурирует в учебной деятельности',
                 Error::TYPE_BASE,
                 [$this->foreignEventParticipantService, 'makeForeignEventParticipant002'],
                 [$this->foreignEventParticipantService, 'fixForeignEventParticipant002'],
+                null, // changeStateFunction
+                [$this->foreignEventParticipantService, 'fetchDataForForeignEventParticipant002'] // DataFetchFunction
             )
         ];
     }

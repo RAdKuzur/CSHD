@@ -18,6 +18,7 @@ use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\educational\TrainingProgramRepository;
 use common\repositories\educational\VisitRepository;
 use common\repositories\general\ErrorsRepository;
+use common\repositories\general\ErrorsRepositoryInterface;
 use common\repositories\order\DocumentOrderRepository;
 use frontend\models\work\educational\CertificateWork;
 use frontend\models\work\educational\journal\VisitLesson;
@@ -34,7 +35,7 @@ use yii\helpers\ArrayHelper;
 
 class ErrorJournalService
 {
-    private ErrorsRepository $errorsRepository;
+    private ErrorsRepositoryInterface $errorsRepository;
     private TrainingGroupRepository $groupRepository;
     private TeacherGroupRepository $teacherGroupRepository;
     private OrderTrainingGroupParticipantRepository $orderParticipantRepository;
@@ -47,7 +48,7 @@ class ErrorJournalService
     private VisitRepository $visitRepository;
 
     public function __construct(
-        ErrorsRepository $errorsRepository,
+        ErrorsRepositoryInterface $errorsRepository,
         TrainingGroupRepository $groupRepository,
         TeacherGroupRepository $teacherGroupRepository,
         OrderTrainingGroupParticipantRepository $orderParticipantRepository,

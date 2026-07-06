@@ -11,6 +11,7 @@ use common\repositories\document_in_out\InOutDocumentsRepository;
 use common\repositories\educational\OrderTrainingGroupParticipantRepository;
 use common\repositories\event\ForeignEventRepository;
 use common\repositories\general\ErrorsRepository;
+use common\repositories\general\ErrorsRepositoryInterface;
 use common\repositories\order\DocumentOrderRepository;
 use common\repositories\order\OrderEventGenerateRepository;
 use common\repositories\order\OrderMainRepository;
@@ -22,7 +23,7 @@ use Yii;
 
 class ErrorDocumentService
 {
-    private ErrorsRepository $errorsRepository;
+    private ErrorsRepositoryInterface $errorsRepository;
     private DocumentOrderRepository $orderRepository;
     private OrderTrainingGroupParticipantRepository $orderParticipantRepository;
     private OrderEventGenerateRepository $eventGenerateRepository;
@@ -32,7 +33,7 @@ class ErrorDocumentService
     private InOutDocumentsRepository $inOutDocumentsRepository;
 
     public function __construct(
-        ErrorsRepository $errorsRepository,
+        ErrorsRepositoryInterface $errorsRepository,
         DocumentOrderRepository $orderRepository,
         OrderTrainingGroupParticipantRepository $orderParticipantRepository,
         OrderEventGenerateRepository $eventGenerateRepository,
@@ -50,6 +51,11 @@ class ErrorDocumentService
         $this->documentInRepository = $documentInRepository;
         $this->documentOutRepository = $documentOutRepository;
         $this->inOutDocumentsRepository = $inOutDocumentsRepository;
+    }
+
+    public function setErrorsRepository(ErrorsRepositoryInterface $repository): void
+    {
+        $this->errorsRepository = $repository;
     }
 
     // Проверка на отсутствие скана

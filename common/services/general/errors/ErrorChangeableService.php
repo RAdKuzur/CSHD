@@ -7,6 +7,7 @@ use common\models\work\ErrorsWork;
 use common\repositories\educational\TrainingGroupRepository;
 use common\repositories\educational\TrainingProgramRepository;
 use common\repositories\general\ErrorsRepository;
+use common\repositories\general\ErrorsRepositoryInterface;
 use common\repositories\order\DocumentOrderRepository;
 use frontend\models\work\educational\training_group\TrainingGroupWork;
 use frontend\models\work\educational\training_program\TrainingProgramWork;
@@ -14,12 +15,12 @@ use frontend\models\work\order\DocumentOrderWork;
 
 class ErrorChangeableService
 {
-    private ErrorsRepository $errorsRepository;
+    private ErrorsRepositoryInterface $errorsRepository;
     private DocumentOrderRepository $orderRepository;
     private TrainingGroupRepository $groupRepository;
 
     public function __construct(
-        ErrorsRepository $errorsRepository,
+        ErrorsRepositoryInterface $errorsRepository,
         DocumentOrderRepository $orderRepository,
         TrainingGroupRepository $groupRepository
     )
@@ -27,6 +28,11 @@ class ErrorChangeableService
         $this->errorsRepository = $errorsRepository;
         $this->orderRepository = $orderRepository;
         $this->groupRepository = $groupRepository;
+    }
+
+    public function setErrorsRepository(ErrorsRepositoryInterface $repository): void
+    {
+        $this->errorsRepository = $repository;
     }
 
     // Методы для изменения состояния ошибок с обычных на критические

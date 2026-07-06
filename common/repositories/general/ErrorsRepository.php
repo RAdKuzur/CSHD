@@ -7,7 +7,7 @@ use common\models\work\ErrorsWork;
 use DomainException;
 use Yii;
 
-class ErrorsRepository
+class ErrorsRepository implements ErrorsRepositoryInterface
 {
     public function get(int $id)
     {
@@ -38,6 +38,17 @@ class ErrorsRepository
             ->where(['table_name' => $tableName])
             ->andWhere(['table_row_id' => $rowId])
             ->andWhere(['was_amnesty' => 0])
+            ->all();
+    }
+
+    /**
+     * Получить все амнистированные ошибки таблицы
+     */
+    public function getAllAmnestyErrorsByTableName(string $tableName): array
+    {
+        return ErrorsWork::find()
+            ->where(['table_name' => $tableName])
+            ->andWhere(['was_amnesty' => 1])
             ->all();
     }
 

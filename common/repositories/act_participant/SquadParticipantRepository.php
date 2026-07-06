@@ -45,6 +45,17 @@ class SquadParticipantRepository
         return $query->all();
     }
 
+    public function getAllByParticipantIds(array $participantIds): array
+    {
+        if (empty($participantIds)) {
+            return [];
+        }
+
+        return SquadParticipantWork::find()
+            ->where(['IN', 'participant_id', $participantIds])
+            ->all();
+    }
+
     public function getCountByParticipantId(array $participantIds)
     {
         $query = SquadParticipantWork::find()

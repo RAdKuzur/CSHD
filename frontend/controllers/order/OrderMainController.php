@@ -149,12 +149,14 @@ class OrderMainController extends DocumentController
 
         $batchService->disableBatchMode();
 
-        return $this->renderContent(
-            "Обработка завершена! Обработано: {$total} записей.\n" .
+        Yii::$app->session->setFlash('success',
+            "Проверка завершена! Обработано: {$total} записей.\n" .
             "Исправлено ошибок: {$totalDeleted}\n" .
             "Новых ошибок: {$totalSaved}\n" .
             "Обновлено состояний: {$totalUpdated}"
         );
+
+        return $this->redirect(['index']);
     }
 
 

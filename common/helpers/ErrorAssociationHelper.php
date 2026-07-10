@@ -42,13 +42,12 @@ class ErrorAssociationHelper
             ErrorDictionary::DOCUMENT_003,
         ];
     }
-
+    // ErrorDictionary::DOCUMENT_004,
     public static function getOrderTrainingGroupErrorsList()
     {
         return [
             ErrorDictionary::DOCUMENT_001,
             ErrorDictionary::DOCUMENT_003,
-            ErrorDictionary::DOCUMENT_004,
         ];
     }
 

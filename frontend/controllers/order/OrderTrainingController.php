@@ -12,6 +12,7 @@ use common\helpers\html\HtmlBuilder;
 use common\helpers\StringFormatter;
 use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\order\DocumentOrderRepository;
+use common\services\general\errors\BatchCheckService;
 use frontend\components\GroupParticipantWidget;
 use frontend\invokables\OrderLoader;
 use frontend\models\search\SearchOrderTraining;
@@ -88,7 +89,12 @@ class OrderTrainingController extends DocumentController
         $searchModel = new SearchOrderTraining();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $links = ButtonsFormatter::primaryCreateLink('приказ');
+        $linksFirst = ButtonsFormatter::primaryCreateLink('приказ');
+        $links = array_merge(
+            $linksFirst,
+            ButtonsFormatter::anyOneLink('Проверить приказы на ошибки', Yii::$app->frontUrls::ORDER_TRAINING_ERROR_CHECK,ButtonsFormatter::BTN_DANGER)
+        );
+
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
         return $this->render('index', [
@@ -128,15 +134,79 @@ class OrderTrainingController extends DocumentController
         ]);
     }
 
-    public function actionErrors() {
+    public function actionErrorsCheck()
+    {
+        set_time_limit(300);
+
+        /** @var BatchCheckService $batchService */
+        $batchService = Yii::createObject(BatchCheckService::class);
 
         $allOrderTraining = OrderTrainingWork::find()->all();
-        foreach ($allOrderTraining as $orderTraining) {
-            /** @var OrderTrainingWork $orderTraining */
-            $orderTraining->checkModel(ErrorAssociationHelper::getOrderTrainingGroupErrorsList(), OrderTrainingWork::tableName(), $orderTraining->id);
+
+        if (empty($allOrderTraining)) {
+            Yii::$app->session->setFlash('info', 'Нет записей для проверки');
+            return $this->redirect(['index']);
         }
 
-        return $this->renderContent('Обработка завершена');
+        $orderIds = ArrayHelper::getColumn($allOrderTraining, 'id');
+        $errorList = ErrorAssociationHelper::getOrderTrainingGroupErrorsList();
+
+        // Предзагружаем данные
+        $preloadedData = [];
+        foreach ($errorList as $errorCode) {
+            $errorEntity = Yii::$app->errors->get($errorCode);
+            if ($errorEntity->getDataFetchFunction() !== null) {
+                $preloadedData[$errorCode] = $errorEntity->fetchData($orderIds);
+            }
+        }
+
+        // Предзагружаем ошибки таблицы
+        $batchService->preloadTableErrors(OrderTrainingWork::tableName());
+        $allCurrentErrors = $batchService->getPreloadedErrors();
+        $allAmnestyErrors = $batchService->getPreloadedAmnestyErrors();
+
+        $batchService->registerModels($allOrderTraining);
+        $batchService->enableBatchMode();
+
+        $total = count($allOrderTraining);
+        $processed = 0;
+        $totalSaved = 0;
+        $totalDeleted = 0;
+        $totalUpdated = 0;
+
+        foreach ($allOrderTraining as $orderTraining) {
+            $orderTraining->checkModelWithData(
+                $errorList,
+                OrderTrainingWork::tableName(),
+                $orderTraining->id,
+                $preloadedData,
+                $allCurrentErrors,
+                $allAmnestyErrors
+            );
+
+            $processed++;
+
+            if ($processed % 5000 === 0) {
+                $result = $batchService->flush();
+                $totalSaved += $result['saved'];
+                $totalDeleted += $result['deleted'];
+                $totalUpdated += $result['updated'];
+            }
+        }
+
+        $finalResult = $batchService->flush();
+        $totalSaved += $finalResult['saved'];
+        $totalDeleted += $finalResult['deleted'];
+        $totalUpdated += $finalResult['updated'];
+
+        $batchService->disableBatchMode();
+
+        return $this->renderContent(
+            "Обработка завершена! Обработано: {$total} записей.\n" .
+            "Исправлено ошибок: {$totalDeleted}\n" .
+            "Новых ошибок: {$totalSaved}\n" .
+            "Обновлено состояний: {$totalUpdated}"
+        );
     }
 
     public function actionCreate()

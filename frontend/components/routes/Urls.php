@@ -16,6 +16,7 @@ class Urls
     const DOC_IN_CREATE = "document/document-in/create";
     const DOC_IN_RESERVE = "document/document-in/reserve";
     const DOC_IN_INDEX = "document/document-in/index";
+    const DOC_IN_ERRORS = "document/document-in/errors-check";
 
     /**
      * Константы DocumentOut
@@ -27,6 +28,7 @@ class Urls
     const DOC_OUT_VIEW = "document/document-out/view";
     const DOC_OUT_CREATE = "document/document-out/create";
     const DOC_OUT_INDEX = "document/document-out/index";
+    const DOC_OUT_ERRORS = "document/document-out/errors-check";
 
     /**
      * Константы RegulationEvent
@@ -221,6 +223,7 @@ class Urls
     const ORDER_MAIN_VIEW = "order/order-main/view";
     const ORDER_MAIN_RESERVE = "order/order-main/reserve";
     const ORDER_MAIN_INDEX = "order/order-main/index";
+    const ORDER_MAIN_ERROR_CHECK = "order/order-main/errors-check";
 
     /**
      * Константы OrderTraining
@@ -230,7 +233,7 @@ class Urls
      */
     const ORDER_TRAINING_VIEW = "order/order-training/view";
     const ORDER_TRAINING_INDEX = "order/order-training/index";
-
+    const ORDER_TRAINING_ERROR_CHECK = "order/order-training/errors-check";
     /**
      * Константы OrderEvent
      *
@@ -239,6 +242,7 @@ class Urls
      */
     const ORDER_EVENT_VIEW = "order/order-event/view";
     const ORDER_EVENT_INDEX = "order/order-event/index";
+    const ORDER_EVENT_ERROR_CHECK = "order/order-event/errors-check";
 
     /**
      *

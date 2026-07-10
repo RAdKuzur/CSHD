@@ -20,6 +20,7 @@ use common\repositories\general\UserRepository;
 use common\repositories\order\DocumentOrderRepository;
 use common\repositories\order\OrderMainRepository;
 use common\repositories\regulation\RegulationRepository;
+use common\services\general\errors\BatchCheckService;
 use common\services\general\files\FileService;
 use DomainException;
 use frontend\models\forms\ExpireForm;
@@ -80,14 +81,98 @@ class OrderMainController extends DocumentController
         $this->peopleRepository = $peopleRepository;
 
     }
+
+    public function actionErrorsCheck()
+    {
+        set_time_limit(300);
+
+        /** @var BatchCheckService $batchService */
+        $batchService = Yii::createObject(BatchCheckService::class);
+
+        $allDocumentOrder = DocumentOrderWork::find()->all();
+
+        if (empty($allDocumentOrder)) {
+            Yii::$app->session->setFlash('info', 'Нет записей для проверки');
+            return $this->redirect(['index']);
+        }
+
+        $orderIds = ArrayHelper::getColumn($allDocumentOrder, 'id');
+        $errorList = ErrorAssociationHelper::getOrderMainErrorsList();
+
+        // Предзагружаем данные
+        $preloadedData = [];
+        foreach ($errorList as $errorCode) {
+            $errorEntity = Yii::$app->errors->get($errorCode);
+            if ($errorEntity->getDataFetchFunction() !== null) {
+                $preloadedData[$errorCode] = $errorEntity->fetchData($orderIds);
+            }
+        }
+
+        // Предзагружаем ошибки таблицы
+        $batchService->preloadTableErrors(DocumentOrderWork::tableName());
+        $allCurrentErrors = $batchService->getPreloadedErrors();
+        $allAmnestyErrors = $batchService->getPreloadedAmnestyErrors();
+
+        $batchService->registerModels($allDocumentOrder);
+        $batchService->enableBatchMode();
+
+        $total = count($allDocumentOrder);
+        $processed = 0;
+        $totalSaved = 0;
+        $totalDeleted = 0;
+        $totalUpdated = 0;
+
+        foreach ($allDocumentOrder as $documentOrder) {
+            $documentOrder->checkModelWithData(
+                $errorList,
+                DocumentOrderWork::tableName(),
+                $documentOrder->id,
+                $preloadedData,
+                $allCurrentErrors,
+                $allAmnestyErrors
+            );
+
+            $processed++;
+
+            if ($processed % 5000 === 0) {
+                $result = $batchService->flush();
+                $totalSaved += $result['saved'];
+                $totalDeleted += $result['deleted'];
+                $totalUpdated += $result['updated'];
+            }
+        }
+
+        $finalResult = $batchService->flush();
+        $totalSaved += $finalResult['saved'];
+        $totalDeleted += $finalResult['deleted'];
+        $totalUpdated += $finalResult['updated'];
+
+        $batchService->disableBatchMode();
+
+        return $this->renderContent(
+            "Обработка завершена! Обработано: {$total} записей.\n" .
+            "Исправлено ошибок: {$totalDeleted}\n" .
+            "Новых ошибок: {$totalSaved}\n" .
+            "Обновлено состояний: {$totalUpdated}"
+        );
+    }
+
+
+
     public function actionIndex(){
         $searchModel = new SearchOrderMain();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $links = array_merge(
+        $linksFirst = array_merge(
             ButtonsFormatter::primaryCreateLink('приказ'),
             ButtonsFormatter::anyOneLink('Добавить резерв', Yii::$app->frontUrls::ORDER_MAIN_RESERVE, ButtonsFormatter::BTN_SUCCESS),
         );
+
+        $links = array_merge(
+            $linksFirst,
+            ButtonsFormatter::anyOneLink('Проверить приказы на ошибки', Yii::$app->frontUrls::ORDER_MAIN_ERROR_CHECK,ButtonsFormatter::BTN_DANGER)
+        );
+
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
         return $this->render('index', [
@@ -149,6 +234,7 @@ class OrderMainController extends DocumentController
             'regulations' => $form->regulations
         ]);
     }
+
     public function actionUpdate($id)
     {
         if ($this->lockWizard->lockObject($id, DocumentOrder::tableName(), Yii::$app->user->id)) {

@@ -23,6 +23,7 @@ use common\repositories\dictionaries\PeopleRepository;
 use common\repositories\event\ParticipantAchievementRepository;
 use common\repositories\order\DocumentOrderRepository;
 use common\repositories\order\OrderEventGenerateRepository;
+use common\services\general\errors\BatchCheckService;
 use frontend\events\general\FileDeleteEvent;
 use frontend\invokables\OrderLoader;
 use frontend\models\work\dictionaries\ForeignEventParticipantsWork;
@@ -130,11 +131,93 @@ class OrderEventController extends DocumentController
         $this->participantAchievementRepository = $participantAchievementRepository;
         parent::__construct($id, $module, $fileService, $fileRepository, $config);
     }
+
+    public function actionErrorsCheck()
+    {
+        set_time_limit(300);
+
+        /** @var BatchCheckService $batchService */
+        $batchService = Yii::createObject(BatchCheckService::class);
+
+        $allOrderEvent = OrderEventWork::find()->all();
+
+        if (empty($allOrderEvent)) {
+            Yii::$app->session->setFlash('info', 'Нет записей для проверки');
+            return $this->redirect(['index']);
+        }
+
+        $orderIds = ArrayHelper::getColumn($allOrderEvent, 'id');
+        $errorList = ErrorAssociationHelper::getOrderEventErrorsList();
+
+        // Предзагружаем данные
+        $preloadedData = [];
+        foreach ($errorList as $errorCode) {
+            $errorEntity = Yii::$app->errors->get($errorCode);
+            if ($errorEntity->getDataFetchFunction() !== null) {
+                $preloadedData[$errorCode] = $errorEntity->fetchData($orderIds);
+            }
+        }
+
+        // Предзагружаем ошибки таблицы
+        $batchService->preloadTableErrors(OrderEventWork::tableName());
+        $allCurrentErrors = $batchService->getPreloadedErrors();
+        $allAmnestyErrors = $batchService->getPreloadedAmnestyErrors();
+
+        $batchService->registerModels($allOrderEvent);
+        $batchService->enableBatchMode();
+
+        $total = count($allOrderEvent);
+        $processed = 0;
+        $totalSaved = 0;
+        $totalDeleted = 0;
+        $totalUpdated = 0;
+
+        foreach ($allOrderEvent as $orderEvent) {
+            $orderEvent->checkModelWithData(
+                $errorList,
+                OrderEventWork::tableName(),
+                $orderEvent->id,
+                $preloadedData,
+                $allCurrentErrors,
+                $allAmnestyErrors
+            );
+
+            $processed++;
+
+            if ($processed % 5000 === 0) {
+                $result = $batchService->flush();
+                $totalSaved += $result['saved'];
+                $totalDeleted += $result['deleted'];
+                $totalUpdated += $result['updated'];
+            }
+        }
+
+        $finalResult = $batchService->flush();
+        $totalSaved += $finalResult['saved'];
+        $totalDeleted += $finalResult['deleted'];
+        $totalUpdated += $finalResult['updated'];
+
+        $batchService->disableBatchMode();
+
+        return $this->renderContent(
+            "Обработка завершена! Обработано: {$total} записей.\n" .
+            "Исправлено ошибок: {$totalDeleted}\n" .
+            "Новых ошибок: {$totalSaved}\n" .
+            "Обновлено состояний: {$totalUpdated}"
+        );
+    }
+
     public function actionIndex() {
         $searchModel = new SearchOrderEvent();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $links = ButtonsFormatter::primaryCreateLink('приказ');
+        $linksFirst = ButtonsFormatter::primaryCreateLink('приказ');
+
+        $links = array_merge(
+            $linksFirst,
+            ButtonsFormatter::anyOneLink('Проверить приказы на ошибки', Yii::$app->frontUrls::ORDER_EVENT_ERROR_CHECK,ButtonsFormatter::BTN_DANGER)
+        );
+
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
         return $this->render('index', [
@@ -274,17 +357,6 @@ class OrderEventController extends DocumentController
                 'buttonsAct' => $buttonHtml
             ]
         );
-    }
-
-    public function actionErrors() {
-
-        $allOrderEvent = OrderEventWork::find()->all();
-        foreach ($allOrderEvent as $orderEvent) {
-            /** @var OrderEventWork $orderEvent */
-            $orderEvent->checkModel(ErrorAssociationHelper::getOrderEventErrorsList(), OrderEventWork::tableName(), $orderEvent->id);
-        }
-
-        return $this->renderContent('Обработка завершена');
     }
 
     public function actionUpdate($id)

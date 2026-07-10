@@ -296,72 +296,93 @@ class ErrorDictionary extends BaseDictionary
                 [$this->documentService, 'makeDocument_001'],
                 [$this->documentService, 'fixDocument_001'],
                 [$this->changeableService, 'changeDocument_001'],
+                [$this->documentService, 'fetchDataForDocumentOrders']
             ),
             self::DOCUMENT_002 => new Error(
                 'ЭД002', 'В приказе отсутствует редактируемый файл',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_002'],
                 [$this->documentService, 'fixDocument_002'],
+                null,
+                [$this->documentService, 'fetchDataForDocumentOrders']
             ),
             self::DOCUMENT_003 => new Error(
                 'ЭД003', 'В приказе отсутствуют ключевые слова',
                 Error::TYPE_CRITICAL,
                 [$this->documentService, 'makeDocument_003'],
                 [$this->documentService, 'fixDocument_003'],
+                null,
+                [$this->documentService, 'fetchDataForDocumentOrders']
             ),
-            self::DOCUMENT_004 => new Error(
-                'ЭД004', 'В образовательном приказе отсутствуют учебные группы',
-                Error::TYPE_BASE,
-                [$this->documentService, 'makeDocument_004'],
-                [$this->documentService, 'fixDocument_004'],
-            ),
+//            self::DOCUMENT_004 => new Error(
+//                'ЭД004', 'В образовательном приказе отсутствуют учебные группы',
+//                Error::TYPE_BASE,
+//                [$this->documentService, 'makeDocument_004'],
+//                [$this->documentService, 'fixDocument_004'],
+//            ),
             self::DOCUMENT_005 => new Error(
                 'ЭД005', 'В образовательном приказе отсутствуют обучающиеся',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_005'],
                 [$this->documentService, 'fixDocument_005'],
+                null,
+                [$this->documentService, 'fetchDataForDocument_005']
             ),
             self::DOCUMENT_006 => new Error(
                 'ЭД006', 'В приказе об участии отсутствует информация для создания карточки учёта достижений',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_006'],
                 [$this->documentService, 'fixDocument_006'],
+                null,
+                [$this->documentService, 'fetchDataForDocument_006']
             ),
             self::DOCUMENT_007 => new Error(
                 'ЭД007', 'В приказе об участии отсутствует дополнительная информация для генерации приказа',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_007'],
                 [$this->documentService, 'fixDocument_007'],
+                null,
+                [$this->documentService, 'fetchDataForDocument_007']
             ),
             self::DOCUMENT_008 => new Error(
                 'ЭД008', 'В исходящем письме отсутствует скан документа',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_008'],
                 [$this->documentService, 'fixDocument_008'],
+                null,
+                [$this->documentService, 'fetchDataForDocumentOuts']
             ),
             self::DOCUMENT_009 => new Error(
                 'ЭД009', 'В исходящем письме отсутствует редактируемый файл',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_009'],
                 [$this->documentService, 'fixDocument_009'],
+                null,
+                [$this->documentService, 'fetchDataForDocumentOuts']
             ),
             self::DOCUMENT_010 => new Error(
                 'ЭД010', 'В исходящем письме отсутствуют ключевые слова',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_010'],
                 [$this->documentService, 'fixDocument_010'],
+                null,
+                [$this->documentService, 'fetchDataForDocumentOuts']
             ),
             self::DOCUMENT_011 => new Error(
                 'ЭД011', 'Во входящем письме отсутствует скан документа',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_011'],
                 [$this->documentService, 'fixDocument_011'],
+                null,
+                [$this->documentService, 'fetchDataForDocumentIns']
             ),
             self::DOCUMENT_012 => new Error(
                 'ЭД012', 'Во входящем письме отсутствуют ключевые слова',
                 Error::TYPE_BASE,
                 [$this->documentService, 'makeDocument_012'],
                 [$this->documentService, 'fixDocument_012'],
+                null,
+                [$this->documentService, 'fetchDataForDocumentIns']
             ),
             self::DOCUMENT_013 => new Error(
                 'ЭД013', 'На входящее письмо ожидается ответ',
@@ -369,6 +390,8 @@ class ErrorDictionary extends BaseDictionary
                 [$this->documentService, 'makeDocument_013'],
                 [$this->documentService, 'fixDocument_013'],
                 [$this->changeableService, 'changeDocument_013'],
+                [$this->documentService, 'fetchDataForDocument_013']
+
             ),
 
             self::JOURNAL_001 => new Error(

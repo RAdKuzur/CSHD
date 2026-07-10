@@ -31,6 +31,11 @@ class DocumentOrderRepository
         return DocumentOrderWork::find()->andWhere(['<>', 'id', $id])->andWhere(['type' => $type])->andWhere(['state' => DocumentOrderWork::ACTUAL])->all();
     }
 
+    public function getByIds(array $ids): array
+    {
+        return DocumentOrderWork::find()->where(['IN', 'id', $ids])->all();
+    }
+
     public function filterByBranches(ActiveQuery  $query, array  $branches) {
         $nomenclaturesByBranches = [];
         foreach ($branches as $branch) {

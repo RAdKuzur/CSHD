@@ -10,14 +10,11 @@ use common\repositories\document_in_out\DocumentOutRepository;
 use common\repositories\document_in_out\InOutDocumentsRepository;
 use common\repositories\educational\OrderTrainingGroupParticipantRepository;
 use common\repositories\event\ForeignEventRepository;
-use common\repositories\general\ErrorsRepository;
 use common\repositories\general\ErrorsRepositoryInterface;
 use common\repositories\order\DocumentOrderRepository;
 use common\repositories\order\OrderEventGenerateRepository;
-use common\repositories\order\OrderMainRepository;
 use frontend\models\work\document_in_out\DocumentInWork;
 use frontend\models\work\document_in_out\DocumentOutWork;
-use frontend\models\work\document_in_out\InOutDocumentsWork;
 use frontend\models\work\order\DocumentOrderWork;
 use Yii;
 
@@ -41,8 +38,7 @@ class ErrorDocumentService
         DocumentInRepository $documentInRepository,
         DocumentOutRepository $documentOutRepository,
         InOutDocumentsRepository $inOutDocumentsRepository
-    )
-    {
+    ) {
         $this->errorsRepository = $errorsRepository;
         $this->orderRepository = $orderRepository;
         $this->orderParticipantRepository = $orderParticipantRepository;
@@ -58,11 +54,149 @@ class ErrorDocumentService
         $this->errorsRepository = $repository;
     }
 
-    // Проверка на отсутствие скана
-    public function makeDocument_001($rowId)
+    /**
+     * DataFetch для DOCUMENT_001, DOCUMENT_002, DOCUMENT_003
+     * Предзагружает все приказы и их файлы
+     */
+    public function fetchDataForDocumentOrders(array $rowIds): array
     {
-        $order = $this->orderRepository->get($rowId);
-        if (count($order->getFileLinks(FilesHelper::TYPE_SCAN)) == 0) {
+        // Загружаем все приказы одним запросом
+        $orders = $this->orderRepository->getByIds($rowIds);
+
+        $orderData = [];
+        foreach ($orders as $order) {
+            $scanFiles = $order->getFileLinks(FilesHelper::TYPE_SCAN);
+            $docFiles = $order->getFileLinks(FilesHelper::TYPE_DOC);
+
+            $orderData[$order->id] = [
+                'has_scan' => count($scanFiles) > 0,
+                'has_doc' => count($docFiles) > 0,
+                'has_keywords' => !(is_null($order->key_words) || strlen($order->key_words) == 0),
+                'model' => $order,
+            ];
+        }
+
+        return $orderData;
+    }
+
+    /**
+     * DataFetch для DOCUMENT_005
+     * Предзагружает количество участников для всех приказов
+     */
+    public function fetchDataForDocument_005(array $rowIds): array
+    {
+        // Один запрос с подсчетом для всех приказов
+        $counts = $this->orderParticipantRepository->getCountsByOrderIds($rowIds);
+        return $counts;
+    }
+
+    /**
+     * DataFetch для DOCUMENT_006
+     * Предзагружает связи с мероприятиями
+     */
+    public function fetchDataForDocument_006(array $rowIds): array
+    {
+        // Один запрос для всех приказов
+        $events = $this->foreignEventRepository->getByDocOrderIds($rowIds);
+
+        $eventMap = [];
+        foreach ($events as $event) {
+            $eventMap[$event->doc_order_id] = true;
+        }
+
+        return $eventMap;
+    }
+
+    /**
+     * DataFetch для DOCUMENT_007
+     * Предзагружает данные генерации
+     */
+    public function fetchDataForDocument_007(array $rowIds): array
+    {
+        $generateData = $this->eventGenerateRepository->getByOrderIds($rowIds);
+
+        $generateMap = [];
+        foreach ($generateData as $data) {
+            $generateMap[$data->order_id] = true;
+        }
+
+        return $generateMap;
+    }
+
+    /**
+     * DataFetch для DOCUMENT_008, DOCUMENT_009, DOCUMENT_010
+     * Предзагружает исходящие документы и их файлы
+     */
+    public function fetchDataForDocumentOuts(array $rowIds): array
+    {
+        $docs = $this->documentOutRepository->getByIds($rowIds);
+
+        $docData = [];
+        foreach ($docs as $doc) {
+            $docData[$doc->id] = [
+                'has_scan' => count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0,
+                'has_doc' => count($doc->getFileLinks(FilesHelper::TYPE_DOC)) > 0,
+                'has_keywords' => !(is_null($doc->key_words) || strlen($doc->key_words) == 0),
+                'model' => $doc,
+            ];
+        }
+
+        return $docData;
+    }
+
+    /**
+     * DataFetch для DOCUMENT_011, DOCUMENT_012
+     * Предзагружает входящие документы и их файлы
+     */
+    public function fetchDataForDocumentIns(array $rowIds): array
+    {
+        $docs = $this->documentInRepository->getByIds($rowIds);
+
+        $docData = [];
+        foreach ($docs as $doc) {
+            $docData[$doc->id] = [
+                'has_scan' => count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0,
+                'has_keywords' => !(is_null($doc->key_words) || strlen($doc->key_words) == 0),
+                'is_need_answer' => $doc->isNeedAnswer(),
+                'model' => $doc,
+            ];
+        }
+
+        return $docData;
+    }
+
+    /**
+     * DataFetch для DOCUMENT_013
+     * Предзагружает связи входящих и исходящих
+     */
+    public function fetchDataForDocument_013(array $rowIds): array
+    {
+        $links = $this->inOutDocumentsRepository->getByDocumentInIds($rowIds);
+
+        $linkMap = [];
+        foreach ($links as $link) {
+            $linkMap[$link->document_in_id] = [
+                'exists' => true,
+                'has_out' => !is_null($link->document_out_id),
+            ];
+        }
+
+        return $linkMap;
+    }
+
+    // ========== ОБНОВЛЕННЫЕ МЕТОДЫ MAKE/FIX ==========
+
+    // DOCUMENT_001
+    public function makeDocument_001($rowId, $preloadedData = null)
+    {
+        if ($preloadedData !== null) {
+            $hasScan = $preloadedData[$rowId]['has_scan'] ?? false;
+        } else {
+            $order = $this->orderRepository->get($rowId);
+            $hasScan = count($order->getFileLinks(FilesHelper::TYPE_SCAN)) > 0;
+        }
+
+        if (!$hasScan) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_001,
@@ -74,21 +208,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_001($errorId)
+    public function fixDocument_001($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $order = $this->orderRepository->get($error->table_row_id);
-        if (count($order->getFileLinks(FilesHelper::TYPE_SCAN)) > 0) {
+
+        if ($preloadedData !== null) {
+            $hasScan = $preloadedData[$error->table_row_id]['has_scan'] ?? false;
+        } else {
+            $order = $this->orderRepository->get($error->table_row_id);
+            $hasScan = count($order->getFileLinks(FilesHelper::TYPE_SCAN)) > 0;
+        }
+
+        if ($hasScan) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на отсутствие редактируемого документа
-    public function makeDocument_002($rowId)
+    // DOCUMENT_002
+    public function makeDocument_002($rowId, $preloadedData = null)
     {
-        $order = $this->orderRepository->get($rowId);
-        if (count($order->getFileLinks(FilesHelper::TYPE_DOC)) == 0) {
+        if ($preloadedData !== null) {
+            $hasDoc = $preloadedData[$rowId]['has_doc'] ?? false;
+        } else {
+            $order = $this->orderRepository->get($rowId);
+            $hasDoc = count($order->getFileLinks(FilesHelper::TYPE_DOC)) > 0;
+        }
+
+        if (!$hasDoc) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_002,
@@ -100,21 +246,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_002($errorId)
+    public function fixDocument_002($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $order = $this->orderRepository->get($error->table_row_id);
-        if (count($order->getFileLinks(FilesHelper::TYPE_DOC)) > 0) {
+
+        if ($preloadedData !== null) {
+            $hasDoc = $preloadedData[$error->table_row_id]['has_doc'] ?? false;
+        } else {
+            $order = $this->orderRepository->get($error->table_row_id);
+            $hasDoc = count($order->getFileLinks(FilesHelper::TYPE_DOC)) > 0;
+        }
+
+        if ($hasDoc) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на отсутствие ключевых слов
-    public function makeDocument_003($rowId)
+    // DOCUMENT_003
+    public function makeDocument_003($rowId, $preloadedData = null)
     {
-        $order = $this->orderRepository->get($rowId);
-        if (is_null($order->key_words) || strlen($order->key_words) == 0) {
+        if ($preloadedData !== null) {
+            $hasKeywords = $preloadedData[$rowId]['has_keywords'] ?? false;
+        } else {
+            $order = $this->orderRepository->get($rowId);
+            $hasKeywords = !(is_null($order->key_words) || strlen($order->key_words) == 0);
+        }
+
+        if (!$hasKeywords) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_003,
@@ -126,31 +284,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_003($errorId)
+    public function fixDocument_003($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $order = $this->orderRepository->get($error->table_row_id);
-        if (!(is_null($order->key_words) || strlen($order->key_words) == 0)) {
+
+        if ($preloadedData !== null) {
+            $hasKeywords = $preloadedData[$error->table_row_id]['has_keywords'] ?? false;
+        } else {
+            $order = $this->orderRepository->get($error->table_row_id);
+            $hasKeywords = !(is_null($order->key_words) || strlen($order->key_words) == 0);
+        }
+
+        if ($hasKeywords) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    public function makeDocument_004($rowId)
+    // DOCUMENT_005
+    public function makeDocument_005($rowId, $preloadedData = null)
     {
-        // deprecated
-    }
+        if ($preloadedData !== null) {
+            $count = $preloadedData[$rowId] ?? 0;
+        } else {
+            $orderParticipant = $this->orderParticipantRepository->getByOrderIds($rowId);
+            $count = count($orderParticipant);
+        }
 
-    public function fixDocument_004($errorId)
-    {
-        // deprecated
-    }
-
-    // Проверка на наличие обучающихся, прикрепленных к приказу
-    public function makeDocument_005($rowId)
-    {
-        $orderParticipant = $this->orderParticipantRepository->getByOrderIds($rowId);
-        if (count($orderParticipant) == 0) {
+        if ($count == 0) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_005,
@@ -162,21 +322,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_005($errorId)
+    public function fixDocument_005($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $orderParticipant = $this->orderParticipantRepository->getByOrderIds($error->table_row_id);
-        if (count($orderParticipant) != 0) {
+
+        if ($preloadedData !== null) {
+            $count = $preloadedData[$error->table_row_id] ?? 0;
+        } else {
+            $orderParticipant = $this->orderParticipantRepository->getByOrderIds($error->table_row_id);
+            $count = count($orderParticipant);
+        }
+
+        if ($count != 0) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на связанное мероприятия (наличие информации для генерации мероприятия)
-    public function makeDocument_006($rowId)
+    // DOCUMENT_006
+    public function makeDocument_006($rowId, $preloadedData = null)
     {
-        $foreignEvent = $this->foreignEventRepository->getByDocOrderId($rowId);
-        if (!$foreignEvent) {
+        if ($preloadedData !== null) {
+            $hasEvent = isset($preloadedData[$rowId]);
+        } else {
+            $foreignEvent = $this->foreignEventRepository->getByDocOrderId($rowId);
+            $hasEvent = (bool)$foreignEvent;
+        }
+
+        if (!$hasEvent) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_006,
@@ -188,21 +360,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_006($errorId)
+    public function fixDocument_006($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $foreignEvent = $this->foreignEventRepository->getByDocOrderId($error->table_row_id);
-        if ($foreignEvent) {
+
+        if ($preloadedData !== null) {
+            $hasEvent = isset($preloadedData[$error->table_row_id]);
+        } else {
+            $foreignEvent = $this->foreignEventRepository->getByDocOrderId($error->table_row_id);
+            $hasEvent = (bool)$foreignEvent;
+        }
+
+        if ($hasEvent) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на наличие данных для генерации документа приказа
-    public function makeDocument_007($rowId)
+    // DOCUMENT_007
+    public function makeDocument_007($rowId, $preloadedData = null)
     {
-        $generateData = $this->eventGenerateRepository->getByOrderId($rowId);
-        if (!$generateData) {
+        if ($preloadedData !== null) {
+            $hasGenerate = isset($preloadedData[$rowId]);
+        } else {
+            $generateData = $this->eventGenerateRepository->getByOrderId($rowId);
+            $hasGenerate = (bool)$generateData;
+        }
+
+        if (!$hasGenerate) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_007,
@@ -214,22 +398,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_007($errorId)
+    public function fixDocument_007($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $generateData = $this->eventGenerateRepository->getByOrderId($error->table_row_id);
-        if ($generateData) {
+
+        if ($preloadedData !== null) {
+            $hasGenerate = isset($preloadedData[$error->table_row_id]);
+        } else {
+            $generateData = $this->eventGenerateRepository->getByOrderId($error->table_row_id);
+            $hasGenerate = (bool)$generateData;
+        }
+
+        if ($hasGenerate) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на отсутствие скана в исходящем письме
-    public function makeDocument_008($rowId)
+    // DOCUMENT_008
+    public function makeDocument_008($rowId, $preloadedData = null)
     {
-        /** @var DocumentOutWork $doc */
-        $doc = $this->documentOutRepository->get($rowId);
-        if (count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) == 0) {
+        if ($preloadedData !== null) {
+            $hasScan = $preloadedData[$rowId]['has_scan'] ?? false;
+        } else {
+            $doc = $this->documentOutRepository->get($rowId);
+            $hasScan = count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0;
+        }
+
+        if (!$hasScan) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_008,
@@ -241,22 +436,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_008($errorId)
+    public function fixDocument_008($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $doc = $this->documentOutRepository->get($error->table_row_id);
-        if (count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0) {
+
+        if ($preloadedData !== null) {
+            $hasScan = $preloadedData[$error->table_row_id]['has_scan'] ?? false;
+        } else {
+            $doc = $this->documentOutRepository->get($error->table_row_id);
+            $hasScan = count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0;
+        }
+
+        if ($hasScan) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на отсутствие редактируемого документа в исходящем письме
-    public function makeDocument_009($rowId)
+    // DOCUMENT_009
+    public function makeDocument_009($rowId, $preloadedData = null)
     {
-        /** @var DocumentOutWork $doc */
-        $doc = $this->documentOutRepository->get($rowId);
-        if (count($doc->getFileLinks(FilesHelper::TYPE_DOC)) == 0) {
+        if ($preloadedData !== null) {
+            $hasDoc = $preloadedData[$rowId]['has_doc'] ?? false;
+        } else {
+            $doc = $this->documentOutRepository->get($rowId);
+            $hasDoc = count($doc->getFileLinks(FilesHelper::TYPE_DOC)) > 0;
+        }
+
+        if (!$hasDoc) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_009,
@@ -268,22 +474,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_009($errorId)
+    public function fixDocument_009($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $doc = $this->documentOutRepository->get($error->table_row_id);
-        if (count($doc->getFileLinks(FilesHelper::TYPE_DOC)) > 0) {
+
+        if ($preloadedData !== null) {
+            $hasDoc = $preloadedData[$error->table_row_id]['has_doc'] ?? false;
+        } else {
+            $doc = $this->documentOutRepository->get($error->table_row_id);
+            $hasDoc = count($doc->getFileLinks(FilesHelper::TYPE_DOC)) > 0;
+        }
+
+        if ($hasDoc) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на отсутствие ключевых слов в исходящем письме
-    public function makeDocument_010($rowId)
+    // DOCUMENT_010
+    public function makeDocument_010($rowId, $preloadedData = null)
     {
-        /** @var DocumentOutWork $doc */
-        $doc = $this->documentOutRepository->get($rowId);
-        if (is_null($doc->key_words) || strlen($doc->key_words) == 0) {
+        if ($preloadedData !== null) {
+            $hasKeywords = $preloadedData[$rowId]['has_keywords'] ?? false;
+        } else {
+            $doc = $this->documentOutRepository->get($rowId);
+            $hasKeywords = !(is_null($doc->key_words) || strlen($doc->key_words) == 0);
+        }
+
+        if (!$hasKeywords) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_010,
@@ -295,23 +512,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_010($errorId)
+    public function fixDocument_010($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
-        /** @var DocumentOutWork $doc */
         $error = $this->errorsRepository->get($errorId);
-        $doc = $this->documentOutRepository->get($error->table_row_id);
-        if (!(is_null($doc->key_words) || strlen($doc->key_words) == 0)) {
+
+        if ($preloadedData !== null) {
+            $hasKeywords = $preloadedData[$error->table_row_id]['has_keywords'] ?? false;
+        } else {
+            $doc = $this->documentOutRepository->get($error->table_row_id);
+            $hasKeywords = !(is_null($doc->key_words) || strlen($doc->key_words) == 0);
+        }
+
+        if ($hasKeywords) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на отсутствие скана во входящем письме
-    public function makeDocument_011($rowId)
+    // DOCUMENT_011
+    public function makeDocument_011($rowId, $preloadedData = null)
     {
-        /** @var DocumentInWork $doc */
-        $doc = $this->documentInRepository->get($rowId);
-        if (count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) == 0) {
+        if ($preloadedData !== null) {
+            $hasScan = $preloadedData[$rowId]['has_scan'] ?? false;
+        } else {
+            $doc = $this->documentInRepository->get($rowId);
+            $hasScan = count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0;
+        }
+
+        if (!$hasScan) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_011,
@@ -323,22 +550,33 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_011($errorId)
+    public function fixDocument_011($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
         $error = $this->errorsRepository->get($errorId);
-        $doc = $this->documentInRepository->get($error->table_row_id);
-        if (count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0) {
+
+        if ($preloadedData !== null) {
+            $hasScan = $preloadedData[$error->table_row_id]['has_scan'] ?? false;
+        } else {
+            $doc = $this->documentInRepository->get($error->table_row_id);
+            $hasScan = count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0;
+        }
+
+        if ($hasScan) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на отсутствие ключевых слов во входящем письме
-    public function makeDocument_012($rowId)
+    // DOCUMENT_012
+    public function makeDocument_012($rowId, $preloadedData = null)
     {
-        /** @var DocumentInWork $doc */
-        $doc = $this->documentInRepository->get($rowId);
-        if (is_null($doc->key_words) || strlen($doc->key_words) == 0) {
+        if ($preloadedData !== null) {
+            $hasKeywords = $preloadedData[$rowId]['has_keywords'] ?? false;
+        } else {
+            $doc = $this->documentInRepository->get($rowId);
+            $hasKeywords = !(is_null($doc->key_words) || strlen($doc->key_words) == 0);
+        }
+
+        if (!$hasKeywords) {
             $this->errorsRepository->save(
                 ErrorsWork::fill(
                     ErrorDictionary::DOCUMENT_012,
@@ -350,55 +588,73 @@ class ErrorDocumentService
         }
     }
 
-    public function fixDocument_012($errorId)
+    public function fixDocument_012($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
-        /** @var DocumentInWork $doc */
         $error = $this->errorsRepository->get($errorId);
-        $doc = $this->documentInRepository->get($error->table_row_id);
-        if (!(is_null($doc->key_words) || strlen($doc->key_words) == 0)) {
+
+        if ($preloadedData !== null) {
+            $hasKeywords = $preloadedData[$error->table_row_id]['has_keywords'] ?? false;
+        } else {
+            $doc = $this->documentInRepository->get($error->table_row_id);
+            $hasKeywords = !(is_null($doc->key_words) || strlen($doc->key_words) == 0);
+        }
+
+        if ($hasKeywords) {
             $this->errorsRepository->delete($error);
         }
     }
 
-    // Проверка на своевременность и наличие ответа на входящее письмо
-    public function makeDocument_013($rowId)
+    // DOCUMENT_013
+    public function makeDocument_013($rowId, $preloadedData = null)
     {
-        /** @var DocumentInWork $doc */
-        $doc = $this->documentInRepository->get($rowId);
-        if ($doc->isNeedAnswer()) {
-            /** @var InOutDocumentsWork $answer */
-            $answer = $this->inOutDocumentsRepository->getByDocumentInId($rowId);
-            if ($answer && is_null($answer->document_out_id)) {
-                $this->errorsRepository->save(
-                    ErrorsWork::fill(
-                        ErrorDictionary::DOCUMENT_013,
-                        DocumentInWork::tableName(),
-                        $rowId,
-                        Yii::$app->errors->get(ErrorDictionary::DOCUMENT_013)->getErrorState()
-                    )
-                );
+        if ($preloadedData !== null) {
+            $docData = $preloadedData['document_ins'][$rowId] ?? null;
+            if ($docData && $docData['is_need_answer']) {
+                $linkData = $preloadedData['document_013_links'][$rowId] ?? null;
+                if ($linkData && $linkData['exists'] && !$linkData['has_out']) {
+                    $this->errorsRepository->save(
+                        ErrorsWork::fill(
+                            ErrorDictionary::DOCUMENT_013,
+                            DocumentInWork::tableName(),
+                            $rowId,
+                            Yii::$app->errors->get(ErrorDictionary::DOCUMENT_013)->getErrorState()
+                        )
+                    );
+                }
+            }
+        } else {
+            $doc = $this->documentInRepository->get($rowId);
+            if ($doc->isNeedAnswer()) {
+                $answer = $this->inOutDocumentsRepository->getByDocumentInId($rowId);
+                if ($answer && is_null($answer->document_out_id)) {
+                    $this->errorsRepository->save(
+                        ErrorsWork::fill(
+                            ErrorDictionary::DOCUMENT_013,
+                            DocumentInWork::tableName(),
+                            $rowId,
+                            Yii::$app->errors->get(ErrorDictionary::DOCUMENT_013)->getErrorState()
+                        )
+                    );
+                }
             }
         }
     }
 
-    public function fixDocument_013($errorId)
+    public function fixDocument_013($errorId, $preloadedData = null)
     {
-        /** @var ErrorsWork $error */
-        /** @var DocumentInWork $doc */
         $error = $this->errorsRepository->get($errorId);
-        $doc = $this->documentInRepository->get($error->table_row_id);
-        $inOutDocs = $this->inOutDocumentsRepository->getByDocumentInId($doc->id);
-        if (is_null($inOutDocs) || !is_null($inOutDocs->document_out_id)) {
-            $this->errorsRepository->delete($error);
+
+        if ($preloadedData !== null) {
+            $linkData = $preloadedData['document_013_links'][$error->table_row_id] ?? null;
+            if (!$linkData || !$linkData['exists'] || $linkData['has_out']) {
+                $this->errorsRepository->delete($error);
+            }
+        } else {
+            $doc = $this->documentInRepository->get($error->table_row_id);
+            $inOutDocs = $this->inOutDocumentsRepository->getByDocumentInId($doc->id);
+            if (is_null($inOutDocs) || !is_null($inOutDocs->document_out_id)) {
+                $this->errorsRepository->delete($error);
+            }
         }
-        //old version
-        //if ($doc->isNeedAnswer()) {
-            /** @var InOutDocumentsWork $answer */
-        //    $answer = $this->inOutDocumentsRepository->getByDocumentInId($error->table_row_id);
-        //    if (!($answer && is_null($answer->document_out_id))) {
-        //        $this->errorsRepository->delete($error);
-        //    }
-        //}
     }
 }

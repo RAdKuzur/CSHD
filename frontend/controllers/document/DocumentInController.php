@@ -2,6 +2,7 @@
 
 namespace frontend\controllers\document;
 
+use common\components\dictionaries\base\ErrorDictionary;
 use common\components\traits\AccessControl;
 use common\components\wizards\LockWizard;
 use common\controllers\DocumentController;
@@ -16,6 +17,7 @@ use common\repositories\dictionaries\PositionRepository;
 use common\repositories\document_in_out\DocumentInRepository;
 use common\repositories\document_in_out\InOutDocumentsRepository;
 use common\repositories\general\FilesRepository;
+use common\services\general\errors\BatchCheckService;
 use common\services\general\files\FileService;
 use common\services\general\PeopleStampService;
 use DomainException;
@@ -26,6 +28,7 @@ use frontend\models\search\SearchDocumentIn;
 use frontend\models\work\document_in_out\DocumentInWork;
 use frontend\services\document\DocumentInService;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 class DocumentInController extends DocumentController
 {
@@ -67,6 +70,90 @@ class DocumentInController extends DocumentController
         $this->buttonsRepository = $buttonsRepository;
     }
 
+    public function actionErrorsCheck()
+    {
+        set_time_limit(300);
+
+        /** @var BatchCheckService $batchService */
+        $batchService = Yii::createObject(BatchCheckService::class);
+
+        $allDocumentIn = DocumentInWork::find()->all();
+
+        if (empty($allDocumentIn)) {
+            Yii::$app->session->setFlash('info', 'Нет записей для проверки');
+            return $this->redirect(['index']);
+        }
+
+        $documentIds = ArrayHelper::getColumn($allDocumentIn, 'id');
+        $errorList = ErrorAssociationHelper::getDocumentInErrorsList();
+
+        // Предзагружаем данные
+        $preloadedData = [];
+
+        // Для DOCUMENT_011, DOCUMENT_012 - данные о файлах и ключевых словах
+        $preloadedData[ErrorDictionary::DOCUMENT_011] = Yii::$app->errors
+            ->get(ErrorDictionary::DOCUMENT_011)
+            ->fetchData($documentIds);
+
+        $preloadedData[ErrorDictionary::DOCUMENT_012] = $preloadedData[ErrorDictionary::DOCUMENT_011]; // те же данные
+
+        // Для DOCUMENT_013 - данные о связях
+        $preloadedData[ErrorDictionary::DOCUMENT_013] = Yii::$app->errors
+            ->get(ErrorDictionary::DOCUMENT_013)
+            ->fetchData($documentIds);
+
+        // Предзагружаем ошибки таблицы
+        $batchService->preloadTableErrors(DocumentInWork::tableName());
+        $allCurrentErrors = $batchService->getPreloadedErrors();
+        $allAmnestyErrors = $batchService->getPreloadedAmnestyErrors();
+
+        $batchService->registerModels($allDocumentIn);
+        $batchService->enableBatchMode();
+
+        $total = count($allDocumentIn);
+        $processed = 0;
+        $totalSaved = 0;
+        $totalDeleted = 0;
+        $totalUpdated = 0;
+
+        foreach ($allDocumentIn as $documentIn) {
+            $documentIn->checkModelWithData(
+                $errorList,
+                DocumentInWork::tableName(),
+                $documentIn->id,
+                $preloadedData,
+                $allCurrentErrors,
+                $allAmnestyErrors
+            );
+
+            $processed++;
+
+            if ($processed % 5000 === 0) {
+                $result = $batchService->flush();
+                $totalSaved += $result['saved'];
+                $totalDeleted += $result['deleted'];
+                $totalUpdated += $result['updated'];
+            }
+        }
+
+        $finalResult = $batchService->flush();
+        $totalSaved += $finalResult['saved'];
+        $totalDeleted += $finalResult['deleted'];
+        $totalUpdated += $finalResult['updated'];
+
+        $batchService->disableBatchMode();
+
+        Yii::$app->session->setFlash('success',
+            "Проверка завершена! Обработано: {$total} записей.\n" .
+            "Исправлено ошибок: {$totalDeleted}\n" .
+            "Новых ошибок: {$totalSaved}\n" .
+            "Обновлено состояний: {$totalUpdated}"
+        );
+
+        return $this->redirect(['index']);
+    }
+
+
     public function actionIndex()
     {
         $model = new DocumentInWork();
@@ -78,7 +165,14 @@ class DocumentInController extends DocumentController
             $this->repository->save($model);
         }
 
-        $links = ButtonsFormatter::twoPrimaryLinks(Yii::$app->frontUrls::DOC_IN_CREATE, Yii::$app->frontUrls::DOC_IN_RESERVE);
+        $linksFirst = ButtonsFormatter::twoPrimaryLinks(Yii::$app->frontUrls::DOC_IN_CREATE, Yii::$app->frontUrls::DOC_IN_RESERVE);
+
+        $links = array_merge(
+            $linksFirst,
+            ButtonsFormatter::anyOneLink('Проверить документы на ошибки', Yii::$app->frontUrls::DOC_IN_ERRORS,ButtonsFormatter::BTN_DANGER)
+        );
+
+
         $buttonHtml = HtmlBuilder::createGroupButton($links);
 
         return $this->render('index', [
@@ -88,6 +182,9 @@ class DocumentInController extends DocumentController
             'buttonsAct' => $buttonHtml,
         ]);
     }
+
+
+
 
     public function actionView($id)
     {

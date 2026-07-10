@@ -75,6 +75,17 @@ class OrderTrainingGroupParticipantRepository
             ->one();
     }
 
+    public function getCountsByOrderIds(array $orderIds): array
+    {
+        $counts = OrderTrainingGroupParticipantWork::find()
+            ->select(['order_id', 'COUNT(*) as cnt'])
+            ->where(['IN', 'order_id', $orderIds])
+            ->groupBy('order_id')
+            ->asArray()
+            ->all();
+        return array_column($counts, 'cnt', 'order_id');
+    }
+
     public function countByTrainingGroupParticipantOutId($trainingGroupParticipantOutId)
     {
         return OrderTrainingGroupParticipantWork::find()->where(['training_group_participant_out_id' => $trainingGroupParticipantOutId])->count();

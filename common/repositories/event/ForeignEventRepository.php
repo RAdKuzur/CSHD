@@ -28,6 +28,13 @@ class ForeignEventRepository
         return ForeignEventWork::find()->where(['order_participant_id' => $id])->one();
     }
 
+    public function getByDocOrderIds(array $orderIds): array
+    {
+        return ForeignEventWork::find()
+            ->where(['IN', 'order_participant_id', $orderIds])
+            ->all();
+    }
+
     /**
      * Возвращает все мероприятия, завершившиеся в промежуток [$startDate; $endDate]
      * и соответствующие уровням из $levels

@@ -52,6 +52,13 @@ class InOutDocumentsRepository
             ->andWhere(['document_in_id' => $docInId])
             ->one();
     }
+
+    public function getByDocumentInIds(array $documentInIds): array
+    {
+        return InOutDocumentsWork::find()
+            ->where(['IN', 'document_in_id', $documentInIds])
+            ->all();
+    }
     /**
      * Подготавливает запрос для создания новой записи в таблице
      * @param $docInId

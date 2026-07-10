@@ -88,6 +88,12 @@ class DocumentOutRepository
         return DocumentOutWork::find()->where(['like', 'document_date', date('Y')])->orderBy(['document_number' => SORT_ASC, 'document_postfix' => SORT_ASC])->all();
     }
 
+    public function getByIds(array $ids): array
+    {
+        return DocumentOutWork::find()->where(['IN', 'id', $ids])->all();
+    }
+
+
     public function save(DocumentOutWork $document)
     {
         if (!$document->save()) {

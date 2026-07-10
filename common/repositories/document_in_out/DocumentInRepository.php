@@ -60,6 +60,11 @@ class DocumentInRepository
         return DocumentInWork::find()->where(['like', 'local_date', date('Y')])->orderBy(['local_number' => SORT_ASC, 'local_postfix' => SORT_ASC])->all();
     }
 
+    public function getByIds(array $ids): array
+    {
+        return DocumentInWork::find()->where(['IN', 'id', $ids])->all();
+    }
+
     public function save(DocumentInWork $document)
     {
         if (!$document->save()) {

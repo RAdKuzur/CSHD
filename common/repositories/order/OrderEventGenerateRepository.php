@@ -19,6 +19,14 @@ class OrderEventGenerateRepository
     {
         return OrderEventGenerateWork::findOne(['order_id' => $orderId]);
     }
+
+    public function getByOrderIds(array $orderIds): array
+    {
+        return OrderEventGenerateWork::find()
+            ->where(['IN', 'order_id', $orderIds])
+            ->all();
+    }
+
     public function save(OrderEventGenerateWork $model)
     {
         if (!$model->save()) {

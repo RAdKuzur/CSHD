@@ -209,7 +209,8 @@ class RulesConfig
                 'delete',
                 'participants-list',
                 'load-participants-from-excel', //ДОБАВЛЕНо
-                'process-participants-excel'//Добавлено
+                'process-participants-excel',//Добавлено
+                'errors-check',
             ]
         ],
 
@@ -233,7 +234,8 @@ class RulesConfig
                 'get-group-by-branch',
                 'get-group-participants-by-branch',
                 'set-preamble',
-                'generate-order'
+                'generate-order',
+                'errors-check'
             ]
         ],
 
@@ -253,7 +255,8 @@ class RulesConfig
                 'delete',
                 'delete-file',
                 'delete-document',
-                'reserve'
+                'reserve',
+                'errors-check',
             ]
         ],
 
@@ -288,6 +291,7 @@ class RulesConfig
                 'delete',
                 'reserve',
                 'delete-file',
+                'errors-check',
             ],
         ],
 
@@ -308,6 +312,7 @@ class RulesConfig
                 'delete',
                 'reserve',
                 'delete-file',
+                'errors-check',
             ],
         ],
 

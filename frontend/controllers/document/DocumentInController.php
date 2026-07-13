@@ -77,7 +77,9 @@ class DocumentInController extends DocumentController
         /** @var BatchCheckService $batchService */
         $batchService = Yii::createObject(BatchCheckService::class);
 
-        $allDocumentIn = DocumentInWork::find()->all();
+        $allDocumentIn = DocumentInWork::find()
+            ->where(['!=', 'document_theme', 'Резерв'])
+            ->all();
 
         if (empty($allDocumentIn)) {
             Yii::$app->session->setFlash('info', 'Нет записей для проверки');

@@ -79,7 +79,9 @@ class DocumentOutController extends DocumentController
         /** @var BatchCheckService $batchService */
         $batchService = Yii::createObject(BatchCheckService::class);
 
-        $allDocumentOut = DocumentOutWork::find()->all();
+        $allDocumentOut = DocumentOutWork::find()
+            ->where(['!=', 'document_theme', 'Резерв'])
+            ->all();
 
         if (empty($allDocumentOut)) {
             Yii::$app->session->setFlash('info', 'Нет записей для проверки');
@@ -192,7 +194,6 @@ class DocumentOutController extends DocumentController
         /** @var DocumentOutWork $model */
         $model = $this->repository->get($id);
         $model->checkFilesExist();
-
         return $this->render('view', [
             'model' => $model,
             'buttonsAct' => $buttonHtml,

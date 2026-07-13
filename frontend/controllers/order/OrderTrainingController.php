@@ -152,12 +152,25 @@ class OrderTrainingController extends DocumentController
         $errorList = ErrorAssociationHelper::getOrderTrainingGroupErrorsList();
 
         // Предзагружаем данные
+//        $preloadedData = [];
+//        foreach ($errorList as $errorCode) {
+//            $errorEntity = Yii::$app->errors->get($errorCode);
+//            if ($errorEntity->getDataFetchFunction() !== null) {
+//                $preloadedData[$errorCode] = $errorEntity->fetchData($orderIds);
+//            }
+//        }
+
+        // Предзагружаем данные
         $preloadedData = [];
+        $errorEntity = Yii::$app->errors->get($errorList[0]);
+        $firstData = $errorEntity->fetchData($orderIds); // Сохраняем данные в переменную
+
+        // Удаляем первый элемент из массива
+        unset($errorList[0]);
+
+        // Для оставшихся кодов копируем те же данные
         foreach ($errorList as $errorCode) {
-            $errorEntity = Yii::$app->errors->get($errorCode);
-            if ($errorEntity->getDataFetchFunction() !== null) {
-                $preloadedData[$errorCode] = $errorEntity->fetchData($orderIds);
-            }
+            $preloadedData[$errorCode] = $firstData;
         }
 
         // Предзагружаем ошибки таблицы

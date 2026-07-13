@@ -89,7 +89,9 @@ class OrderMainController extends DocumentController
         /** @var BatchCheckService $batchService */
         $batchService = Yii::createObject(BatchCheckService::class);
 
-        $allDocumentOrder = DocumentOrderWork::find()->all();
+        $allDocumentOrder = DocumentOrderWork::find()
+            ->where(['!=', 'order_name', 'Резерв'])
+            ->all();
 
         if (empty($allDocumentOrder)) {
             Yii::$app->session->setFlash('info', 'Нет записей для проверки');
@@ -100,12 +102,25 @@ class OrderMainController extends DocumentController
         $errorList = ErrorAssociationHelper::getOrderMainErrorsList();
 
         // Предзагружаем данные
+//        $preloadedData = [];
+//        foreach ($errorList as $errorCode) {
+//            $errorEntity = Yii::$app->errors->get($errorCode);
+//            if ($errorEntity->getDataFetchFunction() !== null) {
+//                $preloadedData[$errorCode] = $errorEntity->fetchData($orderIds);
+//            }
+//        }
+
+        // Предзагружаем данные
         $preloadedData = [];
+        $errorEntity = Yii::$app->errors->get($errorList[0]);
+        $firstData = $errorEntity->fetchData($orderIds); // Сохраняем данные в переменную
+
+        // Удаляем первый элемент из массива
+        unset($errorList[0]);
+
+        // Для оставшихся кодов копируем те же данные
         foreach ($errorList as $errorCode) {
-            $errorEntity = Yii::$app->errors->get($errorCode);
-            if ($errorEntity->getDataFetchFunction() !== null) {
-                $preloadedData[$errorCode] = $errorEntity->fetchData($orderIds);
-            }
+            $preloadedData[$errorCode] = $firstData;
         }
 
         // Предзагружаем ошибки таблицы

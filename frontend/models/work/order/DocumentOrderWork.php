@@ -3,6 +3,7 @@
 namespace frontend\models\work\order;
 
 use common\components\interfaces\FileInterface;
+use common\components\traits\ErrorTrait;
 use common\events\EventTrait;
 use common\helpers\files\FilesHelper;
 use common\helpers\html\HtmlBuilder;
@@ -27,6 +28,7 @@ use yii\helpers\Url;
 class DocumentOrderWork extends DocumentOrder implements FileInterface
 {
     use EventTrait;
+    use ErrorTrait;
     public const ORDER_INIT = 0;
     public const ORDER_MAIN = 1;
     public const ORDER_EVENT = 2;

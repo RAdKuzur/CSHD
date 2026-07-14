@@ -608,9 +608,9 @@ class ErrorDocumentService
     public function makeDocument_013($rowId, $preloadedData = null)
     {
         if ($preloadedData !== null) {
-            $docData = $preloadedData['document_ins'][$rowId] ?? null;
+            $docData = $preloadedData[$rowId] ?? null;
             if ($docData && $docData['is_need_answer']) {
-                $linkData = $preloadedData['document_013_links'][$rowId] ?? null;
+                $linkData = $preloadedData[$rowId] ?? null;
                 if ($linkData && $linkData['exists'] && !$linkData['has_out']) {
                     $this->errorsRepository->save(
                         ErrorsWork::fill(
@@ -645,7 +645,7 @@ class ErrorDocumentService
         $error = $this->errorsRepository->get($errorId);
 
         if ($preloadedData !== null) {
-            $linkData = $preloadedData['document_013_links'][$error->table_row_id] ?? null;
+            $linkData = $preloadedData[$error->table_row_id] ?? null;
             if (!$linkData || !$linkData['exists'] || $linkData['has_out']) {
                 $this->errorsRepository->delete($error);
             }

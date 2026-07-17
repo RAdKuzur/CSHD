@@ -160,10 +160,10 @@ class Error extends BaseObject
     /**
      * Выполняет DataFetch функцию
      */
-    public function fetchData($participantIds)
+    public function fetchData(...$args)
     {
         if ($this->DataFetchFunction !== null) {
-            return ($this->DataFetchFunction)($participantIds);
+            return ($this->DataFetchFunction)(...$args);
         }
         return null;
     }

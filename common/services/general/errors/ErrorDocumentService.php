@@ -62,12 +62,12 @@ class ErrorDocumentService
      * DataFetch для DOCUMENT_001, DOCUMENT_002, DOCUMENT_003
      * Предзагружает все приказы и их файлы
      */
-    public function fetchDataForDocumentOrders(array $rowIds): array
+    public function fetchDataForDocumentOrders(array $rowIds,string $tablename): array
     {
         // Загружаем все приказы одним запросом
         $orders = $this->orderRepository->getByIds($rowIds);
         $fileTypes = [FilesHelper::TYPE_DOC, FilesHelper::TYPE_SCAN];
-        $files = $this->filesRepository->getAll(DocumentOrderWork::tableName(),$fileTypes);
+        $files = $this->filesRepository->getAll($tablename,$fileTypes);
 
         // Группируем файлы по table_row_id и file_type
         $filesMap = [];

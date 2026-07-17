@@ -113,7 +113,7 @@ class OrderMainController extends DocumentController
         // Предзагружаем данные
         $preloadedData = [];
         $errorEntity = Yii::$app->errors->get($errorList[0]);
-        $firstData = $errorEntity->fetchData($orderIds); // Сохраняем данные в переменную
+        $firstData = $errorEntity->fetchData($orderIds,DocumentOrderWork::tableName()); // Сохраняем данные в переменную
 
         // Удаляем первый элемент из массива
         unset($errorList[0]);

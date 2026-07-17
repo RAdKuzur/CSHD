@@ -23,6 +23,15 @@ class FilesRepository
             ->all();
     }
 
+    public function getAll($tableName, $fileTypes)
+    {
+        return FilesWork::find()
+            ->where(['table_name' => $tableName])
+            ->andWhere(['in', 'file_type', $fileTypes])
+            ->all();
+    }
+
+
     public function getLastFile($tableName, $tableRowId, $fileType)
     {
         return FilesWork::find()

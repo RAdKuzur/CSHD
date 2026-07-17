@@ -11,6 +11,7 @@ use common\repositories\document_in_out\InOutDocumentsRepository;
 use common\repositories\educational\OrderTrainingGroupParticipantRepository;
 use common\repositories\event\ForeignEventRepository;
 use common\repositories\general\ErrorsRepositoryInterface;
+use common\repositories\general\FilesRepository;
 use common\repositories\order\DocumentOrderRepository;
 use common\repositories\order\OrderEventGenerateRepository;
 use frontend\models\work\document_in_out\DocumentInWork;
@@ -28,6 +29,7 @@ class ErrorDocumentService
     private DocumentInRepository $documentInRepository;
     private DocumentOutRepository $documentOutRepository;
     private InOutDocumentsRepository $inOutDocumentsRepository;
+    private FilesRepository $filesRepository;
 
     public function __construct(
         ErrorsRepositoryInterface $errorsRepository,
@@ -37,7 +39,8 @@ class ErrorDocumentService
         ForeignEventRepository $foreignEventRepository,
         DocumentInRepository $documentInRepository,
         DocumentOutRepository $documentOutRepository,
-        InOutDocumentsRepository $inOutDocumentsRepository
+        InOutDocumentsRepository $inOutDocumentsRepository,
+        FilesRepository $filesRepository
     ) {
         $this->errorsRepository = $errorsRepository;
         $this->orderRepository = $orderRepository;
@@ -47,6 +50,7 @@ class ErrorDocumentService
         $this->documentInRepository = $documentInRepository;
         $this->documentOutRepository = $documentOutRepository;
         $this->inOutDocumentsRepository = $inOutDocumentsRepository;
+        $this->filesRepository = $filesRepository;
     }
 
     public function setErrorsRepository(ErrorsRepositoryInterface $repository): void
@@ -62,15 +66,34 @@ class ErrorDocumentService
     {
         // Загружаем все приказы одним запросом
         $orders = $this->orderRepository->getByIds($rowIds);
+        $fileTypes = [FilesHelper::TYPE_DOC, FilesHelper::TYPE_SCAN];
+        $files = $this->filesRepository->getAll(DocumentOrderWork::tableName(),$fileTypes);
+
+        // Группируем файлы по table_row_id и file_type
+        $filesMap = [];
+        foreach ($files as $file) {
+            $rowId = $file->table_row_id;
+            $type = $file->file_type;
+
+            if (!isset($filesMap[$rowId])) {
+                $filesMap[$rowId] = [
+                    FilesHelper::TYPE_DOC => 0,
+                    FilesHelper::TYPE_SCAN => 0,
+                ];
+            }
+            $filesMap[$rowId][$type]++;
+        }
 
         $orderData = [];
         foreach ($orders as $order) {
-            $scanFiles = $order->getFileLinks(FilesHelper::TYPE_SCAN);
-            $docFiles = $order->getFileLinks(FilesHelper::TYPE_DOC);
+            $rowFiles = $filesMap[$order->id] ?? [
+                FilesHelper::TYPE_DOC => 0,
+                FilesHelper::TYPE_SCAN => 0,
+            ];
 
             $orderData[$order->id] = [
-                'has_scan' => count($scanFiles) > 0,
-                'has_doc' => count($docFiles) > 0,
+                'has_scan' => $rowFiles[FilesHelper::TYPE_SCAN] > 0,
+                'has_doc' => $rowFiles[FilesHelper::TYPE_DOC] > 0,
                 'has_keywords' => !(is_null($order->key_words) || strlen($order->key_words) == 0),
                 'model' => $order,
             ];
@@ -130,12 +153,34 @@ class ErrorDocumentService
     public function fetchDataForDocumentOuts(array $rowIds): array
     {
         $docs = $this->documentOutRepository->getByIds($rowIds);
+        $fileTypes = [FilesHelper::TYPE_DOC, FilesHelper::TYPE_SCAN];
+        $files = $this->filesRepository->getAll(DocumentOutWork::tableName(), $fileTypes);
+
+        // Группируем файлы по table_row_id и file_type
+        $filesMap = [];
+        foreach ($files as $file) {
+            $rowId = $file->table_row_id;
+            $type = $file->file_type;
+
+            if (!isset($filesMap[$rowId])) {
+                $filesMap[$rowId] = [
+                    FilesHelper::TYPE_DOC => 0,
+                    FilesHelper::TYPE_SCAN => 0,
+                ];
+            }
+            $filesMap[$rowId][$type]++;
+        }
 
         $docData = [];
         foreach ($docs as $doc) {
+            $rowFiles = $filesMap[$doc->id] ?? [
+                FilesHelper::TYPE_DOC => 0,
+                FilesHelper::TYPE_SCAN => 0,
+            ];
+
             $docData[$doc->id] = [
-                'has_scan' => count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0,
-                'has_doc' => count($doc->getFileLinks(FilesHelper::TYPE_DOC)) > 0,
+                'has_scan' => $rowFiles[FilesHelper::TYPE_SCAN] > 0,
+                'has_doc' => $rowFiles[FilesHelper::TYPE_DOC] > 0,
                 'has_keywords' => !(is_null($doc->key_words) || strlen($doc->key_words) == 0),
                 'model' => $doc,
             ];
@@ -152,10 +197,21 @@ class ErrorDocumentService
     {
         $docs = $this->documentInRepository->getByIds($rowIds);
 
+        // Для DocumentIn нужен только SCAN (DOCUMENT_011)
+        $fileTypes = [FilesHelper::TYPE_SCAN];
+        $files = $this->filesRepository->getAll(DocumentInWork::tableName(), $fileTypes);
+
+        // Группируем файлы по table_row_id
+        $filesMap = [];
+        foreach ($files as $file) {
+            $rowId = $file->table_row_id;
+            $filesMap[$rowId] = ($filesMap[$rowId] ?? 0) + 1;
+        }
+
         $docData = [];
         foreach ($docs as $doc) {
             $docData[$doc->id] = [
-                'has_scan' => count($doc->getFileLinks(FilesHelper::TYPE_SCAN)) > 0,
+                'has_scan' => ($filesMap[$doc->id] ?? 0) > 0,
                 'has_keywords' => !(is_null($doc->key_words) || strlen($doc->key_words) == 0),
                 'is_need_answer' => $doc->isNeedAnswer(),
                 'model' => $doc,

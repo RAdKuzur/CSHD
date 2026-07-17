@@ -78,7 +78,7 @@ class DocumentOutController extends DocumentController
 
         /** @var BatchCheckService $batchService */
         $batchService = Yii::createObject(BatchCheckService::class);
-
+        $start = microtime(true);
         $allDocumentOut = DocumentOutWork::find()
             ->where(['!=', 'document_theme', 'Резерв'])
             ->all();
@@ -101,6 +101,7 @@ class DocumentOutController extends DocumentController
 
         $preloadedData[ErrorDictionary::DOCUMENT_009] = $preloadedData[ErrorDictionary::DOCUMENT_008]; // те же данные
         $preloadedData[ErrorDictionary::DOCUMENT_010] = $preloadedData[ErrorDictionary::DOCUMENT_008]; // те же данные
+        $time = microtime(true) - $start;
 
         // Предзагружаем ошибки таблицы
         $batchService->preloadTableErrors(DocumentOutWork::tableName());
@@ -128,7 +129,7 @@ class DocumentOutController extends DocumentController
 
             $processed++;
 
-            if ($processed % 5000 === 0) {
+            if ($processed % 10000 === 0) {
                 $result = $batchService->flush();
                 $totalSaved += $result['saved'];
                 $totalDeleted += $result['deleted'];

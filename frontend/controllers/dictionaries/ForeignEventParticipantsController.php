@@ -411,7 +411,7 @@ class ForeignEventParticipantsController extends Controller
 
             $processed++;
 
-            if ($processed % 5000 === 0) {
+            if ($processed % 10000 === 0) {
                 $stats = $batchService->getStats();
                 $result = $batchService->flush();
                 Yii::info("Processed {$processed}/{$total}. Flushed: " . json_encode($result));
@@ -486,7 +486,7 @@ class ForeignEventParticipantsController extends Controller
 
             $processed++;
 
-            if ($processed % 5000 === 0) {
+            if ($processed % 10000 === 0) {
                 $stats = $batchService->getStats();
                 $result = $batchService->flush();
 

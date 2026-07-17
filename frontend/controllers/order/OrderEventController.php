@@ -197,7 +197,7 @@ class OrderEventController extends DocumentController
 
             $processed++;
 
-            if ($processed % 5000 === 0) {
+            if ($processed % 10000 === 0) {
                 $result = $batchService->flush();
                 $totalSaved += $result['saved'];
                 $totalDeleted += $result['deleted'];

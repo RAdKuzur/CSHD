@@ -5,6 +5,7 @@ namespace backend\controllers\report\form;
 use backend\forms\report\DodForm;
 use backend\forms\report\ECForm;
 use backend\forms\report\SAForm;
+use backend\forms\report\StatsReportForm;
 use backend\forms\report\TeacherReportForm;
 use backend\invokables\ReportDodLoader;
 use backend\invokables\ReportECLoader;
@@ -12,8 +13,10 @@ use backend\invokables\ReportSALoader;
 use backend\services\report\form\DodReportService;
 use backend\services\report\form\EffectiveContractReportService;
 use backend\services\report\form\StateAssignmentReportService;
+use backend\services\report\form\StatsReportService;
 use backend\services\report\form\TeacherReportFormService;
 use backend\services\report\ReportFacade;
+use common\components\dictionaries\base\EventLevelDictionary;
 use common\helpers\DateFormatter;
 use Yii;
 use yii\web\Controller;
@@ -24,6 +27,7 @@ class FormReportController extends Controller
     private DodReportService $dodReportService;
     private EffectiveContractReportService $effectiveContractReportService;
     private TeacherReportFormService $teacherReportFormService;
+    private StatsReportService $statsReportService;
 
     public function __construct(
         $id,
@@ -32,6 +36,7 @@ class FormReportController extends Controller
         DodReportService $dodReportService,
         EffectiveContractReportService $effectiveContractReportService,
         TeacherReportFormService $teacherReportFormService,
+        StatsReportService $statsReportService,
         $config = []
     )
     {
@@ -40,6 +45,7 @@ class FormReportController extends Controller
         $this->dodReportService = $dodReportService;
         $this->effectiveContractReportService = $effectiveContractReportService;
         $this->teacherReportFormService = $teacherReportFormService;
+        $this->statsReportService = $statsReportService;
     }
 
     public function actionFormList()
@@ -113,6 +119,17 @@ class FormReportController extends Controller
             $this->teacherReportFormService->createExcelVariantReport($model, $data);
         }
         return $this->render('teacher', [
+            'model' => $model
+        ]);
+    }
+    public function actionStats()
+    {
+        $model = new StatsReportForm();
+        if($model->load(Yii::$app->request->post())) {
+            $data = $this->statsReportService->statsReport($model->getYear());
+            $this->statsReportService->createExcelVariantReport($model, $data);
+        }
+        return $this->render('stats', [
             'model' => $model
         ]);
     }

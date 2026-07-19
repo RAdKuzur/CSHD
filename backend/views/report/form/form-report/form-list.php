@@ -22,3 +22,5 @@ $this->title = 'Отчеты по готовым формам';
 <?= Html::a("Отчет гос. задание", Url::to(['state-assignment']), ['class'=>'btn btn-primary']); ?>
 
 <?= Html::a("Отчет ДОД", Url::to(['dod']), ['class'=>'btn btn-primary']); ?>
+
+<?= Html::a("ПОКАЗАТЕЛИ ОРГАНИЗАЦИИ ДО", Url::to(['stats']), ['class'=>'btn btn-primary']); ?>

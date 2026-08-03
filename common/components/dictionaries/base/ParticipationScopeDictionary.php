@@ -53,6 +53,8 @@ class ParticipationScopeDictionary extends BaseDictionary
     const MATH = 48;
     const PROFESSIONAL = 49;
     const ECONOMY = 50;
+    const LAW = 51;
+
 
     public function __construct()
     {
@@ -106,7 +108,8 @@ class ParticipationScopeDictionary extends BaseDictionary
             self::YACHTING => 'Парусный спорт (яхтинг)',
             self::MATH => 'Математика',
             self::PROFESSIONAL => 'Профориентационные мероприятия',
-            self::ECONOMY => 'Экономика'
+            self::ECONOMY => 'Экономика',
+            self::LAW => 'Право'
         ];
     }
 
@@ -139,6 +142,7 @@ class ParticipationScopeDictionary extends BaseDictionary
             $this->list[self::RADIO_DIRECTION],
             $this->list[self::PHYSICS],
             $this->list[self::ECONOMY],
+            $this->list[self::LAW],
         ];
     }
 }

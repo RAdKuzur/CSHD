@@ -674,7 +674,7 @@ class TrainingGroupController extends DocumentController
         $students = $this->trainingGroupRepository->getParticipants($id);
         foreach ($data as $item) {
 
-            $result = $this->lessonService->delete($item);
+            $result = $this->lessonService->delete($id, $item);
             if (!$result) {
                 $errorString .= "Ошибка удаления занятия (ID: $item)<br>";
             } else {

@@ -557,7 +557,7 @@ class WordCreator
         $cell = $table->addCell(10000);
         $cell->addText('', null, array('spaceAfter' => 0));
         $cell = $table->addCell(8000);
-        $cell->addText('к приказу директора', array('size' => '12'), array('align' => 'left', 'spaceAfter' => 0));
+        $cell->addText('к приказу', array('size' => '12'), array('align' => 'left', 'spaceAfter' => 0));
         $table->addRow();
         $cell = $table->addCell(10000);
         $cell->addText('', null, array('spaceAfter' => 0));

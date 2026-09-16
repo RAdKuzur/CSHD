@@ -44,6 +44,12 @@ class ThematicDirectionDictionary extends BaseDictionary
     const MATH = 50;
     const MUSIC = 51;
 
+    const COMPLEX_IT = 52;
+
+    const COMPLEX_NATURAL = 53;
+
+    const COMPLEX_TECH = 54;
+
     public function __construct()
     {
         parent::__construct();
@@ -87,6 +93,9 @@ class ThematicDirectionDictionary extends BaseDictionary
             self::YACHTING => 'Парусный спорт (яхтинг)',
             self::MATH => 'Математика',
             self::MUSIC => 'Музыкально-исполнительское искусство',
+            self::COMPLEX_IT => 'Комплексное: информационные технологии',
+            self::COMPLEX_NATURAL => 'Комплексное: естественные науки',
+            self::COMPLEX_TECH => 'Комплексное: технические науки',
         ];
     }
 
@@ -132,6 +141,9 @@ class ThematicDirectionDictionary extends BaseDictionary
             self::YACHTING => 'ЯХТ',
             self::MATH => 'МАТ',
             self::MUSIC => 'МИИ',
+            self::COMPLEX_IT => 'КИТ',
+            self::COMPLEX_NATURAL => 'КЕН',
+            self::COMPLEX_TECH => 'КТН',
         ];
     }
 

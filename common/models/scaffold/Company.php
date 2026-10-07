@@ -47,7 +47,7 @@ class Company extends \yii\db\ActiveRecord
             [['company_type', 'is_contractor', 'category_smsp', 'last_edit_id', 'ownership_type'], 'integer'],
             [['name', 'short_name', 'is_contractor'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
-            [['name', 'shortna_me'], 'string', 'max' => 256],
+            [['name', 'short_name'], 'string', 'max' => 256],
             [['inn'], 'string', 'max' => 15],
             [['comment', 'email', 'site', 'head_fio'], 'string', 'max' => 256],
             [['phone_number', 'okved'], 'string', 'max' => 12],

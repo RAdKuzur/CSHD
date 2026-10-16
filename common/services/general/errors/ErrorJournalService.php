@@ -184,13 +184,19 @@ class ErrorJournalService
 
     public function fixJournal_003($errorId)
     {
+        $daysCount = 4;
         /** @var ErrorsWork $error */
         /** @var TrainingGroupWork $group */
         $error = $this->errorsRepository->get($errorId);
+        if (strtotime($group->finish_date) > strtotime("+$daysCount days"))  {
+            $this->errorsRepository->delete($error);
+            return;
+        }
         $group = $this->groupRepository->get($error->table_row_id);
         if (count($group->getFileLinks(FilesHelper::TYPE_PHOTO)) > 0) {
             $this->errorsRepository->delete($error);
         }
+
     }
 
     // Проверка на отсутствие презентационных материалов
@@ -216,9 +222,14 @@ class ErrorJournalService
 
     public function fixJournal_004($errorId)
     {
+        $daysCount = 4;
         /** @var ErrorsWork $error */
         /** @var TrainingGroupWork $group */
         $error = $this->errorsRepository->get($errorId);
+        if (strtotime($group->finish_date) > strtotime("+$daysCount days")) {
+            $this->errorsRepository->delete($error);
+            return;
+        }
         $group = $this->groupRepository->get($error->table_row_id);
         if (count($group->getFileLinks(FilesHelper::TYPE_PRESENTATION)) > 0) {
             $this->errorsRepository->delete($error);
@@ -248,9 +259,14 @@ class ErrorJournalService
 
     public function fixJournal_005($errorId)
     {
+        $daysCount = 4;
         /** @var ErrorsWork $error */
         /** @var TrainingGroupWork $group */
         $error = $this->errorsRepository->get($errorId);
+        if (strtotime($group->finish_date) > strtotime("+$daysCount days")) {
+            $this->errorsRepository->delete($error);
+            return;
+        }
         $group = $this->groupRepository->get($error->table_row_id);
         if (count($group->getFileLinks(FilesHelper::TYPE_WORK)) > 0) {
             $this->errorsRepository->delete($error);

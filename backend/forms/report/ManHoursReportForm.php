@@ -29,6 +29,7 @@ class ManHoursReportForm extends Model
     // Подтип отчета по человеко-часам
     const MAN_HOURS_FAIR = 1; // учитываем неявки
     const MAN_HOURS_ALL = 2; // игнорируем неявки
+    const MAN_HOURS_PROGRAM = 3; // Максимально возможное количество часов группы
 
     public static $types = [
         self::MAN_HOURS_REPORT => 'Человеко-часы',

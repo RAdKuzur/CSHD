@@ -52,12 +52,23 @@ $this->title = 'Результат отчета по обучающимся';
     <h2>Опция скачивания:</h2>
 <?php endif; ?>
 
-<?php if (!empty($manHoursResult)): ?>
-    <?php $form1 = ActiveForm::begin(['method' => 'post', 'action' => ['download-debug-csv', 'type' => ManHoursReportForm::MAN_HOURS_REPORT]]); ?>
+    <?php if (!empty($manHoursResult)): ?>
+        <?php
+        $downloadType = ((int)$model->method === ManHoursReportForm::MAN_HOURS_PROGRAM)
+                ? ManHoursReportForm::MAN_HOURS_PROGRAM
+                : ManHoursReportForm::MAN_HOURS_REPORT;
+        ?>
+        <?php $form1 = ActiveForm::begin([
+                'method' => 'post',
+                'action' => [
+                        'download-debug-csv',
+                        'type' => $downloadType,
+                ],
+        ]); ?>
         <input type="hidden" name="debugData" value="<?= htmlspecialchars(json_encode($manHoursResult['debugData'], JSON_UNESCAPED_UNICODE)) ?>">
-        <?= Html::submitButton('Скачать подробный отчет по человеко-часам',  ['class' => 'btn btn-primary']) ?>
-    <?php ActiveForm::end(); ?>
-<?php endif; ?>
+        <?= Html::submitButton('Скачать подробный отчет по человеко-часам', ['class' => 'btn btn-primary']) ?>
+        <?php ActiveForm::end(); ?>
+    <?php endif; ?>
 
 <?php if (!empty($participantsResult)): ?>
     <?php $form2 = ActiveForm::begin(['method' => 'post', 'action' => ['download-debug-csv', 'type' => ManHoursReportForm::PARTICIPANT_START_BEFORE_FINISH_IN]]); ?>

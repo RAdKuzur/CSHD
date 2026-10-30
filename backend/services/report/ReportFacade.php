@@ -33,8 +33,19 @@ class ReportFacade
     {
         $manHoursResult = [];
         if ($form->isManHours()) {
-            $manHoursResult['manHours'] =
-                $service->calculateManHours(
+            if ((int)$form->method === ManHoursReportForm::MAN_HOURS_PROGRAM) {
+                $manHoursResult['manHours'] = $service->calculateManHoursProgram(
+                    $form->startDate,
+                    $form->endDate,
+                    $form->branch,
+                    $form->focus,
+                    $form->allowRemote,
+                    $form->budget,
+                    $form->teacher !== '' ? [$form->teacher] : [],
+                    $form->mode
+                );
+            } else {
+                $manHoursResult['manHours'] = $service->calculateManHours(
                     $form->startDate,
                     $form->endDate,
                     $form->branch,
@@ -45,6 +56,7 @@ class ReportFacade
                     $form->teacher !== '' ? [$form->teacher] : [],
                     $form->mode
                 );
+            }
         }
 
         if ($form->isParticipants()) {

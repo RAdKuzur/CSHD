@@ -41,6 +41,7 @@ class ManHoursReportController extends Controller
             $result = ReportFacade::generateManHoursReport($form, $this->service);
 
             return $this->render('man-hours-result', [
+                'model' => $form, // <-- Передаем форму в качестве $model
                 'manHoursResult' => $result['manHours'] ?? [],
                 'participantsResult' => $result['participants'] ?? []
             ]);
@@ -55,6 +56,9 @@ class ManHoursReportController extends Controller
     {
         if (Yii::$app->request->isPost) {
             switch ($type) {
+                case ManHoursReportForm::MAN_HOURS_PROGRAM:
+                    $csvHeader = DebugReportHelper::getManHoursProgramReportHeaders();
+                    break;
                 case ManHoursReportForm::MAN_HOURS_REPORT:
                     $csvHeader = DebugReportHelper::getManHoursReportHeaders();
                     break;

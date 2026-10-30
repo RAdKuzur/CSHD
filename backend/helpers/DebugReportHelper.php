@@ -204,6 +204,17 @@ class DebugReportHelper
         ];
     }
 
+    public static function getManHoursProgramReportHeaders()
+    {
+        return [
+            'Группа',
+            'Объем программы (ак. ч.)',
+            'Кол-во занятий в расписании',
+            'Кол-во учеников',
+            'Кол-во ч/ч (прогноз)',
+        ];
+    }
+
     public static function getEventReportHeaders()
     {
         return [

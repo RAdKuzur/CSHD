@@ -147,6 +147,79 @@ class ReportManHoursService implements ManHoursServiceInterface
         ];
     }
 
+    /**
+     * Подсчет человеко-часов по нормативу программы (capacity * кол-во обучающихся).
+     */
+    public function calculateManHoursProgram(
+        string $startDate,
+        string $endDate,
+        array $branches,
+        array $focuses,
+        array $allowRemotes,
+        array $budgets,
+        array $teacherIds = [],
+        int $mode = ReportFacade::MODE_PURE
+    ): array {
+        $startTime = new DateTime();
+
+        // 1. Получаем группы по базовым фильтрам и диапазону дат
+        $query = $this->getTrainingGroupsQueryByFilters($branches, $focuses, $allowRemotes, $budgets);
+        $query = $this->builder->filterGroupsBetweenDates($query, $startDate, $endDate);
+
+        // Если выбран педагог, фильтруем группы по педагогу
+        if (!empty($teacherIds)) {
+            $query = $this->builder->filterGroupsByTeachers($query, $teacherIds);
+        }
+
+        /** @var \frontend\models\work\educational\training_group\TrainingGroupWork[] $groups */
+        $groups = $this->repository->findAll($query);
+
+        if (empty($groups)) {
+            return ['result' => 0, 'debugData' => []];
+        }
+
+        $groupIds = ArrayHelper::getColumn($groups, 'id');
+
+        // 2. Считаем активных участников для каждой группы
+        $participants = $this->participantRepository->getParticipantsFromGroups($groupIds);
+        $participantsCountByGroup = [];
+        foreach ($participants as $participant) {
+            $gId = $participant->training_group_id;
+            $participantsCountByGroup[$gId] = ($participantsCountByGroup[$gId] ?? 0) + 1;
+        }
+
+        // 3. Расчет: объем часов программы группы * количество участников
+        $result = 0;
+        foreach ($groups as $group) {
+            $studentsCount = $participantsCountByGroup[$group->id] ?? 0;
+
+            // Получаем объем часов из связанной программы (training_program.capacity)
+            $programHours = 0;
+            if (!empty($group->trainingProgramWork)) {
+                $programHours = (float)($group->trainingProgramWork->capacity ?? 0);
+            } elseif (!empty($group->training_program_id)) {
+                // Если релейшен называется иначе или не подгружен:
+                $programHours = (float)(\frontend\models\work\educational\training_program\TrainingProgramWork::find()
+                    ->select('capacity')
+                    ->where(['id' => $group->training_program_id])
+                    ->scalar() ?? 0);
+            }
+
+            $result += ($studentsCount * $programHours);
+        }
+
+        $endTime = new DateTime();
+        $interval = $startTime->diff($endTime);
+        LogFactory::createBaseLog(LogInterface::LVL_INFO, "Время подсчета ч/ч по программе: {$interval->format('%s.%f')}");
+
+        return [
+            'result' => $result,
+            'debugData' => $mode === ReportFacade::MODE_DEBUG ?
+                $this->debugService->createManHoursDebugData($groups, $startDate, $endDate, ManHoursReportForm::MAN_HOURS_PROGRAM, $teacherIds) :
+                []
+        ];
+    }
+
 
     /**
      * Метод подсчета обучающихся за заданный период и заданным типом/подтипом подсчета

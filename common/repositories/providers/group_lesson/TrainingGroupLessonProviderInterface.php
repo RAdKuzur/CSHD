@@ -8,6 +8,7 @@ interface TrainingGroupLessonProviderInterface
 {
     public function get($id);
     public function getLessonsFromGroup($id);
+    public function getLessonsByGroupsAndPeriod(array $groupIds,string $startDate, string $endDate): array;
     public function delete(TrainingGroupLessonWork $model);
     public function save(TrainingGroupLessonWork $model);
 }

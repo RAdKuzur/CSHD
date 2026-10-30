@@ -30,4 +30,15 @@ interface ManHoursServiceInterface
         array $teacherIds = [],
         int $mode = ReportFacade::MODE_PURE
     ) : array;
+
+    public function calculateManHoursProgram(
+        string $startDate,
+        string $endDate,
+        array $branches,
+        array $focuses,
+        array $allowRemotes,
+        array $budgets,
+        array $teacherIds = [],
+        int $mode = ReportFacade::MODE_PURE
+    ): array;
 }

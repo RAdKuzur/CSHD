@@ -46,6 +46,11 @@ class TrainingGroupLessonRepository
         return $this->provider->getLessonsFromGroup($id);
     }
 
+    public function getLessonsByGroupsAndPeriod($ids,$startDate, $endDate)
+    {
+        return $this->provider->getLessonsByGroupsAndPeriod($ids,$startDate,$endDate);
+    }
+
     public function prepareCreate($groupId, $lessonDate, $lessonStartTime, $branch, $auditoriumId, $lessonEndTime, $duration)
     {
         if (get_class($this->provider) == TrainingGroupLessonProvider::class) {

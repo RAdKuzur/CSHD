@@ -252,15 +252,19 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
         <div class="col-xs-8 block-report float-block-report" id="hours" style="display: none">
             <?php
-            $arr = [ManHoursReportForm::MAN_HOURS_FAIR => 'Метод, учитывающий неявки', ManHoursReportForm::MAN_HOURS_ALL => 'Метод, игнорирующий неявки'];
+            $arr = [
+                    ManHoursReportForm::MAN_HOURS_FAIR => 'Метод, учитывающий неявки',
+                    ManHoursReportForm::MAN_HOURS_ALL => 'Метод, игнорирующий неявки (по расписанию)',
+                    ManHoursReportForm::MAN_HOURS_PROGRAM => 'Прогноз максимально возможного кол-ва часов (по программе)',
+            ];
             echo $form->field($model, 'method')->radioList($arr, ['item' => function ($index, $label, $name, $checked, $value) {
                 return
                         '<div class="checkbox" style="font-size: 16px; font-family: Arial; color: black;">
-                    <label for="methods-'. $index .'">
-                        <input id="methods-'. $index .'" name="'. $name .'" type="radio" '. $checked .' value="'. $value .'">
-                        '. $label .'
-                    </label>
-                </div>';
+                <label for="methods-'. $index .'">
+                    <input id="methods-'. $index .'" name="'. $name .'" type="radio" '. $checked .' value="'. $value .'">
+                    '. $label .'
+                </label>
+            </div>';
             }])->label('<b>Метод подсчета человеко-часов</b>');
             ?>
         </div>

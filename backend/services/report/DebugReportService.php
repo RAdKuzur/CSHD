@@ -2,6 +2,7 @@
 
 namespace backend\services\report;
 
+use backend\forms\report\ManHoursReportForm;
 use backend\helpers\DebugReportHelper;
 use backend\helpers\ReportHelper;
 use common\helpers\DateFormatter;
@@ -59,6 +60,8 @@ class DebugReportService
     {
         return DebugReportHelper::createParticipantDebugData($participants);
     }
+
+
     /**
      * @param TrainingGroupWork[] $groups
      * @param string $startDate
@@ -67,35 +70,92 @@ class DebugReportService
      * @param int[] $teacherIds
      * @return string[][]
      */
-    public function createManHoursDebugData(array $groups, string $startDate, string $endDate, int $calculateType, array $teacherIds = []) : array
-    {
+    public function createManHoursDebugData(
+        array $groups,
+        string $startDate,
+        string $endDate,
+        int $calculateType,
+        array $teacherIds = []
+    ): array {
         $data = [];
+
         foreach ($groups as $group) {
+            // Уроки группы
             $lessons = $this->groupRepository->getLessons($group->id);
-            $allLessons = $this->lessonThemeRepository->getByLessonIds(ArrayHelper::getColumn($lessons, 'id'));
-            $teacherLesson = $this->lessonThemeRepository->getByTeacherIds($teacherIds);
+            $lessonIds = ArrayHelper::getColumn($lessons, 'id');
 
-            $visits = $this->visitRepository->getByTrainingGroup($group->id);
-            $visitsCount = 0;
-            foreach ($visits as $visit) {
-                /** @var VisitWork $visit */
-                $lessons = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
-                foreach ($lessons as $lesson) {
-                    $visitsCount += ReportHelper::checkVisitLesson($lesson, $startDate, $endDate, $calculateType, ArrayHelper::getColumn($teacherLesson, 'id'));
+            // Количество учеников
+            $studentsCount = count($this->participantRepository->getParticipantsFromGroups([$group->id]));
+
+            if ($calculateType === ManHoursReportForm::MAN_HOURS_PROGRAM) {
+                // 1. Объем программы (capacity, ак. ч.)
+                $capacity = 0;
+                if (!empty($group->trainingProgramWork)) {
+                    $capacity = (float)($group->trainingProgramWork->capacity ?? 0);
+                } elseif (!empty($group->training_program_id)) {
+                    $capacity = (float)(\frontend\models\work\educational\training_program\TrainingProgramWork::find()
+                        ->select('capacity')
+                        ->where(['id' => $group->training_program_id])
+                        ->scalar() ?? 0);
                 }
-            }
 
-            $data[] = [
-                addslashes($group->number),
-                count($teacherLesson) > 0 ?: count($allLessons),
-                count($allLessons),
-                count($this->participantRepository->getParticipantsFromGroups([$group->id])),
-                addslashes((string)$visitsCount),
-            ];
+                // 2. Кол-во занятий в расписании (непосредственно число уроков группы)
+                $lessonsScheduleCount = count($lessonIds);
+
+                // 3. Прогноз ч/ч: Ученики * Объем программы
+                $manHoursCount = $studentsCount * $capacity;
+
+                // Строго под getManHoursProgramReportHeaders()
+                $data[] = [
+                    (string)$group->number,        // 'Группа'
+                    (string)$capacity,            // 'Объем программы (ак. ч.)'
+                    (string)$lessonsScheduleCount,// 'Кол-во занятий в расписании'
+                    (string)$studentsCount,       // 'Кол-во учеников'
+                    (string)$manHoursCount,       // 'Кол-во ч/ч (прогноз)'
+                ];
+            } else {
+                // Старый формат (MAN_HOURS_FAIR / MAN_HOURS_ALL)
+                $allThemes = !empty($lessonIds) ? $this->lessonThemeRepository->getByLessonIds($lessonIds) : [];
+                $allLessonsCount = count($allThemes);
+
+                $teacherThemesCount = 0;
+                $teacherLessonIds = [];
+                if (!empty($teacherIds)) {
+                    $teacherThemes = $this->lessonThemeRepository->getByTeacherIds($teacherIds);
+                    $teacherLessonIds = ArrayHelper::getColumn($teacherThemes, 'training_group_lesson_id');
+                    $teacherThemesCount = count(array_intersect($lessonIds, $teacherLessonIds));
+                }
+
+                $visits = $this->visitRepository->getByTrainingGroup($group->id);
+                $visitsCount = 0;
+                foreach ($visits as $visit) {
+                    /** @var VisitWork $visit */
+                    $lessonsList = VisitLesson::fromString($visit->lessons, $this->lessonRepository);
+                    foreach ($lessonsList as $l) {
+                        $visitsCount += ReportHelper::checkVisitLesson(
+                            $l,
+                            $startDate,
+                            $endDate,
+                            $calculateType,
+                            $teacherLessonIds
+                        );
+                    }
+                }
+
+                // Строго под старые заголовки
+                $data[] = [
+                    (string)$group->number,
+                    (string)(!empty($teacherIds) ? $teacherThemesCount : $allLessonsCount),
+                    (string)$allLessonsCount,
+                    (string)$studentsCount,
+                    (string)$visitsCount,
+                ];
+            }
         }
 
         return $data;
     }
+
 
     /**
      * @param ForeignEventWork[] $events

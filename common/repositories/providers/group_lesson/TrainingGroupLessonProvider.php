@@ -27,6 +27,15 @@ class TrainingGroupLessonProvider implements TrainingGroupLessonProviderInterfac
             ->all();
     }
 
+    public function getLessonsByGroupsAndPeriod(array $groupIds, string $startDate, string $endDate): array
+    {
+        return TrainingGroupLessonWork::find()
+            ->where(['training_group_id' => $groupIds])
+            ->andWhere(['between', 'lesson_date', $startDate, $endDate])
+            ->orderBy(['lesson_date' => SORT_ASC, 'lesson_start_time' => SORT_ASC])
+            ->all();
+    }
+
     public function prepareCreate($groupId, $lessonDate, $lessonStartTime, $branch, $auditoriumId, $lessonEndTime, $duration)
     {
         $model = TrainingGroupLessonWork::fill($groupId, $lessonDate, $lessonStartTime, $branch, $auditoriumId, $lessonEndTime, $duration);
